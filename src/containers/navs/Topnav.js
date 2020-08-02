@@ -239,7 +239,7 @@ class TopNav extends Component {
             </span>
           </div> */}
 
-          <div className="d-inline-block">
+          {/* <div className="d-inline-block">
             <UncontrolledDropdown className="ml-2">
               <DropdownToggle
                 caret
@@ -262,7 +262,7 @@ class TopNav extends Component {
                 })}
               </DropdownMenu>
             </UncontrolledDropdown>
-          </div>
+          </div> */}
           {/* <div className="position-relative d-none d-none d-lg-inline-block">
             <a
               className="btn btn-outline-primary btn-sm ml-2"

@@ -69,7 +69,7 @@ class ForgotPassword extends Component {
         <Colxx xxs="12" md="10" className="mx-auto my-auto">
           <Card className="auth-card">
             <div className="position-relative image-side ">
-              <p className="text-white h2">LAMITA ID</p>
+              <p className="text-white h2">Researcher</p>
               <p className="white mb-0">
                 Vui lòng sử dụng "số điện thoại@lamita.vn" để đăng nhập
               </p>

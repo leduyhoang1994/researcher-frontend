@@ -19,40 +19,8 @@ export const AUTH = {
   details: `${apiPath}/${user}/detail`,
 }
 
-/** Course */
-export const course = 'course';
-export const COURSES = {
-  all: `${apiPath}/${course}`,
-  one: `${apiPath}/${course}`,
-}
-
-/** Class Room */
-export const classRoom = 'class-room';
-export const CLASS_ROOMS = {
-  all: `${apiPath}/${classRoom}`,
-  one: `${apiPath}/${classRoom}`,
-}
-
-/** Training Class */
-export const trainingClass = 'training-class';
-export const TRAINING_CLASS = {
-  all: `${apiPath}/${trainingClass}`,
-  one: `${apiPath}/${trainingClass}`,
-  expectClass: `${apiPath}/${trainingClass}/create-expect-training-class`
-}
-
-/** Class Manager */
-export const CLASS_MANAGER = {
-  checkIn: `${apiPath}/check-in`,
-  checkOut: `${apiPath}/check-out`,
-}
-
-/** Student */
-export const STUDENTS = {
-  info: `${apiPath}/my-info`
-}
-
-/** Check In */
-export const CHECK_INS = {
-  mine: `${apiPath}/check-in-history`,
+/** Category */
+export const categories = 'categories';
+export const CATEGOIES = {
+  all: `${apiPath}/${categories}`
 }

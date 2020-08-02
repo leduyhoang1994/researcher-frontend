@@ -4,6 +4,12 @@ const researcherMenu = [
     icon: "iconsminds-qr-code",
     label: "Research",
     to: "/app/research"
+  },
+  {
+    id: "filter",
+    icon: "iconsminds-qr-code",
+    label: "Filters",
+    to: "/app/filters"
   }
 ];
 

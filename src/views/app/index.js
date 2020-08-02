@@ -8,6 +8,10 @@ const Research = React.lazy(() =>
   import(/* webpackChunkName: "research" */ './research')
 );
 
+const Filter = React.lazy(() =>
+  import(/* webpackChunkName: "research" */ './filter')
+);
+
 class App extends Component {
   render() {
     const { match } = this.props;
@@ -22,6 +26,10 @@ class App extends Component {
               <Route
                 path={`${match.url}/research`}
                 render={props => <Research {...props} />}
+              />
+              <Route
+                path={`${match.url}/filters`}
+                render={props => <Filter {...props} />}
               />
               <Redirect to="/error" />
             </Switch>

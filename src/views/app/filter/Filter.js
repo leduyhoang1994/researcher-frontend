@@ -5,12 +5,13 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
+import { isFunction } from 'formik';
 
 class Filter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterOptions: {
+            filterOptions: this.props.filterOptions ? this.props.filterOptions : {
                 topCates: SITE_LIST,
                 topSale: {
                     min: "",
@@ -23,11 +24,14 @@ class Filter extends Component {
 
     renderSiteSelector = () => {
         const { filterOptions: { topCates }, filterOptions } = this.state;
+        const { setFilterOptions } = this.props;
         return (
             <>
                 <Row>
                     <Colxx>
-                        <h4>{__(this.messages, "Chọn top thư mục các sàn")}</h4>
+                        <p>
+                            <b>{__(this.messages, "1. Chọn top thư mục các sàn")}</b>
+                        </p>
                     </Colxx>
                 </Row>
                 {
@@ -45,12 +49,16 @@ class Filter extends Component {
                                             type="number"
                                             onChange={e => {
                                                 filterOptions.topCates[index].top = e.target.value ? parseInt(e.target.value) : "";
-                                                if (filterOptions.topCates[index].sites) {
-                                                    filterOptions.topCates[index].sites.forEach(childSite => {
-                                                        childSite.top = e.target.value ? parseInt(e.target.value) : "";
-                                                    });
-                                                }
+                                                // if (filterOptions.topCates[index].sites) {
+                                                //     filterOptions.topCates[index].sites.forEach(childSite => {
+                                                //         childSite.top = e.target.value ? parseInt(e.target.value) : "";
+                                                //     });
+                                                // }
                                                 this.setState({ filterOptions });
+
+                                                if (isFunction(setFilterOptions)) {
+                                                    setFilterOptions(filterOptions);
+                                                }
                                             }}
                                         />
                                     </Colxx>
@@ -70,6 +78,10 @@ class Filter extends Component {
                                                         onChange={e => {
                                                             filterOptions.topCates[index].sites[childIndex].top = e.target.value ? parseInt(e.target.value) : "";
                                                             this.setState({ filterOptions });
+
+                                                            if (isFunction(setFilterOptions)) {
+                                                                setFilterOptions(filterOptions);
+                                                            }
                                                         }}
                                                     />
                                                 </Colxx>
@@ -91,7 +103,9 @@ class Filter extends Component {
             <>
                 <Row>
                     <Colxx xxs="12">
-                        <h4>{__(this.messages, "Giới hạn top sale")}</h4>
+                        <p>
+                            <b>{__(this.messages, "2. Giới hạn top sale")}</b>
+                        </p>
                     </Colxx>
                 </Row>
                 <Row>
@@ -125,7 +139,6 @@ class Filter extends Component {
     }
 
     render() {
-        console.log(this.state.filterOptions);
         return (
             <div>
                 <Row>

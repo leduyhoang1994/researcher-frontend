@@ -61,7 +61,7 @@ module.exports = {
  /* 04.Error Page */
  "pages.error-title": "Có gì đó không đúng!",
  "pages.error-code": "Mã lỗi",
- "pages.go-back-home": "Quay lại Lamita ID",
+ "pages.go-back-home": "Quay lại Researcher",
 
  /** 05. Student */
 };
