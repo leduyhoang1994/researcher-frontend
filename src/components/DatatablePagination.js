@@ -17,6 +17,7 @@ export default class DataTablePagination extends Component {
     this.renderPageJump = this.renderPageJump.bind(this);
 
     this.state = {
+      current_page: props.current_page,
       page: props.page,
       pageSize: this.props.defaultPageSize
     };
@@ -58,7 +59,7 @@ export default class DataTablePagination extends Component {
     this.changePage(pageIndex);
   }
 
-  renderPages() {
+  renderPages1() {
     let pageCount = this.props.pages;
     let pageButtons = [];
     for (let i = 0; i < pageCount; i++) {
@@ -68,6 +69,45 @@ export default class DataTablePagination extends Component {
           <PaginationLink
             onClick={() => this.pageClick(i)}
           >{i + 1}</PaginationLink>
+        </PaginationItem>
+      );
+    }
+    return pageButtons;
+  }
+
+  renderPages() {
+    let pageCount = this.props.pages;
+    let pageButtons = [];
+    const buttonSize = 5;
+    const current_page = this.state.page + 1;
+
+    // pageButtons.push(
+    //   <PaginationItem key={i} active={active}>
+    //     <PaginationLink> . . . </PaginationLink>
+    //   </PaginationItem>
+    // );
+    for (let i = 1; i <= pageCount; i++) {
+      let active = current_page === i ? true : false;
+      if (pageCount > 10) {
+        // if (i <= ((buttonSize - 1) / 2)) {
+
+        // }
+        if (i >= (current_page - ((buttonSize - 1) / 2)) && i <= (current_page + ((buttonSize - 1) / 2))) {
+          pageButtons.push(
+            <PaginationItem key={i} active={active}>
+              <PaginationLink
+                onClick={() => this.pageClick(i)}
+              >{i}</PaginationLink>
+            </PaginationItem>
+          );
+        }
+        continue;
+      }
+      pageButtons.push(
+        <PaginationItem key={i} active={active}>
+          <PaginationLink
+            onClick={() => this.pageClick(i)}
+          >{i}</PaginationLink>
         </PaginationItem>
       );
     }

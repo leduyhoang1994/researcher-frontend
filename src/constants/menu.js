@@ -6,11 +6,11 @@ const researcherMenu = [
     to: "/app/research"
   },
   {
-    id: "filter",
+    id: "product",
     icon: "iconsminds-qr-code",
-    label: "Filters",
-    to: "/app/filters"
-  }
+    label: "Products",
+    to: "/app/products"
+  },
 ];
 
 let data = [];

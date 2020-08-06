@@ -10,16 +10,56 @@ import ApiController from '../../../helpers/Api';
 import { CATEGOIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { SITE_LIST } from '../../../constants/data';
+import categoriesData from '../../../data/categories';
+import { Redirect } from 'react-router-dom';
 
 class Research extends Component {
     constructor(props) {
         super(props);
         this.state = {
             filterOptions: {},
-            categories: []
+            categories: [],
+            selectedCats: [],
+            redirect: false
         };
         this.messages = this.props.intl.messages;
     }
+
+    existInSelectedCats = (cate) => {
+        const { selectedCats } = this.state;
+        let exist = false;
+        selectedCats.forEach(selectedCat => {
+            if (JSON.stringify(selectedCat) === JSON.stringify(cate)) {
+                exist = true;
+                return false;
+            }
+        });
+        return exist;
+    }
+
+    addToSelectedCats = (cate) => {
+        const { selectedCats } = this.state;
+        let exist = this.existInSelectedCats(cate);
+        if (!exist) {
+            selectedCats.push(cate);
+        }
+
+        this.setState({
+            selectedCats: selectedCats
+        });
+    };
+
+    removeFromSelectedCats = (cate) => {
+        let { selectedCats } = this.state;
+
+        selectedCats = selectedCats.filter(selectedCat => {
+            return JSON.stringify(selectedCat) !== JSON.stringify(cate);
+        });
+
+        this.setState({
+            selectedCats: selectedCats
+        });
+    };
 
     setFilterOptions = (filters) => {
         this.setState({
@@ -33,15 +73,54 @@ class Research extends Component {
             NotificationManager.error("Bạn cần chọn top thư mục của ít nhất 1 sàn", "Không thành công");
             return;
         }
-        ApiController.call("POST", CATEGOIES.all, filterOptions, data => {
-            this.setState({
-                categories: data
-            });
+        // ApiController.call("POST", CATEGOIES.all, filterOptions, data => {
+        //     this.setState({
+        //         categories: data
+        //     });
+        // });
+
+        const result = {};
+
+        filterOptions.topCates.forEach(parentSite => {
+            if (parentSite.top) {
+                let parentSiteTop = parentSite.top;
+                result[parentSite.code] = categoriesData.filter(data => {
+                    if (data.countrySite === parentSite.code) {
+                        parentSiteTop--;
+                    }
+                    return data.countrySite === parentSite.code && parentSiteTop >= 0;
+                });
+            }
+            if (parentSite.sites) {
+                parentSite.sites.forEach(site => {
+                    if (site.top) {
+                        let siteTop = site.top;
+                        result[site.code] = categoriesData.filter(data => {
+                            if (data.site === site.code) {
+                                siteTop--;
+                            }
+                            return data.site === site.code && siteTop >= 0;
+                        });
+                    }
+                });
+            }
+        });
+
+        this.setState({
+            categories: result
         });
     }
 
+    redirectTo = (url) => {
+        this.setState({
+            redirect: url
+        })
+    };
+
     render() {
-        console.log(this.state.categories);
+        if (this.state.redirect) {
+            return <Redirect to={`${this.state.redirect}`} />;
+        }
         return (
             <Fragment>
                 <Row>
@@ -87,6 +166,9 @@ class Research extends Component {
                                 </CardTitle>
                                 <Category
                                     categories={this.state.categories}
+                                    addToSelectedCats={this.addToSelectedCats}
+                                    removeFromSelectedCats={this.removeFromSelectedCats}
+                                    existInSelectedCats={this.existInSelectedCats}
                                 />
                             </CardBody>
                             <CardFooter className="text-right">
@@ -98,6 +180,10 @@ class Research extends Component {
                                 </Button>
                                 <Button
                                     color="primary"
+                                    onClick={e => {
+                                        localStorage.setItem('selectedItems', JSON.stringify(this.state.selectedCats));
+                                        this.redirectTo("/app/products");
+                                    }}
                                 >
                                     {__(this.messages, "Tìm sản phẩm")}
                                 </Button>

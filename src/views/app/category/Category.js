@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Collapse } from 'reactstrap';
+import { Row, Collapse, Button, Input } from 'reactstrap';
 import ReactTable from "react-table";
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
@@ -21,7 +21,20 @@ class Category extends Component {
 
   catTableColumn = () => [
     {
-      Header: __(this.messages, "Tên thư mục"),
+      Header: __(this.messages, "Tên thư mục tầng 1"),
+      accessor: "categoryName",
+      sortable: false,
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "Tên thư mục tầng 2"),
+      sortable: false,
+      accessor: "categoryName",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "Tên thư mục tầng 3"),
+      sortable: false,
       accessor: "categoryName",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
@@ -35,6 +48,26 @@ class Category extends Component {
       accessor: "topSale",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
+    {
+      Header: __(this.messages, "Thao tác"),
+      accessor: null,
+      maxWidth: 100,
+      Cell: props => (
+        <div className="text-center">
+          <Input
+            type="checkbox"
+            checked={this.props.existInSelectedCats(props.original)}
+            onChange={e => {
+              if (e.target.checked) {
+                this.props.addToSelectedCats(props.original);
+              } else {
+                this.props.removeFromSelectedCats(props.original);
+              }
+            }}
+          />
+        </div>
+      )
+    },
   ];
 
   renderCats = (site, isCountryCat) => {
@@ -43,14 +76,32 @@ class Category extends Component {
     return (
       <>
         <div className={`cat-header ${isCountryCat ?? "country-cat-header"}`}>
-          <a href="javascript:void(0)" onClick={() => { this.toggle(site.code) }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); this.toggle(site.code) }}>
             <b>Sàn {site.name} ({categorySets[site.code].length})</b>
           </a>
         </div>
         <Collapse
-          isOpen={this.state.collapse[site.code]}
+          isOpen={this.state.collapse[site.code] === undefined ? true : this.state.collapse[site.code]}
         >
           <ReactTable
+            getTrProps={(state, rowInfo) => {
+              if (rowInfo && rowInfo.row) {
+                return {
+                  onClick: (e) => {
+                    if (this.props.existInSelectedCats(rowInfo.original)) {
+                      this.props.removeFromSelectedCats(rowInfo.original);
+                    } else {
+                      this.props.addToSelectedCats(rowInfo.original);
+                    }
+                  },
+                  style: {
+                    cursor: "pointer"
+                  }
+                }
+              } else {
+                return {}
+              }
+            }}
             data={cats}
             columns={this.catTableColumn()}
             defaultPageSize={10}
