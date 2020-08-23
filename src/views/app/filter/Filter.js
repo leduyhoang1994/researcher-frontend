@@ -30,7 +30,7 @@ class Filter extends Component {
                 <Row>
                     <Colxx>
                         <p>
-                            <b>{__(this.messages, "1. Chọn top thư mục các sàn")}</b>
+                            <b>{__(this.messages, "1. Chọn top ngành hàng các sàn")}</b>
                         </p>
                     </Colxx>
                 </Row>
@@ -45,6 +45,7 @@ class Filter extends Component {
                                     <Colxx xxs="6">
                                         <Input
                                             value={parentSite.top}
+                                            readOnly={parentSite.disabled}
                                             className="form-control"
                                             type="number"
                                             onChange={e => {
@@ -72,6 +73,7 @@ class Filter extends Component {
                                                 </Colxx>
                                                 <Colxx xxs="6">
                                                     <Input
+                                                        readOnly={site.disabled}
                                                         value={site.top}
                                                         className="form-control"
                                                         type="number"

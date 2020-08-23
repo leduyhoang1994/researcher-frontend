@@ -2,14 +2,26 @@ const researcherMenu = [
   {
     id: "research",
     icon: "iconsminds-qr-code",
-    label: "Research",
+    label: "Ngành hàng",
     to: "/app/research"
+  },
+  {
+    id: "cateList",
+    icon: "iconsminds-qr-code",
+    label: "Danh sách ngành hàng",
+    to: "/app/cate-sets"
   },
   {
     id: "product",
     icon: "iconsminds-qr-code",
-    label: "Products",
+    label: "Sản phẩm",
     to: "/app/products"
+  },
+  {
+    id: "productSet",
+    icon: "iconsminds-qr-code",
+    label: "Bộ Sản phẩm",
+    to: "/app/product-sets"
   },
 ];
 

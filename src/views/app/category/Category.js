@@ -21,19 +21,19 @@ class Category extends Component {
 
   catTableColumn = () => [
     {
-      Header: __(this.messages, "Tên thư mục tầng 1"),
+      Header: __(this.messages, "Tên ngành hàng tầng 1"),
       accessor: "categoryName",
       sortable: false,
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Tên thư mục tầng 2"),
+      Header: __(this.messages, "Tên ngành hàng tầng 2"),
       sortable: false,
       accessor: "categoryName",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Tên thư mục tầng 3"),
+      Header: __(this.messages, "Tên ngành hàng tầng 3"),
       sortable: false,
       accessor: "categoryName",
       Cell: props => <p className="text-muted">{props.value}</p>

@@ -125,7 +125,7 @@ class Research extends Component {
             <Fragment>
                 <Row>
                     <Colxx xxs="12">
-                        <Breadcrumb heading="Research" match={this.props.match} />
+                        <Breadcrumb heading="Ngành hàng" match={this.props.match} />
                         <Separator className="mb-5" />
                     </Colxx>
                 </Row>
@@ -134,19 +134,19 @@ class Research extends Component {
                         <Card>
                             <CardBody>
                                 <CardTitle>
-                                    {__(this.messages, "Lọc top thư mục")}
+                                    {__(this.messages, "Lọc top ngành hàng")}
                                 </CardTitle>
                                 <Filter
                                     setFilterOptions={this.setFilterOptions}
                                 />
                             </CardBody>
                             <CardFooter className="text-right">
-                                <Button
+                                {/* <Button
                                     className="mr-2"
                                     color="warning"
                                 >
                                     {__(this.messages, "Lưu bộ lọc")}
-                                </Button>
+                                </Button> */}
                                 <Button
                                     color="primary"
                                     onClick={this.filter}
@@ -162,7 +162,7 @@ class Research extends Component {
                         <Card>
                             <CardBody>
                                 <CardTitle>
-                                    {__(this.messages, "Danh sách top thư mục")}
+                                    {__(this.messages, "Danh sách top ngành hàng")}
                                 </CardTitle>
                                 <Category
                                     categories={this.state.categories}
@@ -175,8 +175,31 @@ class Research extends Component {
                                 <Button
                                     className="mr-2"
                                     color="warning"
+                                    onClick={() => {
+                                        const { selectedCats } = this.state;
+                                        let cateSets = localStorage.getItem("cateSets");
+                                        if (!cateSets) {
+                                            cateSets = [];
+                                        } else {
+                                            cateSets = JSON.parse(cateSets);
+                                        }
+
+                                        let cateSetName = prompt("Nhập tên danh sách ngành hàng", "");
+
+                                        if (cateSetName == null || cateSetName == "") {
+                                            return;
+                                        }
+
+                                        cateSets.push({
+                                            setId: new Date().getUTCMilliseconds(),
+                                            setName: cateSetName,
+                                            cates: selectedCats
+                                        });
+
+                                        localStorage.setItem("cateSets", JSON.stringify(cateSets));
+                                    }}
                                 >
-                                    {__(this.messages, "Lưu danh sách thư mục")}
+                                    {__(this.messages, "Lưu danh sách ngành hàng")}
                                 </Button>
                                 <Button
                                     color="primary"

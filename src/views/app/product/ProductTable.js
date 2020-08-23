@@ -3,30 +3,157 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
+import { Input, Button } from 'reactstrap';
+import { isFunction } from 'formik';
+import Select from 'react-select';
+import "./style.scss";
 
-const ProductTable = ({ data, component }) => {
+const ProductTable = ({
+  data,
+  component,
+  existInSelectedProducts,
+  addToSelectedProducts,
+  removeFromSelectedProducts,
+  selectable = true,
+  filterCate = []
+}) => {
   const columns = () => [
     {
-      Header: __(component.messages, "Tên thư mục tầng 3"),
+      Header: __(component.messages, "Thao tác"),
+      accessor: null,
       sortable: false,
+      Cell: props => (
+        <div className="text-left">
+          {
+            selectable &&
+            <Input
+              type="checkbox"
+              checked={existInSelectedProducts(props.original)}
+              onChange={e => {
+                if (e.target.checked) {
+                  addToSelectedProducts(props.original);
+                } else {
+                  removeFromSelectedProducts(props.original);
+                }
+              }}
+            />
+          }
+          {
+            !selectable &&
+            <Button
+              size="xs"
+              onClick={() => {
+                if (isFunction(removeFromSelectedProducts)) {
+                  removeFromSelectedProducts(props.original);
+                }
+              }}
+            >
+              {__(component.messages, "Xóa")}
+            </Button>
+          }
+        </div>
+      )
+    },
+    {
+      Header: __(component.messages, "Tên ngành hàng tầng 3"),
+      filterable: true,
       accessor: "categoryName",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <p className="text-muted">{props.value}</p>,
+      Filter: ({ filter, onChange }) => {
+        return (
+          <Select
+            isClearable
+            className="react-select"
+            classNamePrefix="react-select"
+            options={filterCate}
+            onChange={event => onChange(event ? event.categoryName : "")}
+            getOptionValue={option => option.categoryName}
+            getOptionLabel={option => option.categoryName}
+          />
+        );
+      }
     },
     {
       Header: __(component.messages, "Tên sản phẩm"),
-      sortable: false,
+      filterable: true,
       accessor: "productName",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(component.messages, "Giá"),
-      accessor: "price",
+      Header: __(component.messages, "Link sản phẩm"),
+      filterable: true,
+      accessor: "productLink",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Địa điểm phát hàng"),
+      filterable: true,
+      accessor: "productLocation",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Giá sản phẩm"),
+      accessor: "productPrice",
+      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
-      Header: __(component.messages, "Tổng sale"),
-      accessor: "topSale",
+      Header: __(component.messages, "Phí phát hành nội địa"),
+      accessor: "productPrice",
+      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+    },
+    {
+      Header: __(component.messages, "Số lượng bán tối tiểu"),
+      accessor: "minSale",
+      filterable: true,
+      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+    },
+    {
+      Header: __(component.messages, "Số lượng bán ra"),
+      accessor: "topSale",
+      filterable: true,
+      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+    },
+    {
+      Header: __(component.messages, "Doanh số bán ra"),
+      accessor: "topSale",
+      filterable: true,
+      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+    },
+    {
+      Header: __(component.messages, "Tên shop bán"),
+      sortable: false,
+      filterable: true,
+      accessor: "productShop",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Uy tín shop bán"),
+      sortable: false,
+      filterable: true,
+      accessor: "productShopRating",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Tỉ lệ khách quay lại"),
+      sortable: false,
+      filterable: true,
+      accessor: "rebuildRate",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Ảnh"),
+      sortable: false,
+      accessor: "productShopRating",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Ghi chú"),
+      sortable: false,
+      filterable: true,
+      accessor: "productShopRating",
+      Cell: props => <p className="text-muted">{props.value}</p>
     },
   ];
 
@@ -38,6 +165,24 @@ const ProductTable = ({ data, component }) => {
         defaultPageSize={10}
         className="mb-4"
         PaginationComponent={DataTablePagination}
+        getTrProps={(state, rowInfo) => {
+          if (rowInfo && rowInfo.row && selectable) {
+            return {
+              onClick: (e) => {
+                if (existInSelectedProducts(rowInfo.original)) {
+                  removeFromSelectedProducts(rowInfo.original);
+                } else {
+                  addToSelectedProducts(rowInfo.original);
+                }
+              },
+              style: {
+                cursor: "pointer"
+              }
+            }
+          } else {
+            return {}
+          }
+        }}
       />
     </div>
   );

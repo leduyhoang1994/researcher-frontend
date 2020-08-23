@@ -16,7 +16,8 @@ class CreateTrainingClass extends Component {
       categoriesFilter: [],
       categoryOptions: [],
       search: "",
-      productList: JSON.parse(JSON.stringify(ProductList))
+      productList: JSON.parse(JSON.stringify(ProductList)),
+      selectedProducts: []
     };
     this.messages = this.props.intl.messages;
   }
@@ -74,15 +75,50 @@ class CreateTrainingClass extends Component {
           return true;
         }
       }
-      
-      if (categoriesFilter.length === 0 && !search) { 
+
+      if (categoriesFilter.length === 0 && !search) {
         return true;
       }
       return false;
     });
-    console.log(result);
     this.setState({
       productList: result
+    });
+  };
+
+  existInSelectedProducts = (product) => {
+    const { selectedProducts } = this.state;
+    let exist = false;
+    selectedProducts.forEach(selectedProduct => {
+      if (JSON.stringify(selectedProduct) === JSON.stringify(product)) {
+        exist = true;
+        return false;
+      }
+    });
+    return exist;
+  }
+
+  addToSelectedProducts = (product) => {
+    const { selectedProducts } = this.state;
+    let exist = this.existInSelectedProducts(product);
+    if (!exist) {
+      selectedProducts.push(product);
+    }
+
+    this.setState({
+      selectedProducts: selectedProducts
+    });
+  };
+
+  removeFromSelectedProducts = (product) => {
+    let { selectedProducts } = this.state;
+
+    selectedProducts = selectedProducts.filter(selectedProduct => {
+      return JSON.stringify(selectedProduct) !== JSON.stringify(product);
+    });
+
+    this.setState({
+      selectedProducts: selectedProducts
     });
   };
 
@@ -161,8 +197,41 @@ class CreateTrainingClass extends Component {
                 <ProductTable
                   component={this}
                   data={this.state.productList}
+                  addToSelectedProducts={this.addToSelectedProducts}
+                  removeFromSelectedProducts={this.removeFromSelectedProducts}
+                  existInSelectedProducts={this.existInSelectedProducts}
+                  filterCate={this.state.categoriesFilter}
                 />
               </CardBody>
+              <CardFooter className="text-right">
+                <Button
+                  onClick={e => {
+                    const { selectedProducts } = this.state;
+                    let productSets = localStorage.getItem("productSets");
+                    if (!productSets) {
+                      productSets = [];
+                    } else {
+                      productSets = JSON.parse(productSets);
+                    }
+
+                    let productSetName = prompt("Nhập tên bộ sản phẩm", "");
+
+                    if (productSetName == null || productSetName == "") {
+                      return;
+                    }
+
+                    productSets.push({
+                      setId: new Date().getUTCMilliseconds(),
+                      setName: productSetName,
+                      products: selectedProducts
+                    });
+
+                    localStorage.setItem("productSets", JSON.stringify(productSets));
+                  }}
+                >
+                  {__(this.messages, "Lưu bộ sản phẩm")}
+                </Button>
+              </CardFooter>
             </Card>
           </Colxx>
         </Row>
