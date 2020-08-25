@@ -1,4 +1,4 @@
-export const domain = `${process.env.REACT_APP_API_BASE_PATH}/api`;
+export const domain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const baseDomain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const apiVersion = 'v1';
 export const apiPath = `${domain}/${apiVersion}`;
@@ -21,6 +21,8 @@ export const AUTH = {
 
 /** Category */
 export const categories = 'categories';
-export const CATEGOIES = {
-  all: `${apiPath}/${categories}`
+export const CATEGORIES = {
+  all: `${apiPath}/${categories}`,
+  filter: `${apiPath}/${categories}/filter`,
+  set: `${apiPath}/sets/${categories}`
 }

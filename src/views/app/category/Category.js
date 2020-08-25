@@ -22,20 +22,20 @@ class Category extends Component {
   catTableColumn = () => [
     {
       Header: __(this.messages, "Tên ngành hàng tầng 1"),
-      accessor: "categoryName",
+      accessor: "categoryNameViLevel1",
       sortable: false,
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 2"),
       sortable: false,
-      accessor: "categoryName",
+      accessor: "categoryNameViLevel2",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 3"),
       sortable: false,
-      accessor: "categoryName",
+      accessor: "categoryNameViLevel3",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -45,7 +45,7 @@ class Category extends Component {
     },
     {
       Header: __(this.messages, "Tổng sale"),
-      accessor: "topSale",
+      accessor: "monthlySale",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {

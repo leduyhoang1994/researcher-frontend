@@ -7,6 +7,8 @@ import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Redirect } from 'react-router-dom';
+import ApiController from '../../../helpers/Api';
+import { CATEGORIES } from '../../../constants/api';
 
 class ProductSet extends Component {
   constructor(props) {
@@ -14,37 +16,35 @@ class ProductSet extends Component {
     this.state = {
       setId: this.props.match.params.id,
       cateSet: {
-        cates: []
+        categorySets: []
       }
     };
     this.messages = this.props.intl.messages;
-
-    this.cateSetList = JSON.parse(localStorage.getItem('cateSets')) || [];
   }
 
   componentDidMount() {
     const { setId } = this.state;
+    this.getCateSet(setId);
+  }
 
-    const cateSet = this.cateSetList.find((set, index) => {
-      this.indexOfSet = set.setId == setId ? index : null;
-      return set.setId == setId
-    });
-
-    this.setState({
-      cateSet: cateSet
-    });
+  getCateSet = (id) => {
+    ApiController.get(`${CATEGORIES.set}/${id}`, {}, data => {
+      this.setState({
+        cateSet: data
+      });
+    })
   }
 
   removeFromProductSet = (cate) => {
     let { cateSet } = this.state;
 
-    let cateSetCates = cateSet.cates;
+    let cateSetCates = cateSet.categorySets;
 
     cateSetCates = cateSetCates.filter(selectedProduct => {
       return JSON.stringify(selectedProduct) !== JSON.stringify(cate);
     });
 
-    cateSet.cates = cateSetCates;
+    cateSet.categorySets = cateSetCates;
 
     this.setState({
       cateSet: cateSet
@@ -57,32 +57,52 @@ class ProductSet extends Component {
   catTableColumn = () => [
     {
       Header: __(this.messages, "Tên ngành hàng tầng 1"),
-      accessor: "categoryName",
+      accessor: "category.categoryNameViLevel1",
       sortable: false,
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 2"),
       sortable: false,
-      accessor: "categoryName",
+      accessor: "category.categoryNameViLevel2",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 3"),
       sortable: false,
-      accessor: "categoryName",
+      accessor: "category.categoryNameViLevel3",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Sàn"),
-      accessor: "site",
+      accessor: "category.site",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Tổng sale"),
-      accessor: "topSale",
-      Cell: props => <p className="text-muted">{props.value}</p>
-    }
+      Header: __(this.messages, "#"),
+      accessor: null,
+      width: 150,
+      Cell: props => {
+        return (
+          <div>
+            <Button
+              color="danger"
+              size="xs"
+              onClick={() => {
+                this.removeFromProductSet(props.original)
+              }}
+            >
+              X
+            </Button>
+          </div>
+        )
+      }
+    },
+    // {
+    //   Header: __(this.messages, "Tổng sale"),
+    //   accessor: "monthlySale",
+    //   Cell: props => <p className="text-muted">{props.value}</p>
+    // }
   ];
 
   redirectTo = (url) => {
@@ -138,7 +158,7 @@ class ProductSet extends Component {
                 <Row>
                   <Colxx xxs="12">
                     <ReactTable
-                      data={this.state.cateSet.cates}
+                      data={this.state.cateSet.categorySets}
                       columns={this.catTableColumn()}
                       defaultPageSize={10}
                       className="mb-4"
