@@ -46,5 +46,11 @@ module.exports = {
   /* 04.Error  */
   "pages.error-title": "Vaya, parece que ha ocurrido un error!",
   "pages.error-code": "Código de error",
-  "pages.go-back-home": "REGRESAR A INICIO"
+  "pages.go-back-home": "REGRESAR A INICIO",
+
+
+  /* 05.Formularios */
+  "forms.radios": "Radios",
+  "forms.first-radio": "Primero radio",
+  "forms.second-radio": "Segundo radio",
 };

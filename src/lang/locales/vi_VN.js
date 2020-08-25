@@ -66,4 +66,10 @@ module.exports = {
  "pages.go-back-home": "Quay lại Researcher",
 
  /** 05. Student */
+
+ /* 06.Forms */
+ "forms.title": "Bổ sung vào danh sách có sẵn hay thêm mới?",
+ "forms.radios": "Radios",
+ "forms.first-radio": "Bổ sung",
+ "forms.second-radio": "Thêm mới",
 };

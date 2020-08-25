@@ -17,8 +17,7 @@ class CateSet extends Component {
     this.messages = this.props.intl.messages;
   }
 
-  componentDidMount()
-  {
+  componentDidMount() {
     this.loadCateSets();
   }
 

@@ -49,4 +49,10 @@ module.exports = {
  "pages.error-title": "Ooops... looks like an error occurred!",
  "pages.error-code": "Error code",
  "pages.go-back-home": "GO BACK HOME",
+
+ /* 05.Forms */
+ "forms.title": "Updating to an existing list or creating a new one?",
+ "forms.radios": "Radios",
+ "forms.first-radio": "Update",
+ "forms.second-radio": "Add New",
 };

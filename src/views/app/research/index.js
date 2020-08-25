@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Button, CardFooter, CardHeader } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Button, CardFooter, Modal, CardHeader, ModalHeader, ModalTitle, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
+import IntlMessages from "../../../helpers/IntlMessages";
 import Filter from '../filter/Filter';
 import Category from '../category/Category';
 import ApiController from '../../../helpers/Api';
@@ -13,6 +14,7 @@ import { SITE_LIST } from '../../../constants/data';
 import categoriesData from '../../../data/categories';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
+import RadioButton from './modal';
 
 class Research extends Component {
     constructor(props) {
@@ -21,7 +23,14 @@ class Research extends Component {
             filterOptions: {},
             categories: [],
             selectedCats: [],
-            redirect: false
+            redirect: false,
+            cateSetList: [],
+            isOpenModal: false,
+            isOpenRadio: false,
+            isShow: false,
+            radioValue: "first-radio",
+            cateSetName: "",
+            selected: ""
         };
         this.messages = this.props.intl.messages;
     }
@@ -120,21 +129,54 @@ class Research extends Component {
         })
     };
 
+    loadCateSets = () => {
+        ApiController.get(CATEGORIES.set, {}, data => {
+            this.setState({ cateSetList: data });
+        });
+    }
+
+    cateSetName = (data) => {
+        this.setState({ cateSetName: data });
+    }
+    
+    handleChangeCate = (data) => {
+        console.log(data);
+        this.setState({ selected: data });
+    }
+
+    handleChange = (data) => {
+        this.setState({ radioValue: data });
+    }
+
+    toggleRadioModal = () => {
+        const isOpen = this.state.isOpenRadio;
+        if(!isOpen) {
+            this.loadCateSets();
+        }
+        this.setState({ isOpenRadio: !isOpen });
+    }
+
     createCategoriesSet = () => {
         const { selectedCats } = this.state;
-        let cateSetName = prompt("Nhập tên danh sách ngành hàng", "");
 
-        if (cateSetName == null || cateSetName == "") {
+        const cateName = this.state.cateSetName;
+        console.log(cateName);
+
+        if (cateName == null || cateName === []) {
             return;
         }
 
         const cateIds = arrayColumn(selectedCats, "id");
         ApiController.post(CATEGORIES.set, {
-            setName: cateSetName,
+            setName: cateName,
             ids: cateIds
         }, data => {
             NotificationManager.success("Thành công", "Thành công");
         });
+
+        return <Modal>
+
+        </Modal>
     }
 
     render() {
@@ -195,7 +237,9 @@ class Research extends Component {
                                 <Button
                                     className="mr-2"
                                     color="warning"
-                                    onClick={this.createCategoriesSet}
+                                    onClick={() => {
+                                        this.toggleRadioModal();
+                                    }}
                                 >
                                     {__(this.messages, "Lưu danh sách ngành hàng")}
                                 </Button>
@@ -212,9 +256,19 @@ class Research extends Component {
                         </Card>
                     </Colxx>
                 </Row>
+                
+                <RadioButton
+                    isOpenRadio={this.state.isOpenRadio}
+                    toggleRadioModal={this.toggleRadioModal}
+                    handleChange={this.handleChange}
+                    dataOptions={this.state.cateSetList}
+                    radioValue={this.state.radioValue}
+                    createCateSet={this.createCategoriesSet}
+                    cateSetName={this.cateSetName}
+                    handleChangeCate={this.handleChangeCate}
+                />
             </Fragment>
         );
     }
 }
-
 export default injectIntl(Research);
