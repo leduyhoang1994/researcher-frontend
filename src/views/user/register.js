@@ -1,28 +1,65 @@
 import React, { Component } from "react";
-import { Row, Card, CardTitle, Form, Label, Input, Button } from "reactstrap";
+import { Row, Card, CardTitle, Label, FormGroup, Input, Button } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
 import { registerUser } from "../../redux/actions";
 
 import IntlMessages from "../../helpers/IntlMessages";
 import { Colxx } from "../../components/common/CustomBootstrap";
+import { Formik, Form, Field } from "formik";
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "demo@gogo.com",
-      password: "gogo123",
-      name: "Sarah Kortney"
+      firstName: "Tony",
+      lastName: "Stark",
+      email: "demo@gmail.com",
+      password: "",
+      confirmPassword: ""
     };
   }
-  onUserRegister() {
-    if (this.state.email !== "" && this.state.password !== "") {
-      this.props.history.push("/");
+  // onUserRegister(values) {
+  //   if (this.state.firstName !== "" && this.state.lastName !== ""
+  //     && this.state.email !== "" && this.state.password !== "" && this.state.confirmPassword !== "") {
+  //     console.log("Pass here!");
+  //     this.props.history.push("/");
+  //     this.props.loginUser(values, this.props.history);
+  //   }
+  // }
+
+  onUserRegister = (values) => {
+    if (this.state.firstName !== "" && this.state.lastName !== ""
+      && this.state.email !== "" && this.state.password !== "" && this.state.confirmPassword !== "") {
+        console.log(values);
+        this.props.registerUser(values, this.props.history);
     }
   }
 
+  validateEmail = (value) => {
+    let error;
+    if (!value) {
+      error = "Please enter your email address";
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = "Invalid email address";
+    }
+    return error;
+  }
+
+  validatePassword = (value) => {
+    let error;
+    if (!value) {
+      error = "Please enter your password";
+    } else if (value.length < 4) {
+      error = "Value must be longer than 3 characters";
+    }
+    return error;
+  }
+
   render() {
+    const { firstName, lastName, email, password, confirmPassword } = this.state;
+    const initialValues = { firstName, lastName, email, password, confirmPassword };
+
     return (
       <Row className="h-100">
         <Colxx xxs="12" md="10" className="mx-auto my-auto">
@@ -45,33 +82,82 @@ class Register extends Component {
               <CardTitle className="mb-4">
                 <IntlMessages id="user.register" />
               </CardTitle>
-              <Form>
-                <Label className="form-group has-float-label mb-4">
-                  <Input type="name" defaultValue={this.state.name} />
-                  <IntlMessages id="user.fullname" />
-                </Label>
-                <Label className="form-group has-float-label mb-4">
-                  <Input type="email" defaultValue={this.state.email} />
-                  <IntlMessages id="user.email" />
-                </Label>
-                <Label className="form-group has-float-label mb-4">
-                  <Input type="password" />
-                  <IntlMessages
-                    id="user.password"
-                    defaultValue={this.state.password}
-                  />
-                </Label>
-                <div className="d-flex justify-content-end align-items-center">
-                  <Button
-                    color="primary"
-                    className="btn-shadow"
-                    size="lg"
-                    onClick={() => this.onUserRegister()}
-                  >
-                    <IntlMessages id="user.register-button" />
-                  </Button>
-                </div>
-              </Form>
+              <Formik
+                initialValues={initialValues}
+                onSubmit={this.onUserRegister}>
+                {({ errors, touched }) => (
+                  <Form>
+                    <Label className="form-group has-float-label mb-4">
+                      <Input type="name" defaultValue={this.state.firstName} />
+                      <IntlMessages id="user.firstName" />
+                    </Label>
+                    <Label className="form-group has-float-label mb-4">
+                      <Input type="name" defaultValue={this.state.lastName} />
+                      <IntlMessages id="user.lastName" />
+                    </Label>
+
+                    <FormGroup className="form-group has-float-label">
+                      <Label className="form-group has-float-label mb-4">
+                        <IntlMessages id="user.email" />
+                      </Label>
+                      <Field
+                        className="form-control"
+                        name="email"
+                        validate={this.validateEmail}
+                      />
+                      {errors.email && touched.email && (
+                        <div className="invalid-feedback d-block">
+                          {errors.email}
+                        </div>
+                      )}
+                    </FormGroup>
+
+                    <FormGroup className="form-group has-float-label">
+                      <Label>
+                        <IntlMessages id="user.password" />
+                      </Label>
+                      <Field
+                        className="form-control"
+                        type="password"
+                        name="password"
+                        validate={this.validatePassword}
+                      />
+                      {errors.password && touched.password && (
+                        <div className="invalid-feedback d-block">
+                          {errors.password}
+                        </div>
+                      )}
+                    </FormGroup>
+
+                    <FormGroup className="form-group has-float-label">
+                      <Label>
+                        <IntlMessages id="user.confirmPassword" />
+                      </Label>
+                      <Field
+                        className="form-control"
+                        type="password"
+                        name="confirmPassword"
+                        validate={this.validatePassword}
+                      />
+                      {errors.confirmPassword && touched.confirmPassword && (
+                        <div className="invalid-feedback d-block">
+                          {errors.confirmPassword}
+                        </div>
+                      )}
+                    </FormGroup>
+
+                    <div className="d-flex justify-content-end align-items-center">
+                      <Button
+                        color="primary"
+                        className="btn-shadow"
+                        size="lg"
+                      >
+                        <IntlMessages id="user.register-button" />
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </Card>
         </Colxx>

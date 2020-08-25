@@ -66,7 +66,7 @@ export default class TopnavDarkSwitch extends Component {
           target={"Tooltip-Switch"}
           toggle={this.toggle}
         >
-          Dark Mode
+          {this.getColor().indexOf('dark')>-1 ? "Light Mode" : "Dark Mode"}
         </Tooltip>
       </div>
     );

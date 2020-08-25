@@ -1,10 +1,10 @@
-export const domain = `${process.env.REACT_APP_API_BASE_PATH}/api`;
+export const domain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const baseDomain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const apiVersion = 'v1';
 export const apiPath = `${domain}/${apiVersion}`;
 
 /** User */
-export const user = 'users';
+export const user = 'auth';
 export const USERS = {
   all: `${apiPath}/${user}`,
   one: `${apiPath}/${user}`,

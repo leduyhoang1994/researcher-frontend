@@ -216,7 +216,7 @@ class CreateTrainingClass extends Component {
 
                     let productSetName = prompt("Nhập tên bộ sản phẩm", "");
 
-                    if (productSetName == null || productSetName == "") {
+                    if (productSetName == null || productSetName === "") {
                       return;
                     }
 

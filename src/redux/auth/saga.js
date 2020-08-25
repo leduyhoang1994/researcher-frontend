@@ -60,7 +60,7 @@ function* loginWithEmailPassword({ payload }) {
     const { history } = payload;
     try {
         const loginUser = yield call(loginWithEmailPasswordAsync, email, password);
-        
+
         if (!loginUser.message) {
             localStorage.setItem('user_token', loginUser.result);
             const userDetails = yield call(getUserDetails, loginUser.result);
@@ -80,17 +80,22 @@ function* loginWithEmailPassword({ payload }) {
 export function* watchRegisterUser() {
     yield takeEvery(REGISTER_USER, registerWithEmailPassword);
 }
-
-const registerWithEmailPasswordAsync = async (email, password) =>
-    await auth.createUserWithEmailAndPassword(email, password)
-        .then(authUser => authUser)
-        .catch(error => error);
+const registerWithEmailPasswordAsync = async (firstName, lastName, email, password, confirmPassword) =>
+    await Api.callAsync('post', AUTH.register, {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
 
 function* registerWithEmailPassword({ payload }) {
-    const { email, password } = payload.user;
+    const { firstName, lastName, email, password, confirmPassword } = payload.user;
     const { history } = payload
     try {
-        const registerUser = yield call(registerWithEmailPasswordAsync, email, password);
+        const registerUser = yield call(registerWithEmailPasswordAsync, firstName, lastName, email, password, confirmPassword);
         if (!registerUser.message) {
             localStorage.setItem('user_token', registerUser.result);
             yield put(registerUserSuccess(registerUser));
