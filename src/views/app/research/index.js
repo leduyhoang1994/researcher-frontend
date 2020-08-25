@@ -7,11 +7,12 @@ import { __ } from '../../../helpers/IntlMessages';
 import Filter from '../filter/Filter';
 import Category from '../category/Category';
 import ApiController from '../../../helpers/Api';
-import { CATEGOIES } from '../../../constants/api';
+import { CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { SITE_LIST } from '../../../constants/data';
 import categoriesData from '../../../data/categories';
 import { Redirect } from 'react-router-dom';
+import { arrayColumn } from '../../../helpers/Utils';
 
 class Research extends Component {
     constructor(props) {
@@ -73,42 +74,44 @@ class Research extends Component {
             NotificationManager.error("Bạn cần chọn top thư mục của ít nhất 1 sàn", "Không thành công");
             return;
         }
-        // ApiController.call("POST", CATEGOIES.all, filterOptions, data => {
-        //     this.setState({
-        //         categories: data
-        //     });
+        ApiController.call("POST", CATEGORIES.filter, filterOptions, data => {
+            this.setState({
+                categories: data
+            });
+        });
+
+        // const result = {};
+
+        // filterOptions.topCates.forEach(parentSite => {
+        //     if (parentSite.top) {
+        //         let parentSiteTop = parentSite.top;
+        //         result[parentSite.code] = categoriesData.filter(data => {
+        //             if (data.countrySite === parentSite.code) {
+        //                 parentSiteTop--;
+        //             }
+        //             return data.countrySite === parentSite.code && parentSiteTop >= 0;
+        //         });
+        //     }
+        //     if (parentSite.sites) {
+        //         parentSite.sites.forEach(site => {
+        //             if (site.top) {
+        //                 let siteTop = site.top;
+        //                 result[site.code] = categoriesData.filter(data => {
+        //                     if (data.site === site.code) {
+        //                         siteTop--;
+        //                     }
+        //                     return data.site === site.code && siteTop >= 0;
+        //                 });
+        //             }
+        //         });
+        //     }
         // });
 
-        const result = {};
+        // console.log(result);
 
-        filterOptions.topCates.forEach(parentSite => {
-            if (parentSite.top) {
-                let parentSiteTop = parentSite.top;
-                result[parentSite.code] = categoriesData.filter(data => {
-                    if (data.countrySite === parentSite.code) {
-                        parentSiteTop--;
-                    }
-                    return data.countrySite === parentSite.code && parentSiteTop >= 0;
-                });
-            }
-            if (parentSite.sites) {
-                parentSite.sites.forEach(site => {
-                    if (site.top) {
-                        let siteTop = site.top;
-                        result[site.code] = categoriesData.filter(data => {
-                            if (data.site === site.code) {
-                                siteTop--;
-                            }
-                            return data.site === site.code && siteTop >= 0;
-                        });
-                    }
-                });
-            }
-        });
-
-        this.setState({
-            categories: result
-        });
+        // this.setState({
+        //     categories: result
+        // });
     }
 
     redirectTo = (url) => {
@@ -116,6 +119,23 @@ class Research extends Component {
             redirect: url
         })
     };
+
+    createCategoriesSet = () => {
+        const { selectedCats } = this.state;
+        let cateSetName = prompt("Nhập tên danh sách ngành hàng", "");
+
+        if (cateSetName == null || cateSetName == "") {
+            return;
+        }
+
+        const cateIds = arrayColumn(selectedCats, "id");
+        ApiController.post(CATEGORIES.set, {
+            setName: cateSetName,
+            ids: cateIds
+        }, data => {
+            NotificationManager.success("Thành công", "Thành công");
+        });
+    }
 
     render() {
         if (this.state.redirect) {
@@ -175,29 +195,7 @@ class Research extends Component {
                                 <Button
                                     className="mr-2"
                                     color="warning"
-                                    onClick={() => {
-                                        const { selectedCats } = this.state;
-                                        let cateSets = localStorage.getItem("cateSets");
-                                        if (!cateSets) {
-                                            cateSets = [];
-                                        } else {
-                                            cateSets = JSON.parse(cateSets);
-                                        }
-
-                                        let cateSetName = prompt("Nhập tên danh sách ngành hàng", "");
-
-                                        if (cateSetName == null || cateSetName == "") {
-                                            return;
-                                        }
-
-                                        cateSets.push({
-                                            setId: new Date().getUTCMilliseconds(),
-                                            setName: cateSetName,
-                                            cates: selectedCats
-                                        });
-
-                                        localStorage.setItem("cateSets", JSON.stringify(cateSets));
-                                    }}
+                                    onClick={this.createCategoriesSet}
                                 >
                                     {__(this.messages, "Lưu danh sách ngành hàng")}
                                 </Button>

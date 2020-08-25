@@ -5,6 +5,8 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import CateSeListTable from './CateSetTable';
+import { CATEGORIES } from '../../../constants/api';
+import ApiController from '../../../helpers/Api';
 
 class CateSet extends Component {
   constructor(props) {
@@ -17,10 +19,12 @@ class CateSet extends Component {
 
   componentDidMount()
   {
-    const cateSetList = JSON.parse(localStorage.getItem('cateSets')) || [];
+    this.loadCateSets();
+  }
 
-    this.setState({
-      cateSetList: cateSetList
+  loadCateSets = () => {
+    ApiController.get(CATEGORIES.set, {}, data => {
+      this.setState({ cateSetList: data });
     });
   }
   

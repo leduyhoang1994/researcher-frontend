@@ -55,3 +55,9 @@ export const setDirection = localValue => {
   localStorage.setItem("direction", direction);
 };
 
+
+export const arrayColumn = (array, columnName) => {
+  return array.map(function (value, index) {
+    return value[columnName];
+  })
+}

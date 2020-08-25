@@ -21,6 +21,8 @@ export const AUTH = {
 
 /** Category */
 export const categories = 'categories';
-export const CATEGOIES = {
-  all: `${apiPath}/${categories}`
+export const CATEGORIES = {
+  all: `${apiPath}/${categories}`,
+  filter: `${apiPath}/${categories}/filter`,
+  set: `${apiPath}/sets/${categories}`
 }
