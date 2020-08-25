@@ -55,9 +55,16 @@ const ProductTable = ({
       )
     },
     {
+      Header: __(component.messages, "Ảnh"),
+      sortable: false,
+      width: 50,
+      accessor: "productImage",
+      Cell: props => <img width="50" src={props.value} />
+    },
+    {
       Header: __(component.messages, "Tên ngành hàng tầng 3"),
       filterable: true,
-      accessor: "categoryName",
+      accessor: "productCategoryVi",
       Cell: props => <p className="text-muted">{props.value}</p>,
       Filter: ({ filter, onChange }) => {
         return (
@@ -66,36 +73,38 @@ const ProductTable = ({
             className="react-select"
             classNamePrefix="react-select"
             options={filterCate}
-            onChange={event => onChange(event ? event.categoryName : "")}
-            getOptionValue={option => option.categoryName}
-            getOptionLabel={option => option.categoryName}
+            onChange={event => onChange(event ? event.categoryNameViLevel3 : "")}
+            getOptionValue={option => option.categoryNameViLevel3}
+            getOptionLabel={option => option.categoryNameViLevel3}
           />
         );
       }
     },
     {
       Header: __(component.messages, "Tên sản phẩm"),
+      width: 300,
       filterable: true,
-      accessor: "productName",
+      accessor: "productTitleVi",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Link sản phẩm"),
+      width: 300,
       filterable: true,
       accessor: "productLink",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <a target="_blank" href={props.value} className="text-muted">{props.value}</a>
     },
     {
-      Header: __(component.messages, "Địa điểm phát hàng"),
+      Header: __(component.messages, "Doanh số bán ra"),
+      accessor: "monthlySale",
       filterable: true,
-      accessor: "productLocation",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
       Header: __(component.messages, "Giá sản phẩm"),
-      accessor: "productPrice",
+      accessor: "priceStr",
       filterable: true,
-      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+      Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Phí phát hành nội địa"),
@@ -110,13 +119,13 @@ const ProductTable = ({
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
-      Header: __(component.messages, "Số lượng bán ra"),
-      accessor: "topSale",
+      Header: __(component.messages, "Địa điểm phát hàng"),
       filterable: true,
-      Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+      accessor: "productLocation",
+      Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(component.messages, "Doanh số bán ra"),
+      Header: __(component.messages, "Số lượng bán ra"),
       accessor: "topSale",
       filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
@@ -140,12 +149,6 @@ const ProductTable = ({
       sortable: false,
       filterable: true,
       accessor: "rebuildRate",
-      Cell: props => <p className="text-muted">{props.value}</p>
-    },
-    {
-      Header: __(component.messages, "Ảnh"),
-      sortable: false,
-      accessor: "productShopRating",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {

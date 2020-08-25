@@ -5,6 +5,8 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ProductTable from '../product/ProductTable';
+import { PRODUCTS } from '../../../constants/api';
+import ApiController from '../../../helpers/Api';
 
 class ProductSet extends Component {
   constructor(props) {
@@ -16,39 +18,36 @@ class ProductSet extends Component {
       }
     };
     this.messages = this.props.intl.messages;
-
-    this.productSetList = JSON.parse(localStorage.getItem('productSets')) || [];
   }
 
   componentDidMount() {
+    this.loadCurrentProductSet();
+  }
+
+  loadCurrentProductSet = () => {
     const { setId } = this.state;
+    this.getProductSet(setId);
+  }
 
-    const productSet = this.productSetList.find((set, index) => {
-      this.indexOfSet = set.setId == setId ? index : null;
-      return set.setId == setId
-    });
-
-    this.setState({
-      productSet: productSet
-    });
+  getProductSet = (id) => {
+    ApiController.get(`${PRODUCTS.set}/${id}`, {}, data => {
+      data.productSets = data.productSets.map(d => {
+        return {
+          ...d.product,
+          id: d.id
+        };
+      })
+      this.setState({
+        productSet: data
+      });
+    })
   }
 
   removeFromProductSet = (product) => {
-    let { productSet } = this.state;
-
-    let productSetProducts = productSet.products;
-
-    productSetProducts = productSetProducts.filter(selectedProduct => {
-      return JSON.stringify(selectedProduct) !== JSON.stringify(product);
-    });
-
-    productSet.products = productSetProducts;
-
-    this.setState({
-      productSet: productSet
-    }, () => {
-      this.productSetList[this.indexOfSet] = productSet;
-      localStorage.setItem('productSets', JSON.stringify(this.productSetList));
+    ApiController.delete(`${PRODUCTS.removeFromSet}?ids[]=${product.id}`, {}, data => {
+      this.loadCurrentProductSet();
+    }, {
+      
     });
   };
 
@@ -97,7 +96,7 @@ class ProductSet extends Component {
                   <Colxx xxs="12">
                     <ProductTable
                       component={this}
-                      data={this.state.productSet.products}
+                      data={this.state.productSet.productSets}
                       selectable={false}
                       removeFromSelectedProducts={this.removeFromProductSet}
                     />

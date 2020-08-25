@@ -5,6 +5,8 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ProductSeListTable from './ProductSetTable';
+import { PRODUCTS } from '../../../constants/api';
+import ApiController from '../../../helpers/Api';
 
 class ProductSet extends Component {
   constructor(props) {
@@ -15,12 +17,13 @@ class ProductSet extends Component {
     this.messages = this.props.intl.messages;
   }
 
-  componentDidMount()
-  {
-    const productSetList = JSON.parse(localStorage.getItem('productSets')) || [];
+  componentDidMount() {
+    this.loadProductSets();
+  }
 
-    this.setState({
-      productSetList: productSetList
+  loadProductSets = () => {
+    ApiController.get(PRODUCTS.set, {}, data => {
+      this.setState({ productSetList: data });
     });
   }
   

@@ -20,7 +20,7 @@ const ProductTableSet = ({
       sortable: false,
       accessor: "setName",
       Cell: props => <p className="text-muted">
-          <Link to={`/app/product-sets/${props.original.setId}`}>{props.value}</Link>
+          <Link to={`/app/product-sets/${props.original.id}`}>{props.value}</Link>
         </p>
     },
   ];

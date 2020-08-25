@@ -30,7 +30,7 @@ class Research extends Component {
             isShow: false,
             radioValue: "first-radio",
             cateSetName: "",
-            selected: ""
+            selected: null
         };
         this.messages = this.props.intl.messages;
     }
@@ -88,39 +88,6 @@ class Research extends Component {
                 categories: data
             });
         });
-
-        // const result = {};
-
-        // filterOptions.topCates.forEach(parentSite => {
-        //     if (parentSite.top) {
-        //         let parentSiteTop = parentSite.top;
-        //         result[parentSite.code] = categoriesData.filter(data => {
-        //             if (data.countrySite === parentSite.code) {
-        //                 parentSiteTop--;
-        //             }
-        //             return data.countrySite === parentSite.code && parentSiteTop >= 0;
-        //         });
-        //     }
-        //     if (parentSite.sites) {
-        //         parentSite.sites.forEach(site => {
-        //             if (site.top) {
-        //                 let siteTop = site.top;
-        //                 result[site.code] = categoriesData.filter(data => {
-        //                     if (data.site === site.code) {
-        //                         siteTop--;
-        //                     }
-        //                     return data.site === site.code && siteTop >= 0;
-        //                 });
-        //             }
-        //         });
-        //     }
-        // });
-
-        // console.log(result);
-
-        // this.setState({
-        //     categories: result
-        // });
     }
 
     redirectTo = (url) => {
@@ -144,10 +111,6 @@ class Research extends Component {
         this.setState({ selected: data });
     }
 
-    handleChange = (data) => {
-        this.setState({ radioValue: data });
-    }
-
     toggleRadioModal = () => {
         const isOpen = this.state.isOpenRadio;
         if(!isOpen) {
@@ -156,27 +119,34 @@ class Research extends Component {
         this.setState({ isOpenRadio: !isOpen });
     }
 
-    createCategoriesSet = () => {
+    createCategoriesSet = (cateSet = null) => {
         const { selectedCats } = this.state;
 
-        const cateName = this.state.cateSetName;
-        console.log(cateName);
+        const cateSetName = this.state.cateSetName;
+        console.log(cateSetName);
 
-        if (cateName == null || cateName === []) {
+        if (cateSetName == null || cateSetName === []) {
             return;
         }
-
         const cateIds = arrayColumn(selectedCats, "id");
-        ApiController.post(CATEGORIES.set, {
-            setName: cateName,
-            ids: cateIds
-        }, data => {
-            NotificationManager.success("Thành công", "Thành công");
-        });
 
-        return <Modal>
-
-        </Modal>
+        if (cateSet) {
+            //Add to existed cateSet
+            ApiController.post(CATEGORIES.addToSet, {
+                setId: cateSet.value,
+                itemId: cateIds
+            }, data => {
+                NotificationManager.success("Thành công", "Thành công");
+            });
+        } else {
+            //Crate new cateSet
+            ApiController.post(CATEGORIES.set, {
+                setName: cateSetName,
+                ids: cateIds
+            }, data => {
+                NotificationManager.success("Thành công", "Thành công");
+            });
+        }
     }
 
     render() {

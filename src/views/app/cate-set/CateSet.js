@@ -23,6 +23,10 @@ class ProductSet extends Component {
   }
 
   componentDidMount() {
+    this.loadCurrentCateSet();
+  }
+
+  loadCurrentCateSet = () => {
     const { setId } = this.state;
     this.getCateSet(setId);
   }
@@ -37,20 +41,11 @@ class ProductSet extends Component {
 
   removeFromProductSet = (cate) => {
     let { cateSet } = this.state;
-
-    let cateSetCates = cateSet.categorySets;
-
-    cateSetCates = cateSetCates.filter(selectedProduct => {
-      return JSON.stringify(selectedProduct) !== JSON.stringify(cate);
-    });
-
-    cateSet.categorySets = cateSetCates;
-
-    this.setState({
-      cateSet: cateSet
-    }, () => {
-      this.cateSetList[this.indexOfSet] = cateSet;
-      localStorage.setItem('cateSets', JSON.stringify(this.cateSetList));
+    
+    ApiController.delete(`${CATEGORIES.removeFromSet}?ids[]=${cate.id}`, {}, data => {
+      this.loadCurrentCateSet();
+    }, {
+      
     });
   };
 
@@ -171,7 +166,7 @@ class ProductSet extends Component {
                 <Button
                   color="primary"
                   onClick={e => {
-                    localStorage.setItem('selectedItems', JSON.stringify(this.state.cateSet.cates));
+                    localStorage.setItem('selectedItems', JSON.stringify(this.state.cateSet.categorySets));
                     this.redirectTo("/app/products");
                   }}
                 >

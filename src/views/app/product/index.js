@@ -8,6 +8,9 @@ import Select, { createFilter } from 'react-select';
 import categoriesData from '../../../data/categories';
 import ProductTable from './ProductTable';
 import ProductList from '../../../data/products';
+import ApiController from '../../../helpers/Api';
+import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import ProductSetModal from './ProductSetModal';
 
 class CreateTrainingClass extends Component {
   constructor(props) {
@@ -17,7 +20,8 @@ class CreateTrainingClass extends Component {
       categoryOptions: [],
       search: "",
       productList: JSON.parse(JSON.stringify(ProductList)),
-      selectedProducts: []
+      selectedProducts: [],
+      productSetModalOpen: false
     };
     this.messages = this.props.intl.messages;
   }
@@ -26,64 +30,30 @@ class CreateTrainingClass extends Component {
     if (localStorage.getItem('selectedItems')) {
       const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
       this.setState({
-        categoriesFilter: categoriesFilter
+        categoriesFilter: categoriesFilter.map(cate => cate.category)
       }, () => {
         // localStorage.removeItem('selectedItems');
       });
     };
-    let categoryOptionsKey = {};
-    let categoryOptions = [];
-    // let listCate = [];
-    categoriesData.forEach(cate => {
-      if (!categoryOptionsKey[cate.site]) {
-        categoryOptionsKey[cate.site] = [];
-      }
-      categoryOptionsKey[cate.site].push(cate);
-      // listCate.push(cate.categoryName);
-    });
-    // console.log(JSON.stringify(listCate));
-    Object.keys(categoryOptionsKey).map(key => {
-      categoryOptions.push({
-        label: key,
-        options: categoryOptionsKey[key]
-      });
-    });
-    this.setState({
-      categoryOptions: categoryOptions
-    }, () => {
-      this.searchProducts();
-    });
+    this.loadCategories();
   }
+
+  loadCategories = () => {
+    ApiController.call('get', CATEGORIES.all, {}, data => {
+      this.setState({
+        categoryOptions: data
+      });
+      this.searchProducts();
+    })
+  };
 
   searchProducts = () => {
     const { search, categoriesFilter } = this.state;
-    let result = ProductList.filter(p => {
-      if (search) {
-        if (p.productName.toLowerCase().includes(search.toLowerCase())) {
-          return true;
-        }
-      }
-      if (categoriesFilter.length > 0) {
-        let found = false;
-        categoriesFilter.forEach(cate => {
-          if (cate.categoryName === p.categoryName) {
-            found = true;
-            return false;
-          }
-        });
-        if (found) {
-          return true;
-        }
-      }
-
-      if (categoriesFilter.length === 0 && !search) {
-        return true;
-      }
-      return false;
-    });
-    this.setState({
-      productList: result
-    });
+    ApiController.call('get', PRODUCTS.all, {}, data => {
+      this.setState({
+        productList: data
+      });
+    })
   };
 
   existInSelectedProducts = (product) => {
@@ -121,6 +91,12 @@ class CreateTrainingClass extends Component {
       selectedProducts: selectedProducts
     });
   };
+
+  toggleProductSetModalOpen = () => {
+    this.setState({
+      productSetModalOpen: !this.state.productSetModalOpen
+    });
+  }
 
   render() {
     return (
@@ -164,8 +140,8 @@ class CreateTrainingClass extends Component {
                         filterOption={createFilter({ ignoreAccents: false })}
                         isMulti
                         options={this.state.categoryOptions}
-                        getOptionValue={option => option.categoryName}
-                        getOptionLabel={option => option.categoryName}
+                        getOptionValue={option => option.id}
+                        getOptionLabel={option => option.categoryNameViLevel3}
                         value={this.state.categoriesFilter}
                         onChange={e => {
                           this.setState({
@@ -206,27 +182,7 @@ class CreateTrainingClass extends Component {
               <CardFooter className="text-right">
                 <Button
                   onClick={e => {
-                    const { selectedProducts } = this.state;
-                    let productSets = localStorage.getItem("productSets");
-                    if (!productSets) {
-                      productSets = [];
-                    } else {
-                      productSets = JSON.parse(productSets);
-                    }
-
-                    let productSetName = prompt("Nhập tên bộ sản phẩm", "");
-
-                    if (productSetName == null || productSetName === "") {
-                      return;
-                    }
-
-                    productSets.push({
-                      setId: new Date().getUTCMilliseconds(),
-                      setName: productSetName,
-                      products: selectedProducts
-                    });
-
-                    localStorage.setItem("productSets", JSON.stringify(productSets));
+                    this.toggleProductSetModalOpen()
                   }}
                 >
                   {__(this.messages, "Lưu bộ sản phẩm")}
@@ -235,6 +191,11 @@ class CreateTrainingClass extends Component {
             </Card>
           </Colxx>
         </Row>
+        <ProductSetModal  
+          isOpen={this.state.productSetModalOpen}
+          toggleModal={this.toggleProductSetModalOpen}
+          selectedProducts={this.state.selectedProducts}
+        />
       </Fragment>
     );
   }

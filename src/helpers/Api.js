@@ -67,6 +67,8 @@ const ApiController = {
         break;
       case 'put': case 'PUT':
         return ApiController.put(url, data, callback, options);
+      case 'delete': case 'DELETE':
+        return ApiController.delete(url, data, callback, options);
       default:
         break;
     }
@@ -149,6 +151,41 @@ const ApiController = {
           );
         }
       });
+  },
+  delete: (url, data, callback, options = {}) => {
+    let params = '';
+    if (options.urlParams) {
+      params = '?' + ApiController.serialize(options.urlParams);
+    }
+
+    Axios.delete(url + params, {
+      data: data
+    })
+    .then(res => {
+      return res.data;
+    })
+    .then(data => {
+      if (isFunction(callback)) {
+        if (data.result !== undefined) {
+          callback(data.result);
+        } else {
+          callback(data);
+        }
+      }
+    }).catch(error => {
+      if (isFunction(options.errorCallback)) {
+        options.errorCallback(error);
+      } else {
+        NotificationManager.error(
+          error.response.data.message ? error.response.data.message : "Something wrong",
+          "Error",
+          3000,
+          null,
+          null,
+          ""
+        );
+      }
+    });
   }
 }
 
