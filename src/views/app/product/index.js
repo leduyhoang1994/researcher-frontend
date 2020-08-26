@@ -30,7 +30,7 @@ class CreateTrainingClass extends Component {
     if (localStorage.getItem('selectedItems')) {
       const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
       this.setState({
-        categoriesFilter: categoriesFilter.map(cate => cate.category)
+        categoriesFilter: categoriesFilter.map(cate => cate.category || cate)
       }, () => {
         // localStorage.removeItem('selectedItems');
       });
