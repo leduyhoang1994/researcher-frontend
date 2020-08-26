@@ -14,7 +14,7 @@ import { SITE_LIST } from '../../../constants/data';
 import categoriesData from '../../../data/categories';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
-import RadioButton from './modal';
+import ResearchSetModal from './ResearchSetModal';
 
 class Research extends Component {
     constructor(props) {
@@ -29,8 +29,7 @@ class Research extends Component {
             isOpenRadio: false,
             isShow: false,
             radioValue: "first-radio",
-            cateSetName: "",
-            selected: null
+            cateSetName: ""
         };
         this.messages = this.props.intl.messages;
     }
@@ -105,13 +104,8 @@ class Research extends Component {
     cateSetName = (data) => {
         this.setState({ cateSetName: data });
     }
-    
-    handleChangeCate = (data) => {
-        console.log(data);
-        this.setState({ selected: data });
-    }
 
-    toggleRadioModal = () => {
+    toggleResearchSetModal = () => {
         const isOpen = this.state.isOpenRadio;
         if(!isOpen) {
             this.loadCateSets();
@@ -139,7 +133,7 @@ class Research extends Component {
                 NotificationManager.success("Thành công", "Thành công");
             });
         } else {
-            //Crate new cateSet
+            //Create new cateSet
             ApiController.post(CATEGORIES.set, {
                 setName: cateSetName,
                 ids: cateIds
@@ -208,7 +202,7 @@ class Research extends Component {
                                     className="mr-2"
                                     color="warning"
                                     onClick={() => {
-                                        this.toggleRadioModal();
+                                        this.toggleResearchSetModal();
                                     }}
                                 >
                                     {__(this.messages, "Lưu danh sách ngành hàng")}
@@ -227,15 +221,12 @@ class Research extends Component {
                     </Colxx>
                 </Row>
                 
-                <RadioButton
+                <ResearchSetModal
                     isOpenRadio={this.state.isOpenRadio}
-                    toggleRadioModal={this.toggleRadioModal}
+                    toggleResearchSetModal={this.toggleResearchSetModal}
                     handleChange={this.handleChange}
-                    dataOptions={this.state.cateSetList}
-                    radioValue={this.state.radioValue}
                     createCateSet={this.createCategoriesSet}
                     cateSetName={this.cateSetName}
-                    handleChangeCate={this.handleChangeCate}
                 />
             </Fragment>
         );

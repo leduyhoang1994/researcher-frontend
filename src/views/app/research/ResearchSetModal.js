@@ -1,17 +1,30 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
+import { CATEGORIES } from '../../../constants/api';
+import ApiController from '../../../helpers/Api';
 
-class RadioButton extends Component {
+class ResearchSetModal extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             selectedCate: null,
-            radioValue: "update-cate-set"
+            radioValue: "update-cate-set",
+            cateSetList: []
         }
+    }
+
+    componentDidMount() {
+        this.loadProductSets()
+    }
+
+    loadProductSets = () => {
+        ApiController.get(CATEGORIES.set, {}, data => {
+            this.setState({ cateSetList: data });
+        });
     }
 
     handleChange = (data) => {
@@ -33,29 +46,65 @@ class RadioButton extends Component {
         })
     }
 
+    ShowInputArea = ({ cateSetName, handleChangeCate }) => {
+        let setName = (event) => {
+            cateSetName(event.target.value)
+        };
+
+        if (this.state.radioValue === "update-cate-set") {
+            let options = [];
+            const dataOptions = this.state.cateSetList;
+            if (dataOptions) {
+                dataOptions.forEach(data => {
+                    let temp = {};
+                    temp.value = data.id;
+                    temp.label = data.setName;
+                    options.push(temp);
+                })
+            }
+
+            return (
+                <div>
+                    <Label>
+                        Chọn ngành hàng
+                    </Label>
+                    <Select
+                        options={options}
+                        value={this.state.selectedCate}
+                        onChange={handleChangeCate}
+                    />
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <Label>
+                        {/* <IntlMessages id="user.email" /> */}
+                        Nhập tên ngành hàng
+                    </Label>
+                    <Input
+                        type="text"
+                        className="form-control"
+                        name="name"
+                        onChange={setName}
+                    />
+                </div>
+            )
+        }
+    }
+
     render() {
         if (!this.props.isOpenRadio) {
             return null;
         }
 
-        let options = [];
-        let { createCateSet, dataOptions  } = this.props;
+        let { createCateSet } = this.props;
         let { handleChange } = this;
-        let { radioValue, selectedCate } = this.state;
-
-
-        if (dataOptions) {
-            dataOptions.forEach(data => {
-                let temp = {};
-                temp.value = data.id;
-                temp.label = data.setName;
-                options.push(temp);
-            })
-        }
+        let { selectedCate } = this.state;
 
         return (
             <div>
-                <Modal isOpen={true} toggle={this.props.toggleRadioModal}>
+                <Modal isOpen={true} toggle={this.props.toggleResearchSetModal}>
                     <ModalHeader>
                         <IntlMessages id="forms.title" />
                     </ModalHeader>
@@ -80,74 +129,32 @@ class RadioButton extends Component {
                             </Colxx>
                         </FormGroup>
                         {
-                            Show({
-                                radioValue,
-                                options,
+                            this.ShowInputArea({
                                 cateSetName: this.cateSetName,
                                 handleChangeCate: this.handleChangeCate,
-                                selectedCate: this.state.selectedCate
                             })
                         }
                     </ModalBody>
                     <ModalFooter>
                         <Button variant="secondary"
                             onClick={() => {
-                                this.props.toggleRadioModal();
+                                this.props.toggleResearchSetModal();
                             }}
                         >
                             Close
                         </Button>
                         <Button variant="primary"
                             onClick={() => {
-                                this.props.toggleRadioModal();
+                                this.props.toggleResearchSetModal();
                                 createCateSet(selectedCate);
                             }}
                         >Save</Button>
                     </ModalFooter>
                 </Modal>
-
             </div>
         )
     }
 
 }
 
-
-const Show = ({ radioValue, options, cateSetName, handleChangeCate, selectedCate }) => {
-
-    let selected = "";
-    let setName = (event) => {
-        cateSetName(event.target.value)
-    };
-
-    if (radioValue === "update-cate-set") {
-        return (
-            <div>
-                <Label>
-                    Chọn ngành hàng
-                </Label>
-                <Select
-                    options={options}
-                    value={selectedCate}
-                    onChange={handleChangeCate}
-                />
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <Label>
-                    {/* <IntlMessages id="user.email" /> */}
-                    Nhập tên ngành hàng
-                </Label>
-                <Input
-                    type="text"
-                    className="form-control"
-                    name="name"
-                    onChange={setName}
-                />
-            </div>
-        )
-    }
-}
-export default RadioButton;
+export default ResearchSetModal;

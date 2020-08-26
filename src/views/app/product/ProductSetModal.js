@@ -15,7 +15,9 @@ class ProductSetModal extends Component {
       selectedProducts: this.props.selectedProducts || [],
       radioValue: "update-product-set",
       listProductSet: [],
-      productSetName: ""
+      options: [],
+      productSetName: "",
+      selected: ""
     };
     console.log(this.props.selectedProducts);
   }
@@ -26,8 +28,18 @@ class ProductSetModal extends Component {
 
   loadProductSets = () => {
     ApiController.call('get', PRODUCTS.set, {}, data => {
+      let options = [];
+      if (data) {
+        data.forEach(element => {
+          let option = {};
+          option.label = element.setName;
+          option.value = element.setName;
+          options.push(option);
+        });
+      }
       this.setState({
-        listProductSet: data
+        listProductSet: data,
+        options: options
       })
     });
   }
@@ -35,53 +47,105 @@ class ProductSetModal extends Component {
   handleChange = (data) => {
     if (data === "add-new-product-set") {
       this.setState({
-        selectedProducts: null
+        selected: null
       });
     }
     this.setState({ radioValue: data });
   }
 
-  createProductSet = (productSet = null) => {
-    const { selectedProducts } = this.props;
-
-    console.log(selectedProducts);
+  createProductSet = () => {
+    const { selectedProducts, listProductSet, selected } = this.state;
 
     const productSetName = this.state.productSetName;
 
     if (productSetName == null || productSetName === []) {
-        return;
+      return;
     }
+
     const productIds = arrayColumn(selectedProducts, "id");
 
-    if (productSet) {
-        //Add to existed cateSet
-        ApiController.post(PRODUCTS.addToSet, {
-            setId: productSet.value,
-            itemId: productIds
-        }, data => {
-            NotificationManager.success("Thành công", "Thành công");
-        });
+    if (this.state.radioValue === "update-product-set") {
+      let setId = null;
+      listProductSet.forEach(product => {
+        if (product.setName === selected.value) {
+          setId = product.id;
+        }
+      })
+      //Add to existed cateSet
+      ApiController.post(PRODUCTS.addToSet, {
+        setId: setId,
+        itemId: productIds
+      }, data => {
+        NotificationManager.success("Thành công", "Thành công");
+      });
     } else {
-        //Crate new cateSet
-        ApiController.post(PRODUCTS.set, {
-            setName: productSetName,
-            ids: productIds
-        }, data => {
-            NotificationManager.success("Thành công", "Thành công");
-        });
+      //Create new cateSet
+      ApiController.post(PRODUCTS.set, {
+        setName: productSetName,
+        ids: productIds
+      }, data => {
+        NotificationManager.success("Thành công", "Thành công");
+      });
     }
   }
 
-  setProductSetName = (value) => {
+  // handleChangeProduct = (data) => {
+  //   this.setState({
+  //     selectedProducts: data
+  //   })
+  // }
+
+  setProductSetName = (event) => {
     this.setState({
-      productSetName: value
+      productSetName: event.target.value
     })
+  }
+
+  handleChangeProduct = (data) => {
+    this.setState({
+      selected: data
+    })
+  };
+
+  ShowInputArea = () => {
+    
+
+    if (this.state.radioValue === "update-product-set") {
+      return (
+        <div>
+          <Label>
+            Chọn bộ sản phẩm
+                  </Label>
+          <Select
+            options={this.state.options}
+            value={this.state.selected}
+            onChange={this.handleChangeProduct}
+          />
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Label>
+            {/* <IntlMessages id="user.email" /> */}
+                      Nhập tên bộ sản phẩm
+                  </Label>
+          <Input
+            type="text"
+            className="form-control"
+            name="name"
+            value={this.state.productSetName}
+            onChange={this.setProductSetName}
+          />
+        </div>
+      )
+    }
   }
 
   render() {
     const { isOpen, toggleModal } = this.props;
     const { handleChange, createProductSet, setProductSetName } = this;
-    const { radioValue, listProductSet, selectedProducts, productSetName } = this.state;
+    const { selectedProducts } = this.state;
 
     return (
       <div>
@@ -110,14 +174,7 @@ class ProductSetModal extends Component {
               </Colxx>
             </FormGroup>
             {
-              Show({
-                radioValue,
-                listProductSet,
-                productSetName,
-                setProductSetName: setProductSetName,
-                handleChangeCate: this.handleChangeCate,
-                selectedCate: this.state.selectedCate
-              })
+              this.ShowInputArea()
             }
           </ModalBody>
           <ModalFooter>
@@ -131,49 +188,11 @@ class ProductSetModal extends Component {
             <Button variant="primary"
               onClick={() => {
                 toggleModal();
-                createProductSet(selectedProducts);
+                createProductSet();
               }}
             >Save</Button>
           </ModalFooter>
         </Modal>
-      </div>
-    )
-  }
-}
-
-
-const Show = ({ radioValue, listProductSet, setProductSetName, productSetName, handleChangeCate, selectedCate }) => {
-  let setName = (event) => {
-    setProductSetName(event.target.value)
-  };
-
-  if (radioValue === "update-product-set") {
-    return (
-      <div>
-        <Label>
-          Chọn bộ sản phẩm
-                </Label>
-        <Select
-          options={listProductSet}
-          value={selectedCate}
-          onChange={handleChangeCate}
-        />
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Label>
-          {/* <IntlMessages id="user.email" /> */}
-                    Nhập tên bộ sản phẩm
-                </Label>
-        <Input
-          type="text"
-          className="form-control"
-          name="name"
-          value={productSetName}
-          onChange={setName}
-        />
       </div>
     )
   }

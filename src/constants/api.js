@@ -15,8 +15,8 @@ export const USERS = {
 export const AUTH = {
   logout: `${apiPath}/${user}/logout`,
   login: `${apiPath}/${user}/login`,
-  register: `${apiPath}/${user}/register`,
-  details: `${apiPath}/${user}/detail`,
+  register: `${apiPath}/users/register`,
+  details: `${apiPath}/users/info`,
 }
 
 /** Category */

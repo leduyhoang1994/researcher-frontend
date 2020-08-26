@@ -45,7 +45,7 @@ const loginWithEmailPasswordAsync = async (email, password) =>
 //     .catch(error => error);
 
 const getUserDetails = async (token) =>
-    await Api.callAsync('post', AUTH.details, {
+    await Api.callAsync('get', AUTH.details, {
         token: token
     }, {
         headers: {
@@ -61,9 +61,9 @@ function* loginWithEmailPassword({ payload }) {
     try {
         const loginUser = yield call(loginWithEmailPasswordAsync, email, password);
 
-        if (!loginUser.message) {
-            localStorage.setItem('user_token', loginUser.result);
-            const userDetails = yield call(getUserDetails, loginUser.result);
+        if(loginUser.success) {
+            localStorage.setItem('user_token', loginUser.result.accessToken);
+            const userDetails = yield call(getUserDetails, loginUser.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginUserSuccess(loginUser.result, userDetails));
             window.open('/', '_self');
@@ -89,20 +89,19 @@ const registerWithEmailPasswordAsync = async (firstName, lastName, email, passwo
         confirmPassword: confirmPassword
     }).then(data => {
         return data.data;
-    }).catch(error => error);
+    }).catch(error => error.response.data);
 
 function* registerWithEmailPassword({ payload }) {
     const { firstName, lastName, email, password, confirmPassword } = payload.user;
     const { history } = payload
     try {
         const registerUser = yield call(registerWithEmailPasswordAsync, firstName, lastName, email, password, confirmPassword);
-        if (!registerUser.message) {
-            localStorage.setItem('user_token', registerUser.result);
+        if (registerUser.success) {
+            // localStorage.setItem('user_details', JSON.stringify(registerUser.result));
             yield put(registerUserSuccess(registerUser));
-            window.open('/', '_self');
+            window.open('/user/login', '_self');
         } else {
-            yield put(registerUserError(registerUser.message));
-
+            yield put(registerUserError(registerUser));
         }
     } catch (error) {
         yield put(registerUserError(error));

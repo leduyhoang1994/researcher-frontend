@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { Row, Card, CardTitle, Label, FormGroup, Input, Button } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
-import { registerUser } from "../../redux/actions";
+import { registerUser, registerUserError } from "../../redux/actions";
 
+import { NotificationManager } from "../../components/common/react-notifications";
 import IntlMessages from "../../helpers/IntlMessages";
 import { Colxx } from "../../components/common/CustomBootstrap";
 import { Formik, Form, Field } from "formik";
@@ -29,9 +30,8 @@ class Register extends Component {
   // }
 
   onUserRegister = (values) => {
-    if (this.state.firstName !== "" && this.state.lastName !== ""
-      && this.state.email !== "" && this.state.password !== "" && this.state.confirmPassword !== "") {
-        console.log(values);
+    if (values.firstName !== "" && values.lastName !== ""
+      && values.email !== "" && values.password !== "" && values.confirmPassword !== "") {
         this.props.registerUser(values, this.props.history);
     }
   }
@@ -50,10 +50,25 @@ class Register extends Component {
     let error;
     if (!value) {
       error = "Please enter your password";
-    } else if (value.length < 4) {
-      error = "Value must be longer than 3 characters";
+    } else if (value.length < 6) {
+      error = "Value must be longer than 5 characters";
     }
     return error;
+  }
+
+  componentDidUpdate() {
+    console.log(this.props);
+    if (this.props.error) {
+      console.log("Error: " + this.props.error);
+      NotificationManager.warning(
+        "Email is existed, please try another!",
+        "Register Error",
+        3000,
+        null,
+        null,
+        ''
+      );
+    }
   }
 
   render() {
@@ -166,13 +181,14 @@ class Register extends Component {
   }
 }
 const mapStateToProps = ({ authUser }) => {
-  const { user, loading } = authUser;
-  return { user, loading };
+  const { user, loading, error } = authUser;
+  return { user, loading, error };
 };
 
 export default connect(
   mapStateToProps,
   {
-    registerUser
+    registerUser,
+    registerUserError,
   }
 )(Register);
