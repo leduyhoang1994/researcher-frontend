@@ -55,4 +55,7 @@ module.exports = {
  "forms.radios": "Radios",
  "forms.first-radio": "Update",
  "forms.second-radio": "Add New",
+
+//  0.6.Table
+"table.react-advanced": "List of categories",
 };

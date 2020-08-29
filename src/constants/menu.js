@@ -1,28 +1,43 @@
-const researcherMenu = [
+const multiMenu = [
   {
     id: "research",
     icon: "iconsminds-qr-code",
-    label: "Ngành hàng",
-    to: "/app/research"
+    label: "Tìm kiếm",
+    to: "/app/research",
+    subs: [{
+      icon: "iconsminds-qr-code",
+      label: "Ngành hàng",
+      to: "/app/research"
+    },
+    {
+      icon: "iconsminds-qr-code",
+      label: "Danh sách ngành hàng",
+      to: "/app/cate-sets"
+    },
+    {
+      icon: "iconsminds-qr-code",
+      label: "Sản phẩm",
+      to: "/app/products"
+    },
+    {
+      icon: "iconsminds-qr-code",
+      label: "Bộ Sản phẩm",
+      to: "/app/product-sets",
+    }
+    ]
   },
   {
     id: "cateList",
     icon: "iconsminds-qr-code",
-    label: "Danh sách ngành hàng",
-    to: "/app/cate-sets"
+    label: "Ngành hàng",
+    to: "/app/list-cate",
   },
   {
     id: "product",
     icon: "iconsminds-qr-code",
     label: "Sản phẩm",
     to: "/app/products"
-  },
-  {
-    id: "productSet",
-    icon: "iconsminds-qr-code",
-    label: "Bộ Sản phẩm",
-    to: "/app/product-sets"
-  },
+  }
 ];
 
 let data = [];
@@ -38,6 +53,6 @@ if (userDetails && userDetails.roles) {
     }
   });
 }
-data = data.concat(researcherMenu);
+data = data.concat(multiMenu);
 
 export default data;

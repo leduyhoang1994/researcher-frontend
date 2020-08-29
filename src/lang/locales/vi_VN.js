@@ -72,4 +72,7 @@ module.exports = {
  "forms.radios": "Radios",
  "forms.first-radio": "Bổ sung",
  "forms.second-radio": "Thêm mới",
+
+ //  0.7.Table
+"table.react-advanced": "Danh sách ngành hàng",
 };

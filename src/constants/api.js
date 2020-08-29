@@ -27,6 +27,7 @@ export const CATEGORIES = {
   set: `${apiPath}/sets/${categories}`,
   addToSet: `${apiPath}/sets/${categories}/listAdd`,
   removeFromSet: `${apiPath}/sets/${categories}/listDelete`,
+  allEdit: `${apiPath}/categoryEdits`,
 }
 
 /** Product */
