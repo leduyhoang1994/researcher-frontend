@@ -45,6 +45,7 @@ module.exports = {
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
 
+
  /* 04.Error Page */
  "pages.error-title": "Ooops... looks like an error occurred!",
  "pages.error-code": "Error code",
@@ -58,4 +59,14 @@ module.exports = {
 
 //  0.6.Table
 "table.react-advanced": "List of categories",
+
+// 0.6.Menu
+"menu.category": "Category",
+"menu.detail": "Detail",
+"menu.add-new": "Add New",
+
+
+/* 07.Dashboards */
+"dashboards.categories": "Categories",
+"dashboards.category": "Category",
 };

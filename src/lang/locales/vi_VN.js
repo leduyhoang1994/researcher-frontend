@@ -75,4 +75,9 @@ module.exports = {
 
  //  0.7.Table
 "table.react-advanced": "Danh sách ngành hàng",
+
+// 0.8.Menu
+"menu.category": "Ngành hàng",
+"menu.detail": "Chi tiết",
+"menu.add-new": "Thêm mới",
 };

@@ -12,8 +12,7 @@ class Category extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: [],
-      redirect: false,
+      categories: []
     };
     this.messages = this.props.intl.messages;
   }
@@ -29,11 +28,9 @@ class Category extends Component {
     });
   }
 
-  redirectTo = (url) => {
-    this.setState({
-      redirect: url
-    })
-  };
+  handleClickRow = (row) => {
+    window.open(`/app/edit-cate/${row.id}`, "_self")
+  }
 
   render() {
     return (
@@ -45,16 +42,16 @@ class Category extends Component {
           <Row>
             <Colxx xxs="12">
               <Card>
-                <ReactTableAdvancedCard categories={this.state.categories} />
+                <ReactTableAdvancedCard
+                  categories={this.state.categories}
+                  handleClickRow={this.handleClickRow}
+                />
+
                 <div className="text-right card-title">
-                  <Link to="/app/list-cate/add">
+                  <Link to="/app/add-cate">
                     <Button
                       className="mr-2"
                       color="warning"
-                      onClick={e => {
-                        // localStorage.setItem('selectedItems', JSON.stringify(this.state.cateSet.categorySets));
-
-                      }}
                     >
                       {__(this.messages, "Thêm ngành hàng")}
                     </Button>

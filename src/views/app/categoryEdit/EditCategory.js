@@ -5,36 +5,50 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
 
-class Category extends Component {
+class EditCategory extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories: [],
+            setId: this.props.match.params.id,
+            category: []
         };
         this.messages = this.props.intl.messages;
     }
 
-    //   componentDidMount() {
-    //     this.getCategories();
-    //   }
+    componentDidMount() {
+        this.loadCurrentCategory();
+    }
 
-    //   getCategories = () => {
-    //     ApiController.get(CATEGORIES.allEdit, {}, data => {
-    //       console.log("AAAAA" + data);
-    //       this.setState({ categories: data });
-    //     });
-    //   }
+    loadCurrentCategory = () => {
+        const { setId } = this.state;
+        this.getCategories(setId);
+    }
+
+    getCategories = (setId) => {
+        ApiController.get(`${CATEGORIES.allEdit}/${setId}`, {}, data => {
+            console.log("BBBBB" + JSON.stringify(data));
+            this.setState({ category: data });
+        });
+    }
 
     render() {
-        if (this.props.cateId) {
-        }
+        // if (this.props.cateId) {
+        // }
         return (
             <div>
                 <Fragment>
                     {/* {
           this.renderCategories()
-        } */}
+        } */}   
+                    <Row>
+                        <Colxx xxs="12">
+                            {console.log(this.props.match)}
+                            <Breadcrumb heading="menu.category" match={this.props.match} />
+                        </Colxx>
+                    </Row>
+                    <div></div>
                     <Row>
                         <Colxx xxs="12">
 
@@ -47,4 +61,4 @@ class Category extends Component {
     }
 }
 
-export default injectIntl(Category);
+export default injectIntl(EditCategory);

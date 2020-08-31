@@ -29,8 +29,8 @@ const dataTableColumns = [
   {
     Header: "Tên ngành hàng tầng 3",
     accessor: "nameLv3",
-    // Cell: props => <p className="list-item-heading">{props.value}</p>
-    Cell: ({ row }) => (<Link to={{pathname:'/editpage/'+`${row.pageURL}`, state :{data : row} } }>{row.name}</Link>),
+    Cell: props => <p className="list-item-heading">{props.value}</p>
+    // Cell: ({ row }) => (<Link to={{pathname:'/editpage/'+`${row.pageURL}`, state :{data : row} } }>{row.name}</Link>),
   }
 ];
 
@@ -93,6 +93,9 @@ export const ReactTableAdvancedCard = (props) => {
           getTrProps={(state, rowInfo) => {
             if (true) {
               return {
+                onClick: (e) => {
+                  props.handleClickRow(rowInfo.original)
+                },
                 style: {
                   cursor: "pointer"
                 }
