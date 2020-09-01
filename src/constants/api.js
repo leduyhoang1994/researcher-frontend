@@ -25,9 +25,9 @@ export const CATEGORIES = {
   all: `${apiPath}/${categories}`,
   filter: `${apiPath}/${categories}/filter`,
   set: `${apiPath}/sets/${categories}`,
-  addToSet: `${apiPath}/sets/${categories}/listAdd`,
-  removeFromSet: `${apiPath}/sets/${categories}/listDelete`,
-  allEdit: `${apiPath}/categoryEdits`,
+  addToSet: `${apiPath}/sets/${categories}/list-add`,
+  removeFromSet: `${apiPath}/sets/${categories}/list-delete`,
+  allEdit: `${apiPath}/category-edits`,
 }
 
 /** Product */
@@ -36,6 +36,12 @@ export const PRODUCTS = {
   all: `${apiPath}/${products}`,
   filter: `${apiPath}/${products}/filter`,
   set: `${apiPath}/sets/${products}`,
-  addToSet: `${apiPath}/sets/${products}/listAdd`,
-  removeFromSet: `${apiPath}/sets/${products}/listDelete`,
+  addToSet: `${apiPath}/sets/${products}/list-add`,
+  removeFromSet: `${apiPath}/sets/${products}/list-delete`,
+}
+
+export const attributes = 'attributes';
+export const ATTRIBUTES = {
+  all: `${apiPath}/${attributes}`,
+
 }

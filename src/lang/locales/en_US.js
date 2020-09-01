@@ -62,8 +62,9 @@ module.exports = {
 
 // 0.6.Menu
 "menu.category": "Category",
+"menu.list-cate": "List of categories",
 "menu.detail": "Detail",
-"menu.add-new": "Add New",
+"menu.add": "Add New",
 
 
 /* 07.Dashboards */

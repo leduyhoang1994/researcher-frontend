@@ -82,7 +82,6 @@ export const ReactTableWithScrollableCard = (props) => {
 };
 export const ReactTableAdvancedCard = (props) => {
   const data = props.categories;
-  console.log(data);
   return (
     <Card className="mb-4">
       <CardBody>

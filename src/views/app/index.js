@@ -80,16 +80,16 @@ class App extends Component {
                 render={props => <CateSets {...props} />}
               />
               <Route
+                path={`${match.url}/list-cate/edit/:id`}
+                render={props => <EditCategory {...props} />}
+              />
+              <Route
+                path={`${match.url}/list-cate/add`}
+                render={props => <EditCategory {...props} />}
+              />
+              <Route
                 path={`${match.url}/list-cate`}
                 render={props => <Category {...props} />}
-              />
-              <Route
-                path={`${match.url}/edit-cate/:id`}
-                render={props => <EditCategory {...props} />}
-              />
-              <Route
-                path={`${match.url}/add-cate`}
-                render={props => <EditCategory {...props} />}
               />
               <Redirect to="/error" />
             </Switch>

@@ -23,13 +23,12 @@ class Category extends Component {
 
   getCategories = () => {
     ApiController.get(CATEGORIES.allEdit, {}, data => {
-      console.log("AAAAA" + data);
       this.setState({ categories: data });
     });
   }
 
   handleClickRow = (row) => {
-    window.open(`/app/edit-cate/${row.id}`, "_self")
+    window.open(`/app/list-cate/edit/${row.id}`, "_self")
   }
 
   render() {
@@ -48,7 +47,7 @@ class Category extends Component {
                 />
 
                 <div className="text-right card-title">
-                  <Link to="/app/add-cate">
+                  <Link to="/app/list-cate/add">
                     <Button
                       className="mr-2"
                       color="warning"
