@@ -16,7 +16,7 @@ class Property extends React.Component {
             loading: false,
             properties: [],
             propertiesOptions: {},
-            propertiesAttributesValue: this.props.productOptions && this.normalizeProductAttribute(this.props.productOptions),
+            propertiesAttributesValue: this.props.productOptions && this.normalizeProductAttribute(this.props.productOptions) || {},
             reloadOptions: {},
             productId: this.props.productId
         };

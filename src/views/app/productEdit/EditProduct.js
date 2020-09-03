@@ -70,7 +70,7 @@ class EditProduct extends Component {
                 uboxIn: data.uboxIn,
                 idCategory: data.categoryEditId,
                 productId: data.productId,
-                options: data.options,
+                options: data.productEditOptions,
             })
 
             this.state.optionCategories.forEach(item => {
