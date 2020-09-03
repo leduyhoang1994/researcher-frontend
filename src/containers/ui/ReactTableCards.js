@@ -34,52 +34,6 @@ const dataTableColumns = [
   }
 ];
 
-export const ReactTableWithPaginationCard = (props) => {
-  const data = props;
-  console.log(data);
-  return (
-    <Card className="mb-4">
-      <CardBody>
-        <CardTitle>
-          <IntlMessages id="table.react-pagination" />
-        </CardTitle>
-        <ReactTable
-          data={data}
-          paginationMaxSize={3}
-          columns={dataTableColumns}
-          defaultPageSize={5}
-          showPageJump={false}
-          showPageSizeOptions={false}
-          PaginationComponent={DataTablePagination}
-          className={"react-table-fixed-height"}
-        />
-      </CardBody>
-    </Card>
-  );
-};
-export const ReactTableWithScrollableCard = (props) => {
-  const data = props;
-  console.log(data);
-  return (
-    <Card className="mb-4">
-      <CardBody>
-        <CardTitle>
-          <IntlMessages id="table.react-scrollable" />
-        </CardTitle>
-        <ReactTable
-          data={data}
-          TbodyComponent={CustomTbodyComponent}
-          columns={dataTableColumns}
-          defaultPageSize={20}
-          showPageJump={false}
-          showPageSizeOptions={false}
-          showPagination={false}
-          className={"react-table-fixed-height"}
-        />
-      </CardBody>
-    </Card>
-  );
-};
 export const ReactTableAdvancedCard = (props) => {
   const data = props.categories;
   return (

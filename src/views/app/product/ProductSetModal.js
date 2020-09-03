@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
@@ -144,8 +144,7 @@ class ProductSetModal extends Component {
 
   render() {
     const { isOpen, toggleModal } = this.props;
-    const { handleChange, createProductSet, setProductSetName } = this;
-    const { selectedProducts } = this.state;
+    const { handleChange, createProductSet } = this;
 
     return (
       <div>

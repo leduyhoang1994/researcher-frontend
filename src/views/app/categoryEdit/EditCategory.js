@@ -20,7 +20,7 @@ class EditCategory extends Component {
             optionsLv1: [],
             optionsLv2: [],
             optionsLv3: [],
-            optionsOwnProperties: [],
+            optionsOwnProperties: [{ label: " ", value: " " }],
             optionsProperties: [],
             propertiesFilter: [],
             attributeIds: [],
@@ -74,23 +74,28 @@ class EditCategory extends Component {
 
             const description = data.description;
 
-            let attributes = data.categoryEditAttributes;
-            let listOptions = [];
-            attributes.forEach(item => {
-                if (item.attribute) {
-                    let option = {};
-                    option.label = item.attribute.label;
-                    option.value = item.attribute.label;
-                    listOptions.push(option);
-                }
-            })
-            console.log(JSON.stringify(listOptions));
+            console.log(data.categoryEditAttributes);
+            if (data.categoryEditAttributes) {
+                let attributes = data.categoryEditAttributes;
+                let listOptions = [];
+                attributes.forEach(item => {
+                    if (item.attribute) {
+                        let option = {};
+                        option.label = item.attribute.label;
+                        option.value = item.attribute.label;
+                        listOptions.push(option);
+                    }
+                })
+                console.log(JSON.stringify(listOptions));
+                this.setState({
+                    optionsOwnProperties: listOptions
+                });
+            }
             this.setState({
                 categoryLv1: option1,
                 categoryLv2: option2,
                 categoryLv3: option3,
-                valueText: description,
-                optionsOwnProperties: listOptions
+                valueText: description
             });
         });
     }
@@ -200,7 +205,7 @@ class EditCategory extends Component {
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
-                window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
+                // window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
@@ -228,7 +233,7 @@ class EditCategory extends Component {
             && this.state.categoryLv3.value !== "") {
 
             const propertiesFilter = this.state.propertiesFilter;
-            this.setState({ attributeIds : [] });
+            this.setState({ attributeIds: [] });
 
             ApiController.get(ATTRIBUTES.all, {}, data => {
                 data.forEach(item => {
@@ -264,7 +269,6 @@ class EditCategory extends Component {
                             <Label className="form-group has-float-label">
                                 <Creatable
                                     isClearable
-                                    isMulti
                                     value={categoryLv1}
                                     options={optionsLv1}
                                     className="react-select"
@@ -279,7 +283,6 @@ class EditCategory extends Component {
                             <Label className="form-group has-float-label">
                                 <Creatable
                                     isClearable
-                                    isMulti
                                     value={categoryLv2}
                                     options={optionsLv2}
                                     className="react-select"
@@ -294,7 +297,6 @@ class EditCategory extends Component {
                             <Label className="form-group has-float-label">
                                 <Creatable
                                     isClearable
-                                    isMulti
                                     value={categoryLv3}
                                     options={optionsLv3}
                                     className="react-select"
