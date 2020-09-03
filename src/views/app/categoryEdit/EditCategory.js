@@ -200,6 +200,7 @@ class EditCategory extends Component {
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
+                window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
@@ -213,6 +214,8 @@ class EditCategory extends Component {
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
+                console.log(JSON.stringify(data.categoryEdit.id));
+                // window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");

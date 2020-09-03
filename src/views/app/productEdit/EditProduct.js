@@ -8,6 +8,7 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import PicturesWall from '../../../containers/ui/PicturesWall';
+import Property from './Property';
 
 class EditProduct extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class EditProduct extends Component {
             setId: this.props.match.params.id || null,
             product: {},
             productName: "",
+            idCategory: null,
             selectedCategory: "",
             priceMin: 0,
             priceMax: 0,
@@ -42,29 +44,26 @@ class EditProduct extends Component {
 
     getCategories = () => {
         ApiController.get(CATEGORIES.allEdit, {}, data => {
-            let options = [];
             let tempOptions = [];
+            let categories = [];
+            console.log(JSON.stringify(data));
             data.forEach(item => {
-                if (!tempOptions.includes(item.nameLv3)) tempOptions.push(item.nameLv3);
+                if (!tempOptions.includes(item.nameLv3)) {
+                    tempOptions.push(item.nameLv3);
+                    categories.push({label: item.nameLv3, value: item.id})
+                }
+                console.log(categories);
             })
-
-            console.log(data);
-            tempOptions.forEach(item => {
-                options.push({ label: item, value: item });
-            })
-            this.setState({ optionsCategories: options });
+            this.setState({ optionsCategories: categories });
         });
     }
 
     handleChangeCategory = (data) => {
         this.setState({
-            selectedCategory: data
+            selectedCategory: data,
+            idCategory: data.value
         })
     };
-
-    handleClickRow = (row) => {
-        window.open(`/app/list-product/edit/${row.id}`, "_self")
-    }
 
     render() {
         const { name, priceMin, priceMax, futurePriceMin, futurePriceMax } = this.state.product;
@@ -175,6 +174,9 @@ class EditProduct extends Component {
                                         </span>
                                     </Label>
                                 </Colxx>
+                            </Row>
+                            <Row>
+                                {/* <Property categoryId={this.state.idCategory} /> */}
                             </Row>
                         </Colxx>
                     </Row>

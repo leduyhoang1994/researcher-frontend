@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
-import { Colxx } from "../../../components/common/CustomBootstrap";
+import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
+import Select, { Creatable } from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
-import { CATEGORIES } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 
@@ -12,18 +14,68 @@ class Product extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories: []
+            setId: this.props.match.params.id || null,
+            categories: [],
+            optionCategories: [],
+            selectedCategory: "",
         };
         this.messages = this.props.intl.messages;
     }
 
+    componentDidMount() {
+        // this.getAllCategories();
+        // this.loadCurrentCategory();
+        // this.getProperties();
+    }
+
+    loadCurrentProduct = () => {
+        const { setId } = this.state;
+        if (setId)
+            this.getProducts(setId);
+    }
+
+    getProducts = (setId) => {
+        ApiController.get(`${PRODUCTS.allEdit}/${setId}`, {}, data => {
+            let options = [];
+            data.forEach(item => {
+                let option = {};
+                option.label = item.label;
+                option.value = item.label;
+                options.push(option);
+            })
+            this.setState({ optionsProperties: options });
+        });
+
+    }
+    getAllCategories = () => {
+        ApiController.get(CATEGORIES.allEdit, {}, data => {
+            let options = [];
+            let tempOptions = [];
+            data.forEach(item => {
+                if (!tempOptions.includes(item.nameLv3)) tempOptions.push(item.nameLv3);
+            })
+
+            tempOptions.forEach(item => {
+                options.push({ label: item, value: item });
+            })
+
+            this.setState({
+                optionCategories: options
+            });
+        });
+    }
+
+    handleClickRow = (row) => {
+        window.open(`/app/list-product/edit/${row.id}`, "_self")
+    }
+    
     render() {
         return (
             <div>
                 <Fragment>
                     <Row>
                         <Colxx xxs="12">
-                            <Breadcrumb heading="Tìm kiếm sản phẩm" match={this.props.match} />
+                            <Breadcrumb heading="Sản phẩm" match={this.props.match} />
                             <Separator className="mb-5" />
                         </Colxx>
                     </Row>
@@ -57,17 +109,13 @@ class Product extends Component {
                                         <Colxx xxs="12">
                                             <Label className="form-group has-float-label">
                                                 <Select
-                                                    filterOption={createFilter({ ignoreAccents: false })}
-                                                    isMulti
-                                                    options={this.state.categoryOptions}
-                                                    getOptionValue={option => option.id}
-                                                    getOptionLabel={option => option.categoryNameViLevel3}
-                                                    value={this.state.categoriesFilter}
-                                                    onChange={e => {
+                                                    options={this.state.optionCategories}
+                                                    value={this.state.selectedCategory}
+                                                    onChange={(value) =>
                                                         this.setState({
-                                                            categoriesFilter: e
-                                                        });
-                                                    }}
+                                                            selectedCategory: value
+                                                        })
+                                                    }
                                                 />
                                                 <span>
                                                     {__(this.messages, "Thư mục")}
@@ -87,12 +135,12 @@ class Product extends Component {
                         </Colxx>
                     </Row>
                     <Row>
-          <Colxx xxs="12">
-            <Card>
-              
-            </Card>
-          </Colxx>
-        </Row>
+                        <Colxx xxs="12">
+                            <Card>
+
+                            </Card>
+                        </Colxx>
+                    </Row>
 
                 </Fragment>
             </div>

@@ -38,6 +38,7 @@ export const PRODUCTS = {
   set: `${apiPath}/sets/${products}`,
   addToSet: `${apiPath}/sets/${products}/list-add`,
   removeFromSet: `${apiPath}/sets/${products}/list-delete`,
+  allEdit: `${apiPath}/product-edits`,
 }
 
 export const attributes = 'attributes';
