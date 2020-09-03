@@ -40,6 +40,14 @@ const EditCategory = React.lazy(() =>
   import(/* webpackChunkName: "product-set" */ './categoryEdit/EditCategory')
 );
 
+const Products = React.lazy(() =>
+  import(/* webpackChunkName: "product-set" */ './productEdit/Product')
+);
+
+const EditProducts = React.lazy(() =>
+  import(/* webpackChunkName: "product-set" */ './productEdit/EditProduct')
+);
+
 class App extends Component {
   render() {
     const { match } = this.props;
@@ -90,6 +98,18 @@ class App extends Component {
               <Route
                 path={`${match.url}/list-cate`}
                 render={props => <Category {...props} />}
+              />
+              <Route
+                path={`${match.url}/list-product/edit/:id`}
+                render={props => <EditProducts {...props} />}
+              />
+              <Route
+                path={`${match.url}/list-product/add`}
+                render={props => <EditProducts {...props} />}
+              />
+              <Route
+                path={`${match.url}/list-product`}
+                render={props => <Products {...props} />}
               />
               <Redirect to="/error" />
             </Switch>

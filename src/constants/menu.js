@@ -36,7 +36,7 @@ const multiMenu = [
     id: "product",
     icon: "iconsminds-qr-code",
     label: "Sản phẩm",
-    to: "/app/products"
+    to: "/app/list-product"
   }
 ];
 

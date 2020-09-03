@@ -79,6 +79,8 @@ module.exports = {
 // 0.8.Menu
 "menu.category": "Ngành hàng",
 "menu.list-cate": "Danh sách ngành hàng",
+"menu.product": "Sản phẩm",
+"menu.list-product": "Danh sách sản phẩm",
 "menu.detail": "Chi tiết",
 "menu.add": "Thêm mới",
 };

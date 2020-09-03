@@ -20,8 +20,10 @@ class EditCategory extends Component {
             optionsLv1: [],
             optionsLv2: [],
             optionsLv3: [],
+            optionsOwnProperties: [],
             optionsProperties: [],
             propertiesFilter: [],
+            attributeIds: [],
             categoryLv1: "",
             categoryLv2: "",
             categoryLv3: "",
@@ -71,11 +73,24 @@ class EditCategory extends Component {
             option3.value = data.nameLv3;
 
             const description = data.description;
+
+            let attributes = data.categoryEditAttributes;
+            let listOptions = [];
+            attributes.forEach(item => {
+                if (item.attribute) {
+                    let option = {};
+                    option.label = item.attribute.label;
+                    option.value = item.attribute.label;
+                    listOptions.push(option);
+                }
+            })
+            console.log(JSON.stringify(listOptions));
             this.setState({
                 categoryLv1: option1,
                 categoryLv2: option2,
                 categoryLv3: option3,
-                valueText: description
+                valueText: description,
+                optionsOwnProperties: listOptions
             });
         });
     }
@@ -159,7 +174,7 @@ class EditCategory extends Component {
                 description: ""
             }).then(data => {
                 this.setState({ optionsProperties: [...this.state.optionsProperties, { label: value, value: value }] });
-                NotificationManager.success("Thêm thuộc tính thành công", "Thành công" );
+                NotificationManager.success("Thêm thuộc tính thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Thêm thuộc tính thất bại", "Thất bại");
             })
@@ -171,57 +186,62 @@ class EditCategory extends Component {
         newValue.forEach(item => {
             listProperties.push(item.label)
         })
-        this.setState({ propertiesFilter: listProperties });
+        this.setState({ propertiesFilter: listProperties, optionsOwnProperties: newValue });
     };
 
+    callApi = async () => {
+        if (this.state.setId) {
+            console.log(this.state.attributeIds);
+            await Api.callAsync('put', CATEGORIES.allEdit, {
+                id: parseInt(this.state.setId),
+                nameLv1: this.state.categoryLv1.value,
+                nameLv2: this.state.categoryLv2.value,
+                nameLv3: this.state.categoryLv3.value,
+                description: this.state.valueText,
+                attributeIds: this.state.attributeIds
+            }).then(data => {
+                NotificationManager.success("Thành công", "Thành công");
+            }).catch(error => {
+                NotificationManager.warning("Cập nhật thất bại", "Thất bại");
+            });
+        } else {
+            console.log(this.state.attributeIds);
+            await Api.callAsync('post', CATEGORIES.allEdit, {
+                nameLv1: this.state.categoryLv1.value,
+                nameLv2: this.state.categoryLv2.value,
+                nameLv3: this.state.categoryLv3.value,
+                description: this.state.valueText,
+                attributeIds: this.state.attributeIds
+            }).then(data => {
+                NotificationManager.success("Thành công", "Thành công");
+            }).catch(error => {
+                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+            });
+        }
+    }
     editCategory = async () => {
         if (this.state.categoryLv1.value !== ""
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {
-            let ids = [];
+
             const propertiesFilter = this.state.propertiesFilter;
+            this.setState({ attributeIds : [] });
+
             ApiController.get(ATTRIBUTES.all, {}, data => {
                 data.forEach(item => {
-                    console.log();
                     if (propertiesFilter.includes(item.label)) {
-                        ids.push(item.id);
+                        this.setState({ attributeIds: [...this.state.attributeIds, item.id] });
                     }
-                })
+                });
+                this.callApi();
             })
-
-            if (this.state.setId) {
-                await Api.callAsync('put', CATEGORIES.allEdit, {
-                    id: parseInt(this.state.setId),
-                    nameLv1: this.state.categoryLv1.value,
-                    nameLv2: this.state.categoryLv2.value,
-                    nameLv3: this.state.categoryLv3.value,
-                    description: this.state.valueText,
-                    attributeIds: ids
-                }).then(data => {
-                    NotificationManager.success("Thành công", "Thành công");
-                }).catch(error => {
-                    NotificationManager.warning("Cập nhật thất bại", "Thất bại" );
-                });
-            } else {
-                await Api.callAsync('post', CATEGORIES.allEdit, {
-                    nameLv1: this.state.categoryLv1.value,
-                    nameLv2: this.state.categoryLv2.value,
-                    nameLv3: this.state.categoryLv3.value,
-                    description: this.state.valueText,
-                    attributeIds: ids
-                }).then(data => {
-                    NotificationManager.success("Thành công", "Thành công");
-                }).catch(error => {
-                    NotificationManager.warning( "Thêm mới thất bại", "Thất bại");
-                });
-            }
         } else {
             return;
         }
     }
 
     render() {
-        const { optionsLv1, optionsLv2, optionsLv3, optionsProperties } = this.state;
+        const { optionsLv1, optionsLv2, optionsLv3, optionsProperties, optionsOwnProperties } = this.state;
         const { categoryLv1, categoryLv2, categoryLv3 } = this.state;
 
         let getValueInput = (event) => {
@@ -289,14 +309,13 @@ class EditCategory extends Component {
                                 <Creatable
                                     isClearable
                                     isMulti
+                                    value={optionsOwnProperties}
                                     options={optionsProperties}
                                     className="react-select"
                                     classNamePrefix="react-select"
                                     onChange={this.handleChangeOptions}
                                     onCreateOption={this.handleCreateOptions}
                                 />
-
-                                {/* onCreateOption={this.handleCreate} */}
                                 <span>
                                     {__(this.messages, "Thuộc tính")}
                                 </span>

@@ -63,6 +63,8 @@ module.exports = {
 // 0.6.Menu
 "menu.category": "Category",
 "menu.list-cate": "List of categories",
+"menu.product": "Product",
+"menu.list-product": "List of products",
 "menu.detail": "Detail",
 "menu.add": "Add New",
 
