@@ -10,6 +10,7 @@ import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 import ProductTable from './ProductTable';
+import Property from './Property';
 
 class Product extends Component {
     constructor(props) {
@@ -146,7 +147,6 @@ class Product extends Component {
                             </Card>
                         </Colxx>
                     </Row>
-
                 </Fragment>
             </div>
         );
