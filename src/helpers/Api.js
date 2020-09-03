@@ -161,31 +161,54 @@ const ApiController = {
     Axios.delete(url + params, {
       data: data
     })
-    .then(res => {
-      return res.data;
-    })
-    .then(data => {
-      if (isFunction(callback)) {
-        if (data.result !== undefined) {
-          callback(data.result);
-        } else {
-          callback(data);
+      .then(res => {
+        return res.data;
+      })
+      .then(data => {
+        if (isFunction(callback)) {
+          if (data.result !== undefined) {
+            callback(data.result);
+          } else {
+            callback(data);
+          }
         }
+      }).catch(error => {
+        if (isFunction(options.errorCallback)) {
+          options.errorCallback(error);
+        } else {
+          NotificationManager.error(
+            error.response.data.message ? error.response.data.message : "Something wrong",
+            "Error",
+            3000,
+            null,
+            null,
+            ""
+          );
+        }
+      });
+  },
+  upload: (url, formData, callback, options) => {
+    Axios.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    }).catch(error => {
-      if (isFunction(options.errorCallback)) {
-        options.errorCallback(error);
-      } else {
-        NotificationManager.error(
-          error.response.data.message ? error.response.data.message : "Something wrong",
-          "Error",
-          3000,
-          null,
-          null,
-          ""
-        );
-      }
-    });
+    })
+      .then(data => {
+        callback(data.result);
+      }).catch(error => {
+        if (isFunction(options.errorCallback)) {
+          options.errorCallback(error);
+        } else {
+          NotificationManager.error(
+            error.response.data.message ? error.response.data.message : "Something wrong",
+            "Error",
+            3000,
+            null,
+            null,
+            ""
+          );
+        }
+      });
   }
 }
 

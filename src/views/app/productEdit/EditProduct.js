@@ -8,6 +8,7 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Property from './Property';
+import Media from './Media';
 
 class EditProduct extends Component {
     constructor(props) {
@@ -113,9 +114,9 @@ class EditProduct extends Component {
                         <Card>
                             <CardBody>
                                 <Row>
-                                    <Colxx xxs="5">
-                                    </Colxx>
-                                    <Colxx xxs="1">
+                                    <Colxx xxs="6">
+                                        <Media
+                                        />
                                     </Colxx>
                                     <Colxx xxs="6">
                                         <Label className="form-group has-float-label">
