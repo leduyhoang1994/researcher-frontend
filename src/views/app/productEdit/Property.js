@@ -31,7 +31,7 @@ class Property extends React.Component {
         const result = {};
         
         const temp = options;
-        console.log(temp);
+        
         for(let index in temp) {
             const option = temp[index];
             console.log(option);
@@ -40,6 +40,8 @@ class Property extends React.Component {
             }
             result[option.option.attribute.code].push(option.option);
         }
+
+        this.props.setProductAttribute(result);
         
         return result;
     }

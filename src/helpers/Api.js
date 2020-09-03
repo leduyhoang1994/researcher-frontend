@@ -43,7 +43,7 @@ const ApiController = {
       params = '?' + ApiController.serialize(data);
     }
     const result = await Axios.get(`${url}${params}`, options);
-    if (options.data) {
+    if (options?.data) {
       return result.result[options.data]
     }
     return result;
@@ -162,7 +162,7 @@ const ApiController = {
       data: data
     })
       .then(res => {
-        return res.data;
+        return res.data || res;
       })
       .then(data => {
         if (isFunction(callback)) {
@@ -177,7 +177,7 @@ const ApiController = {
           options.errorCallback(error);
         } else {
           NotificationManager.error(
-            error.response.data.message ? error.response.data.message : "Something wrong",
+            error.response?.data.message ? error.response?.data.message : "Something wrong",
             "Error",
             3000,
             null,

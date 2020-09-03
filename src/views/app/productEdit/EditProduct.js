@@ -37,14 +37,15 @@ class EditProduct extends Component {
             productId: "",
             options: {},
             optionIds: [],
+            featureImage: ""
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this)
     }
 
-    componentDidMount() {
-        this.getCategories();
-        this.getOldProducts()
+    async componentDidMount() {
+        await this.getCategories();
+        await this.getOldProducts()
         this.loadCurrentProduct();
     }
 
@@ -71,6 +72,7 @@ class EditProduct extends Component {
                 idCategory: data.categoryEditId,
                 productId: data.productId,
                 options: data.productEditOptions,
+                featureImage: data.featureImage
             })
 
             this.state.optionCategories.forEach(item => {
@@ -91,29 +93,28 @@ class EditProduct extends Component {
         })
     }
 
-    getOldProducts = () => {
+    getOldProducts = async () => {
         let options = [];
-        ApiController.get(PRODUCTS.all, {}, data => {
-            data.forEach(item => {
-                options.push({ label: item.productTitleCn, value: item.id })
-            })
-            this.setState({ optionOldProducts: options })
+        const data = await ApiController.getAsync(PRODUCTS.all, {});
+        
+        data.data.result.forEach(item => {
+            options.push({ label: item.productTitleVi, value: item.id })
         })
+        this.setState({ optionOldProducts: options })
     }
 
-    getCategories = () => {
-        ApiController.get(CATEGORIES.allEdit, {}, data => {
-            let tempOptions = [];
-            let categories = [];
-            // console.log(JSON.stringify(data));
-            data.forEach(item => {
-                if (!tempOptions.includes(item.nameLv3)) {
-                    tempOptions.push(item.nameLv3);
-                    categories.push({ label: item.nameLv3, value: item.id })
-                }
-            })
-            this.setState({ optionCategories: categories });
-        });
+    getCategories = async () => {
+        const data = await ApiController.getAsync(CATEGORIES.allEdit, {});
+        let tempOptions = [];
+        let categories = [];
+        // console.log(JSON.stringify(data));
+        data.data.result.forEach(item => {
+            if (!tempOptions.includes(item.nameLv3)) {
+                tempOptions.push(item.nameLv3);
+                categories.push({ label: item.nameLv3, value: item.id })
+            }
+        })
+        this.setState({ optionCategories: categories });
     }
 
     handleChangeCategory = (data) => {
@@ -177,7 +178,8 @@ class EditProduct extends Component {
                 uboxIn: this.state.uboxIn,
                 categoryEditId: this.state.idCategory,
                 productId: this.state.productId || this.state.selectedOldProduct.value,
-                optionIds: this.state.optionIds
+                optionIds: this.state.optionIds,
+                featureImage: this.state.featureImage,
             }).then(data => {
                 // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
@@ -200,7 +202,8 @@ class EditProduct extends Component {
                 uboxIn: this.state.uboxIn,
                 categoryEditId: this.state.idCategory,
                 productId: this.state.productId || this.state.selectedOldProduct.value,
-                optionIds: this.state.optionIds
+                optionIds: this.state.optionIds,
+                featureImage: this.state.featureImage,
             }).then(data => {
                 // console.log(JSON.stringify(data.categoryEdit.id));
                 // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
@@ -228,6 +231,11 @@ class EditProduct extends Component {
                                 <Row>
                                     <Colxx xxs="6">
                                         <Media
+                                            key={this.state.featureImage !== ""}
+                                            setFeatureImage={url => {
+                                                this.setState({ featureImage: url })
+                                            }}
+                                            featureImage={this.state.featureImage}
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
@@ -324,6 +332,7 @@ class EditProduct extends Component {
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Select
+                                                        key={this.state.optionOldProducts.length + "-" + this.state.selectedOldProduct}
                                                         className="react-select"
                                                         classNamePrefix="react-select"
                                                         options={this.state.optionOldProducts}

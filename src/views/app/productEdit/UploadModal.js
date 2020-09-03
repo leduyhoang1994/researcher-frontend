@@ -8,23 +8,27 @@ class UploadModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            file: null
+            files: null
         }
         this.onFormSubmit = this.onFormSubmit.bind(this)
         this.onChange = this.onChange.bind(this)
     }
     onFormSubmit(e) {
         e.preventDefault() // Stop form submit
-        this.fileUpload(this.state.file);
+        this.fileUpload(this.state.files);
     }
     onChange(e) {
-        this.setState({ file: e.target.files[0] })
+        this.setState({ files: e.target.files })
     }
 
-    fileUpload = (file) => {
+    fileUpload = (files) => {
         const productId = this.props.productId;
-        var formData = new FormData();
-        formData.append("file", file);
+        const formData = new FormData();
+        const fileArray = Array.from(files);
+
+        fileArray.forEach(file => {
+            formData.append("file", file);
+        });
         formData.append("id", productId);
         ApiController.post(`${PRODUCT_EDIT.media}/images`, formData, data => {
             this.props.reloadMedia();
@@ -38,7 +42,7 @@ class UploadModal extends React.Component {
                 <ModalBody>
                     <form onSubmit={this.onFormSubmit}>
                         <h1>File Upload</h1><br />
-                        <input type="file" onChange={this.onChange} />
+                        <input type="file" onChange={this.onChange} multiple />
                         <button type="submit">Upload</button>
                     </form>
                 </ModalBody>

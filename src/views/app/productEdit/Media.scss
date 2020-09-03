@@ -6,9 +6,38 @@
 }
 
 .media-item {
-    @include media();
-    background-size: cover;
-    background-position: center;
+
+    .media-item-show {
+        @include media();
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .set-feature-btn, .remove-media-btn {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        padding: 0px;
+        border-radius: 100%;
+        display: inline-flex;
+        background-color: white;
+        cursor: pointer;
+        i {
+            font-size: 18px;
+        }
+        &:hover {
+            i {
+                color: lightgray;
+            }
+        }
+    }
+
+    .remove-media-btn {
+        left: unset !important;
+        right: -5px !important;
+        color: red
+    }
 }
 
 .media-add {
