@@ -31,10 +31,10 @@ class Property extends React.Component {
         // const { productId } = this.state;
         const productId = 3;
         ApiController.call('get', `${PRODUCT_EDIT.all}/${productId}`, {}, data => {
-            console.log(data);
+            console.log(data.productEditOptions);
             this.setState({ 
                 categoryId: data.categoryEditId,
-                propertiesAttributesValue: this.normalizeProductAttribute(data.options)
+                propertiesAttributesValue: this.normalizeProductAttribute(data.productEditOptions)
             }, () => {
                 this.loadCategoryProperties(data.categoryEditId);
             });
@@ -43,12 +43,18 @@ class Property extends React.Component {
 
     normalizeProductAttribute = (options) => {
         const result = {};
-        options.forEach(option => {
+        
+        const temp = options;
+        console.log(temp);
+        for(let index in temp) {
+            const option = temp[index];
+            console.log(option);
             if (!result[option.option.attribute.code]) {
                 result[option.option.attribute.code] = [];
             }
             result[option.option.attribute.code].push(option.option);
-        });
+        }
+        
         return result;
     }
 

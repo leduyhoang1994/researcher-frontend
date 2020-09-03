@@ -8,6 +8,8 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Property from './Property';
+import Api from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class EditProduct extends Component {
     constructor(props) {
@@ -30,17 +32,19 @@ class EditProduct extends Component {
             optionCategories: [],
             selectedOldProduct: "",
             optionOldProducts: [],
+            optionProperties: [],
+            productId: "",
+            options: {},
+            optionIds: [],
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this)
     }
 
     componentDidMount() {
-        this.loadCurrentProduct();
-        // this.getProperties();
         this.getCategories();
-
         this.getOldProducts()
+        this.loadCurrentProduct();
     }
 
     loadCurrentProduct = () => {
@@ -51,8 +55,38 @@ class EditProduct extends Component {
 
     getProduct = (setId) => {
         ApiController.get(`${PRODUCTS.allEdit}/${setId}`, {}, data => {
-            console.log(JSON.stringify(data));
-            this.setState({ product: data })
+            this.setState({
+                name: data.name,
+                priceMin: data.priceMin,
+                priceMax: data.priceMax,
+                futurePriceMin: data.futurePriceMin,
+                futurePriceMax: data.futurePriceMax,
+                serviceSla: data.serviceSla,
+                serviceCost: data.serviceCost,
+                description: data.description,
+                transportation: data.transportation,
+                workshopIn: data.workshopIn,
+                uboxIn: data.uboxIn,
+                idCategory: data.categoryEditId,
+                productId: data.productId,
+                options: data.productEditOptions,
+            })
+
+            this.state.optionCategories.forEach(item => {
+                if (item.value === this.state.idCategory) {
+                    this.setState({
+                        selectedCategory: { label: item.label, value: item.value }
+                    })
+                }
+            })
+
+            this.state.optionOldProducts.forEach(item => {
+                if (item.value === this.state.productId) {
+                    this.setState({
+                        selectedOldProduct: { label: item.label, value: item.value }
+                    })
+                }
+            })
         })
     }
 
@@ -70,7 +104,7 @@ class EditProduct extends Component {
         ApiController.get(CATEGORIES.allEdit, {}, data => {
             let tempOptions = [];
             let categories = [];
-            console.log(JSON.stringify(data));
+            // console.log(JSON.stringify(data));
             data.forEach(item => {
                 if (!tempOptions.includes(item.nameLv3)) {
                     tempOptions.push(item.nameLv3);
@@ -96,10 +130,88 @@ class EditProduct extends Component {
         });
     }
 
+    setProductAttribute = (data) => {
+        let optionId = [];
+        for (var items in data) {
+            let arr = data[items];
+            arr.map(item => {
+                optionId.push(item.id);
+            })
+        }
+
+        this.setState({
+            optionIds: optionId
+        });
+    }
+
+    editProduct = () => {
+        if (this.state.name !== "" && this.state.priceMin !== ""
+            && this.state.priceMax !== "" && this.state.futurePriceMin !== ""
+            && this.state.futurePriceMax !== "" && this.state.serviceSla !== ""
+            && this.state.serviceCost !== "" && this.state.description !== ""
+            && this.state.transportation !== "" && this.state.workshopIn !== ""
+            && this.state.uboxIn !== "" && this.state.idCategory !== ""
+            && this.state.selectedOldProduct.value !== "" && this.state.idCategory !== "") {
+
+            this.callApi();
+        } else {
+            return;
+        }
+    }
+
+    callApi = async () => {
+        if (this.state.setId) {
+            await Api.callAsync('put', PRODUCTS.allEdit, {
+                id: parseInt(this.state.setId),
+                name: this.state.name,
+                priceMin: this.state.priceMin,
+                priceMax: this.state.priceMax,
+                futurePriceMin: this.state.futurePriceMin,
+                futurePriceMax: this.state.futurePriceMax,
+                serviceSla: this.state.serviceSla,
+                serviceCost: this.state.serviceCost,
+                description: this.state.description,
+                transportation: this.state.transportation,
+                workshopIn: this.state.workshopIn,
+                uboxIn: this.state.uboxIn,
+                categoryEditId: this.state.idCategory,
+                productId: this.state.productId || this.state.selectedOldProduct.value,
+                optionIds: this.state.optionIds
+            }).then(data => {
+                // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
+                NotificationManager.success("Thành công", "Thành công");
+            }).catch(error => {
+                NotificationManager.warning("Cập nhật thất bại", "Thất bại");
+            });
+        } else {
+            console.log(this.state.attributeIds);
+            await Api.callAsync('post', PRODUCTS.allEdit, {
+                name: this.state.name,
+                priceMin: this.state.priceMin,
+                priceMax: this.state.priceMax,
+                futurePriceMin: this.state.futurePriceMin,
+                futurePriceMax: this.state.futurePriceMax,
+                serviceSla: this.state.serviceSla,
+                serviceCost: this.state.serviceCost,
+                description: this.state.description,
+                transportation: this.state.transportation,
+                workshopIn: this.state.workshopIn,
+                uboxIn: this.state.uboxIn,
+                categoryEditId: this.state.idCategory,
+                productId: this.state.productId || this.state.selectedOldProduct.value,
+                optionIds: this.state.optionIds
+            }).then(data => {
+                // console.log(JSON.stringify(data.categoryEdit.id));
+                // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
+                NotificationManager.success("Thành công", "Thành công");
+            }).catch(error => {
+                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+            });
+        }
+    }
+
     render() {
         let { name, priceMin, priceMax, futurePriceMin, futurePriceMax, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state;
-        console.log(priceMin);
-        const initialValues = { name, priceMin, priceMax, futurePriceMin, futurePriceMax };
         return (
             <Fragment>
                 <Row>
@@ -315,8 +427,8 @@ class EditProduct extends Component {
                                                 <Property
                                                     component={this}
                                                     categoryId={this.state.idCategory} // category id of product
-                                                    productOptions={null} // options fields of product data
-                                                    setProductAttribute={null} // callback function, called everytime product property change
+                                                    productOptions={this.state.options} // options fields of product data
+                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>
                                         </Row>
@@ -345,7 +457,7 @@ class EditProduct extends Component {
                                         className="mr-2"
                                         color="primary"
                                         onClick={() => {
-                                            this.editCategory();
+                                            this.editProduct();
                                         }}
                                     >
                                         {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
