@@ -4,9 +4,7 @@
   "description": "Gogo - React Bootstrap 4 Admin Dashboard Template",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^4.2.2",
     "@glidejs/glide": "^3.3.0",
-    "antd": "^4.6.2",
     "availity-reactstrap-validation": "^2.0.4",
     "axios": "^0.18.0",
     "chart.js": "2.7.2",

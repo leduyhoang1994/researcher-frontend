@@ -45,7 +45,7 @@ const Products = React.lazy(() =>
 );
 
 const EditProducts = React.lazy(() =>
-  import(/* webpackChunkName: "product-set" */ './productEdit/EditProduct')
+  import(/* webpackChunkName: "product-set-123" */ './productEdit/EditProduct')
 );
 
 class App extends Component {
