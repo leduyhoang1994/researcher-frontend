@@ -8,8 +8,12 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Property from './Property';
+<<<<<<< HEAD
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
+=======
+import Media from './Media';
+>>>>>>> 76f7450a9bd7f59e21e2cc9559ab4ac86b448161
 
 class EditProduct extends Component {
     constructor(props) {
@@ -225,9 +229,9 @@ class EditProduct extends Component {
                         <Card>
                             <CardBody>
                                 <Row>
-                                    <Colxx xxs="5">
-                                    </Colxx>
-                                    <Colxx xxs="1">
+                                    <Colxx xxs="6">
+                                        <Media
+                                        />
                                     </Colxx>
                                     <Colxx xxs="6">
                                         <Label className="form-group has-float-label">

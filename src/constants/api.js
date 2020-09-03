@@ -54,6 +54,7 @@ export const CATEGORY_EDIT = {
 export const productEdit = 'product-edits';
 export const PRODUCT_EDIT = {
   all: `${apiPath}/${productEdit}`,
+  media: `${apiPath}/${productEdit}/media`,
 }
 
 export const options = 'options';

@@ -1,0 +1,19 @@
+@mixin media() {
+    width: 80px;
+    height: 80px;
+    float: left;
+    margin: 5px;
+}
+
+.media-item {
+    @include media();
+    background-size: cover;
+    background-position: center;
+}
+
+.media-add {
+    @include media();
+    background-color: lightgray;
+    border: 2px solid #d7d7d7;
+    cursor: pointer;
+}
