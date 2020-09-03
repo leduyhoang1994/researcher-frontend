@@ -20,25 +20,11 @@ class Property extends React.Component {
             reloadOptions: {},
             productId: this.props.productId
         };
+        console.log(this.props.productOptions);
     }
 
     componentDidMount() {
         this.loadCategoryProperties();
-        this.loadProduct();
-    }
-
-    loadProduct() {
-        // const { productId } = this.state;
-        const productId = 3;
-        ApiController.call('get', `${PRODUCT_EDIT.all}/${productId}`, {}, data => {
-            console.log(data.productEditOptions);
-            this.setState({ 
-                categoryId: data.categoryEditId,
-                propertiesAttributesValue: this.normalizeProductAttribute(data.productEditOptions)
-            }, () => {
-                this.loadCategoryProperties(data.categoryEditId);
-            });
-        });
     }
 
     normalizeProductAttribute = (options) => {
@@ -59,7 +45,7 @@ class Property extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.categoryId !== prevProps.categoryId) {
+        if (this.props.categoryId !== prevProps.categoryId && this.props.categoryId !== undefined) {
             this.loadCategoryProperties();
         }
     }

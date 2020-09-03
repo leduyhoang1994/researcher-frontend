@@ -8,12 +8,9 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Property from './Property';
-<<<<<<< HEAD
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-=======
 import Media from './Media';
->>>>>>> 76f7450a9bd7f59e21e2cc9559ab4ac86b448161
 
 class EditProduct extends Component {
     constructor(props) {
@@ -26,12 +23,12 @@ class EditProduct extends Component {
             futurePriceMin: 0,
             futurePriceMax: 0,
             serviceSla: "",
-            serviceCost: null,
+            serviceCost: "",
             description: "",
             transportation: "",
-            workshopIn: null,
-            uboxIn: null,
-            idCategory: null,
+            workshopIn: "",
+            uboxIn: "",
+            idCategory: "",
             selectedCategory: "",
             optionCategories: [],
             selectedOldProduct: "",
@@ -73,7 +70,7 @@ class EditProduct extends Component {
                 uboxIn: data.uboxIn,
                 idCategory: data.categoryEditId,
                 productId: data.productId,
-                options: data.productEditOptions,
+                options: data.options,
             })
 
             this.state.optionCategories.forEach(item => {
@@ -429,6 +426,7 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Property
+                                                    key={this.state.productId}
                                                     component={this}
                                                     categoryId={this.state.idCategory} // category id of product
                                                     productOptions={this.state.options} // options fields of product data

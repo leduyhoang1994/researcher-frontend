@@ -34,13 +34,14 @@ class Media extends React.Component {
     }
 
     renderMediaItem = (media) => {
-        const url = 'http://localhost:8080/products/3/images'
+        const { productId } = this.state;
+        const url = `http://localhost:8080/products/${productId}/images`
         const style = {
             backgroundImage: `url('${url}/${media}')`
         };
 
         return (
-            <div className="media-item" style={style}>
+            <div key={media} className="media-item" style={style}>
 
             </div>
         );
