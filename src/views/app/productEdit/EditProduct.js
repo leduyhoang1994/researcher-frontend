@@ -50,7 +50,7 @@ class EditProduct extends Component {
             data.forEach(item => {
                 if (!tempOptions.includes(item.nameLv3)) {
                     tempOptions.push(item.nameLv3);
-                    categories.push({label: item.nameLv3, value: item.id})
+                    categories.push({ label: item.nameLv3, value: item.id })
                 }
                 console.log(categories);
             })
@@ -176,7 +176,14 @@ class EditProduct extends Component {
                                 </Colxx>
                             </Row>
                             <Row>
-                                {/* <Property categoryId={this.state.idCategory} /> */}
+                                <Colxx xxs="12">
+                                    <Property
+                                        component={this}
+                                        categoryId={this.state.idCategory} // category id of product
+                                        productOptions={null} // options fields of product data
+                                        setProductAttribute={null} // callback function, called everytime product property change
+                                    />
+                                </Colxx>
                             </Row>
                         </Colxx>
                     </Row>

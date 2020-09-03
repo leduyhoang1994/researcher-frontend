@@ -44,5 +44,20 @@ export const PRODUCTS = {
 export const attributes = 'attributes';
 export const ATTRIBUTES = {
   all: `${apiPath}/${attributes}`,
-
 }
+
+export const cagegoryEdit = 'category-edit-attributes';
+export const CATEGORY_EDIT = {
+  all: `${apiPath}/${cagegoryEdit}/category`,
+}
+
+export const productEdit = 'product-edits';
+export const PRODUCT_EDIT = {
+  all: `${apiPath}/${productEdit}`,
+}
+
+export const options = 'options';
+export const OPTIONS = {
+  create: `${apiPath}/${options}`,
+  all: `${apiPath}/${options}/attribute`,
+};

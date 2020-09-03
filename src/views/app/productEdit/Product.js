@@ -9,6 +9,7 @@ import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
+import Property from './Property';
 
 class Product extends Component {
     constructor(props) {
@@ -137,11 +138,10 @@ class Product extends Component {
                     <Row>
                         <Colxx xxs="12">
                             <Card>
-
+                                
                             </Card>
                         </Colxx>
                     </Row>
-
                 </Fragment>
             </div>
         );
