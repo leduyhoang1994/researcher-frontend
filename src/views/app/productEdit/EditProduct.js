@@ -95,8 +95,10 @@ class EditProduct extends Component {
 
     getOldProducts = async () => {
         let options = [];
-        const data = await ApiController.getAsync(PRODUCTS.all, {});
-        
+        const data = await ApiController.getAsync(PRODUCTS.all, {
+            page: 0,
+            size: 20
+        });
         data.data.result.forEach(item => {
             options.push({ label: item.productTitleVi, value: item.id })
         })
@@ -298,7 +300,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         name="futurePriceMin"
                                                         value={futurePriceMin}
-                                                        min="0"
+                                                        min={0}
                                                         defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
@@ -311,7 +313,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         name="futurePriceMax"
                                                         value={futurePriceMax}
-                                                        min="0"
+                                                        min={0}
                                                         defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
@@ -353,11 +355,7 @@ class EditProduct extends Component {
                                                         name="serviceSla"
                                                         value={serviceSla}
                                                         defaultValue={this.state.serviceSla}
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                serviceSla: e.target.value
-                                                            });
-                                                        }}
+                                                        onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "SLA dịch vụ")}
@@ -366,14 +364,11 @@ class EditProduct extends Component {
                                                 <Label className="form-group has-float-label">
                                                     <Input
                                                         type="number"
+                                                        min={0}
                                                         name="serviceCost"
                                                         value={serviceCost}
                                                         defaultValue={this.state.serviceCost}
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                serviceCost: e.target.value
-                                                            });
-                                                        }}
+                                                        onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Phí dịch vụ dự kiến")}
@@ -387,11 +382,7 @@ class EditProduct extends Component {
                                                         name="transportation"
                                                         value={transportation}
                                                         defaultValue={this.state.transportation}
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                transportation: e.target.value
-                                                            });
-                                                        }}
+                                                        onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Hình thức vận chuyển")}
@@ -404,11 +395,7 @@ class EditProduct extends Component {
                                                         value={workshopIn}
                                                         min="0"
                                                         defaultValue={this.state.workshopIn}
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                workshopIn: e.target.value
-                                                            });
-                                                        }}
+                                                        onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian phát hàng của xưởng")}
@@ -420,11 +407,7 @@ class EditProduct extends Component {
                                                         name="uboxIn"
                                                         value={uboxIn}
                                                         defaultValue={this.state.uboxIn} rows="1"
-                                                        onChange={e => {
-                                                            this.setState({
-                                                                transportation: e.target.value
-                                                            });
-                                                        }}
+                                                        onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian giao hàng Ubox")}
