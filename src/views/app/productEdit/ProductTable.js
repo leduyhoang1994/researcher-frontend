@@ -3,22 +3,20 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
-import { Input, Button } from 'reactstrap';
-import { isFunction } from 'formik';
-import Select from 'react-select';
 import "./style.scss";
 
 const dataTableColumns = [
     {
         Header: "Hình ảnh",
         width: 150,
-        accessor: "mediaLink",
+        accessor: "featureImage",
         Cell: props => <img width="50" src={props.value} />
     },
     {
-        Header: "Mã ngành hàng",
-        accessor: "categoryEditId",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+        Header: "Ngành hàng",
+        width: 250,
+        accessor: "category",
+        Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
         Header: "Tên sản phẩm",
@@ -82,8 +80,9 @@ const dataTableColumns = [
         Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
 ]
+
 const ProductTable = (props) => {
-    const data = props.products;
+    let data = props.products;
     return (
         <div>
             <ReactTable
