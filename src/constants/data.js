@@ -6,10 +6,10 @@ export const SITE_LIST = [
         disabled: true,
         sites: [
             {
-                code: "shopee",
+                code: "Shopee",
                 name: "Shopee",
                 top: "",
-                disabled: true,
+                disabled: false,
             },
             {
                 code: "lazada",

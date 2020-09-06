@@ -11,6 +11,7 @@ import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';
 import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ProductSetModal from './ProductSetModal';
+import { arrayColumn } from '../../../helpers/Utils';
 
 class CreateTrainingClass extends Component {
   constructor(props) {
@@ -49,9 +50,13 @@ class CreateTrainingClass extends Component {
 
   searchProducts = () => {
     const { search, categoriesFilter } = this.state;
-    ApiController.call('get', PRODUCTS.all, {}, data => {
+    ApiController.call('get', PRODUCTS.all, {
+      page: 1,
+      size: 10,
+      categoriesFilter:  arrayColumn(this.state.categoriesFilter, 'id')
+    }, data => {
       this.setState({
-        productList: data
+        productList: data.data
       });
     })
   };
