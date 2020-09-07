@@ -6,7 +6,9 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import { Input, Button } from 'reactstrap';
 import { isFunction } from 'formik';
 import Select from 'react-select';
+import ResourceTable from '../../../components/data-table';
 import "./style.scss";
+import { PRODUCTS } from '../../../constants/api';
 
 const ProductTable = ({
   data,
@@ -61,25 +63,25 @@ const ProductTable = ({
       accessor: "productImage",
       Cell: props => <img width="50" src={props.value} />
     },
-    {
-      Header: __(component.messages, "Tên ngành hàng tầng 3"),
-      filterable: true,
-      accessor: "productCategoryVi",
-      Cell: props => <p className="text-muted">{props.value}</p>,
-      Filter: ({ filter, onChange }) => {
-        return (
-          <Select
-            isClearable
-            className="react-select"
-            classNamePrefix="react-select"
-            options={filterCate}
-            onChange={event => onChange(event ? event.categoryNameViLevel3 : "")}
-            getOptionValue={option => option.categoryNameViLevel3}
-            getOptionLabel={option => option.categoryNameViLevel3}
-          />
-        );
-      }
-    },
+    // {
+    //   Header: __(component.messages, "Tên ngành hàng tầng 3"),
+    //   filterable: true,
+    //   accessor: "productCategoryVi",
+    //   Cell: props => <p className="text-muted">{props.value}</p>,
+    //   Filter: ({ filter, onChange }) => {
+    //     return (
+    //       <Select
+    //         isClearable
+    //         className="react-select"
+    //         classNamePrefix="react-select"
+    //         options={filterCate}
+    //         onChange={event => onChange(event ? event.categoryNameViLevel3 : "")}
+    //         getOptionValue={option => option.categoryNameViLevel3}
+    //         getOptionLabel={option => option.categoryNameViLevel3}
+    //       />
+    //     );
+    //   }
+    // },
     {
       Header: __(component.messages, "Tên sản phẩm"),
       width: 300,
@@ -160,14 +162,20 @@ const ProductTable = ({
     },
   ];
 
+  const apiResource = {
+    url: PRODUCTS.all,
+    query: {
+      
+    }
+  }
+
   return (
     <div>
-      <ReactTable
-        data={data}
+      <ResourceTable
+        apiResource={apiResource}
         columns={columns()}
-        defaultPageSize={10}
+        defaultPageSize={25}
         className="mb-4"
-        PaginationComponent={DataTablePagination}
         getTrProps={(state, rowInfo) => {
           if (rowInfo && rowInfo.row && selectable) {
             return {

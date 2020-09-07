@@ -50,10 +50,16 @@ class CreateTrainingClass extends Component {
 
   searchProducts = () => {
     const { search, categoriesFilter } = this.state;
+    const s = {
+      categoryId: {
+        "in": arrayColumn(this.state.categoriesFilter, 'id')
+      }
+    };
+    
     ApiController.call('get', PRODUCTS.all, {
       page: 1,
       size: 10,
-      categoriesFilter:  arrayColumn(this.state.categoriesFilter, 'id')
+      s: JSON.stringify(s)
     }, data => {
       this.setState({
         productList: data.data
