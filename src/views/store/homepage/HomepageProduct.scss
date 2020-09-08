@@ -1,0 +1,29 @@
+.product {
+    background: transparent;
+    box-shadow: none;
+    padding: 10px;
+    padding-bottom: 10px;
+    height: 280px;
+    cursor: pointer;
+    transition: all 0.25s linear;
+    background: transparent;
+    &:hover {
+        box-shadow: 0 1px 15px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.04);
+        background: white;
+    }
+    .product-body {
+        background-color: transparent;
+        padding: 0px;
+        padding-top:10px;
+        text-align: justify;
+        text-justify: inter-word;
+        display: flex;
+        flex-direction: column;
+        .product-subtitle {
+            flex: 1;
+        }
+        .product-price {
+            // padding: 10px 0px;
+        }
+    }
+}

@@ -41,6 +41,9 @@ const ViewUser = React.lazy(() =>
 const ViewSeller = React.lazy(() =>
   import(/* webpackChunkName: "views-user" */ './views/seller')
 );
+const ViewStore = React.lazy(() =>
+  import(/* webpackChunkName: "views-user" */ './views/store')
+);
 const ViewError = React.lazy(() =>
   import(/* webpackChunkName: "views-error" */ './views/error')
 );
@@ -106,6 +109,10 @@ class App extends Component {
                   <Route
                     path="/seller"
                     render={props => <ViewSeller {...props} />}
+                  />
+                  <Route
+                    path="/store"
+                    render={props => <ViewStore {...props} />}
                   />
                   <Route
                     path="/error"
