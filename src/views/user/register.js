@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Row, Card, CardTitle, Label, FormGroup, Input, Button } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
-import { registerUser, registerUserError } from "../../redux/actions";
+import { registerUser, registerUserError } from "../../redux/auth/actions";
 
 import { NotificationManager } from "../../components/common/react-notifications";
 import IntlMessages from "../../helpers/IntlMessages";
@@ -72,6 +72,7 @@ class Register extends Component {
   }
 
   render() {
+    console.log(this.props);
     const { firstName, lastName, email, password, confirmPassword } = this.state;
     const initialValues = { firstName, lastName, email, password, confirmPassword };
 

@@ -2,13 +2,15 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from '../../helpers/Firebase';
 import Api from '../../helpers/Api';
-import { AUTH } from '../../constants/api';
+import { USER, SELLER } from '../../constants/api';
 import {
     LOGIN_USER,
     REGISTER_USER,
     LOGOUT_USER,
     FORGOT_PASSWORD,
     RESET_PASSWORD,
+    LOGIN_SELLER,
+    REGISTER_SELLER,
 } from '../actions';
 
 import {
@@ -16,6 +18,10 @@ import {
     loginUserError,
     registerUserSuccess,
     registerUserError,
+    loginSellerSuccess,
+    loginSellerError,
+    registerSellerSuccess,
+    registerSellerError,
     forgotPasswordSuccess,
     forgotPasswordError,
     resetPasswordSuccess,
@@ -28,32 +34,11 @@ export function* watchLoginUser() {
     yield takeEvery(LOGIN_USER, loginWithEmailPassword);
 }
 
+
 // const loginWithEmailPasswordAsync = async (email, password) =>
 //     await auth.signInWithEmailAndPassword(email, password)
 //         .then(authUser => authUser)
 //         .catch(error => error);
-
-const loginWithEmailPasswordAsync = async (email, password) =>
-    await Api.callAsync('post', AUTH.login, {
-        email: email,
-        password: password
-    }).then(data => {
-        return data.data;
-    }).catch(error => error);
-// await auth.signInWithEmailAndPassword(email, password)
-//     .then(authUser => authUser)
-//     .catch(error => error);
-
-const getUserDetails = async (token) =>
-    await Api.callAsync('get', AUTH.details, {
-        token: token
-    }, {
-        headers: {
-            Authorization: 'Bearer ' + token //the token is a variable which holds the token
-        }
-    }).then(data => {
-        return data.data;
-    }).catch(error => error);
 
 function* loginWithEmailPassword({ payload }) {
     const { email, password } = payload.user;
@@ -61,7 +46,7 @@ function* loginWithEmailPassword({ payload }) {
     try {
         const loginUser = yield call(loginWithEmailPasswordAsync, email, password);
 
-        if(loginUser.success) {
+        if (loginUser.success) {
             localStorage.setItem('user_token', loginUser.result.accessToken);
             const userDetails = yield call(getUserDetails, loginUser.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
@@ -76,12 +61,79 @@ function* loginWithEmailPassword({ payload }) {
     }
 }
 
+const loginWithEmailPasswordAsync = async (email, password) =>
+    await Api.callAsync('post', USER.login, {
+        email: email,
+        password: password
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
+// await auth.signInWithEmailAndPassword(email, password)
+//     .then(authUser => authUser)
+//     .catch(error => error);
+
+export function* watchLoginSeller() {
+    yield takeEvery(LOGIN_SELLER, loginSellerWithEmailPassword);
+}
+
+function* loginSellerWithEmailPassword({ payload }) {
+    const { userName, password } = payload.user;
+    const { history } = payload;
+    try {
+        const loginSeller = yield call(loginSellerWithEmailPasswordAsync, userName, password);
+
+        if (loginSeller.success) {
+            localStorage.setItem('user_token', loginSeller.result.accessToken);
+            const userDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(userDetails));
+            yield put(loginSellerSuccess(loginSeller.result, userDetails));
+            window.open('/', '_self');
+        } else {
+            yield put(loginSellerError(loginSeller.message));
+        }
+    } catch (error) {
+        yield put(loginSellerError(error));
+
+    }
+}
+
+const loginSellerWithEmailPasswordAsync = async (userName, password) =>
+    await Api.callAsync('post', SELLER.login, {
+        username: userName,
+        password: password
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
+
+
+const getUserDetails = async (token) =>
+    await Api.callAsync('get', USER.details, {
+        token: token
+    }, {
+        headers: {
+            Authorization: 'Bearer ' + token //the token is a variable which holds the token
+        }
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
+
+const getSellerDetails = async (token) =>
+    await Api.callAsync('get', SELLER.details, {
+        token: token
+    }, {
+        headers: {
+            Authorization: 'Bearer ' + token //the token is a variable which holds the token
+        }
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
+
 
 export function* watchRegisterUser() {
     yield takeEvery(REGISTER_USER, registerWithEmailPassword);
 }
 const registerWithEmailPasswordAsync = async (firstName, lastName, email, password, confirmPassword) =>
-    await Api.callAsync('post', AUTH.register, {
+    await Api.callAsync('post', USER.register, {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -108,7 +160,44 @@ function* registerWithEmailPassword({ payload }) {
     }
 }
 
+// FOR SELLER
+export function* watchRegisterSeller() {
+    yield takeEvery(REGISTER_SELLER, registerSellerWithEmailPassword);
+}
 
+function* registerSellerWithEmailPassword({ payload }) {
+    const { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address } = payload.user;
+    const { history } = payload;
+    try {
+        const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address);
+        if (registerSeller.success) {
+            // localStorage.setItem('user_details', JSON.stringify(registerSeller.result));
+            yield put(registerSellerSuccess(registerSeller));
+            window.open('/seller/login', '_self');
+        } else {
+            yield put(registerSellerError(registerSeller));
+        }
+    } catch (error) {
+        yield put(registerSellerError(error));
+    }
+}
+
+const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address) =>
+    await Api.callAsync('post', SELLER.register, {
+        firstName: firstName,
+        lastName: lastName,
+        username: userName,
+        phoneNumber: phone,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        city: selectedCity,
+        district: selectedDistrict,
+        town: selectedCommune,
+        address: address
+    }).then(data => {
+        return data.data;
+    }).catch(error => error.response.data);
 
 export function* watchLogoutUser() {
     yield takeEvery(LOGOUT_USER, logout);
@@ -116,7 +205,7 @@ export function* watchLogoutUser() {
 
 const logoutAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
-    await ApiController.callAsync("POST", AUTH.logout, null);
+    await ApiController.callAsync("POST", USER.logout, null);
     history.push('/')
 }
 
@@ -183,8 +272,10 @@ function* resetPassword({ payload }) {
 export default function* rootSaga() {
     yield all([
         fork(watchLoginUser),
+        fork(watchLoginSeller),
         fork(watchLogoutUser),
         fork(watchRegisterUser),
+        fork(watchRegisterSeller),
         fork(watchForgotPassword),
         fork(watchResetPassword),
     ]);

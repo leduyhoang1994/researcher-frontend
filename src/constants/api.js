@@ -4,19 +4,28 @@ export const apiVersion = 'v1';
 export const apiPath = `${domain}/${apiVersion}`;
 
 /** User */
-export const user = 'auth';
+export const user = 'auth-users';
 export const USERS = {
   all: `${apiPath}/${user}`,
   one: `${apiPath}/${user}`,
   classManagers: `${apiPath}/class-manager`
 }
 
-/** Auth */
-export const AUTH = {
+/** Auth User*/
+export const USER = {
   logout: `${apiPath}/${user}/logout`,
   login: `${apiPath}/${user}/login`,
-  register: `${apiPath}/users/register`,
-  details: `${apiPath}/users/info`,
+  register: `${apiPath}/${user}/register`,
+  details: `${apiPath}/${user}/info`,
+}
+
+/** Auth Seller*/
+export const seller = 'auth-sellers';
+export const SELLER = {
+  logout: `${apiPath}/${seller}/logout`,
+  login: `${apiPath}/${seller}/login`,
+  register: `${apiPath}/${seller}/register`,
+  details: `${apiPath}/${seller}/info`,
 }
 
 /** Category */
