@@ -1,19 +1,19 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Card, CardBody, CardTitle, Label, Input, CardFooter, Button } from 'reactstrap';
-import { Colxx, Separator } from "../../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../../containers/navs/Breadcrumb";
+import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../../helpers/IntlMessages';
-import ApiController from '../../../../helpers/Api';
-import { CATEGORIES, PRODUCTS } from '../../../../constants/api';
-import { arrayColumn } from '../../../../helpers/Utils';
-import Order from './Order';
+import { __ } from '../../../helpers/IntlMessages';
+import ApiController from '../../../helpers/Api';
+import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { arrayColumn } from '../../../helpers/Utils';
+import Product from './Product';
 
-class OrderList extends Component {
+class ProductList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            orders: [],
+            products: [],
         };
         this.messages = this.props.intl.messages;
     }
@@ -26,21 +26,21 @@ class OrderList extends Component {
         let array = [];
         ApiController.get(PRODUCTS.allEdit, {}, data => {
             this.setState({
-                orders: data
+                products: data
             }, () => {
-                this.state.orders.forEach(item => {
+                this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
                     array.push(item);
                 });
                 this.setState({
-                    orders: array
+                    products: array
                 })
             })
         })
     }
 
     render() {
-        const { orders } = this.state;
+        const { products } = this.state;
         return (
             <div>
                 <Fragment>
@@ -51,10 +51,10 @@ class OrderList extends Component {
                         </Colxx>
                     </Row>
                     <Row >
-                        {orders.map((order, index) => {
+                        {products.map((product, index) => {
                             return (
                                 <Colxx xxs="3">
-                                    <Order key={index} order={order} />
+                                    <Product key={index} product={product} />
                                 </Colxx>
                             )
                         })}
@@ -66,4 +66,4 @@ class OrderList extends Component {
         )
     }
 }
-export default injectIntl(OrderList);
+export default injectIntl(ProductList);

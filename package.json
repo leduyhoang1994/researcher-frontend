@@ -11,7 +11,7 @@
     "classnames": "2.2.6",
     "firebase": "^7.4.0",
     "formik": "^1.5.1",
-    "moment": "2.22.2",
+    "moment": "^2.22.2",
     "mousetrap": "^1.6.3",
     "qrcode.react": "^1.0.0",
     "rc-slider": "^8.6.1",

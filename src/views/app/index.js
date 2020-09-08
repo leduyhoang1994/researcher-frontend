@@ -48,10 +48,6 @@ const EditProducts = React.lazy(() =>
   import(/* webpackChunkName: "product-set-123" */ './productEdit/EditProduct')
 );
 
-const ProductList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ './seller/product/ProductList')
-);
-
 class App extends Component {
   render() {
     const { match } = this.props;
@@ -114,11 +110,6 @@ class App extends Component {
               <Route
                 path={`${match.url}/list-product`}
                 render={props => <Products {...props} />}
-              />
-              <Route
-                exact
-                path={`${match.url}/seller/products`}
-                render={props => <ProductList {...props} />}
               />
               <Redirect to="/error" />
             </Switch>

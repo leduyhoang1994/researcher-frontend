@@ -1,0 +1,18 @@
+.ReactTable.table-hover {
+  .rt-tbody {
+    .rt-tr {
+      &:hover {
+        background-color: #e6e6e6;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  overflow: unset !important;
+}
+
+.ReactTable .rt-td {
+  overflow: hidden !important;
+}

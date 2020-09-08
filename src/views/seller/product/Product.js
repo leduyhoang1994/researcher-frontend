@@ -1,12 +1,10 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Label, Input, CardFooter, Button } from 'reactstrap';
-import { Colxx, Separator } from "../../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../../containers/navs/Breadcrumb";
+import React from 'react';
+import { Row } from 'reactstrap';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../../helpers/IntlMessages';
 import { Link } from 'react-router-dom';
 
-const Order = (props) => {
+const Product = (props) => {
     let product = props.product;
     const style = {
         textAlign: "center",
@@ -45,4 +43,4 @@ const Order = (props) => {
     );
 };
 
-export default injectIntl(Order);
+export default injectIntl(Product);
