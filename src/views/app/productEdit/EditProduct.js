@@ -11,6 +11,7 @@ import Property from './Property';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import Media from './Media';
+import { AsyncPaginate } from 'react-select-async-paginate';
 
 class EditProduct extends Component {
     constructor(props) {
@@ -45,7 +46,6 @@ class EditProduct extends Component {
 
     async componentDidMount() {
         await this.getCategories();
-        await this.getOldProducts()
         this.loadCurrentProduct();
     }
 
@@ -93,16 +93,27 @@ class EditProduct extends Component {
         })
     }
 
-    getOldProducts = async () => {
-        let options = [];
+    getOldProducts = async (search, loadedOptions, { page }) => {
+        const filter = {
+            productTitleVi : { 
+                "$cont": `%${search}%`
+            }
+        };
         const data = await ApiController.getAsync(PRODUCTS.all, {
-            page: 0,
+            s: JSON.stringify(filter),
+            page: page,
             size: 20
         });
-        data.data.result.forEach(item => {
-            options.push({ label: item.productTitleVi, value: item.id })
-        })
-        this.setState({ optionOldProducts: options })
+
+        const hasMore = data.data.result.page < data.data.result.pageCount;
+
+        return {
+            options: data.data.result.data,
+            hasMore: hasMore,
+            additional: {
+                page: page + 1,
+            },
+        };
     }
 
     getCategories = async () => {
@@ -333,17 +344,23 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
-                                                    <Select
-                                                        key={this.state.optionOldProducts.length + "-" + this.state.selectedOldProduct}
+                                                    <AsyncPaginate
                                                         className="react-select"
                                                         classNamePrefix="react-select"
-                                                        options={this.state.optionOldProducts}
-                                                        value={this.state.selectedOldProduct}
+                                                        defaultOptions
+                                                        // options={this.state.optionOldProducts}
+                                                        // value={this.state.selectedOldProduct}
+                                                        getOptionLabel={(option) => option.productTitleVi}
+                                                        getOptionValue={(option) => option.id}
+                                                        loadOptions={this.getOldProducts}
                                                         onChange={data =>
                                                             this.setState({
                                                                 selectedOldProduct: data
                                                             })
                                                         }
+                                                        additional={{ 
+                                                            page: 1 
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Nguồn sản phẩm")}

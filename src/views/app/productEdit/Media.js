@@ -11,7 +11,7 @@ class Media extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            productId: this.props.productId || 3,
+            productId: this.props.productId,
             mediaItems: {
                 images: [],
                 videos: []
@@ -27,6 +27,9 @@ class Media extends React.Component {
 
     loadProductMedia = () => {
         const { productId } = this.state;
+        if (!productId) {
+            return;
+        }
         ApiController.call('get', `${PRODUCT_EDIT.all}/${productId}/media`, {}, data => {
             this.setState({
                 mediaItems: data
