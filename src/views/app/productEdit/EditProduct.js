@@ -17,7 +17,7 @@ class EditProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            setId: this.props.match.params.id || null,
+            id: this.props.match.params.id || null,
             name: "",
             priceMin: 0,
             priceMax: 0,
@@ -50,13 +50,13 @@ class EditProduct extends Component {
     }
 
     loadCurrentProduct = () => {
-        const { setId } = this.state;
-        if (setId)
-            this.getProduct(setId);
+        const { id } = this.state;
+        if (id)
+            this.getProduct(id);
     }
 
-    getProduct = (setId) => {
-        ApiController.get(`${PRODUCTS.allEdit}/${setId}`, {}, data => {
+    getProduct = (id) => {
+        ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
             this.setState({
                 name: data.name,
                 priceMin: data.priceMin,
@@ -175,9 +175,9 @@ class EditProduct extends Component {
     }
 
     callApi = async () => {
-        if (this.state.setId) {
+        if (this.state.id) {
             await Api.callAsync('put', PRODUCTS.allEdit, {
-                id: parseInt(this.state.setId),
+                id: parseInt(this.state.id),
                 name: this.state.name,
                 priceMin: this.state.priceMin,
                 priceMax: this.state.priceMax,
@@ -194,7 +194,7 @@ class EditProduct extends Component {
                 optionIds: this.state.optionIds,
                 featureImage: this.state.featureImage,
             }).then(data => {
-                // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
+                // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
@@ -219,7 +219,7 @@ class EditProduct extends Component {
                 featureImage: this.state.featureImage,
             }).then(data => {
                 // console.log(JSON.stringify(data.categoryEdit.id));
-                // window.open(`/app/list-product/edit/${this.state.setId}`, "_self")
+                // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
@@ -244,6 +244,7 @@ class EditProduct extends Component {
                                 <Row>
                                     <Colxx xxs="6">
                                         <Media
+                                            productId={this.state.id}
                                             key={this.state.featureImage !== ""}
                                             setFeatureImage={url => {
                                                 this.setState({ featureImage: url })
@@ -471,7 +472,7 @@ class EditProduct extends Component {
                                             this.editProduct();
                                         }}
                                     >
-                                        {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
+                                        {__(this.messages, this.state.id ? "Cập nhật" : "Thêm mới")}
                                     </Button>
                                 </div>
                             </CardBody>

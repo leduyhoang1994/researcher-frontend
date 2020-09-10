@@ -5,16 +5,19 @@ import UserLayout from '../../layout/UserLayout';
 const Login = React.lazy(() =>
   import(/* webpackChunkName: "user-login" */ './login')
 );
+
 const Register = React.lazy(() =>
   import(/* webpackChunkName: "user-register" */ './register')
 );
+
 
 const User = ({ match }) => {
   return (
     <UserLayout>
       <Suspense fallback={<div className="loading" />}>
         <Switch>
-          <Redirect exact from={`${match.url}/`} to={`${match.url}/login`} />
+          <Redirect exact from={`${match.url}/`} to={`${match.url}/products`} />
+          {/* <Redirect exact from={`${match.url}/`} to={`${match.url}/login`} /> */}
           <Route
             path={`${match.url}/login`}
             render={props => <Login {...props} />}
@@ -23,6 +26,7 @@ const User = ({ match }) => {
             path={`${match.url}/register`}
             render={props => <Register {...props} />}
           />
+          
           <Redirect to="/error" />
         </Switch>
       </Suspense>

@@ -2,14 +2,13 @@
     background: transparent;
     box-shadow: none;
     padding: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 0;
     height: 100%;
     cursor: pointer;
     transition: all 0.25s linear;
     background: transparent;
     &:hover {
         box-shadow: 0 1px 15px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.04);
-        background: white;
     }
     .product-body {
         background-color: transparent;
@@ -26,4 +25,7 @@
             // padding: 10px 0px;
         }
     }
+}
+.align-center {
+    text-align: center;
 }
