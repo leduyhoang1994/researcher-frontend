@@ -13,15 +13,27 @@ const dataTableColumns = [
         Cell: props => <img width="50" src={props.value} />
     },
     {
-        Header: "Ngành hàng",
-        width: 250,
-        accessor: "category.nameLv3",
-        Cell: props => <p className="text-muted">{props.value}</p>
+        Header: "Trạng thái",
+        width: 150,
+        accessor: "isPublished",
+        Cell: props => <p className={props.value ? "text-success" : "text-danger"}>
+            {props.value ? "Đang xuất bản" : "Ngừng xuất bản"}
+        </p>
     },
     {
         Header: "Tên sản phẩm",
         width: 250,
         accessor: "name",
+        Cell: props => <div style={{
+            "whiteSpace": "break-spaces"
+        }}>
+            <p><b>{props.value}</b></p>
+        </div>
+    },
+    {
+        Header: "Ngành hàng",
+        width: 250,
+        accessor: "category.nameLv3",
         Cell: props => <p className="text-muted">{props.value}</p>
     },
     {

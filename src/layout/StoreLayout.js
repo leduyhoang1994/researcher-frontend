@@ -11,7 +11,7 @@ class StoreLayout extends Component {
     const { containerClassnames } = this.props;
     return (
       <div id="app-container" className={containerClassnames}>
-        <TopNav history={this.props.history} />
+        <TopNav hideMenu={true} home={"/store"} history={this.props.history} />
         <Sidebar />
         <main>
           <div className="container-fluid">

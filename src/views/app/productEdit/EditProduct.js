@@ -12,6 +12,8 @@ import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import Media from './Media';
 import { AsyncPaginate } from 'react-select-async-paginate';
+import { Redirect } from 'react-router-dom';
+import { isFunction } from 'formik';
 
 class EditProduct extends Component {
     constructor(props) {
@@ -38,15 +40,44 @@ class EditProduct extends Component {
             productId: "",
             options: {},
             optionIds: [],
-            featureImage: ""
+            featureImage: "",
+            sourceProduct: {},
+            sourceProductSelected: null,
+            redirect: false,
+            loading: false,
+            isPublished: false
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this)
     }
 
+    setRedirect = (url) => {
+        this.setState({
+            redirect: url
+        })
+    }
+
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect push to={this.state.redirect} />
+        }
+    }
+
     async componentDidMount() {
+        this.setState({ loading: true });
         await this.getCategories();
-        this.loadCurrentProduct();
+        const productId = new URLSearchParams(this.props.location.search).get("product-id");
+        if (productId) {
+            const data = await ApiController.callAsync('get', `${PRODUCTS.allEdit}/source/${productId}`, {});
+            const product = data.data.result;
+
+            if (product?.id) {
+                window.open(`/app/list-product/edit/${product.id}`, "_self");
+            }
+        } else {
+            this.loadCurrentProduct();
+        }
+        this.setState({ loading: false });
     }
 
     loadCurrentProduct = () => {
@@ -72,7 +103,9 @@ class EditProduct extends Component {
                 idCategory: data.categoryEditId,
                 productId: data.productId,
                 options: data.productEditOptions,
-                featureImage: data.featureImage
+                featureImage: data.featureImage,
+                sourceProduct: data.sourceProduct,
+                isPublished: data.isPublished
             })
 
             this.state.optionCategories.forEach(item => {
@@ -94,8 +127,9 @@ class EditProduct extends Component {
     }
 
     getOldProducts = async (search, loadedOptions, { page }) => {
+        const { productId } = this.state;
         const filter = {
-            productTitleVi : { 
+            productTitleVi: {
                 "$cont": `%${search}%`
             }
         };
@@ -159,15 +193,33 @@ class EditProduct extends Component {
         });
     }
 
-    editProduct = () => {
-        if (this.state.name !== "" && this.state.priceMin !== ""
-            && this.state.priceMax !== "" && this.state.futurePriceMin !== ""
-            && this.state.futurePriceMax !== "" && this.state.serviceSla !== ""
-            && this.state.serviceCost !== "" && this.state.description !== ""
-            && this.state.transportation !== "" && this.state.workshopIn !== ""
-            && this.state.uboxIn !== "" && this.state.idCategory !== ""
-            && this.state.selectedOldProduct.value !== "" && this.state.idCategory !== "") {
+    validateFields = async () => {
+        const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
+            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "idCategory", "idCategory", () => {
+                return [this.state.selectedOldProduct.value, "sourceProduct"]
+            }];
+        let success = true;
+        for await (const field of needToValidate) {
+            if (isFunction(field)) {
+                const fieldData = field();
+                if (fieldData[0] === "") {
+                    success = false;
+                    NotificationManager.error(`Trường ${fieldData[0]} cần phải nhập`);
+                }
+            } else {
+                if (this.state[field] === "") {
+                    success = false;
+                    NotificationManager.error(`Trường ${field} cần phải nhập`);
+                }
+            }
+        }
+        console.log(success);
 
+        return success;
+    }
+
+    editProduct = async () => {
+        if (await this.validateFields()) {
             this.callApi();
         } else {
             return;
@@ -190,18 +242,19 @@ class EditProduct extends Component {
                 workshopIn: this.state.workshopIn,
                 uboxIn: this.state.uboxIn,
                 categoryEditId: this.state.idCategory,
-                productId: this.state.productId || this.state.selectedOldProduct.value,
+                productId: this.state.productId,
                 optionIds: this.state.optionIds,
                 featureImage: this.state.featureImage,
+                isPublished: this.state.isPublished,
             }).then(data => {
                 // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
+                this.loadCurrentProduct();
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            console.log(this.state.attributeIds);
-            await Api.callAsync('post', PRODUCTS.allEdit, {
+            const data = await Api.callAsync('post', PRODUCTS.allEdit, {
                 name: this.state.name,
                 priceMin: this.state.priceMin,
                 priceMax: this.state.priceMax,
@@ -214,23 +267,47 @@ class EditProduct extends Component {
                 workshopIn: this.state.workshopIn,
                 uboxIn: this.state.uboxIn,
                 categoryEditId: this.state.idCategory,
-                productId: this.state.productId || this.state.selectedOldProduct.value,
+                productId: this.state.productId,
                 optionIds: this.state.optionIds,
                 featureImage: this.state.featureImage,
+                isPublished: this.state.isPublished,
             }).then(data => {
+                return data.data;
                 // console.log(JSON.stringify(data.categoryEdit.id));
                 // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
-                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                return error.response?.data;
             });
+
+            if (data.success) {
+                NotificationManager.success("Thành công", "Thành công");
+                window.open(`/app/list-product/edit/${data.result.id}`, "_self");
+            } else {
+                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                const message = data?.message;
+                if (Array.isArray(message)) {
+                    for (const mess of message) {
+                        NotificationManager.warning(mess, "Thêm mới thất bại");
+                    }
+                } else {
+                    NotificationManager.warning(message, "Thêm mới thất bại");
+                }
+            }
         }
     }
 
     render() {
+        if (this.state.loading) {
+            return (
+                <Fragment>
+                    <div className="loading"></div>
+                </Fragment>
+            )
+        }
         let { name, priceMin, priceMax, futurePriceMin, futurePriceMax, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state;
         return (
             <Fragment>
+                {this.renderRedirect()}
                 <Row>
                     <Colxx xxs="12">
                         <Breadcrumb heading="Sản phẩm" match={this.props.match} />
@@ -282,7 +359,6 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="priceMin"
-                                                        defaultValue={0}
                                                         min={0}
                                                         value={priceMin}
                                                         // defaultValue="0"
@@ -354,14 +430,26 @@ class EditProduct extends Component {
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getOldProducts}
-                                                        onChange={data =>
+                                                        onChange={data => {
+                                                            console.log(data?.id);
                                                             this.setState({
-                                                                selectedOldProduct: data
+                                                                productId: data?.id,
+                                                                sourceProductSelected: data
                                                             })
                                                         }
-                                                        additional={{ 
-                                                            page: 1 
+                                                        }
+                                                        additional={{
+                                                            page: 1
                                                         }}
+                                                        value={
+                                                            this.state.sourceProductSelected ||
+                                                            (
+                                                                this.state.sourceProduct ? {
+                                                                    id: this.state.productId,
+                                                                    productTitleVi: this.state.sourceProduct.productTitleVi
+                                                                } : null
+                                                            )
+                                                        }
                                                     />
                                                     <span>
                                                         {__(this.messages, "Nguồn sản phẩm")}
@@ -451,7 +539,7 @@ class EditProduct extends Component {
                                             <Input type="textarea"
                                                 value={description}
                                                 name="description"
-                                                defaultValue={this.state.description} rows="5"
+                                                rows="5"
                                                 onChange={e => {
                                                     this.setState({
                                                         description: e.target.value
@@ -465,6 +553,19 @@ class EditProduct extends Component {
                                     </Colxx>
                                 </Row>
                                 <div className="text-right card-title">
+                                    <Button
+                                        className="mr-2"
+                                        color={this.state.isPublished ? "danger" : "success"}
+                                        onClick={() => {
+                                            this.setState({
+                                                isPublished: !this.state.isPublished
+                                            }, () => {
+                                                this.editProduct();
+                                            });
+                                        }}
+                                    >
+                                        {__(this.messages, this.state.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                    </Button>
                                     <Button
                                         className="mr-2"
                                         color="primary"

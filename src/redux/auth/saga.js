@@ -87,7 +87,7 @@ function* loginSellerWithEmailPassword({ payload }) {
             const userDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginSellerSuccess(loginSeller.result, userDetails));
-            window.open('/', '_self');
+            window.open('/store', '_self');
         } else {
             yield put(loginSellerError(loginSeller.message));
         }

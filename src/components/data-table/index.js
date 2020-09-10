@@ -26,48 +26,50 @@ class ResourceTable extends Component {
   }
 
   loadData = (userQuery) => {
-    let { url, query } = this.apiResource;
+    let { url, query } = this.props.apiResource;
     const { pagination, filtered, sorted } = this.state;
-    query.page = query.page || 1;
-    query = {
+    let newQuery = {};
+    newQuery.page = query.page || 1;
+    newQuery = {
       ...query,
       ...pagination,
-      ...userQuery
+      ...userQuery,
     };
 
-    if (filtered) {
-      let searches = [];
-      let getDataBy = {};
-      filtered.forEach(f => {
-        let qf = `${f.id}:${f.value}`;
-        searches.push(qf);
-        getDataBy[f.id] = f.value;
-      });
-      query = {
-        ...query,
-        search: searches.join(";"),
-        getDataBy: {
-          ...getDataBy,
-          ...query
-        }
-      }
+    if (sorted && sorted.id) {
+      const orderBy = sorted.id;
+      const orderDirection = sorted.desc === false ? "ASC" : "DESC";
+      newQuery.sort = `${orderBy},${orderDirection}`;
     }
 
-    if (sorted && sorted.id) {
-      query = {
-        ...query,
-        orderBy: sorted.id,
-        sortedBy: sorted.desc === false ? "asc" : "desc"
-      }
+    newQuery.s = {};
+    if (filtered) {
+      filtered.forEach(filter => {
+        if (filter.value) {
+          newQuery.s[filter.id] = {
+            "$cont": `%${filter.value}%`
+          };
+        }
+      });
+    }
+
+    newQuery.s = {
+      ...newQuery.s || {},
+      ...query.s
+    };
+
+    if (newQuery.s) {
+      newQuery.s = JSON.stringify(newQuery.s);
+    } else {
+      delete newQuery.s;
     }
 
     this.setState({ isLoading: true });
 
-    ApiController.call("GET", url, query, response => {
+    ApiController.call("GET", url, newQuery, response => {
       pagination.pages = Math.floor(response.total / response.count);
       pagination.current_page = response.page;
       pagination.defaultPageSize = response.count;
-      pagination.per_page = response.count;
       this.setState({
         data: response.data,
         pagination: pagination,
@@ -95,11 +97,8 @@ class ResourceTable extends Component {
           showPageJump={true}
           PaginationComponent={ResourceTablePagination}
           showPageSizeOptions={true}
-          sorted={[this.state.sorted]}
           onSortedChange={(column, sortDirection, event) => {
             const sort = column[0];
-
-            localStorage.setItem('manager.students.sorted', JSON.stringify(sort));
             this.setState({ sorted: sort }, () => {
               this.loadData();
             });
@@ -107,26 +106,25 @@ class ResourceTable extends Component {
           defaultFilterMethod={(filter, row) => {
             return true;
           }}
-          filtered={this.state.filtered}
+          // filtered={this.state.filtered}
           onFilteredChange={filtered => {
-            localStorage.setItem('manager.students.filtered', JSON.stringify(filtered));
-            this.setState({ filtered: filtered }, () => {
-              clearTimeout(this.filterTimer);
-              this.filterTimer = setTimeout(() => {
+            clearTimeout(this.filterTimer);
+            this.filterTimer = setTimeout(() => {
+              this.setState({ filtered: filtered }, () => {
                 this.loadData();
-              }, 1000);
-            });
+              });
+            }, 1000);
+            return filtered;
           }}
           loadData={this.loadData}
           onPageSizeChange={size => {
-            this.loadData({
-              per_page: size
-            });
             this.setState({
               pagination: {
                 ...this.state.pagination,
                 per_page: size
               }
+            }, () => {
+              this.loadData();
             });
           }}
           onPageChange={page => {

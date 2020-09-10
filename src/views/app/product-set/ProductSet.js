@@ -14,7 +14,8 @@ class ProductSet extends Component {
     this.state = {
       setId: this.props.match.params.id,
       productSet: {
-        products: []
+        products: [],
+        keyState: "key"
       }
     };
     this.messages = this.props.intl.messages;
@@ -38,13 +39,19 @@ class ProductSet extends Component {
         };
       })
       this.setState({
-        productSet: data
+        productSet: data,
+        keyState: Math.random()
       });
     })
   }
 
   removeFromProductSet = (product) => {
-    ApiController.delete(`${PRODUCTS.removeFromSet}?ids[]=${product.id}`, {}, data => {
+    const setItem = product.productSets.find(s => {
+      return s.setId == this.state.setId
+    })
+    ApiController.delete(`${PRODUCTS.removeFromSet}`, {
+      ids: [setItem?.id]
+    }, data => {
       this.loadCurrentProductSet();
     }, {
       
@@ -52,6 +59,7 @@ class ProductSet extends Component {
   };
 
   render() {
+    const { setId } = this.state;
     return (
       <Fragment>
         <Row>
@@ -81,8 +89,8 @@ class ProductSet extends Component {
                           this.setState({
                             productSet: productSet
                           }, () => {
-                            this.productSetList[this.indexOfSet] = productSet;
-                            localStorage.setItem('productSets', JSON.stringify(this.productSetList));
+                            // this.productSetList[this.indexOfSet] = productSet;
+                            // localStorage.setItem('productSets', JSON.stringify(this.productSetList));
                           });
                         }}
                       />
@@ -95,10 +103,18 @@ class ProductSet extends Component {
                 <Row>
                   <Colxx xxs="12">
                     <ProductTable
+                      key={this.state.keyState}
                       component={this}
-                      data={this.state.productSet.productSets}
                       selectable={false}
                       removeFromSelectedProducts={this.removeFromProductSet}
+                      filter={{
+                        join: 'productSets||id,setId,productId',
+                        s: {
+                          'productSets.setId' : {
+                            "$eq" : this.state.setId
+                          }
+                        }
+                      }}
                     />
                   </Colxx>
                 </Row>

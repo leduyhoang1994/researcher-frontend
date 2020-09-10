@@ -20,7 +20,7 @@ class EditCategory extends Component {
             optionsLv1: [],
             optionsLv2: [],
             optionsLv3: [],
-            optionsOwnProperties: [{ label: " ", value: " " }],
+            optionsOwnProperties: [],
             optionsProperties: [],
             propertiesFilter: [],
             attributeIds: [],
@@ -136,7 +136,7 @@ class EditCategory extends Component {
 
     handleSelect1 = categoryLv1 => {
         if(categoryLv1) {
-            this.setState({ categoryLv1: categoryLv1[0] });
+            this.setState({ categoryLv1: categoryLv1 });
         } else {
             this.setState({ categoryLv1: "" });
         }
@@ -144,7 +144,7 @@ class EditCategory extends Component {
 
     handleSelect2 = categoryLv2 => {
         if(categoryLv2) {
-            this.setState({ categoryLv2: categoryLv2[0] });
+            this.setState({ categoryLv2: categoryLv2 });
         } else {
             this.setState({ categoryLv2: "" });
         }
@@ -153,7 +153,7 @@ class EditCategory extends Component {
 
     handleSelect3 = categoryLv3 => {
         if(categoryLv3) {
-            this.setState({ categoryLv3: categoryLv3[0] });
+            this.setState({ categoryLv3: categoryLv3 });
         } else {
             this.setState({ categoryLv3: "" });
         }
@@ -225,22 +225,28 @@ class EditCategory extends Component {
             });
         } else {
             console.log(this.state.attributeIds);
-            await Api.callAsync('post', CATEGORIES.allEdit, {
+            const data = await Api.callAsync('post', CATEGORIES.allEdit, {
                 nameLv1: this.state.categoryLv1.value,
                 nameLv2: this.state.categoryLv2.value,
                 nameLv3: this.state.categoryLv3.value,
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
-                console.log(JSON.stringify(data.categoryEdit.id));
-                window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
+                return data.data;
             }).catch(error => {
-                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                return error.response.data;
             });
+
+            if (data.success) {
+                window.open(`/app/list-cate/edit/${data.result.id}`, "_self")
+                NotificationManager.success("Thành công", "Thành công");
+            } else {
+                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+            }
         }
     }
     editCategory = async () => {
+        console.log(this.state);
         if (this.state.categoryLv1.value !== ""
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {

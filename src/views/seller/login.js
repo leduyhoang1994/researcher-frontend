@@ -110,9 +110,9 @@ class Login extends Component {
                       )}
                     </FormGroup>
                     <div className="d-flex justify-content-between align-items-center">
-                      {/* <NavLink to={`/user/forgot-password`}>
-                        <IntlMessages id="user.forgot-password-question" />
-                      </NavLink> */}
+                      <NavLink to={`/seller/register`}>
+                        <IntlMessages id="Đăng ký tài khoản" />
+                      </NavLink>
                       <Button
                         color="primary"
                         className={`btn-shadow btn-multiple-state ${this.props.loading ? "show-spinner" : ""}`}

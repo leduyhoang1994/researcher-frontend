@@ -205,22 +205,27 @@ class TopNav extends Component {
     return (
       <nav className="navbar fixed-top">
         <div className="d-flex align-items-center navbar-left">
-          <NavLink
-            to="#" location={{}}
-            className="menu-button d-none d-md-block"
-            onClick={e =>
-              this.menuButtonClick(e, menuClickCount, containerClassnames)
-            }
-          >
-            <MenuIcon />
-          </NavLink>
-          <NavLink
-            to="#" location={{}}
-            className="menu-button-mobile d-xs-block d-sm-block d-md-none"
-            onClick={e => this.mobileMenuButtonClick(e, containerClassnames)}
-          >
-            <MobileMenuIcon />
-          </NavLink>
+          {
+            this.props.hideMenu ||
+            <>
+              <NavLink
+                to="#" location={{}}
+                className="menu-button d-none d-md-block"
+                onClick={e =>
+                  this.menuButtonClick(e, menuClickCount, containerClassnames)
+                }
+              >
+                <MenuIcon />
+              </NavLink>
+              <NavLink
+                to="#" location={{}}
+                className="menu-button-mobile d-xs-block d-sm-block d-md-none"
+                onClick={e => this.mobileMenuButtonClick(e, containerClassnames)}
+              >
+                <MobileMenuIcon />
+              </NavLink>
+            </>
+          }
 
           <div className="search" data-search-path="/store/search">
             <Input
@@ -273,7 +278,7 @@ class TopNav extends Component {
             </a>
           </div> */}
         </div>
-        <a className="navbar-logo" href="/">
+        <a className="navbar-logo" href={this.props.home || "/"}>
           <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" />
         </a>
@@ -282,7 +287,7 @@ class TopNav extends Component {
 
           <div className="header-icons d-inline-block align-middle">
 
-            {/* <TopnavEasyAccess /> */}
+            <TopnavEasyAccess />
             {/* <TopnavNotifications /> */}
             <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"

@@ -15,12 +15,12 @@ const TopnavEasyAccess = () => {
           right
           id="iconMenuDropdown"
         >
-          <NavLink to="/app/qr-code" className="icon-menu-item">
-            <i className="iconsminds-qr-code d-block" />{" "}
-            <IntlMessages id="menu.qr-code" />
+          <NavLink to="/store/cart" className="icon-menu-item">
+            <i className="simple-icon-basket" /><br/>
+            <IntlMessages id="Giỏ hàng" />
           </NavLink>
 
-          <NavLink to="/app/ui" className="icon-menu-item">
+          {/* <NavLink to="/app/ui" className="icon-menu-item">
             <i className="iconsminds-pantone d-block" />{" "}
             <IntlMessages id="menu.ui" />
           </NavLink>
@@ -39,7 +39,7 @@ const TopnavEasyAccess = () => {
           <NavLink to="/app/applications/todo" className="icon-menu-item">
             <i className="iconsminds-check d-block" />{" "}
             <IntlMessages id="menu.todo" />
-          </NavLink>
+          </NavLink> */}
         </DropdownMenu>
       </UncontrolledDropdown>
     </div>

@@ -104,6 +104,10 @@ class App extends Component {
                 render={props => <EditProducts {...props} />}
               />
               <Route
+                path={`${match.url}/list-product/edit`}
+                render={props => <EditProducts {...props} />}
+              />
+              <Route
                 path={`${match.url}/list-product/add`}
                 render={props => <EditProducts {...props} />}
               />
