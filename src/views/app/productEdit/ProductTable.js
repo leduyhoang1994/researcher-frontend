@@ -15,7 +15,7 @@ const dataTableColumns = [
     {
         Header: "Ngành hàng",
         width: 250,
-        accessor: "category",
+        accessor: "category.nameLv3",
         Cell: props => <p className="text-muted">{props.value}</p>
     },
     {

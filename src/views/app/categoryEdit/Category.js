@@ -55,15 +55,6 @@ class Category extends Component {
                       {__(this.messages, "Thêm ngành hàng")}
                     </Button>
                   </Link>
-                  <Button
-                    className="mr-2"
-                    color="primary"
-                    onClick={e => {
-                      // this.redirectTo("/app/products");
-                    }}
-                  >
-                    {__(this.messages, "Tìm sản phẩm")}
-                  </Button>
                 </div>
               </Card>
             </Colxx>

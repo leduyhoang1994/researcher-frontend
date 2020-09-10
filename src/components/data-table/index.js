@@ -10,10 +10,12 @@ class ResourceTable extends Component {
     super(props);
     this.state = {
       data: [],
-      pagination: {},
+      pagination: {
+        per_page: this.props.defaultPageSize || 25
+      },
       isLoading: true,
-      filtered: localStorage.getItem('manager.students.filtered') ? JSON.parse(localStorage.getItem('manager.students.filtered')) : [],
-      sorted: localStorage.getItem('manager.students.sorted') ? JSON.parse(localStorage.getItem('manager.students.sorted')) : [],
+      filtered: [],
+      sorted: [],
     };
     this.filterTimer = null;
     this.apiResource = props.apiResource || {};

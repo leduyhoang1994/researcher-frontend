@@ -24,6 +24,7 @@ const ProductTable = ({
       Header: __(component.messages, "Thao tác"),
       accessor: null,
       sortable: false,
+      width: selectable ? 'auto' : 150,
       Cell: props => (
         <div className="text-left">
           {
@@ -42,16 +43,30 @@ const ProductTable = ({
           }
           {
             !selectable &&
-            <Button
-              size="xs"
-              onClick={() => {
-                if (isFunction(removeFromSelectedProducts)) {
-                  removeFromSelectedProducts(props.original);
-                }
-              }}
-            >
-              {__(component.messages, "Xóa")}
-            </Button>
+            <>
+              <Button
+                className="mr-2"
+                size="xs"
+                onClick={() => {
+                  if (isFunction(removeFromSelectedProducts)) {
+                    removeFromSelectedProducts(props.original);
+                  }
+                }}
+              >
+                {__(component.messages, "Xóa")}
+              </Button>
+              <Button
+                size="xs"
+                color="success"
+                onClick={() => {
+                  if (isFunction(removeFromSelectedProducts)) {
+                    removeFromSelectedProducts(props.original);
+                  }
+                }}
+              >
+                {__(component.messages, "Biên tập")}
+              </Button>
+            </>
           }
         </div>
       )
@@ -165,7 +180,7 @@ const ProductTable = ({
   const apiResource = {
     url: PRODUCTS.all,
     query: {
-      
+
     }
   }
 
