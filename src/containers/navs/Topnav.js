@@ -21,7 +21,7 @@ import {
 
 import {
   menuHiddenBreakpoint,
-  searchPath,
+  searchPathStore,
   localeOptions,
   isDarkSwitchActive
 } from "../../constants/defaultValues";
@@ -32,6 +32,8 @@ import TopnavNotifications from "./Topnav.Notifications";
 import TopnavDarkSwitch from "./Topnav.DarkSwitch";
 
 import { getDirection, setDirection } from "../../helpers/Utils";
+import { PRODUCT_EDIT } from '../../constants/api';
+import ApiController from '../../helpers/Api';
 
 class TopNav extends Component {
   constructor(props) {
@@ -140,10 +142,8 @@ class TopNav extends Component {
   };
 
   search = () => {
-    this.props.history.push(searchPath + "/" + this.state.searchKeyword);
-    this.setState({
-      searchKeyword: ""
-    });
+    let search = this.state.searchKeyword.trim();
+    window.open(`/store/search?s=${search}`, "_self");
   };
 
   toggleFullScreen = () => {
@@ -222,7 +222,7 @@ class TopNav extends Component {
             <MobileMenuIcon />
           </NavLink>
 
-          {/* <div className="search" data-search-path="/app/pages/search">
+          <div className="search" data-search-path="/store/search">
             <Input
               name="searchKeyword"
               id="searchKeyword"
@@ -237,7 +237,7 @@ class TopNav extends Component {
             >
               <i className="simple-icon-magnifier" />
             </span>
-          </div> */}
+          </div>
 
           {/* <div className="d-inline-block">
             <UncontrolledDropdown className="ml-2">

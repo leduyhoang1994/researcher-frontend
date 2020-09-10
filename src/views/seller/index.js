@@ -10,17 +10,6 @@ const Register = React.lazy(() =>
   import(/* webpackChunkName: "user-register" */ './register')
 );
 
-const ProductList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../seller/product/ProductList')
-);
-
-const OrderList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../seller/order/OrderList')
-);
-
-const OrderDetail = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../seller/order/OrderDetail')
-);
 
 const User = ({ match }) => {
   return (
@@ -37,20 +26,7 @@ const User = ({ match }) => {
             path={`${match.url}/register`}
             render={props => <Register {...props} />}
           />
-          <Route
-            exact
-            path={`${match.url}/products`}
-            render={props => <ProductList {...props} />}
-          />
-          <Route
-            path={`${match.url}/orders/detail/:id`}
-            render={props => <OrderDetail {...props} />}
-          />
-          <Route
-            exact
-            path={`${match.url}/orders`}
-            render={props => <OrderList {...props} />}
-          />
+          
           <Redirect to="/error" />
         </Switch>
       </Suspense>

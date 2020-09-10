@@ -16,7 +16,7 @@ class OrderDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            setId: this.props.match.params.id || null,
+            id: this.props.match.params.id || null,
             order: {},
             products: [],
         };
@@ -28,13 +28,13 @@ class OrderDetail extends Component {
     }
 
     loadCurrentOrder = () => {
-        const { setId } = this.state;
-        if (setId)
-            this.getOrder(setId);
+        const { id } = this.state;
+        if (id)
+            this.getOrder(id);
     }
 
-    getOrder = (setId) => {
-        ApiController.get(`${ORDERS.details}/${setId}`, {}, data => {
+    getOrder = (id) => {
+        ApiController.get(`${ORDERS.details}/${id}`, {}, data => {
             this.setState({
                 order: data,
                 products: data.orderDetails

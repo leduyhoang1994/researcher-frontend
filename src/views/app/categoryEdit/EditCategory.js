@@ -135,15 +135,28 @@ class EditCategory extends Component {
     }
 
     handleSelect1 = categoryLv1 => {
-        this.setState({ categoryLv1: categoryLv1[0] });
+        if(categoryLv1) {
+            this.setState({ categoryLv1: categoryLv1[0] });
+        } else {
+            this.setState({ categoryLv1: "" });
+        }
     };
 
     handleSelect2 = categoryLv2 => {
-        this.setState({ categoryLv2: categoryLv2[0] });
+        if(categoryLv2) {
+            this.setState({ categoryLv2: categoryLv2[0] });
+        } else {
+            this.setState({ categoryLv2: "" });
+        }
+        
     };
 
     handleSelect3 = categoryLv3 => {
-        this.setState({ categoryLv3: categoryLv3[0] });
+        if(categoryLv3) {
+            this.setState({ categoryLv3: categoryLv3[0] });
+        } else {
+            this.setState({ categoryLv3: "" });
+        }
     };
 
     handleChangeInput = (value) => {

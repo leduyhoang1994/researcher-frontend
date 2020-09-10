@@ -22,6 +22,7 @@ export const firebaseConfig = {
 };
 
 export const searchPath = "/app/pages/search";
+export const searchPathStore = "/store/search";
 export const servicePath = "https://api.coloredstrategies.com";
 
 /* 

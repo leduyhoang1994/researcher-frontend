@@ -55,9 +55,9 @@ export const ATTRIBUTES = {
   all: `${apiPath}/${attributes}`,
 }
 
-export const cagegoryEdit = 'category-edit-attributes';
+export const categoryEdit = 'category-edit-attributes';
 export const CATEGORY_EDIT = {
-  all: `${apiPath}/${cagegoryEdit}/category`,
+  all: `${apiPath}/${categoryEdit}/category`,
 }
 
 export const productEdit = 'product-edits';
@@ -79,4 +79,9 @@ export const ORDERS = {
   all: `${apiPath}/${order}`,
   getBySellerId: `${apiPath}/${order}/view-list`,
   details: `${apiPath}/${order}/view-detail`,
+}
+
+export const category_seller = 'category-seller-view';
+export const CATEGORY_SELLER = {
+  all: `${apiPath}/${category_seller}`,
 }

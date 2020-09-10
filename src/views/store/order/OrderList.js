@@ -33,7 +33,7 @@ class OrderList extends Component {
     }
 
     handleClickRow = (row) => {
-        window.open(`/app/seller/orders/detail/${row.id}`, "_self")
+        window.open(`/store/orders/detail/${row.id}`, "_self")
     }
 
     render() {
