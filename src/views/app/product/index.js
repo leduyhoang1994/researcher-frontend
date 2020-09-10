@@ -22,7 +22,8 @@ class CreateTrainingClass extends Component {
       search: "",
       productList: JSON.parse(JSON.stringify(ProductList)),
       selectedProducts: [],
-      productSetModalOpen: false
+      productSetModalOpen: false,
+      filter: {}
     };
     this.messages = this.props.intl.messages;
   }
@@ -34,9 +35,11 @@ class CreateTrainingClass extends Component {
         categoriesFilter: categoriesFilter.map(cate => cate.category || cate)
       }, () => {
         // localStorage.removeItem('selectedItems');
+        this.loadCategories();
       });
-    };
-    this.loadCategories();
+    } else {
+      this.loadCategories();
+    }
   }
 
   loadCategories = () => {
@@ -49,22 +52,15 @@ class CreateTrainingClass extends Component {
   };
 
   searchProducts = () => {
-    const { search, categoriesFilter } = this.state;
-    const s = {
+    const { filter, categoriesFilter } = this.state;
+    const s = categoriesFilter.length > 0 ? {
       categoryId: {
-        "in": arrayColumn(this.state.categoriesFilter, 'id')
+        "$in": arrayColumn(categoriesFilter, 'id')
       }
-    };
-    
-    ApiController.call('get', PRODUCTS.all, {
-      page: 1,
-      size: 10,
-      s: JSON.stringify(s)
-    }, data => {
-      this.setState({
-        productList: data.data
-      });
-    })
+    } : {};
+
+    filter.s = s;
+    this.setState({ filter: filter });
   };
 
   existInSelectedProducts = (product) => {
@@ -110,6 +106,7 @@ class CreateTrainingClass extends Component {
   }
 
   render() {
+    const { filter } = this.state;
     return (
       <Fragment>
         <Row>
@@ -158,6 +155,7 @@ class CreateTrainingClass extends Component {
                           this.setState({
                             categoriesFilter: e
                           });
+                          this.searchProducts();
                         }}
                       />
                       <span>
@@ -182,12 +180,14 @@ class CreateTrainingClass extends Component {
             <Card>
               <CardBody>
                 <ProductTable
+                  key={filter.length}
                   component={this}
                   data={this.state.productList}
                   addToSelectedProducts={this.addToSelectedProducts}
                   removeFromSelectedProducts={this.removeFromSelectedProducts}
                   existInSelectedProducts={this.existInSelectedProducts}
                   filterCate={this.state.categoriesFilter}
+                  filter={filter}
                 />
               </CardBody>
               <CardFooter className="text-right">
@@ -202,7 +202,7 @@ class CreateTrainingClass extends Component {
             </Card>
           </Colxx>
         </Row>
-        <ProductSetModal  
+        <ProductSetModal
           isOpen={this.state.productSetModalOpen}
           toggleModal={this.toggleProductSetModalOpen}
           selectedProducts={this.state.selectedProducts}

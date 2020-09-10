@@ -17,13 +17,15 @@ const ProductTable = ({
   addToSelectedProducts,
   removeFromSelectedProducts,
   selectable = true,
-  filterCate = []
+  filterCate = [], 
+  filter
 }) => {
   const columns = () => [
     {
       Header: __(component.messages, "Thao tác"),
       accessor: null,
       sortable: false,
+      filterable: false,
       Cell: props => (
         <div className="text-left">
           {
@@ -59,42 +61,46 @@ const ProductTable = ({
     {
       Header: __(component.messages, "Ảnh"),
       sortable: false,
+      filterable: false,
       width: 50,
       accessor: "productImage",
       Cell: props => <img width="50" src={props.value} />
     },
-    // {
-    //   Header: __(component.messages, "Tên ngành hàng tầng 3"),
-    //   filterable: true,
-    //   accessor: "productCategoryVi",
-    //   Cell: props => <p className="text-muted">{props.value}</p>,
-    //   Filter: ({ filter, onChange }) => {
-    //     return (
-    //       <Select
-    //         isClearable
-    //         className="react-select"
-    //         classNamePrefix="react-select"
-    //         options={filterCate}
-    //         onChange={event => onChange(event ? event.categoryNameViLevel3 : "")}
-    //         getOptionValue={option => option.categoryNameViLevel3}
-    //         getOptionLabel={option => option.categoryNameViLevel3}
-    //       />
-    //     );
-    //   }
-    // },
+    {
+      Header: __(component.messages, "Tên ngành hàng tầng 3"),
+      filterable: true,
+      width: 300,
+      accessor: "productCategoryVi",
+      Cell: props => <p className="text-muted">{props.value}</p>,
+      Filter: ({ filter, onChange }) => {
+        return (
+          <Select
+            isClearable
+            className="react-select"
+            classNamePrefix="react-select"
+            options={filterCate}
+            onChange={event => onChange(event ? event.categoryNameViLevel3 : undefined)}
+            getOptionValue={option => option.categoryNameViLevel3}
+            getOptionLabel={option => option.categoryNameViLevel3}
+          />
+        );
+      }
+    },
     {
       Header: __(component.messages, "Tên sản phẩm"),
-      width: 300,
+      width: 500,
       filterable: true,
       accessor: "productTitleVi",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Link sản phẩm"),
-      width: 300,
+      width: 100,
       filterable: true,
       accessor: "productLink",
-      Cell: props => <a target="_blank" href={props.value} className="text-muted">{props.value}</a>
+      Cell: props => <div className="text-center">
+        <a target="_blank" href={props.value}>Link</a>
+      </div>
     },
     {
       Header: __(component.messages, "Doanh số bán ra"),
@@ -165,13 +171,15 @@ const ProductTable = ({
   const apiResource = {
     url: PRODUCTS.all,
     query: {
-      
+      ...filter,
+      s: filter?.s || null
     }
   }
 
   return (
     <div>
       <ResourceTable
+        key={JSON.stringify(apiResource)}
         apiResource={apiResource}
         columns={columns()}
         defaultPageSize={25}

@@ -20,7 +20,7 @@ class EditCategory extends Component {
             optionsLv1: [],
             optionsLv2: [],
             optionsLv3: [],
-            optionsOwnProperties: [{ label: " ", value: " " }],
+            optionsOwnProperties: [],
             optionsProperties: [],
             propertiesFilter: [],
             attributeIds: [],
