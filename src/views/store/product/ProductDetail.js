@@ -1,13 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, Input, Label, CardFooter, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
-import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
-import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { CATEGORIES, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import Property from '../../app/productEdit/Property';
 import Api from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 
@@ -25,14 +22,12 @@ class ProductDetail extends Component {
             product: {},
             media: [],
             detailImages: [],
+            properties: [],
         };
         console.log(this.props);
         this.messages = this.props.intl.messages;
     }
 
-    componentWillMount() {
-        this.getMedia(this.state.id);
-    }
     componentDidMount() {
         this.loadCurrentProduct();
     }
@@ -41,7 +36,7 @@ class ProductDetail extends Component {
         const { id } = this.state;
         if (id) {
             this.getProduct(id);
-            // this.getMedia(id);
+            this.getMedia(id)
         }
     }
 
@@ -49,6 +44,16 @@ class ProductDetail extends Component {
         ApiController.get(`${PRODUCT_EDIT.all}/${id}`, {}, data => {
             this.setState({
                 product: data,
+            }, () => {
+                // const option = this.state.product.productEditOptions;
+                // let arr = [];
+                // console.log(option);
+                // option.forEach(item => {
+                //     arr.push({ label: item.options.attribute.label, value: item.options.label })
+                // })
+                // this.setState({
+                //     properties: arr,
+                // })
             })
         })
     }
@@ -56,28 +61,15 @@ class ProductDetail extends Component {
     getMedia = (id) => {
         ApiController.get(`${PRODUCT_EDIT.all}/${id}/media`, {}, data => {
             const arr = data.images;
-            // let images = [];
+            let list = [];
             arr.map((item, index) => {
-                // images.push({id: index, img: item})
-                this.setState({
-                    detailImages: [...this.state.detailImages, { id: index, img: item }],
-                })
+                return list.push({ id: index, img: item })
             })
-            // console.log(data.images);
-
+            this.setState({
+                detailImages: list,
+            })
         })
     }
-    // , () => {
-    //     const { media } = this.state.media;
-    //     console.log(media.images);
-    //     let arr = [];
-    //     media.images.forEach(item => {
-    //         arr.push({ id: 0, img: item })
-    //     })
-    //     this.setState({
-    //         detailImages: arr
-    //     })
-    // }
 
     addToCart = () => {
         const { id, name, featureImage, priceMin, priceMax } = this.state.product;
@@ -92,28 +84,24 @@ class ProductDetail extends Component {
         for (let i = 0; i < cart.length; i++)
             if (cart[i].id === product.id) return;
 
-        cart.push( product );
+        cart.push(product);
 
         localStorage.setItem("cart", JSON.stringify(cart));
     };
 
     render() {
-        let { name, priceMin, priceMax, futurePriceMin, futurePriceMax, featureImage, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state.product;
+        let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
-
         console.log(detailImages);
         return (
             <Fragment>
                 <Row>
-                    <Colxx xxs="12">
-                        <Breadcrumb heading="Sản phẩm" match={this.props.match} />
-                        <Separator className="mb-5" />
+                    <Colxx xxs="2" >
+                        {/* category */}
                     </Colxx>
-                </Row>
-                <Row>
-                    <Colxx xxs="6" className="col-left">
-                        <Card className="mb-4" style={{ textAlign: "center" }}>
-                            <CardBody>
+                    <Colxx xxs="10" >
+                        <Row>
+                            <Colxx xxs="6" style={{ textAlign: "center" }}>
                                 <GlideComponentThumbs settingsImages={
                                     {
                                         bound: true,
@@ -143,111 +131,16 @@ class ProductDetail extends Component {
                                         }
                                     }
                                 } />
-                            </CardBody>
-                        </Card>
-                    </Colxx>
-                    <Colxx xxs="6" className="col-right">
-                        <h2>{name}</h2>
-                        <p>{description}</p>
-                    </Colxx>
-                </Row>
-
-                <Row>
-                    <Colxx xxs="12">
-                        <Card>
-                            <CardBody>
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <h2>{name}</h2>
                                 <Row>
-                                    <Colxx xxs="12">
-                                        <Row>
-                                            <Colxx xxs="6">
-                                                <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="number"
-                                                        name="priceMin"
-                                                        value={priceMin}
-                                                        defaultValue={priceMin}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Giá sản phẩm")}
-                                                    </span>
-                                                </Label>
-                                                <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="number"
-                                                        min={0}
-                                                        name="serviceCost"
-                                                        value={serviceCost}
-                                                        defaultValue={serviceCost}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Phí dịch vụ dự kiến")}
-                                                    </span>
-                                                </Label>
-                                            </Colxx>
-                                            <Colxx xxs="6">
-                                                <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="text"
-                                                        name="transportation"
-                                                        value={transportation}
-                                                        defaultValue={transportation}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Hình thức vận chuyển")}
-                                                    </span>
-                                                </Label>
-                                                <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="number"
-                                                        name="workshopIn"
-                                                        value={workshopIn}
-                                                        min="0"
-                                                        defaultValue={workshopIn}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Thời gian phát hàng của xưởng")}
-                                                    </span>
-                                                </Label>
-                                                <Label className="form-group has-float-label">
-                                                    <Input type="number"
-                                                        min="0"
-                                                        name="uboxIn"
-                                                        value={uboxIn}
-                                                        defaultValue={this.state.uboxIn} rows="1"
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Thời gian giao hàng Ubox")}
-                                                    </span>
-                                                </Label>
-                                            </Colxx>
-                                        </Row>
-                                        <Row>
-                                            {/* <Colxx xxs="12">
-                                                <Property
-                                                    key={this.state.productId}
-                                                    component={this}
-                                                    categoryId={this.state.idCategory} // category id of product
-                                                    productOptions={this.state.options} // options fields of product data
-                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
-                                                />
-                                            </Colxx> */}
-                                        </Row>
-                                    </Colxx>
-
-                                    <Colxx xxs="12">
-                                        <Label className="form-group has-float-label">
-                                            <Input type="textarea"
-                                                value={description}
-                                                name="description"
-                                                defaultValue={description} rows="5"
-                                            />
-                                            <span>
-                                                {__(this.messages, "Mô tả")}
-                                            </span>
-                                        </Label>
+                                    <Colxx xxs="6">
+                                        <p>{priceMin} NDT</p>
+                                        <p>{futurePriceMin} NDT</p>
                                     </Colxx>
                                 </Row>
-                                <div className="text-right card-title">
+                                <div className="text-left card-title">
                                     <Button
                                         className="mr-2"
                                         color="primary"
@@ -258,11 +151,15 @@ class ProductDetail extends Component {
                                         {__(this.messages, "Thêm vào giỏ")}
                                     </Button>
                                 </div>
-                            </CardBody>
-                        </Card>
+                            </Colxx>
+                        </Row>
+
+
+
                     </Colxx>
                 </Row>
-            </Fragment>
+
+            </Fragment >
         );
     }
 }

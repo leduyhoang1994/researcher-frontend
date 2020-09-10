@@ -9,7 +9,6 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 
 const renderTable = (data) => {
     return data.map((item, index) => {
-        console.log(item);
         const { featureImage, name, priceMin, priceMax, quantity, calculatedPrice } = item
         return (
             <tr key={index}>

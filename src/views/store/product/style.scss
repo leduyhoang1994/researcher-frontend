@@ -2,7 +2,7 @@
     background: transparent;
     box-shadow: none;
     padding: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 0;
     height: 100%;
     cursor: pointer;
     transition: all 0.25s linear;
@@ -25,4 +25,7 @@
             // padding: 10px 0px;
         }
     }
+}
+.align-center {
+    text-align: center;
 }

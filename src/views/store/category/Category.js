@@ -10,23 +10,18 @@ import { Link } from 'react-router-dom';
 
 const items = [
     {
-        name: 'billing',
-        label: 'Billing',
+        label: 'Đồ gia dụng',
         items: [
             {
-                name: 'statements',
                 label: 'Statements',
                 items: [
                     {
-                        name: 'statements',
                         label: 'Statements',
                     },
                     {
-                        name: 'statements',
                         label: 'Statements',
                     },
                     {
-                        name: 'statements',
                         label: 'Statements',
                     },
                 ],
@@ -35,10 +30,25 @@ const items = [
         ],
     },
     {
-        name: 'settings',
-        label: 'Settings',
-        items: [{ name: 'profile', label: 'Profile' }],
-    },
+        label: 'Đồ gia dụng',
+        items: [
+            {
+                label: 'Statements',
+                items: [
+                    {
+                        label: 'Statements',
+                    },
+                    {
+                        label: 'Statements',
+                    },
+                    {
+                        label: 'Statements',
+                    },
+                ],
+            },
+            { name: 'reports', label: 'Reports' },
+        ],
+    }
 ]
 class Category extends Component {
     constructor(props) {

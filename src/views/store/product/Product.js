@@ -3,40 +3,28 @@ import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { Link, NavLink } from 'react-router-dom';
 import "./style.scss";
-import { Card, CardBody, Badge, CardSubtitle, CardText, CardImg } from 'reactstrap';
+import { Card, CardBody, Button, CardSubtitle, CardText, CardImg } from 'reactstrap';
+
+const addToCart = products => {
+    const { id, name, featureImage, priceMin, priceMax } = products;
+    const quantity = 1;
+    const product = { id, name, featureImage, priceMin, priceMax, quantity };
+
+    let cart = localStorage.getItem("cart");
+
+    if (cart === null) cart = [];
+    else cart = JSON.parse(cart);
+
+    for (let i = 0; i < cart.length; i++)
+        if (cart[i].id === product.id) return;
+
+    cart.push(product);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+};
 
 const Product = (props) => {
     const product = props.product;
-
-    const borderImage = {
-        height: "250px",
-        width: "100%",
-        position: "relative",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: "table-cell",
-        textAlign: "center",
-        verticalAlign: "middle",
-    }
-    const image = {
-        height: "auto",
-        width: "auto",
-        maxHeight: "auto",
-        maxWidth: "100%",
-        display: "block",
-        position: "relative",
-    }
-    const productName = {
-        fontSize: "20pt",
-        padding: "10px 0",
-    }
-    const price = {
-        display: "inline-block",
-        width: "50%",
-        textAlign: "center",
-    }
 
     return (
         <Card className="mb-4 product">
@@ -51,26 +39,26 @@ const Product = (props) => {
                     }
                 </div>
                 <CardBody className="product-body">
-                    <CardSubtitle className="mb-2 product-subtitle">{product.name}</CardSubtitle>
+                    <CardSubtitle className="font-weight-bold mb-2 product-subtitle">{product.name}</CardSubtitle>
                     {/* <CardText className="product-price font-weight-bold text-left text-normal mb-0">{product.priceMin}</CardText> */}
-                    <CardText className="product-price font-weight-bold text-right text-normal mb-0">{product.priceMax}</CardText>
+                    <CardText className="product-price font-weight-bold text-right text-normal mb-0">{product.priceMax} NDT</CardText>
+                    <CardText className="text-left text-normal mb-0">Khối lượng {product.weight} kg</CardText>
+                    <CardText className="text-left text-normal mb-0">Phí ship nội địa TQ {product.serviceCost}</CardText>
                 </CardBody>
             </NavLink>
-
+            <div className="align-center mt-3">
+                <Button
+                    className="mr-2"
+                    color="primary"
+                    onClick={() => {
+                        addToCart(product)
+                    }}
+                >
+                    Thêm vào giỏ
+                            {/* {__(this.messages, "Thêm vào giỏ" )} */}
+                </Button>
+            </div>
         </Card>
-        // <div style={{textAlign:"center"}} className="product">
-        //     <Link style={{ width: "100%" }} to={`products/detail/${product.id}`}>
-        //         <span style={borderImage}>
-        //             <img style={image} src={product.featureImage} alt={"avatar"} />
-        //         </span>
-        //         <p style={productName}>{product.name}</p>
-        //         <div >
-        //             <span style={price}>{product.priceMin}</span>
-        //             <span style={price}>{product.priceMax}</span>
-        //         </div>
-
-        //     </Link>
-        // </div>
     );
 };
 
