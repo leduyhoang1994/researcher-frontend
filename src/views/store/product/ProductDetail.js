@@ -3,10 +3,11 @@ import { Row, Card, CardBody, Input, Label, CardFooter, Button } from 'reactstra
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, PRODUCT_EDIT } from '../../../constants/api';
+import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Api from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
+import Property from '../../app/productEdit/Property';
 
 class ProductDetail extends Component {
     constructor(props) {
@@ -23,7 +24,9 @@ class ProductDetail extends Component {
             media: [],
             detailImages: [],
             properties: [],
-            isAddedToCart: false
+            isAddedToCart: false,
+            options: {},
+            optionIds: [],
         };
         console.log(this.props);
         this.messages = this.props.intl.messages;
@@ -42,7 +45,7 @@ class ProductDetail extends Component {
     }
 
     getProduct = (id) => {
-        ApiController.get(`${PRODUCT_EDIT.all}/${id}`, {}, data => {
+        ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
             this.setState({
                 product: data,
             }, () => {
@@ -60,7 +63,7 @@ class ProductDetail extends Component {
     }
 
     getMedia = (id) => {
-        ApiController.get(`${PRODUCT_EDIT.all}/${id}/media`, {}, data => {
+        ApiController.get(`${PRODUCT_SELLER.all}/${id}/media`, {}, data => {
             const arr = data.images;
             let list = [];
             arr.map((item, index) => {
@@ -90,17 +93,31 @@ class ProductDetail extends Component {
         localStorage.setItem("cart", JSON.stringify(cart));
     };
 
+    setProductAttribute = (data) => {
+        let optionId = [];
+        for (var items in data) {
+            let arr = data[items];
+            arr.map(item => {
+                optionId.push(item.id);
+            })
+        }
+
+        this.setState({
+            optionIds: optionId
+        });
+    }
+
     render() {
         let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
-        
+
         let cart = localStorage.getItem("cart");
         cart = cart ? JSON.parse(cart) : [];
 
         let isAddedToCart = this.state.isAddedToCart;
 
         for (let i = 0; i < cart.length; i++)
-            if (cart[i].id == this.state.id) 
+            if (cart[i].id == this.state.id)
                 isAddedToCart = true;
 
         return (
@@ -148,6 +165,13 @@ class ProductDetail extends Component {
                                     <Colxx xxs="6">
                                         <p>{priceMin} VNĐ</p>
                                         <p>{futurePriceMin} VNĐ</p>
+                                        <Property
+                                            key={this.state.productId}
+                                            component={this}
+                                            categoryId={this.state.idCategory} // category id of product
+                                            productOptions={this.state.options} // options fields of product data
+                                            setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
+                                        />
                                     </Colxx>
                                 </Row>
                                 <div className="text-left card-title">

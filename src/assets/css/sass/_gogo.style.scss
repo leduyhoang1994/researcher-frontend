@@ -1734,6 +1734,38 @@ button {
     }
   }
 
+  .navbar-logo-seller {
+    width: 110px;
+    height: 55px;
+    position: absolute;
+    left: 0;
+    top: -8px;
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      background: url($logoStore) no-repeat;
+      background-position: center center;
+      background-size: contain;
+    }
+
+    .logo-mobile {
+      width: 100%;
+      height: 100%;
+      background: url($logoStore) no-repeat;
+      background-position: center center;
+      background-size: contain;
+    }
+
+    @include respond-below(sm) {
+      width: 80px;
+    }
+
+    @include respond-below(xxs) {
+      width: 50px;
+    }
+  }
+
   .language-button {
     background: $background-color;
     border: initial;

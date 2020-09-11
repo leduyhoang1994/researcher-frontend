@@ -278,11 +278,15 @@ class TopNav extends Component {
             </a>
           </div> */}
         </div>
-        <a className="navbar-logo" href={this.props.home || "/"}>
+        <a className="navbar-logo" href={"/app"}>
           <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" />
         </a>
-        <div className="navbar-right">
+        <div className="navbar-right" style={{position: "relative"}}>
+          <a className="navbar-logo-seller" href={"/store"}>
+            <span className="logo d-none d-xs-block" />
+            <span className="logo-mobile d-block d-xs-none" />
+          </a>
           {isDarkSwitchActive && <TopnavDarkSwitch />}
 
           <div className="header-icons d-inline-block align-middle">
