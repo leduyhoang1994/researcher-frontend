@@ -23,6 +23,7 @@ class ProductDetail extends Component {
             media: [],
             detailImages: [],
             properties: [],
+            isAddedToCart: false
         };
         console.log(this.props);
         this.messages = this.props.intl.messages;
@@ -92,7 +93,16 @@ class ProductDetail extends Component {
     render() {
         let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
-        console.log(detailImages);
+        
+        let cart = localStorage.getItem("cart");
+        cart = cart ? JSON.parse(cart) : [];
+
+        let isAddedToCart = this.state.isAddedToCart;
+
+        for (let i = 0; i < cart.length; i++)
+            if (cart[i].id == this.state.id) 
+                isAddedToCart = true;
+
         return (
             <Fragment>
                 <Row>
@@ -136,19 +146,23 @@ class ProductDetail extends Component {
                                 <h2>{name}</h2>
                                 <Row>
                                     <Colxx xxs="6">
-                                        <p>{priceMin} NDT</p>
-                                        <p>{futurePriceMin} NDT</p>
+                                        <p>{priceMin} VNĐ</p>
+                                        <p>{futurePriceMin} VNĐ</p>
                                     </Colxx>
                                 </Row>
                                 <div className="text-left card-title">
                                     <Button
                                         className="mr-2"
                                         color="primary"
+                                        disabled={isAddedToCart}
                                         onClick={() => {
                                             this.addToCart();
+                                            this.setState({
+                                                isAddedToCart: true
+                                            });
                                         }}
                                     >
-                                        {__(this.messages, "Thêm vào giỏ")}
+                                        {__(this.messages, isAddedToCart ? "Đã thêm" : "Thêm vào giỏ")}
                                     </Button>
                                 </div>
                             </Colxx>

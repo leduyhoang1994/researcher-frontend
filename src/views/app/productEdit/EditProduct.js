@@ -48,7 +48,8 @@ class EditProduct extends Component {
             isPublished: false
         };
         this.messages = this.props.intl.messages;
-        this.handleChange = this.handleChange.bind(this)
+        this.handleChange = this.handleChange.bind(this);
+        console.log(this.props.location.pathname.replace("/app/list-product/add/", ""));
     }
 
     setRedirect = (url) => {
@@ -64,16 +65,30 @@ class EditProduct extends Component {
     }
 
     async componentDidMount() {
+
         this.setState({ loading: true });
         await this.getCategories();
         const productId = new URLSearchParams(this.props.location.search).get("product-id");
+        const productAddId = new URLSearchParams(this.props.location.search).get("productId");
         if (productId) {
             const data = await ApiController.callAsync('get', `${PRODUCTS.allEdit}/source/${productId}`, {});
             const product = data.data.result;
 
             if (product?.id) {
                 window.open(`/app/list-product/edit/${product.id}`, "_self");
+            } else {
+                window.open(`/app/list-product/add?productId=${productId}`, "_self");
             }
+        }
+        else if (productAddId) {
+            console.log(`here ${productAddId}`)
+            ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
+                this.setState({
+                    sourceProduct: { productTitleVi: data.productTitleVi },
+                    productId: productAddId
+                })
+            })
+
         } else {
             this.loadCurrentProduct();
         }
@@ -116,6 +131,8 @@ class EditProduct extends Component {
                 }
             })
 
+            console.log('getProduct' + JSON.stringify(this.state.optionOldProducts))
+
             this.state.optionOldProducts.forEach(item => {
                 if (item.value === this.state.productId) {
                     this.setState({
@@ -127,7 +144,8 @@ class EditProduct extends Component {
     }
 
     getOldProducts = async (search, loadedOptions, { page }) => {
-        const { productId } = this.state;
+        // const { productId } = this.state;
+
         const filter = {
             productTitleVi: {
                 "$cont": `%${search}%`
@@ -447,6 +465,7 @@ class EditProduct extends Component {
                                                                 this.state.sourceProduct ? {
                                                                     id: this.state.productId,
                                                                     productTitleVi: this.state.sourceProduct.productTitleVi
+
                                                                 } : null
                                                             )
                                                         }

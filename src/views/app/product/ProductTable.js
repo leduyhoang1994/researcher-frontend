@@ -17,7 +17,7 @@ const ProductTable = ({
   addToSelectedProducts,
   removeFromSelectedProducts,
   selectable = true,
-  filterCate = [], 
+  filterCate = [],
   filter
 }) => {
   const columns = () => [

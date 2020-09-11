@@ -6,7 +6,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
 import { CATEGORY_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './Category.scss';
 
 class Category extends Component {
@@ -48,8 +48,12 @@ class Category extends Component {
         //use for filtering
         const fullPath = [...path, cate];
         return (
-            <span className="cursor-pointer">
-                {cate}
+            <span className="list-item-heading mb-0 truncate w-40 w-xs-100  mb-1 mt-1">
+                <span className="cursor-pointer hover display-block "
+                onClick={() => this.props.getProductByCategory(fullPath)}
+                >
+                    {cate}
+                </span>
             </span>
         );
     }

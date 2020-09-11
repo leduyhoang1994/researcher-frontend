@@ -8,7 +8,7 @@ import { Colxx, Separator } from '../../../components/common/CustomBootstrap';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import HomepageProduct from './HomepageProduct';
 import { Link } from 'react-router-dom';
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { searchPathStore } from "../../../constants/defaultValues";
 import ProductList from '../product/ProductList';
@@ -24,25 +24,49 @@ class Homepage extends React.Component {
             cart = [];
             localStorage.setItem("cart", JSON.stringify(cart));
         } else cart = JSON.parse(cart);
-        
+
         this.state = {
             categories: {},
             products: [],
+            categoryLv1: "",
+            categoryLv2: "",
+            categoryLv3: "",
             search: "",
             cart: cart,
+            // cate: new URLSearchParams(this.props.location.search),
+
         };
         this.messages = this.props.intl.messages;
+        console.log(this.props.history);
     }
 
-    // componentDidMount() {
-    //     this.getProducts();
-    // }
+    componentDidMount() {
+        this.getProducts();
+    }
 
-    getProducts = () => {
+    getProducts = (category) => {
         let array = [];
-        ApiController.get(PRODUCTS.allEdit, {}, data => {
+        let categoryLv1, categoryLv2, categoryLv3;
+        if (category) {
+            categoryLv1 = category[0];
+            categoryLv2 = category[1] || "";
+            categoryLv3 = category[2] || "";
+            console.log(categoryLv1, categoryLv2, categoryLv3);
+        } else {
+            categoryLv1 = this.state.categoryLv1;
+            categoryLv2 = this.state.categoryLv2;
+            categoryLv3 = this.state.categoryLv3;
+        }
+
+        ApiController.post(PRODUCT_SELLER.filter, {
+            categoryEditNameLv1: categoryLv1,
+            categoryEditNameLv2: categoryLv2,
+            categoryEditNameLv3: categoryLv3,
+            page: 0,
+            size: 10
+        }, data => {
             this.setState({
-                products: data
+                products: data.productEdits
             }, () => {
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
@@ -63,14 +87,14 @@ class Homepage extends React.Component {
                     <Colxx xxs="3">
                         <Row>
                             <Colxx xxs="12">
-                                <Category />
+                                <Category getProductByCategory={this.getProducts} />
                             </Colxx>
                         </Row>
                     </Colxx>
                     <Colxx xxs="9">
                         <Row>
                             <Colxx xxs="12">
-                                <ProductList />
+                                <ProductList products={products} />
                             </Colxx>
                         </Row>
                     </Colxx>

@@ -74,7 +74,7 @@ export const OPTIONS = {
 };
 
 /** Order */
-export const order = 'orders';
+export const order = 'seller-orders';
 export const ORDERS = {
   all: `${apiPath}/${order}`,
   getBySellerId: `${apiPath}/${order}/view-list`,
@@ -84,4 +84,10 @@ export const ORDERS = {
 export const category_seller = 'category-seller-view';
 export const CATEGORY_SELLER = {
   all: `${apiPath}/${category_seller}`,
+}
+
+export const product_seller = 'product-seller-view';
+export const PRODUCT_SELLER = {
+  all: `${apiPath}/${product_seller}`,
+  filter: `${apiPath}/${product_seller}/filter`,
 }
