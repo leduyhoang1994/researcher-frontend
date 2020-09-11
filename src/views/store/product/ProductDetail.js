@@ -215,17 +215,7 @@ class ProductDetail extends Component {
                                                 {__(this.messages, isAddedToCart ? "Đặt ngay" : "Thêm vào giỏ")}
                                             </Button>
                                         </div>
-                                        <div className="float-left card-title ml-5">
-                                            <Button
-                                                className="mr-2"
-                                                color="warning"
-                                                onClick={() => {
-
-                                                }}
-                                            >
-                                                {__(this.messages, "Nhập hàng")}
-                                            </Button>
-                                        </div>
+                                        
                                     </Colxx>
                                 </Row>
                             </Colxx>
