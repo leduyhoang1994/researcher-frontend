@@ -283,10 +283,6 @@ class TopNav extends Component {
           <span className="logo-mobile d-block d-xs-none" />
         </a>
         <div className="navbar-right" style={{position: "relative"}}>
-          <a className="navbar-logo-seller" href={"/store"}>
-            <span className="logo d-none d-xs-block" />
-            <span className="logo-mobile d-block d-xs-none" />
-          </a>
           {isDarkSwitchActive && <TopnavDarkSwitch />}
 
           <div className="header-icons d-inline-block align-middle">

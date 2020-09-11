@@ -27,6 +27,7 @@ class ProductDetail extends Component {
             isAddedToCart: false,
             options: {},
             optionIds: [],
+            quantity: 1,
         };
         console.log(this.props);
         this.messages = this.props.intl.messages;
@@ -77,7 +78,7 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { id, name, featureImage, priceMin, priceMax } = this.state.product;
-        const quantity = 1;
+        const quantity = this.state.quantity || 1;
         const product = { id, name, featureImage, priceMin, priceMax, quantity };
 
         let cart = localStorage.getItem("cart");
@@ -108,7 +109,7 @@ class ProductDetail extends Component {
     }
 
     render() {
-        let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state.product;
+        let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
 
         let cart = localStorage.getItem("cart");
@@ -117,16 +118,14 @@ class ProductDetail extends Component {
         let isAddedToCart = this.state.isAddedToCart;
 
         for (let i = 0; i < cart.length; i++)
-            if (cart[i].id == this.state.id)
+            if (cart[i].id == this.state.id) {
                 isAddedToCart = true;
+            }
 
         return (
             <Fragment>
                 <Row>
-                    <Colxx xxs="2" >
-                        {/* category */}
-                    </Colxx>
-                    <Colxx xxs="10" >
+                    <Colxx xxs="12" >
                         <Row>
                             <Colxx xxs="6" style={{ textAlign: "center" }}>
                                 <GlideComponentThumbs settingsImages={
@@ -161,7 +160,7 @@ class ProductDetail extends Component {
                             </Colxx>
                             <Colxx xxs="6">
                                 <h2>{name}</h2>
-                                <Row>
+                                <Row className="mt-3">
                                     <Colxx xxs="6">
                                         <p>{priceMin} VNĐ</p>
                                         <p>{futurePriceMin} VNĐ</p>
@@ -173,30 +172,107 @@ class ProductDetail extends Component {
                                             setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                         />
                                     </Colxx>
+                                    <Colxx xxs="6">
+                                        <p >Sản lượng bán tại site gốc 1244</p>
+                                    </Colxx>
                                 </Row>
-                                <div className="text-left card-title">
-                                    <Button
-                                        className="mr-2"
-                                        color="primary"
-                                        disabled={isAddedToCart}
-                                        onClick={() => {
-                                            this.addToCart();
-                                            this.setState({
-                                                isAddedToCart: true
-                                            });
-                                        }}
-                                    >
-                                        {__(this.messages, isAddedToCart ? "Đã thêm" : "Thêm vào giỏ")}
-                                    </Button>
-                                </div>
+                                <Row>
+                                    <div>
+                                        <p className="float-left mt-3 ml-3">Số lượng</p>
+                                        <Label className="form-group has-float-label float-left ml-5">
+                                            <Input
+                                                type="number"
+                                                name="quantity"
+                                                min={0}
+                                                value={this.state.quantity}
+                                                // defaultValue="0"
+                                                onChange={e => {
+                                                    this.setState({
+                                                        quantity: e.target.value
+                                                    })
+                                                }}
+                                            />
+                                        </Label>
+                                    </div>
+                                </Row>
+                                <Row className="mt-3">
+                                    <Colxx xxs="12">
+                                        <div className="text-left card-title float-left">
+                                            <Button
+                                                className="mr-2"
+                                                color="primary"
+                                                onClick={() => {
+                                                    if (!isAddedToCart) {
+                                                        this.addToCart();
+                                                        this.setState({
+                                                            isAddedToCart: true
+                                                        });
+                                                    } else {
+                                                        window.open("/store/cart")
+                                                    }
+                                                }}
+                                            >
+                                                {__(this.messages, isAddedToCart ? "Đặt ngay" : "Thêm vào giỏ")}
+                                            </Button>
+                                        </div>
+                                        <div className="float-left card-title ml-5">
+                                            <Button
+                                                className="mr-2"
+                                                color="warning"
+                                                onClick={() => {
+
+                                                }}
+                                            >
+                                                {__(this.messages, "Nhập hàng")}
+                                            </Button>
+                                        </div>
+                                    </Colxx>
+                                </Row>
                             </Colxx>
                         </Row>
-
-
-
                     </Colxx>
                 </Row>
+                <Row className="mt-5">
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">Thời gian phát hàng của xưởng {workshopIn} ngày</p>
+                        </div>
+                    </Colxx>
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">Hình thức vận chuyển {transportation}</p>
+                        </div>
+                    </Colxx>
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">Thời gian giao hàng Ubox {uboxIn} ngày</p>
+                        </div>
+                    </Colxx>
+                </Row>
+                <Row >
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">Trọng lượng {weight} g</p>
 
+                        </div>
+                    </Colxx>
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">SLA dịch vụ {serviceSla}</p>
+                        </div>
+                    </Colxx>
+                    <Colxx xxs="4" >
+                        <div>
+                            <p className="mt-3 ml-3">Phí dịch vụ dự kiến {serviceCost}</p>
+                        </div>
+                    </Colxx>
+                </Row>
+                <Row className="mt-5">
+                    <Colxx xxs="12" >
+                        <h2 className="mt-3 ml-3">Mô tả sản phẩm</h2>
+                        <p className="mt-3 ml-3">{description}</p>
+                    </Colxx>
+                </Row>
             </Fragment >
         );
     }

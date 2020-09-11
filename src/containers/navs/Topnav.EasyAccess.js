@@ -19,6 +19,10 @@ const TopnavEasyAccess = () => {
             <i className="simple-icon-basket" /><br/>
             <IntlMessages id="Giỏ hàng" />
           </NavLink>
+          <NavLink to="/store" className="icon-menu-item">
+            <i className="iconsminds-shop" /><br/>
+            <IntlMessages id="Shop" />
+          </NavLink>
 
           {/* <NavLink to="/app/ui" className="icon-menu-item">
             <i className="iconsminds-pantone d-block" />{" "}
