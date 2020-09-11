@@ -32,8 +32,6 @@ import TopnavNotifications from "./Topnav.Notifications";
 import TopnavDarkSwitch from "./Topnav.DarkSwitch";
 
 import { getDirection, setDirection } from "../../helpers/Utils";
-import { PRODUCT_EDIT } from '../../constants/api';
-import ApiController from '../../helpers/Api';
 
 class TopNav extends Component {
   constructor(props) {
@@ -278,7 +276,7 @@ class TopNav extends Component {
             </a>
           </div> */}
         </div>
-        <a className="navbar-logo" href={"/app"}>
+        <a className="navbar-logo" href={this.props.home || "/app"}>
           <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" />
         </a>
