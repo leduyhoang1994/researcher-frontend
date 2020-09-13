@@ -11,7 +11,14 @@ import {
     FORGOT_PASSWORD_ERROR,
     RESET_PASSWORD,
     RESET_PASSWORD_SUCCESS,
-    RESET_PASSWORD_ERROR
+    RESET_PASSWORD_ERROR,
+    LOGIN_SELLER,
+    LOGIN_SELLER_SUCCESS,
+    LOGIN_SELLER_ERROR,
+    REGISTER_SELLER,
+    REGISTER_SELLER_SUCCESS,
+    REGISTER_SELLER_ERROR,
+    LOGOUT_SELLER
 } from '../actions';
 
 const INIT_STATE = {
@@ -51,6 +58,21 @@ export default (state = INIT_STATE, action) => {
         case REGISTER_USER_ERROR:
             return { ...state, loading: false, user: '', error: action.payload.message };
         case LOGOUT_USER:
+            return { ...state, user: null, error: '' };
+
+        case LOGIN_SELLER:
+            return { ...state, loading: true, error: '' };
+        case LOGIN_SELLER_SUCCESS:
+            return { ...state, loading: false, user: action.payload.user, userDetails: action.payload.userDetails, error: '' };
+        case LOGIN_SELLER_ERROR:
+            return { ...state, loading: false, user: '', error: action.payload.message };
+        case REGISTER_SELLER:
+            return { ...state, loading: true, error: '' };
+        case REGISTER_SELLER_SUCCESS:
+            return { ...state, loading: false, user: action.payload, error: '' };
+        case REGISTER_SELLER_ERROR:
+            return { ...state, loading: false, user: '', error: action.payload.message };
+        case LOGOUT_SELLER:
             return { ...state, user: null, error: '' };
         default: return { ...state };
     }

@@ -135,9 +135,9 @@ class Register extends Component {
 
   componentDidUpdate() {
     if (this.props.error) {
-      console.log("Error: " + this.props.error);
+      console.log("Error: " + JSON.stringify(this.props.error));
       NotificationManager.warning(
-        "Username is existed, please try another!",
+        this.props.error.message,
         "Register Error",
         3000,
         null,

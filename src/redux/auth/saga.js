@@ -11,6 +11,7 @@ import {
     RESET_PASSWORD,
     LOGIN_SELLER,
     REGISTER_SELLER,
+    LOGOUT_SELLER,
 } from '../actions';
 
 import {
@@ -219,6 +220,26 @@ function* logout({ payload }) {
     }
 }
 
+export function* watchLogoutSeller() {
+    yield takeEvery(LOGOUT_USER, logoutSeller);
+}
+
+const logoutSellerAsync = async (history) => {
+    // await auth.signOut().then(authUser => authUser).catch(error => error);
+    await ApiController.callAsync("POST", SELLER.logout, null);
+    history.push('/')
+}
+
+function* logoutSeller({ payload }) {
+    const { history } = payload
+    try {
+        yield call(logoutSellerAsync, history);
+        localStorage.removeItem('user_token');
+        localStorage.removeItem('user_details');
+    } catch (error) {
+    }
+}
+
 export function* watchForgotPassword() {
     yield takeEvery(FORGOT_PASSWORD, forgotPassword);
 }
@@ -276,6 +297,7 @@ export default function* rootSaga() {
         fork(watchLogoutUser),
         fork(watchRegisterUser),
         fork(watchRegisterSeller),
+        fork(watchLogoutSeller),
         fork(watchForgotPassword),
         fork(watchResetPassword),
     ]);

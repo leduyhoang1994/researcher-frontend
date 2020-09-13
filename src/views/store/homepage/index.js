@@ -1,20 +1,13 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Card, CardBody, Row } from 'reactstrap';
-import { NavLink } from 'react-router-dom';
-import IntlMessages from '../../../helpers/IntlMessages';
+import { Row } from 'reactstrap';
 import { Fragment } from 'react';
-import { Colxx, Separator } from '../../../components/common/CustomBootstrap';
-import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import HomepageProduct from './HomepageProduct';
-import { Link } from 'react-router-dom';
-import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
+import { Colxx } from '../../../components/common/CustomBootstrap';
+import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { searchPathStore } from "../../../constants/defaultValues";
 import ProductList from '../product/ProductList';
 import Category from '../category/Category';
 
-const apiUrl = searchPathStore;
 class Homepage extends React.Component {
 
     constructor(props) {
@@ -33,7 +26,8 @@ class Homepage extends React.Component {
             categoryLv3: "",
             search: "",
             cart: cart,
-            // cate: new URLSearchParams(this.props.location.search),
+            cate: new URLSearchParams(this.props.location.search),
+            categoryName: this.props.match.params.cate || null,
 
         };
         this.messages = this.props.intl.messages;
@@ -44,13 +38,21 @@ class Homepage extends React.Component {
         this.getProducts();
     }
 
-    getProducts = (category) => {
+    getProducts = () => {
+        let level = (this.state.cate.get("lvl"));
+        console.log(this.state.categoryName + " " + level);
         let array = [];
-        let categoryLv1, categoryLv2, categoryLv3;
-        if (category) {
-            categoryLv1 = category[0];
-            categoryLv2 = category[1] || "";
-            categoryLv3 = category[2] || "";
+        let categoryLv1 = this.state.categoryLv1;
+        let categoryLv2 = this.state.categoryLv2;
+        let categoryLv3 = this.state.categoryLv3;
+        if (level) {
+            level = parseInt(level);
+            switch (level) {
+                case 1: return categoryLv1 = this.state.categoryName;
+                case 2: return categoryLv2 = this.state.categoryName;
+                case 3: return categoryLv3 = this.state.categoryName;
+                default: break;
+            }
             console.log(categoryLv1, categoryLv2, categoryLv3);
         } else {
             categoryLv1 = this.state.categoryLv1;

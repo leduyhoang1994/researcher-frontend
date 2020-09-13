@@ -43,7 +43,7 @@ class Login extends Component {
   componentDidUpdate() {
     if (this.props.error) {
       NotificationManager.warning(
-        "Username or password is incorrect!",
+        this.props.error.message,
         "Login Error",
         3000,
         null,

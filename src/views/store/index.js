@@ -64,6 +64,10 @@ const User = ({ match }) => {
             render={props => <CartList {...props} />}
           />
           <Route
+            path={`${match.url}/:cate`}
+            render={props => <HomePage {...props} />}
+          />
+          <Route
             path={`${match.url}/`}
             render={props => <HomePage {...props} />}
           />

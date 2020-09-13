@@ -27,7 +27,7 @@ class EditCategory extends Component {
             categoryLv1: "",
             categoryLv2: "",
             categoryLv3: "",
-            valueText: ''
+            valueText: '',
         };
         this.messages = this.props.intl.messages;
     }
@@ -80,10 +80,7 @@ class EditCategory extends Component {
                 let listOptions = [];
                 attributes.forEach(item => {
                     if (item.attribute) {
-                        let option = {};
-                        option.label = item.attribute.label;
-                        option.value = item.attribute.label;
-                        listOptions.push(option);
+                        listOptions.push({label: item.attribute.label, value: item.attribute.label});
                     }
                 })
                 console.log(JSON.stringify(listOptions));
@@ -208,22 +205,24 @@ class EditCategory extends Component {
     };
 
     callApi = async () => {
-        if (this.state.setId) {
+        const id = this.state.setId;
+        if (id) {
             console.log(this.state.attributeIds);
             await Api.callAsync('put', CATEGORIES.allEdit, {
-                id: parseInt(this.state.setId),
+                id: parseInt(id),
                 nameLv1: this.state.categoryLv1.value,
                 nameLv2: this.state.categoryLv2.value,
                 nameLv3: this.state.categoryLv3.value,
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
-                window.open(`/app/list-cate/edit/${this.state.setId}`, "_self")
+                window.open(`/app/list-cate/edit/${id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
+            
             console.log(this.state.attributeIds);
             const data = await Api.callAsync('post', CATEGORIES.allEdit, {
                 nameLv1: this.state.categoryLv1.value,
@@ -236,9 +235,8 @@ class EditCategory extends Component {
             }).catch(error => {
                 return error.response.data;
             });
-
             if (data.success) {
-                window.open(`/app/list-cate/edit/${data.result.id}`, "_self")
+                window.open(`/app/list-cate/edit/${data.result.categoryEdit.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");

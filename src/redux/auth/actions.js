@@ -18,6 +18,7 @@ import {
   REGISTER_SELLER,
   REGISTER_SELLER_SUCCESS,
   REGISTER_SELLER_ERROR,
+  LOGOUT_SELLER
 } from '../actions';
 
 export const loginUser = (user, history) => ({
@@ -106,5 +107,10 @@ export const registerSellerError = (message) => ({
 
 export const logoutUser = (history) => ({
   type: LOGOUT_USER,
+  payload: { history }
+});
+
+export const logoutSeller = (history) => ({
+  type: LOGOUT_SELLER,
   payload: { history }
 });

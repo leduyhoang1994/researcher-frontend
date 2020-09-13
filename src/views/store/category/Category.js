@@ -1,12 +1,8 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
-import { Colxx } from "../../../components/common/CustomBootstrap";
+import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
 import { CATEGORY_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { NavLink } from 'react-router-dom';
 import './Category.scss';
 
 class Category extends Component {
@@ -50,7 +46,10 @@ class Category extends Component {
         return (
             <span className="list-item-heading mb-0 truncate w-40 w-xs-100  mb-1 mt-1">
                 <span className="cursor-pointer hover display-block "
-                onClick={() => this.props.getProductByCategory(fullPath)}
+                onClick={() => {
+                    window.open(`/store/${cate}?lvl=${fullPath.indexOf(cate) + 1}`, "_self")
+                    this.props.getProductByCategory(fullPath)}
+                }
                 >
                     {cate}
                 </span>

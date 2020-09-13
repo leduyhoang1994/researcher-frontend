@@ -225,7 +225,7 @@ class TopNav extends Component {
             </>
           }
 
-          <div className="search" data-search-path="/store/search">
+          <div className="search ml-5" data-search-path="/store/search">
             <Input
               name="searchKeyword"
               id="searchKeyword"
