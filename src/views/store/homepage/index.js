@@ -40,7 +40,6 @@ class Homepage extends React.Component {
 
     getProducts = () => {
         let level = (this.state.cate.get("lvl"));
-        console.log(this.state.categoryName + " " + level);
         let array = [];
         let categoryLv1 = this.state.categoryLv1;
         let categoryLv2 = this.state.categoryLv2;
@@ -48,12 +47,11 @@ class Homepage extends React.Component {
         if (level) {
             level = parseInt(level);
             switch (level) {
-                case 1: return categoryLv1 = this.state.categoryName;
-                case 2: return categoryLv2 = this.state.categoryName;
-                case 3: return categoryLv3 = this.state.categoryName;
+                case 1:  categoryLv1 = this.state.categoryName; break ;
+                case 2:  categoryLv2 = this.state.categoryName; break ;
+                case 3:  categoryLv3 = this.state.categoryName; break ;
                 default: break;
             }
-            console.log(categoryLv1, categoryLv2, categoryLv3);
         } else {
             categoryLv1 = this.state.categoryLv1;
             categoryLv2 = this.state.categoryLv2;

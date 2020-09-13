@@ -3,7 +3,7 @@ import { Card, CardBody } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { injectIntl } from 'react-intl';
 import { Colxx } from "../../../components/common/CustomBootstrap";
-
+import { numberWithCommas } from "../../../helpers/Utils";
 
 
 class Products extends Component {
@@ -24,10 +24,10 @@ class Products extends Component {
                                 <span className="align-middle d-inline-block w-70 w-xs-100">{item.name}</span>
                             </NavLink>
                             <p className="mb-1 text-small w-15 w-xs-100">
-                                {item.priceMin}
+                                {numberWithCommas(parseInt(item.priceMin))} VNĐ
                             </p>
                             <p className="mb-1 text-small w-15 w-xs-100">
-                                {item.priceMax}
+                                {numberWithCommas(parseInt(item.priceMax))} VNĐ
                             </p>
                             <button className="mb-1 w-5 w-xs-100 btn btn-primary"
                                 onClick={() => {

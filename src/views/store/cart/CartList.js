@@ -6,6 +6,7 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { ORDERS } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import { numberWithCommas } from "../../../helpers/Utils";
 class CartList extends Component {
     constructor(props) {
         super(props);
@@ -145,7 +146,7 @@ class CartList extends Component {
                         })
                         }
                         <Colxx xxs="12" className="text-right">
-                            <h3>Tổng cộng: {this.state.total}</h3>
+                            <h3>Tổng cộng: {numberWithCommas(this.state.total)} VNĐ</h3>
                         </Colxx>
                     </div>
 

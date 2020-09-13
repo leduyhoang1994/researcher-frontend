@@ -8,6 +8,7 @@ import ApiController from '../../../helpers/Api';
 import Api from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import Property from '../../app/productEdit/Property';
+import { numberWithCommas } from "../../../helpers/Utils";
 
 class ProductDetail extends Component {
     constructor(props) {
@@ -162,8 +163,8 @@ class ProductDetail extends Component {
                                 <h2>{name}</h2>
                                 <Row className="mt-3">
                                     <Colxx xxs="6">
-                                        <p>{priceMin} VNĐ</p>
-                                        <p>{futurePriceMin} VNĐ</p>
+                                        <p className="product-price">{numberWithCommas(parseInt(priceMin))} VNĐ</p>
+                                        <p className="product-price">{numberWithCommas(parseInt(futurePriceMin))} VNĐ</p>
                                         <Property
                                             key={this.state.productId}
                                             component={this}
