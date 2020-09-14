@@ -24,7 +24,6 @@ class Login extends Component {
       if (userName !== "" && values.password !== "") {
         const password = values.password;
         const data = { userName, password }
-        console.log(data);
         this.props.loginSeller(data, this.props.history);
       }
     }
@@ -43,7 +42,7 @@ class Login extends Component {
   componentDidUpdate() {
     if (this.props.error) {
       NotificationManager.warning(
-        this.props.error.message,
+        this.props.error,
         "Login Error",
         3000,
         null,

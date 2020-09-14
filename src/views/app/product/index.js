@@ -5,7 +5,6 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import Select, { createFilter } from 'react-select';
-import categoriesData from '../../../data/categories';
 import ProductTable from './ProductTable';
 import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';

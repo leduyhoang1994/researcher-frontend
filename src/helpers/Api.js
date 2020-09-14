@@ -96,7 +96,7 @@ const ApiController = {
           options.errorCallback(error);
         } else {
           NotificationManager.error(
-            error.response.data.message ? error.response.data.message : "Something wrong",
+            error.response?.data?.message ? error.response?.data?.message : "Something wrong",
             "Error",
             3000,
             null,

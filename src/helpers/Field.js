@@ -20,7 +20,6 @@ export const FieldsHelper = {
   },
   renderField(data, field, fieldInfo, component) {
     const { type } = fieldInfo;
-    console.log(fieldInfo.isDisabled);
 
     switch (type) {
       case 'text':

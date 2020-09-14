@@ -1,14 +1,46 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, Input, Label, CardFooter, Button } from 'reactstrap';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Row, Input, Label, Button } from 'reactstrap';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
+import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import Api from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
-import Property from '../../app/productEdit/Property';
 import { numberWithCommas } from "../../../helpers/Utils";
+// import { detailImages, detailThumbs } from "../../../data/carouselItems";
+
+const renderOptions = properties => {
+    let options = {};
+    let list = [];
+    if (properties) {
+        properties.forEach(item => {
+            if (!options[item.label]) {
+                options[item.label] = {};
+            }
+            if (!options[item.label][item.value]) {
+                options[item.label][item.value] = "";
+            }
+        });
+
+
+        for (let option in options) {
+            let value = options[option];
+            let attr = "";
+            for (let val in value) {
+                attr = attr.concat(val).concat(", ");
+            }
+            attr = attr.substr(0, attr.length - 2);
+            list.push({ label: option, value: attr })
+        }
+
+        return list.map(item => {
+            console.log(item);
+            return (
+                <p key={`${item.label}-${item.value}`}>{item.label} : {item.value}</p>
+            )
+        })
+    }
+}
 
 class ProductDetail extends Component {
     constructor(props) {
@@ -30,12 +62,22 @@ class ProductDetail extends Component {
             optionIds: [],
             quantity: 1,
         };
-        console.log(this.props);
         this.messages = this.props.intl.messages;
     }
 
     componentDidMount() {
         this.loadCurrentProduct();
+        let cart = localStorage.getItem("cart");
+        cart = cart ? JSON.parse(cart) : [];
+
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id == this.state.id) {
+                this.setState({
+                    isAddedToCart: !this.state.isAddedToCart
+                })
+
+            }
+        }
     }
 
     loadCurrentProduct = () => {
@@ -48,18 +90,14 @@ class ProductDetail extends Component {
 
     getProduct = (id) => {
         ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
+            let arr = [];
+            console.log(data);
+            data.productEditOptions.forEach(item => {
+                arr.push({ label: item.option.attribute.label, value: item.option.label })
+            });
             this.setState({
                 product: data,
-            }, () => {
-                // const option = this.state.product.productEditOptions;
-                // let arr = [];
-                // console.log(option);
-                // option.forEach(item => {
-                //     arr.push({ label: item.options.attribute.label, value: item.options.label })
-                // })
-                // this.setState({
-                //     properties: arr,
-                // })
+                properties: arr
             })
         })
     }
@@ -109,19 +147,12 @@ class ProductDetail extends Component {
         });
     }
 
+
     render() {
-        let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
+        let { name, priceMin, futurePriceMin, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
 
-        let cart = localStorage.getItem("cart");
-        cart = cart ? JSON.parse(cart) : [];
-
-        let isAddedToCart = this.state.isAddedToCart;
-
-        for (let i = 0; i < cart.length; i++)
-            if (cart[i].id == this.state.id) {
-                isAddedToCart = true;
-            }
+        const { isAddedToCart, properties } = this.state;
 
         return (
             <Fragment>
@@ -129,35 +160,37 @@ class ProductDetail extends Component {
                     <Colxx xxs="12" >
                         <Row>
                             <Colxx xxs="6" style={{ textAlign: "center" }}>
-                                <GlideComponentThumbs settingsImages={
-                                    {
-                                        bound: true,
-                                        rewind: false,
-                                        focusAt: 0,
-                                        startAt: 0,
-                                        gap: 5,
-                                        perView: 1,
-                                        data: detailImages,
-                                    }
-                                } settingsThumbs={
-                                    {
-                                        bound: true,
-                                        rewind: false,
-                                        focusAt: 0,
-                                        startAt: 0,
-                                        gap: 10,
-                                        perView: 5,
-                                        data: detailImages,
-                                        breakpoints: {
-                                            576: {
-                                                perView: 4
-                                            },
-                                            420: {
-                                                perView: 3
+                                {
+                                    detailImages.length > 0 && <GlideComponentThumbs settingsImages={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 5,
+                                            perView: 1,
+                                            data: detailImages,
+                                        }
+                                    } settingsThumbs={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 10,
+                                            perView: 5,
+                                            data: detailImages,
+                                            breakpoints: {
+                                                576: {
+                                                    perView: 4
+                                                },
+                                                420: {
+                                                    perView: 3
+                                                }
                                             }
                                         }
-                                    }
-                                } />
+                                    } />
+                                }
                             </Colxx>
                             <Colxx xxs="6">
                                 <h2>{name}</h2>
@@ -165,13 +198,12 @@ class ProductDetail extends Component {
                                     <Colxx xxs="6">
                                         <p className="product-price">{numberWithCommas(parseInt(priceMin))} VNĐ</p>
                                         <p className="product-price">{numberWithCommas(parseInt(futurePriceMin))} VNĐ</p>
-                                        <Property
-                                            key={this.state.productId}
-                                            component={this}
-                                            categoryId={this.state.idCategory} // category id of product
-                                            productOptions={this.state.options} // options fields of product data
-                                            setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
-                                        />
+                                        <div className="mt-3">
+                                            <h3 >Thuộc tính sản phẩm</h3>
+                                            {
+                                                renderOptions(properties)
+                                            }
+                                        </div>
                                     </Colxx>
                                     <Colxx xxs="6">
                                         <p >Sản lượng bán tại site gốc 1244</p>
@@ -216,7 +248,7 @@ class ProductDetail extends Component {
                                                 {__(this.messages, isAddedToCart ? "Đặt ngay" : "Thêm vào giỏ")}
                                             </Button>
                                         </div>
-                                        
+
                                     </Colxx>
                                 </Row>
                             </Colxx>
@@ -243,7 +275,7 @@ class ProductDetail extends Component {
                 <Row >
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Trọng lượng {weight} g</p>
+                            <p className="mt-3 ml-3">Khối lượng {weight} kg</p>
 
                         </div>
                     </Colxx>

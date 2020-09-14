@@ -20,36 +20,19 @@ class EditProduct extends Component {
         super(props);
         this.state = {
             id: this.props.match.params.id || null,
-            name: "",
-            priceMin: 0,
-            priceMax: 0,
-            futurePriceMin: 0,
-            futurePriceMax: 0,
-            serviceSla: "",
-            serviceCost: "",
-            description: "",
-            transportation: "",
-            workshopIn: "",
-            uboxIn: "",
-            idCategory: "",
+            product: {},
             selectedCategory: "",
             optionCategories: [],
             selectedOldProduct: "",
             optionOldProducts: [],
             optionProperties: [],
-            productId: "",
-            options: {},
             optionIds: [],
-            featureImage: "",
-            sourceProduct: {},
             sourceProductSelected: null,
             redirect: false,
             loading: false,
-            isPublished: false
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this);
-        console.log(this.props.location.pathname.replace("/app/list-product/add/", ""));
     }
 
     setRedirect = (url) => {
@@ -65,7 +48,6 @@ class EditProduct extends Component {
     }
 
     async componentDidMount() {
-
         this.setState({ loading: true });
         await this.getCategories();
         const productId = new URLSearchParams(this.props.location.search).get("product-id");
@@ -74,6 +56,13 @@ class EditProduct extends Component {
             const data = await ApiController.callAsync('get', `${PRODUCTS.allEdit}/source/${productId}`, {});
             const product = data.data.result;
 
+            // if (product?.id) {
+            //     this.setRedirect(`/app/list-product/edit/${product.id}`);
+            //     this.renderRedirect();
+            // } else {
+            //     this.setRedirect(`/app/list-product/add?productId=${productId}`);
+            //     this.renderRedirect();
+            // }
             if (product?.id) {
                 window.open(`/app/list-product/edit/${product.id}`, "_self");
             } else {
@@ -81,7 +70,6 @@ class EditProduct extends Component {
             }
         }
         else if (productAddId) {
-            console.log(`here ${productAddId}`)
             ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
                 this.setState({
                     sourceProduct: { productTitleVi: data.productTitleVi },
@@ -104,37 +92,19 @@ class EditProduct extends Component {
     getProduct = (id) => {
         ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
             this.setState({
-                name: data.name,
-                priceMin: data.priceMin,
-                priceMax: data.priceMax,
-                futurePriceMin: data.futurePriceMin,
-                futurePriceMax: data.futurePriceMax,
-                serviceSla: data.serviceSla,
-                serviceCost: data.serviceCost,
-                description: data.description,
-                transportation: data.transportation,
-                workshopIn: data.workshopIn,
-                uboxIn: data.uboxIn,
-                idCategory: data.categoryEditId,
-                productId: data.productId,
-                options: data.productEditOptions,
-                featureImage: data.featureImage,
-                sourceProduct: data.sourceProduct,
-                isPublished: data.isPublished
+                product: data,
             })
 
             this.state.optionCategories.forEach(item => {
-                if (item.value === this.state.idCategory) {
+                if (item.value === this.state.product.categoryEditId) {
                     this.setState({
                         selectedCategory: { label: item.label, value: item.value }
                     })
                 }
             })
 
-            console.log('getProduct' + JSON.stringify(this.state.optionOldProducts))
-
             this.state.optionOldProducts.forEach(item => {
-                if (item.value === this.state.productId) {
+                if (item.value === this.state.product.productId) {
                     this.setState({
                         selectedOldProduct: { label: item.label, value: item.value }
                     })
@@ -172,7 +142,6 @@ class EditProduct extends Component {
         const data = await ApiController.getAsync(CATEGORIES.allEdit, {});
         let tempOptions = [];
         let categories = [];
-        // console.log(JSON.stringify(data));
         data.data.result.forEach(item => {
             if (!tempOptions.includes(item.nameLv3)) {
                 tempOptions.push(item.nameLv3);
@@ -183,17 +152,20 @@ class EditProduct extends Component {
     }
 
     handleChangeCategory = (data) => {
+        let product = this.state.product;
+        product.categoryEditId = data.value;
         this.setState({
             selectedCategory: data,
-            idCategory: data.value
+            product: product
         })
     };
 
     handleChange(event) {
-        const value = event.target.value;
+        let value = parseInt(event.target.value) || event.target.value;
+        let product = this.state.product;
+        product[event.target.name] = value
         this.setState({
-            ...this.state,
-            [event.target.name]: value
+            product: product
         });
     }
 
@@ -206,14 +178,16 @@ class EditProduct extends Component {
             })
         }
 
+        let product = this.state.product;
+        product.optionIds = optionId;
         this.setState({
-            optionIds: optionId
+            product: product
         });
     }
 
     validateFields = async () => {
         const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "idCategory", "idCategory", () => {
+            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "idCategory", () => {
                 return [this.state.selectedOldProduct.value, "sourceProduct"]
             }];
         let success = true;
@@ -231,7 +205,6 @@ class EditProduct extends Component {
                 }
             }
         }
-        console.log(success);
 
         return success;
     }
@@ -246,60 +219,30 @@ class EditProduct extends Component {
 
     callApi = async () => {
         if (this.state.id) {
-            await Api.callAsync('put', PRODUCTS.allEdit, {
-                id: parseInt(this.state.id),
-                name: this.state.name,
-                priceMin: this.state.priceMin,
-                priceMax: this.state.priceMax,
-                futurePriceMin: this.state.futurePriceMin,
-                futurePriceMax: this.state.futurePriceMax,
-                serviceSla: this.state.serviceSla,
-                serviceCost: this.state.serviceCost,
-                description: this.state.description,
-                transportation: this.state.transportation,
-                workshopIn: this.state.workshopIn,
-                uboxIn: this.state.uboxIn,
-                categoryEditId: this.state.idCategory,
-                productId: this.state.productId,
-                optionIds: this.state.optionIds,
-                featureImage: this.state.featureImage,
-                isPublished: this.state.isPublished,
-            }).then(data => {
-                // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
+            let product = this.state.product;
+            product.id = parseInt(this.state.id);
+            await Api.callAsync('put', PRODUCTS.allEdit,
+                product
+            ).then(data => {
+                NotificationManager.success("Cập nhật thành công", "Thành công");
                 this.loadCurrentProduct();
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            const data = await Api.callAsync('post', PRODUCTS.allEdit, {
-                name: this.state.name,
-                priceMin: this.state.priceMin,
-                priceMax: this.state.priceMax,
-                futurePriceMin: this.state.futurePriceMin,
-                futurePriceMax: this.state.futurePriceMax,
-                serviceSla: this.state.serviceSla,
-                serviceCost: this.state.serviceCost,
-                description: this.state.description,
-                transportation: this.state.transportation,
-                workshopIn: this.state.workshopIn,
-                uboxIn: this.state.uboxIn,
-                categoryEditId: this.state.idCategory,
-                productId: this.state.productId,
-                optionIds: this.state.optionIds,
-                featureImage: this.state.featureImage,
-                isPublished: this.state.isPublished,
-            }).then(data => {
+            const data = await Api.callAsync('post', PRODUCTS.allEdit,
+                this.state.product
+            ).then(data => {
                 return data.data;
-                // console.log(JSON.stringify(data.categoryEdit.id));
-                // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
             }).catch(error => {
                 return error.response?.data;
             });
 
             if (data.success) {
-                NotificationManager.success("Thành công", "Thành công");
-                window.open(`/app/list-product/edit/${data.result.id}`, "_self");
+                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
+                NotificationManager.success("Thêm mới thành công", "Thành công");
+                // this.setRedirect(`/app/list-product/edit/${data.result.productEdit.id}`);
+                // this.renderRedirect();
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 const message = data?.message;
@@ -322,7 +265,7 @@ class EditProduct extends Component {
                 </Fragment>
             )
         }
-        let { name, priceMin, priceMax, futurePriceMin, futurePriceMax, serviceSla, serviceCost, description, transportation, workshopIn, uboxIn } = this.state;
+        const { name, priceMin, priceMax, featureImage, futurePriceMin, futurePriceMax, productId, serviceSla, serviceCost, weight, description, transportation, workshopIn, uboxIn, categoryEditId, productEditOptions, sourceProduct, isPublished } = this.state.product;
         return (
             <Fragment>
                 {this.renderRedirect()}
@@ -340,11 +283,15 @@ class EditProduct extends Component {
                                     <Colxx xxs="6">
                                         <Media
                                             productId={this.state.id}
-                                            key={this.state.featureImage !== ""}
+                                            key={featureImage}
                                             setFeatureImage={url => {
-                                                this.setState({ featureImage: url })
+                                                this.setState({
+                                                    product: {
+                                                        featureImage: url
+                                                    }
+                                                })
                                             }}
-                                            featureImage={this.state.featureImage}
+                                            featureImage={featureImage}
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
@@ -379,7 +326,6 @@ class EditProduct extends Component {
                                                         name="priceMin"
                                                         min={0}
                                                         value={priceMin}
-                                                        // defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -392,7 +338,6 @@ class EditProduct extends Component {
                                                         name="priceMax"
                                                         value={priceMax}
                                                         min={0}
-                                                        defaultValue={0}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -407,7 +352,6 @@ class EditProduct extends Component {
                                                         name="futurePriceMin"
                                                         value={futurePriceMin}
                                                         min={0}
-                                                        defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -420,7 +364,6 @@ class EditProduct extends Component {
                                                         name="futurePriceMax"
                                                         value={futurePriceMax}
                                                         min={0}
-                                                        defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -428,9 +371,6 @@ class EditProduct extends Component {
                                                     </span>
                                                 </Label>
                                             </Colxx>
-                                        </Row>
-                                        <Row>
-                                            {/* <Property categoryId={this.state.idCategory} /> */}
                                         </Row>
                                     </Colxx>
                                 </Row>
@@ -443,15 +383,14 @@ class EditProduct extends Component {
                                                         className="react-select"
                                                         classNamePrefix="react-select"
                                                         defaultOptions
-                                                        // options={this.state.optionOldProducts}
-                                                        // value={this.state.selectedOldProduct}
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getOldProducts}
                                                         onChange={data => {
-                                                            console.log(data?.id);
+                                                            let product = this.state.product;
+                                                            product.productId = data?.id;
                                                             this.setState({
-                                                                productId: data?.id,
+                                                                product: product,
                                                                 sourceProductSelected: data
                                                             })
                                                         }
@@ -462,9 +401,9 @@ class EditProduct extends Component {
                                                         value={
                                                             this.state.sourceProductSelected ||
                                                             (
-                                                                this.state.sourceProduct ? {
-                                                                    id: this.state.productId,
-                                                                    productTitleVi: this.state.sourceProduct.productTitleVi
+                                                                sourceProduct ? {
+                                                                    id: productId,
+                                                                    productTitleVi: sourceProduct.productTitleVi
 
                                                                 } : null
                                                             )
@@ -479,7 +418,6 @@ class EditProduct extends Component {
                                                         type="text"
                                                         name="serviceSla"
                                                         value={serviceSla}
-                                                        defaultValue={this.state.serviceSla}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -492,11 +430,22 @@ class EditProduct extends Component {
                                                         min={0}
                                                         name="serviceCost"
                                                         value={serviceCost}
-                                                        defaultValue={this.state.serviceCost}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Phí dịch vụ dự kiến")}
+                                                    </span>
+                                                </Label>
+                                                <Label className="form-group has-float-label">
+                                                    <Input
+                                                        type="number"
+                                                        min={0}
+                                                        name="weight"
+                                                        value={weight}
+                                                        onChange={this.handleChange}
+                                                    />
+                                                    <span>
+                                                        {__(this.messages, "Khối lượng")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -506,7 +455,6 @@ class EditProduct extends Component {
                                                         type="text"
                                                         name="transportation"
                                                         value={transportation}
-                                                        defaultValue={this.state.transportation}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -519,7 +467,6 @@ class EditProduct extends Component {
                                                         name="workshopIn"
                                                         value={workshopIn}
                                                         min="0"
-                                                        defaultValue={this.state.workshopIn}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -531,7 +478,7 @@ class EditProduct extends Component {
                                                         min="0"
                                                         name="uboxIn"
                                                         value={uboxIn}
-                                                        defaultValue={this.state.uboxIn} rows="1"
+                                                        rows="1"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -543,10 +490,10 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Property
-                                                    key={this.state.productId}
+                                                    key={productId}
                                                     component={this}
-                                                    categoryId={this.state.idCategory} // category id of product
-                                                    productOptions={this.state.options} // options fields of product data
+                                                    categoryId={categoryEditId} // category id of product
+                                                    productOptions={productEditOptions} // options fields of product data
                                                     setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>
@@ -559,11 +506,7 @@ class EditProduct extends Component {
                                                 value={description}
                                                 name="description"
                                                 rows="5"
-                                                onChange={e => {
-                                                    this.setState({
-                                                        description: e.target.value
-                                                    });
-                                                }}
+                                                onChange={this.handleChange}
                                             />
                                             <span>
                                                 {__(this.messages, "Mô tả")}
@@ -574,16 +517,20 @@ class EditProduct extends Component {
                                 <div className="text-right card-title">
                                     <Button
                                         className="mr-2"
-                                        color={this.state.isPublished ? "danger" : "success"}
+                                        color={isPublished ? "danger" : "success"}
                                         onClick={() => {
+                                            let publish = this.state.product.isPublished;
                                             this.setState({
-                                                isPublished: !this.state.isPublished
+                                                product: {
+                                                    isPublished: !publish
+                                                }
+
                                             }, () => {
                                                 this.editProduct();
                                             });
                                         }}
                                     >
-                                        {__(this.messages, this.state.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                        {__(this.messages, isPublished ? "Ngừng xuất bản" : "Xuất bản")}
                                     </Button>
                                     <Button
                                         className="mr-2"

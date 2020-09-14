@@ -30,7 +30,6 @@ class Filter extends React.Component {
         let search = this.state.search.get('s');
         let array = [];
         ApiController.post(PRODUCT_EDIT.filter, { productEditName: search, page: 0, size: 10 }, data => {
-            console.log(data);
             this.setState({
                 products: data.productEdits
             }, () => {
@@ -55,7 +54,7 @@ class Filter extends React.Component {
                             <Product key={index} product={product} />
                         </Colxx>
                     )
-                }) : <h1 style={{textAlign: "center"}}>Nothing to show</h1>
+                }) : <h1 >Không tìm thấy sản phẩm nào!</h1>
                 }
             </Row>
         );
