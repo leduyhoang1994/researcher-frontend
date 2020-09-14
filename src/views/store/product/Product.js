@@ -72,7 +72,7 @@ class Product extends React.Component {
                     <div
                         className="position-relative"
                         style={{
-                            height: `${this.state.width}px`
+                            height: `${this.state.width}px`,
                         }}
                     >
                         <CardImg
@@ -80,7 +80,6 @@ class Product extends React.Component {
                             height="100%"
                             style={{
                                 objectFit: "contain",
-                                backgroundColor: "white"
                             }} top src={product.featureImage} alt="Card image cap" />
                         {
                             /* 

@@ -54,7 +54,7 @@ class Filter extends React.Component {
                             <Product key={index} product={product} />
                         </Colxx>
                     )
-                }) : <h1 style={{textAlign: "center"}}>Nothing to show</h1>
+                }) : <h1 >Không tìm thấy sản phẩm nào!</h1>
                 }
             </Row>
         );

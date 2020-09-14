@@ -104,7 +104,9 @@ const loginSellerWithEmailPasswordAsync = async (userName, password) =>
         password: password
     }).then(data => {
         return data.data;
-    }).catch(error => error);
+    }).catch(error => {
+        return error.response.data;
+    });
 
 
 const getUserDetails = async (token) =>
@@ -221,17 +223,18 @@ function* logout({ payload }) {
 }
 
 export function* watchLogoutSeller() {
-    yield takeEvery(LOGOUT_USER, logoutSeller);
+    console.log("AAA");
+    yield takeEvery(LOGOUT_SELLER, logoutSeller);
 }
 
 const logoutSellerAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
     await ApiController.callAsync("POST", SELLER.logout, null);
-    history.push('/')
+    history.push('/seller/login')
 }
 
 function* logoutSeller({ payload }) {
-    const { history } = payload
+    const { history } = payload;
     try {
         yield call(logoutSellerAsync, history);
         localStorage.removeItem('user_token');

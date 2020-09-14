@@ -15,20 +15,10 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: "Tony",
-      lastName: "Stark",
-      userName: "",
-      phone: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      seller: {},
       optionsCity: [],
       optionsDistrict: [],
       optionsCommune: [],
-      selectedCity: null,
-      selectedDistrict: null,
-      selectedCommune: null,
-      address: "",
     };
     this.handleChange = this.handleChange.bind(this)
   }
@@ -154,8 +144,9 @@ class Register extends Component {
   }
 
   render() {
-    const { email, password, confirmPassword, optionsCity, optionsDistrict, optionsCommune, selectedDistrict, selectedCommune, address } = this.state;
-    const { selectedCity } = this.state.optionsCity;
+    const { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address } = this.state.seller;
+    // const { selectedCity } = this.state.optionsCity;
+    const { optionsCity, optionsDistrict, optionsCommune } = this.state;
     const initialValues = { email, password, confirmPassword };
 
     return (
@@ -188,12 +179,12 @@ class Register extends Component {
                     <Row className="h-100">
                       <Colxx xxs="6">
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="firstName" onChange={this.handleChange} defaultValue={this.state.firstName} />
+                          <Input type="name" name="firstName" onChange={this.handleChange} defaultValue={firstName} />
                           <IntlMessages id="user.firstName" />
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="userName" onChange={this.handleChange} defaultValue={this.state.userName} />
+                          <Input type="name" name="userName" onChange={this.handleChange} defaultValue={userName} />
                           <IntlMessages id="user.userName" />
                         </Label>
 
@@ -248,12 +239,12 @@ class Register extends Component {
 
                       <Colxx xxs="6">
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="lastName" onChange={this.handleChange} defaultValue={this.state.lastName} />
+                          <Input type="name" name="lastName" onChange={this.handleChange} defaultValue={lastName} />
                           <IntlMessages id="user.lastName" />
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="phone" required onChange={this.handleChange} defaultValue={this.state.phone} />
+                          <Input type="name" name="phone" required onChange={this.handleChange} defaultValue={phone} />
                           <IntlMessages id="user.phone" />
                         </Label>
 

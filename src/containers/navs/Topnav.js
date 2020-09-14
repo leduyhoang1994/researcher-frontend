@@ -16,6 +16,7 @@ import {
   setContainerClassnames,
   clickOnMobileMenu,
   logoutUser,
+  logoutSeller,
   changeLocale
 } from "../../redux/actions";
 
@@ -175,7 +176,12 @@ class TopNav extends Component {
   };
 
   handleLogout = () => {
-    this.props.logoutUser(this.props.history);
+    if (this.props.home === "/store") {
+      this.props.logoutSeller(this.props.history);
+    } else {
+      this.props.logoutUser(this.props.history);
+    }
+    localStorage.setItem("cart", []);
   };
 
   menuButtonClick = (e, menuClickCount, containerClassnames) => {
@@ -280,7 +286,7 @@ class TopNav extends Component {
           <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" />
         </a>
-        <div className="navbar-right" style={{position: "relative"}}>
+        <div className="navbar-right" style={{ position: "relative" }}>
           {isDarkSwitchActive && <TopnavDarkSwitch />}
 
           <div className="header-icons d-inline-block align-middle">
@@ -339,6 +345,6 @@ const mapStateToProps = ({ menu, settings }) => {
 export default injectIntl(
   connect(
     mapStateToProps,
-    { setContainerClassnames, clickOnMobileMenu, logoutUser, changeLocale }
+    { setContainerClassnames, clickOnMobileMenu, logoutSeller, logoutUser, changeLocale }
   )(TopNav)
 );

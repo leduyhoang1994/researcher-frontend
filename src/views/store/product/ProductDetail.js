@@ -9,9 +9,20 @@ import GlideComponentThumbs from "../../../components/carousel/GlideComponentThu
 import { numberWithCommas } from "../../../helpers/Utils";
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
 
-const renderOptions = options => {
-    if (options) {
-        let list = [];
+const renderOptions = properties => {
+    let options = {};
+    let list = [];
+    if (properties) {
+        properties.forEach(item => {
+            if (!options[item.label]) {
+                options[item.label] = {};
+            }
+            if (!options[item.label][item.value]) {
+                options[item.label][item.value] = "";
+            }
+        });
+
+
         for (let option in options) {
             let value = options[option];
             let attr = "";
@@ -19,12 +30,13 @@ const renderOptions = options => {
                 attr = attr.concat(val).concat(", ");
             }
             attr = attr.substr(0, attr.length - 2);
-            list.push({label : option, value : attr})
+            list.push({ label: option, value: attr })
         }
+
         return list.map(item => {
             console.log(item);
             return (
-                <p>{item.label} : {item.value}</p>
+                <p key={`${item.label}-${item.value}`}>{item.label} : {item.value}</p>
             )
         })
     }
@@ -55,6 +67,17 @@ class ProductDetail extends Component {
 
     componentDidMount() {
         this.loadCurrentProduct();
+        let cart = localStorage.getItem("cart");
+        cart = cart ? JSON.parse(cart) : [];
+
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id == this.state.id) {
+                this.setState({
+                    isAddedToCart: !this.state.isAddedToCart
+                })
+
+            }
+        }
     }
 
     loadCurrentProduct = () => {
@@ -67,8 +90,14 @@ class ProductDetail extends Component {
 
     getProduct = (id) => {
         ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
+            let arr = [];
+            console.log(data);
+            data.productEditOptions.forEach(item => {
+                arr.push({ label: item.option.attribute.label, value: item.option.label })
+            });
             this.setState({
                 product: data,
+                properties: arr
             })
         })
     }
@@ -120,75 +149,48 @@ class ProductDetail extends Component {
 
 
     render() {
-        let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
+        let { name, priceMin, futurePriceMin, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
 
-        let cart = localStorage.getItem("cart");
-        cart = cart ? JSON.parse(cart) : [];
+        const { isAddedToCart, properties } = this.state;
 
-        let isAddedToCart = this.state.isAddedToCart;
-
-        for (let i = 0; i < cart.length; i++)
-            if (cart[i].id == this.state.id) {
-                isAddedToCart = true;
-            }
-
-        let arr = [];
-        let options = {}
-        const option = this.state.product.productEditOptions;
-        if (option) {
-            option.forEach(item => {
-                arr.push({ label: item.option.attribute.label, value: item.option.label })
-            })
-            if (arr) {
-                arr.forEach(item => {
-                    if (!options[item.label]) {
-                        options[item.label] = {};
-                    }
-                    if (!options[item.label][item.value]) {
-                        options[item.label][item.value] = "";
-                    }
-                });
-                console.log(JSON.stringify(options));
-                for (var value in options)
-                    console.log(value);
-            }
-        }
         return (
             <Fragment>
                 <Row>
                     <Colxx xxs="12" >
                         <Row>
                             <Colxx xxs="6" style={{ textAlign: "center" }}>
-                                <GlideComponentThumbs settingsImages={
-                                    {
-                                        bound: true,
-                                        rewind: false,
-                                        focusAt: 0,
-                                        startAt: 0,
-                                        gap: 5,
-                                        perView: 1,
-                                        data: detailImages,
-                                    }
-                                } settingsThumbs={
-                                    {
-                                        bound: true,
-                                        rewind: false,
-                                        focusAt: 0,
-                                        startAt: 0,
-                                        gap: 10,
-                                        perView: 5,
-                                        data: detailImages,
-                                        breakpoints: {
-                                            576: {
-                                                perView: 4
-                                            },
-                                            420: {
-                                                perView: 3
+                                {
+                                    detailImages.length > 0 && <GlideComponentThumbs settingsImages={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 5,
+                                            perView: 1,
+                                            data: detailImages,
+                                        }
+                                    } settingsThumbs={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 10,
+                                            perView: 5,
+                                            data: detailImages,
+                                            breakpoints: {
+                                                576: {
+                                                    perView: 4
+                                                },
+                                                420: {
+                                                    perView: 3
+                                                }
                                             }
                                         }
-                                    }
-                                } />
+                                    } />
+                                }
                             </Colxx>
                             <Colxx xxs="6">
                                 <h2>{name}</h2>
@@ -199,7 +201,7 @@ class ProductDetail extends Component {
                                         <div className="mt-3">
                                             <h3 >Thuộc tính sản phẩm</h3>
                                             {
-                                                renderOptions(options)
+                                                renderOptions(properties)
                                             }
                                         </div>
                                     </Colxx>
@@ -273,7 +275,7 @@ class ProductDetail extends Component {
                 <Row >
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Trọng lượng {weight} g</p>
+                            <p className="mt-3 ml-3">Khối lượng {weight} kg</p>
 
                         </div>
                     </Colxx>
