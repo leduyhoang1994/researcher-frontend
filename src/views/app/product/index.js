@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Label, Input, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Label, CardFooter, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
@@ -8,7 +8,7 @@ import Select, { createFilter } from 'react-select';
 import ProductTable from './ProductTable';
 import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES } from '../../../constants/api';
 import ProductSetModal from './ProductSetModal';
 import { arrayColumn } from '../../../helpers/Utils';
 

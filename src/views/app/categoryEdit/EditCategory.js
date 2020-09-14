@@ -1,13 +1,12 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button, ListGroupItem } from 'reactstrap';
+import { Row, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { CATEGORIES, ATTRIBUTES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import Select, { Creatable } from 'react-select';
-import { Link } from 'react-router-dom';
+import { Creatable } from 'react-select';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
@@ -79,7 +78,7 @@ class EditCategory extends Component {
                 let listOptions = [];
                 attributes.forEach(item => {
                     if (item.attribute) {
-                        listOptions.push({label: item.attribute.label, value: item.attribute.label});
+                        listOptions.push({ label: item.attribute.label, value: item.attribute.label });
                     }
                 })
                 this.setState({
@@ -130,7 +129,7 @@ class EditCategory extends Component {
     }
 
     handleSelect1 = categoryLv1 => {
-        if(categoryLv1) {
+        if (categoryLv1) {
             this.setState({ categoryLv1: categoryLv1 });
         } else {
             this.setState({ categoryLv1: "" });
@@ -138,16 +137,16 @@ class EditCategory extends Component {
     };
 
     handleSelect2 = categoryLv2 => {
-        if(categoryLv2) {
+        if (categoryLv2) {
             this.setState({ categoryLv2: categoryLv2 });
         } else {
             this.setState({ categoryLv2: "" });
         }
-        
+
     };
 
     handleSelect3 = categoryLv3 => {
-        if(categoryLv3) {
+        if (categoryLv3) {
             this.setState({ categoryLv3: categoryLv3 });
         } else {
             this.setState({ categoryLv3: "" });

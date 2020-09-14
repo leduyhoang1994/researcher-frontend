@@ -1,7 +1,6 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label } from 'reactstrap';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../containers/navs/Breadcrumb";
+import React, { Component } from 'react';
+import { Row, Input, Label } from 'reactstrap';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';

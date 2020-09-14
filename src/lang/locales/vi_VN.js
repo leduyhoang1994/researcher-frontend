@@ -24,7 +24,7 @@ module.exports = {
   "user.fullName": "Họ tên",
   "user.firstName": "Họ",
   "user.lastName": "Tên",
-  "user.phone": "Số điện thoại *",
+  "user.phoneNumber": "Số điện thoại *",
   "user.login-button": "ĐĂNG NHẬP",
   "user.register-button": "ĐĂNG KÝ",
   "user.reset-password-button": "CÀI ĐẶT LẠI",
@@ -65,6 +65,7 @@ module.exports = {
   "menu.student.info": "Thông tin",
   "menu.student.checkin-history": "Lịch sử Check In",
   "menu.checkin-history": "Lịch sử Check In",
+  "menu.research": "Ngành hàng",
 
  /* 04.Error Page */
  "pages.error-title": "Có gì đó không đúng!",

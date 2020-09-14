@@ -34,7 +34,6 @@ const renderOptions = properties => {
         }
 
         return list.map(item => {
-            console.log(item);
             return (
                 <p key={`${item.label}-${item.value}`}>{item.label} : {item.value}</p>
             )
@@ -91,7 +90,6 @@ class ProductDetail extends Component {
     getProduct = (id) => {
         ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
             let arr = [];
-            console.log(data);
             data.productEditOptions.forEach(item => {
                 arr.push({ label: item.option.attribute.label, value: item.option.label })
             });
@@ -147,12 +145,8 @@ class ProductDetail extends Component {
         });
     }
 
-
     render() {
-        let { name, priceMin, futurePriceMin, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
-        const detailImages = this.state.detailImages;
-
-        const { isAddedToCart, properties } = this.state;
+        const { product, detailImages, isAddedToCart, properties } = this.state;
 
         return (
             <Fragment>
@@ -193,11 +187,11 @@ class ProductDetail extends Component {
                                 }
                             </Colxx>
                             <Colxx xxs="6">
-                                <h2>{name}</h2>
+                                <h2>{product.name}</h2>
                                 <Row className="mt-3">
                                     <Colxx xxs="6">
-                                        <p className="product-price">{numberWithCommas(parseInt(priceMin))} VNĐ</p>
-                                        <p className="product-price">{numberWithCommas(parseInt(futurePriceMin))} VNĐ</p>
+                                        <p className="product-price">{numberWithCommas(parseInt(product.priceMin))} VNĐ</p>
+                                        <p className="product-price">{numberWithCommas(parseInt(product.futurePriceMin))} VNĐ</p>
                                         <div className="mt-3">
                                             <h3 >Thuộc tính sản phẩm</h3>
                                             {
@@ -258,42 +252,42 @@ class ProductDetail extends Component {
                 <Row className="mt-5">
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Thời gian phát hàng của xưởng {workshopIn} ngày</p>
+                            <p className="mt-3 ml-3">Thời gian phát hàng của xưởng {product.workshopIn} ngày</p>
                         </div>
                     </Colxx>
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Hình thức vận chuyển {transportation}</p>
+                            <p className="mt-3 ml-3">Hình thức vận chuyển {product.transportation}</p>
                         </div>
                     </Colxx>
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Thời gian giao hàng Ubox {uboxIn} ngày</p>
+                            <p className="mt-3 ml-3">Thời gian giao hàng Ubox {product.uboxIn} ngày</p>
                         </div>
                     </Colxx>
                 </Row>
                 <Row >
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Khối lượng {weight} kg</p>
+                            <p className="mt-3 ml-3">Khối lượng {product.weight} kg</p>
 
                         </div>
                     </Colxx>
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">SLA dịch vụ {serviceSla}</p>
+                            <p className="mt-3 ml-3">SLA dịch vụ {product.serviceSla}</p>
                         </div>
                     </Colxx>
                     <Colxx xxs="4" >
                         <div>
-                            <p className="mt-3 ml-3">Phí dịch vụ dự kiến {serviceCost}</p>
+                            <p className="mt-3 ml-3">Phí dịch vụ dự kiến {product.serviceCost}</p>
                         </div>
                     </Colxx>
                 </Row>
                 <Row className="mt-5">
                     <Colxx xxs="12" >
                         <h2 className="mt-3 ml-3">Mô tả sản phẩm</h2>
-                        <p className="mt-3 ml-3">{description}</p>
+                        <p className="mt-3 ml-3">{product.description}</p>
                     </Colxx>
                 </Row>
             </Fragment >

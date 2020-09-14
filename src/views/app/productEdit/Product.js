@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -17,7 +17,8 @@ class Product extends Component {
             optionCategories: [],
             selectedCategory: "",
             products: [],
-            search: "",
+            search: new URLSearchParams(this.props.location.search) || "",
+            category: this.props.match.params.cate || null,
         };
         this.messages = this.props.intl.messages;
     }
@@ -28,6 +29,18 @@ class Product extends Component {
     }
 
     getProducts = () => {
+        const { search } = this.state;
+        const cate = (this.state.cate.get("cate")) || "";
+        if(!search && !cate) {
+            console.log("all");
+            
+        } else {
+            this.getAllProducts();
+        }
+        
+    }
+
+    getAllProducts = () => {
         let array = [];
         ApiController.get(PRODUCTS.allEdit, {}, data => {
             this.setState({
@@ -44,8 +57,14 @@ class Product extends Component {
         })
     }
 
+    get
+
     getAllCategories = () => {
-        ApiController.get(CATEGORIES.allEdit, {}, data => {
+        let cate = (this.state.cate.get("cate")) || "";
+        ApiController.get(CATEGORIES.allEdit, {
+            productEditName: this.state.search,
+            categoryEditNameLv3: this.s
+        }, data => {
             let options = [];
             let tempOptions = [];
             data.forEach(item => {
@@ -62,11 +81,8 @@ class Product extends Component {
 
     searchProducts = () => {
         const { search, selectedCategory } = this.state;
-        // ApiController.call('get', PRODUCTS.allEdit, {}, data => {
-        //     this.setState({
-        //         products: data
-        //     });
-        // })
+        console.log(search + " " + JSON.stringify(selectedCategory[0]));
+        window.open(`/app/list-product/${search}?cate=${selectedCategory.label}`, "_self")
     }
 
     handleClickRow = (row) => {
@@ -113,7 +129,6 @@ class Product extends Component {
                                         <Colxx xxs="12">
                                             <Label className="form-group has-float-label">
                                                 <Select
-                                                    isMulti
                                                     options={this.state.optionCategories}
                                                     value={this.state.selectedCategory}
                                                     onChange={(value) =>
