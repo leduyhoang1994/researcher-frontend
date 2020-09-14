@@ -26,8 +26,6 @@ const renderTable = (data) => {
 const OrderDetailTable = (props) => {
     let data = props.data;
     const totalPrice = props.totalPrice;
-    console.log(data);
-    console.log(totalPrice);
 
     return (
         <Row className="invoice-react">

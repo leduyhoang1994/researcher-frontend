@@ -62,7 +62,6 @@ class Product extends Component {
 
     searchProducts = () => {
         const { search, selectedCategory } = this.state;
-        console.log(search + " : " + selectedCategory);
         // ApiController.call('get', PRODUCTS.allEdit, {}, data => {
         //     this.setState({
         //         products: data

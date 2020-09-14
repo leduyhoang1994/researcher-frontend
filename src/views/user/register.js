@@ -57,9 +57,7 @@ class Register extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.props);
     if (this.props.error) {
-      console.log("Error: " + this.props.error);
       NotificationManager.warning(
         "Email is existed, please try another!",
         "Register Error",
@@ -72,7 +70,6 @@ class Register extends Component {
   }
 
   render() {
-    console.log(this.props);
     const { firstName, lastName, email, password, confirmPassword } = this.state;
     const initialValues = { firstName, lastName, email, password, confirmPassword };
 

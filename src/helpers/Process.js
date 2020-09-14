@@ -54,7 +54,6 @@ export const isUpgradeable = (group, data) => {
   try {
     eval(`isUpgradeable = ${formula}`);
   } catch (error) {
-    console.log(error);
     
     isUpgradeable = false;
   }

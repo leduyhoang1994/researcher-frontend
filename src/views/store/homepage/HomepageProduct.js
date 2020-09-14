@@ -17,7 +17,6 @@ class HomepageProduct extends React.Component {
         this.setState({
             width: this.productCard.clientWidth
         });
-        console.log(this.productCard.clientWidth);
     }
 
     render() {

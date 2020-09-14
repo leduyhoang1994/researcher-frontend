@@ -31,7 +31,6 @@ class Homepage extends React.Component {
 
         };
         this.messages = this.props.intl.messages;
-        console.log(this.props.history);
     }
 
     componentDidMount() {

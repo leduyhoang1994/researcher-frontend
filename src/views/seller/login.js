@@ -24,7 +24,6 @@ class Login extends Component {
       if (userName !== "" && values.password !== "") {
         const password = values.password;
         const data = { userName, password }
-        console.log(data);
         this.props.loginSeller(data, this.props.history);
       }
     }
