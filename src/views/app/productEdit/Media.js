@@ -11,6 +11,7 @@ class Media extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            files: null,
             productId: this.props.productId,
             mediaItems: {
                 images: [],
@@ -42,6 +43,10 @@ class Media extends React.Component {
             featureImage: url
         });
         this.props.setFeatureImage(url);
+    }
+
+    getListMedias = (files) => {
+        this.props.handlerFiles(files)
     }
 
     removeImage = (url) => {
@@ -176,6 +181,8 @@ class Media extends React.Component {
                     toggle={this.toggleUploadModal}
                     productId={this.state.productId}
                     reloadMedia={this.loadProductMedia}
+                    getListImages={this.getListMedias}
+                    files={this.props.files}
                 />
             </div>
         );
