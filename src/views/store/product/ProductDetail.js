@@ -1,14 +1,34 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, Input, Label, CardFooter, Button } from 'reactstrap';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Row, Input, Label, Button } from 'reactstrap';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
+import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import Api from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
-import Property from '../../app/productEdit/Property';
 import { numberWithCommas } from "../../../helpers/Utils";
+// import { detailImages, detailThumbs } from "../../../data/carouselItems";
+
+const renderOptions = options => {
+    if (options) {
+        let list = [];
+        for (let option in options) {
+            let value = options[option];
+            let attr = "";
+            for (let val in value) {
+                attr = attr.concat(val).concat(", ");
+            }
+            attr = attr.substr(0, attr.length - 2);
+            list.push({label : option, value : attr})
+        }
+        return list.map(item => {
+            console.log(item);
+            return (
+                <p>{item.label} : {item.value}</p>
+            )
+        })
+    }
+}
 
 class ProductDetail extends Component {
     constructor(props) {
@@ -50,16 +70,6 @@ class ProductDetail extends Component {
         ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
             this.setState({
                 product: data,
-            }, () => {
-                // const option = this.state.product.productEditOptions;
-                // let arr = [];
-                // console.log(option);
-                // option.forEach(item => {
-                //     arr.push({ label: item.options.attribute.label, value: item.options.label })
-                // })
-                // this.setState({
-                //     properties: arr,
-                // })
             })
         })
     }
@@ -109,6 +119,7 @@ class ProductDetail extends Component {
         });
     }
 
+
     render() {
         let { name, priceMin, priceMax, futurePriceMin, featureImage, serviceSla, serviceCost, description, weight, transportation, workshopIn, uboxIn } = this.state.product;
         const detailImages = this.state.detailImages;
@@ -123,6 +134,27 @@ class ProductDetail extends Component {
                 isAddedToCart = true;
             }
 
+        let arr = [];
+        let options = {}
+        const option = this.state.product.productEditOptions;
+        if (option) {
+            option.forEach(item => {
+                arr.push({ label: item.option.attribute.label, value: item.option.label })
+            })
+            if (arr) {
+                arr.forEach(item => {
+                    if (!options[item.label]) {
+                        options[item.label] = {};
+                    }
+                    if (!options[item.label][item.value]) {
+                        options[item.label][item.value] = "";
+                    }
+                });
+                console.log(JSON.stringify(options));
+                for (var value in options)
+                    console.log(value);
+            }
+        }
         return (
             <Fragment>
                 <Row>
@@ -165,13 +197,12 @@ class ProductDetail extends Component {
                                     <Colxx xxs="6">
                                         <p className="product-price">{numberWithCommas(parseInt(priceMin))} VNĐ</p>
                                         <p className="product-price">{numberWithCommas(parseInt(futurePriceMin))} VNĐ</p>
-                                        <Property
-                                            key={this.state.productId}
-                                            component={this}
-                                            categoryId={this.state.idCategory} // category id of product
-                                            productOptions={this.state.options} // options fields of product data
-                                            setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
-                                        />
+                                        <div className="mt-3">
+                                            <h3 >Thuộc tính sản phẩm</h3>
+                                            {
+                                                renderOptions(options)
+                                            }
+                                        </div>
                                     </Colxx>
                                     <Colxx xxs="6">
                                         <p >Sản lượng bán tại site gốc 1244</p>
@@ -216,7 +247,7 @@ class ProductDetail extends Component {
                                                 {__(this.messages, isAddedToCart ? "Đặt ngay" : "Thêm vào giỏ")}
                                             </Button>
                                         </div>
-                                        
+
                                     </Colxx>
                                 </Row>
                             </Colxx>
