@@ -87,7 +87,6 @@ class CartList extends Component {
     remove = id => {
         let tempProducts = [...this.state.products];
         let tempCart = [...this.state.cart];
-        console.log("aaa");
         tempCart = tempCart.filter(item => item.id !== id);
         tempProducts = tempProducts.filter(item => item.id !== id);
         localStorage.setItem("cart", JSON.stringify([...tempCart]));
@@ -104,7 +103,6 @@ class CartList extends Component {
     addTotals = () => {
         let total = 0;
         this.state.cart.map(item => {
-            console.log(item);
             total += (item.priceMin + item.priceMax) / 2 * item.quantity
         });
         this.setState({

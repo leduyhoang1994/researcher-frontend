@@ -30,7 +30,6 @@ class ProductDetail extends Component {
             optionIds: [],
             quantity: 1,
         };
-        console.log(this.props);
         this.messages = this.props.intl.messages;
     }
 

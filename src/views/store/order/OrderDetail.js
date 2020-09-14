@@ -62,7 +62,6 @@ class OrderDetail extends Component {
 
             data.push(value);
         })
-        console.log(data);
         return (
             <div>
                 <Fragment>

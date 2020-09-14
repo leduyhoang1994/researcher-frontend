@@ -49,7 +49,6 @@ class EditProduct extends Component {
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this);
-        console.log(this.props.location.pathname.replace("/app/list-product/add/", ""));
     }
 
     setRedirect = (url) => {
@@ -81,7 +80,6 @@ class EditProduct extends Component {
             }
         }
         else if (productAddId) {
-            console.log(`here ${productAddId}`)
             ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
                 this.setState({
                     sourceProduct: { productTitleVi: data.productTitleVi },
@@ -131,8 +129,6 @@ class EditProduct extends Component {
                 }
             })
 
-            console.log('getProduct' + JSON.stringify(this.state.optionOldProducts))
-
             this.state.optionOldProducts.forEach(item => {
                 if (item.value === this.state.productId) {
                     this.setState({
@@ -172,7 +168,6 @@ class EditProduct extends Component {
         const data = await ApiController.getAsync(CATEGORIES.allEdit, {});
         let tempOptions = [];
         let categories = [];
-        // console.log(JSON.stringify(data));
         data.data.result.forEach(item => {
             if (!tempOptions.includes(item.nameLv3)) {
                 tempOptions.push(item.nameLv3);
@@ -231,7 +226,6 @@ class EditProduct extends Component {
                 }
             }
         }
-        console.log(success);
 
         return success;
     }
@@ -291,7 +285,6 @@ class EditProduct extends Component {
                 isPublished: this.state.isPublished,
             }).then(data => {
                 return data.data;
-                // console.log(JSON.stringify(data.categoryEdit.id));
                 // window.open(`/app/list-product/edit/${this.state.id}`, "_self")
             }).catch(error => {
                 return error.response?.data;
@@ -379,7 +372,6 @@ class EditProduct extends Component {
                                                         name="priceMin"
                                                         min={0}
                                                         value={priceMin}
-                                                        // defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -392,7 +384,6 @@ class EditProduct extends Component {
                                                         name="priceMax"
                                                         value={priceMax}
                                                         min={0}
-                                                        defaultValue={0}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -407,7 +398,6 @@ class EditProduct extends Component {
                                                         name="futurePriceMin"
                                                         value={futurePriceMin}
                                                         min={0}
-                                                        defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -420,7 +410,6 @@ class EditProduct extends Component {
                                                         name="futurePriceMax"
                                                         value={futurePriceMax}
                                                         min={0}
-                                                        defaultValue="0"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -449,7 +438,6 @@ class EditProduct extends Component {
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getOldProducts}
                                                         onChange={data => {
-                                                            console.log(data?.id);
                                                             this.setState({
                                                                 productId: data?.id,
                                                                 sourceProductSelected: data
@@ -479,7 +467,6 @@ class EditProduct extends Component {
                                                         type="text"
                                                         name="serviceSla"
                                                         value={serviceSla}
-                                                        defaultValue={this.state.serviceSla}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -492,7 +479,6 @@ class EditProduct extends Component {
                                                         min={0}
                                                         name="serviceCost"
                                                         value={serviceCost}
-                                                        defaultValue={this.state.serviceCost}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -506,7 +492,6 @@ class EditProduct extends Component {
                                                         type="text"
                                                         name="transportation"
                                                         value={transportation}
-                                                        defaultValue={this.state.transportation}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -519,7 +504,6 @@ class EditProduct extends Component {
                                                         name="workshopIn"
                                                         value={workshopIn}
                                                         min="0"
-                                                        defaultValue={this.state.workshopIn}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -531,7 +515,7 @@ class EditProduct extends Component {
                                                         min="0"
                                                         name="uboxIn"
                                                         value={uboxIn}
-                                                        defaultValue={this.state.uboxIn} rows="1"
+                                                        rows="1"
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>

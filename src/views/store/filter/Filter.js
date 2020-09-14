@@ -30,7 +30,6 @@ class Filter extends React.Component {
         let search = this.state.search.get('s');
         let array = [];
         ApiController.post(PRODUCT_EDIT.filter, { productEditName: search, page: 0, size: 10 }, data => {
-            console.log(data);
             this.setState({
                 products: data.productEdits
             }, () => {

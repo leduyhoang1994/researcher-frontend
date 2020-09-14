@@ -74,7 +74,6 @@ class EditCategory extends Component {
 
             const description = data.description;
 
-            console.log(data.categoryEditAttributes);
             if (data.categoryEditAttributes) {
                 let attributes = data.categoryEditAttributes;
                 let listOptions = [];
@@ -83,7 +82,6 @@ class EditCategory extends Component {
                         listOptions.push({label: item.attribute.label, value: item.attribute.label});
                     }
                 })
-                console.log(JSON.stringify(listOptions));
                 this.setState({
                     optionsOwnProperties: listOptions
                 });
@@ -207,7 +205,6 @@ class EditCategory extends Component {
     callApi = async () => {
         const id = this.state.setId;
         if (id) {
-            console.log(this.state.attributeIds);
             await Api.callAsync('put', CATEGORIES.allEdit, {
                 id: parseInt(id),
                 nameLv1: this.state.categoryLv1.value,
@@ -222,8 +219,6 @@ class EditCategory extends Component {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            
-            console.log(this.state.attributeIds);
             const data = await Api.callAsync('post', CATEGORIES.allEdit, {
                 nameLv1: this.state.categoryLv1.value,
                 nameLv2: this.state.categoryLv2.value,
@@ -244,7 +239,6 @@ class EditCategory extends Component {
         }
     }
     editCategory = async () => {
-        console.log(this.state);
         if (this.state.categoryLv1.value !== ""
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {

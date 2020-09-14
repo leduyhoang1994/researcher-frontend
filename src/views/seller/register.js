@@ -107,7 +107,6 @@ class Register extends Component {
     if (selectedDistrict) selectedDistrict = selectedDistrict.label;
     if (selectedCommune) selectedCommune = selectedCommune.label;
     const data = { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune }
-    console.log(data);
     if (data.userName !== "" && data.phone !== "" && data.password !== "" && data.confirmPassword !== "") {
       this.props.registerSeller(data, this.props.history);
     }
@@ -135,7 +134,6 @@ class Register extends Component {
 
   componentDidUpdate() {
     if (this.props.error) {
-      console.log("Error: " + JSON.stringify(this.props.error));
       NotificationManager.warning(
         this.props.error.message,
         "Register Error",

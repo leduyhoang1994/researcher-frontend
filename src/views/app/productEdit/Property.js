@@ -20,7 +20,6 @@ class Property extends React.Component {
             reloadOptions: {},
             productId: this.props.productId
         };
-        console.log(this.props.productOptions);
     }
 
     componentDidMount() {
@@ -34,7 +33,6 @@ class Property extends React.Component {
         
         for(let index in temp) {
             const option = temp[index];
-            console.log(option);
             if (!result[option.option.attribute.code]) {
                 result[option.option.attribute.code] = [];
             }

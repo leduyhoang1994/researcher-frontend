@@ -117,7 +117,6 @@ class Research extends Component {
         const { selectedCats } = this.state;
 
         const cateSetName = this.state.cateSetName;
-        console.log(cateSetName);
 
         if (cateSetName == null || cateSetName === []) {
             return;

@@ -19,7 +19,6 @@ class ProductSetModal extends Component {
       productSetName: "",
       selected: ""
     };
-    console.log(this.props.selectedProducts);
   }
 
   componentDidMount() {
