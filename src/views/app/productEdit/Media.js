@@ -17,6 +17,10 @@ class Media extends React.Component {
                 images: [],
                 videos: []
             },
+            mediaLocal: {
+                images: [],
+                videos: []
+            },
             isUploadModalOpen: false,
             featureImage: this.props.featureImage
         }
@@ -46,7 +50,7 @@ class Media extends React.Component {
     }
 
     getListMedias = (files) => {
-        this.props.handlerFiles(files)
+        this.props.handleFiles(files)
     }
 
     removeImage = (url) => {

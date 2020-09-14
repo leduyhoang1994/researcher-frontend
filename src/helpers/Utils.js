@@ -28,7 +28,7 @@ export const getDateWithFormat = () => {
   return dd + '.' + mm + '.' + yyyy;
 }
 
-export const getCurrentTime=()=>{
+export const getCurrentTime = () => {
   const now = new Date();
   return now.getHours() + ":" + now.getMinutes()
 }
@@ -64,4 +64,24 @@ export const arrayColumn = (array, columnName) => {
 
 export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function buildFormData(formData, data, parentKey) {
+  if (data && typeof data === 'object' && !(data instanceof Date) && !(data instanceof File)) {
+    Object.keys(data).forEach(key => {
+      buildFormData(formData, data[key], parentKey ? `${parentKey}[${key}]` : key);
+    });
+  } else {
+    const value = data == null ? '' : data;
+
+    formData.append(parentKey, value);
+  }
+}
+
+export const jsonToFormData = (data, formData) => {
+  if (!formData) formData = new FormData();
+
+  buildFormData(formData, data);
+
+  return formData;
 }

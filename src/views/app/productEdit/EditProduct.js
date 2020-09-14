@@ -5,8 +5,9 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { jsonToFormData } from '../../../helpers/Utils'
 import Property from './Property';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
@@ -30,6 +31,11 @@ class EditProduct extends Component {
             sourceProductSelected: null,
             redirect: false,
             loading: false,
+            files: null,
+            mediaItems: {
+                images: [],
+                videos: []
+            }
         };
         this.messages = this.props.intl.messages;
         this.handleChange = this.handleChange.bind(this);
@@ -38,6 +44,13 @@ class EditProduct extends Component {
     setRedirect = (url) => {
         this.setState({
             redirect: url
+        })
+    }
+
+    setFiles = (files) => {
+        console.log(`(setFiles) ${files}`)
+        this.setState({
+            files: files
         })
     }
 
@@ -73,7 +86,7 @@ class EditProduct extends Component {
             ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
                 this.setState({
                     sourceProduct: { productTitleVi: data.productTitleVi },
-                    productId: productAddId
+                    product: { productId: productAddId },
                 })
             })
 
@@ -91,8 +104,11 @@ class EditProduct extends Component {
 
     getProduct = (id) => {
         ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
+            const {} = data
             this.setState({
-                product: data,
+                product: {...data},
+                mediaItems: {...data}
+
             })
 
             this.state.optionCategories.forEach(item => {
@@ -187,7 +203,7 @@ class EditProduct extends Component {
 
     validateFields = async () => {
         const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "idCategory", () => {
+            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "categoryId", () => {
                 return [this.state.selectedOldProduct.value, "sourceProduct"]
             }];
         let success = true;
@@ -230,8 +246,19 @@ class EditProduct extends Component {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
+            let formData = new FormData()
+
+            formData = jsonToFormData(this.state.product, formData)
+
+            if (this.state.files) {
+                const fileArray = Array.from(this.state.files);
+                fileArray.forEach(file => {
+                    formData.append("file", file);
+                });
+            }
+
             const data = await Api.callAsync('post', PRODUCTS.allEdit,
-                this.state.product
+                formData
             ).then(data => {
                 return data.data;
             }).catch(error => {
@@ -239,8 +266,9 @@ class EditProduct extends Component {
             });
 
             if (data.success) {
-                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
-                NotificationManager.success("Thêm mới thành công", "Thành công");
+                // window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
+                // NotificationManager.success("Thêm mới thành công", "Thành công");
+
                 // this.setRedirect(`/app/list-product/edit/${data.result.productEdit.id}`);
                 // this.renderRedirect();
             } else {
@@ -265,7 +293,8 @@ class EditProduct extends Component {
                 </Fragment>
             )
         }
-        const { name, priceMin, priceMax, featureImage, futurePriceMin, futurePriceMax, productId, serviceSla, serviceCost, weight, description, transportation, workshopIn, uboxIn, categoryEditId, productEditOptions, sourceProduct, isPublished } = this.state.product;
+
+        const data = this.state.product
         return (
             <Fragment>
                 {this.renderRedirect()}
@@ -283,7 +312,7 @@ class EditProduct extends Component {
                                     <Colxx xxs="6">
                                         <Media
                                             productId={this.state.id}
-                                            key={featureImage}
+                                            key={data.featureImage}
                                             setFeatureImage={url => {
                                                 this.setState({
                                                     product: {
@@ -291,7 +320,9 @@ class EditProduct extends Component {
                                                     }
                                                 })
                                             }}
-                                            featureImage={featureImage}
+                                            featureImage={data.featureImage}
+                                            handleFiles={this.setFiles}
+                                            mediaItem=
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
@@ -310,7 +341,7 @@ class EditProduct extends Component {
                                         <Label className="form-group has-float-label">
                                             <Input
                                                 type="text"
-                                                value={name}
+                                                value={data.name}
                                                 name="name"
                                                 onChange={this.handleChange}
                                             />
@@ -325,7 +356,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         name="priceMin"
                                                         min={0}
-                                                        value={priceMin}
+                                                        value={data.priceMin}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -336,7 +367,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="priceMax"
-                                                        value={priceMax}
+                                                        value={data.priceMax}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -350,7 +381,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="futurePriceMin"
-                                                        value={futurePriceMin}
+                                                        value={data.futurePriceMin}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -362,7 +393,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="futurePriceMax"
-                                                        value={futurePriceMax}
+                                                        value={data.futurePriceMax}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -401,9 +432,9 @@ class EditProduct extends Component {
                                                         value={
                                                             this.state.sourceProductSelected ||
                                                             (
-                                                                sourceProduct ? {
-                                                                    id: productId,
-                                                                    productTitleVi: sourceProduct.productTitleVi
+                                                                data.sourceProduct ? {
+                                                                    id: data.productId,
+                                                                    productTitleVi: data.sourceProduct.productTitleVi
 
                                                                 } : null
                                                             )
@@ -417,7 +448,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="text"
                                                         name="serviceSla"
-                                                        value={serviceSla}
+                                                        value={data.serviceSla}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -429,7 +460,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="serviceCost"
-                                                        value={serviceCost}
+                                                        value={data.serviceCost}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -441,7 +472,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="weight"
-                                                        value={weight}
+                                                        value={data.weight}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -454,7 +485,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="text"
                                                         name="transportation"
-                                                        value={transportation}
+                                                        value={data.transportation}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -465,7 +496,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="workshopIn"
-                                                        value={workshopIn}
+                                                        value={data.workshopIn}
                                                         min="0"
                                                         onChange={this.handleChange}
                                                     />
@@ -477,7 +508,7 @@ class EditProduct extends Component {
                                                     <Input type="number"
                                                         min="0"
                                                         name="uboxIn"
-                                                        value={uboxIn}
+                                                        value={data.uboxIn}
                                                         rows="1"
                                                         onChange={this.handleChange}
                                                     />
@@ -490,10 +521,10 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Property
-                                                    key={productId}
+                                                    key={data.productId}
                                                     component={this}
-                                                    categoryId={categoryEditId} // category id of product
-                                                    productOptions={productEditOptions} // options fields of product data
+                                                    categoryId={data.categoryEditId} // category id of product
+                                                    productOptions={data.productEditOptions} // options fields of product data
                                                     setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>
@@ -503,7 +534,7 @@ class EditProduct extends Component {
                                     <Colxx xxs="12">
                                         <Label className="form-group has-float-label">
                                             <Input type="textarea"
-                                                value={description}
+                                                value={data.description}
                                                 name="description"
                                                 rows="5"
                                                 onChange={this.handleChange}
@@ -517,7 +548,7 @@ class EditProduct extends Component {
                                 <div className="text-right card-title">
                                     <Button
                                         className="mr-2"
-                                        color={isPublished ? "danger" : "success"}
+                                        color={data.isPublished ? "danger" : "success"}
                                         onClick={() => {
                                             let publish = this.state.product.isPublished;
                                             this.setState({
@@ -530,7 +561,7 @@ class EditProduct extends Component {
                                             });
                                         }}
                                     >
-                                        {__(this.messages, isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                        {__(this.messages, data.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
                                     </Button>
                                     <Button
                                         className="mr-2"
