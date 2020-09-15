@@ -17,10 +17,6 @@ class Media extends React.Component {
                 images: [],
                 videos: []
             },
-            mediaLocal: {
-                images: [],
-                videos: []
-            },
             isUploadModalOpen: false,
             featureImage: this.props.featureImage
         }
@@ -31,14 +27,8 @@ class Media extends React.Component {
     }
 
     loadProductMedia = () => {
-        const { productId } = this.state;
-        if (!productId) {
-            return;
-        }
-        ApiController.call('get', `${PRODUCT_EDIT.all}/${productId}/media`, {}, data => {
-            this.setState({
-                mediaItems: data
-            });
+        this.setState({
+            mediaItems: this.props.mediaItems
         });
     }
 
@@ -50,20 +40,22 @@ class Media extends React.Component {
     }
 
     getListMedias = (files) => {
+        console.log(files[0])
         this.props.handleFiles(files)
     }
 
     removeImage = (url) => {
-        var newURL = url.replace(/^[a-z]{4,5}\:\/{2}[a-z0-9.]{1,}\:[0-9]{1,4}.(.*)/, '$1'); // http or https
-        ApiController.call('delete', `${PRODUCT_EDIT.media}`, {
-            filePath: newURL
-        }, data => {
-            this.loadProductMedia();
-        });
+        if (window.confirm('Bạn có chắc chắn muốn xóa file này không?')) {
+            var newURL = url.replace(/^[a-z]{4,5}\:\/{2}[a-z0-9.]{1,}\:[0-9]{1,4}.(.*)/, '$1'); // http or https
+            ApiController.call('delete', `${PRODUCT_EDIT.media}`, {
+                filePath: newURL
+            }, data => {
+                this.loadProductMedia();
+            });
+        } 
     }
 
     renderMediaItem = (media) => {
-        const { productId } = this.state;
         const style = {
             backgroundImage: `url('${media}')`
         };
@@ -93,7 +85,7 @@ class Media extends React.Component {
     }
 
     renderMedia = () => {
-        const { mediaItems } = this.state;
+        const { mediaItems,  } = this.state;
         return (
             <>
                 {
@@ -131,8 +123,13 @@ class Media extends React.Component {
 
     render() {
         const { mediaItems } = this.state;
-        const hasMedia = mediaItems.images.length > 0 || mediaItems.videos.length > 0;
-        const countMedias = mediaItems.images.length + mediaItems.videos.length;
+        let hasMedia = false
+        let countMedias = 0
+        if (mediaItems && mediaItems.images && mediaItems.videos) {
+            hasMedia = mediaItems.images && mediaItems.videos ? mediaItems.images.length > 0 || mediaItems.videos.length > 0 : false;
+            countMedias = mediaItems.images.length + mediaItems.videos.length;
+        }
+
         return (
             <div className="mb-4" style={{
                 minHeight: '620px'

@@ -103,12 +103,16 @@ class EditProduct extends Component {
     }
 
     getProduct = (id) => {
+        const mediaItems = this.state.mediaItems
+        const product = this.state.product
         ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
-            const {} = data
-            this.setState({
-                product: {...data},
-                mediaItems: {...data}
+            mediaItems.images = data.images
+            mediaItems.videos = data.videos
 
+            Object.assign(product, data)
+            this.setState({
+                product: product,
+                mediaItems: mediaItems
             })
 
             this.state.optionCategories.forEach(item => {
@@ -322,7 +326,7 @@ class EditProduct extends Component {
                                             }}
                                             featureImage={data.featureImage}
                                             handleFiles={this.setFiles}
-                                            mediaItem=
+                                            mediaItems={this.state.mediaItems}
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
