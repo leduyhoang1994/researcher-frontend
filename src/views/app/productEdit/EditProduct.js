@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Property from './Property';
 import Api from '../../../helpers/Api';
@@ -53,7 +53,7 @@ class EditProduct extends Component {
         const productId = new URLSearchParams(this.props.location.search).get("product-id");
         const productAddId = new URLSearchParams(this.props.location.search).get("productId");
         if (productId) {
-            const data = await ApiController.callAsync('get', `${PRODUCTS.allEdit}/source/${productId}`, {});
+            const data = await ApiController.callAsync('get', `${PRODUCT_EDIT.all}/source/${productId}`, {});
             const product = data.data.result;
 
             // if (product?.id) {
@@ -90,7 +90,7 @@ class EditProduct extends Component {
     }
 
     getProduct = (id) => {
-        ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
+        ApiController.get(`${PRODUCT_EDIT.all}/${id}`, {}, data => {
             this.setState({
                 product: data,
             })
@@ -221,7 +221,7 @@ class EditProduct extends Component {
         if (this.state.id) {
             let product = this.state.product;
             product.id = parseInt(this.state.id);
-            await Api.callAsync('put', PRODUCTS.allEdit,
+            await Api.callAsync('put', PRODUCT_EDIT.all,
                 product
             ).then(data => {
                 NotificationManager.success("Cập nhật thành công", "Thành công");
@@ -230,7 +230,7 @@ class EditProduct extends Component {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            const data = await Api.callAsync('post', PRODUCTS.allEdit,
+            const data = await Api.callAsync('post', PRODUCT_EDIT.all,
                 this.state.product
             ).then(data => {
                 return data.data;

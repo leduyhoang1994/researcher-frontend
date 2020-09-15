@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 import ProductTable from './ProductTable';
@@ -17,8 +17,12 @@ class Product extends Component {
             optionCategories: [],
             selectedCategory: "",
             products: [],
-            search: new URLSearchParams(this.props.location.search) || "",
-            category: this.props.match.params.cate || null,
+            filter: {
+                productEditName: this.props.match.params.search || "",
+                categoryEditNameLv3: new URLSearchParams(this.props.location.search) || "",
+                page: 0,
+                size: 20
+            }
         };
         this.messages = this.props.intl.messages;
     }
@@ -29,22 +33,23 @@ class Product extends Component {
     }
 
     getProducts = () => {
-        const { search } = this.state;
-        const cate = (this.state.cate.get("cate")) || "";
-        if(!search && !cate) {
-            console.log("all");
-            
-        } else {
-            this.getAllProducts();
-        }
-        
+        let filter = this.state.filter;
+        const category = this.state.filter.categoryEditNameLv3.get("cate") || "";
+        filter.categoryEditNameLv3 = category;
+        this.setState({
+            filter: filter,
+            selectedCategory: { label: category, value: category }
+        })
+        this.filterProducts();
     }
 
-    getAllProducts = () => {
+    filterProducts = () => {
         let array = [];
-        ApiController.get(PRODUCTS.allEdit, {}, data => {
+        let filter = this.state.filter;
+
+        ApiController.post(PRODUCT_EDIT.filter, filter, data => {
             this.setState({
-                products: data
+                products: data.productEdits
             }, () => {
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
@@ -57,22 +62,16 @@ class Product extends Component {
         })
     }
 
-    get
-
     getAllCategories = () => {
-        let cate = (this.state.cate.get("cate")) || "";
-        ApiController.get(CATEGORIES.allEdit, {
-            productEditName: this.state.search,
-            categoryEditNameLv3: this.s
-        }, data => {
+        ApiController.get(CATEGORIES.allEdit, {}, data => {
             let options = [];
             let tempOptions = [];
             data.forEach(item => {
                 if (!tempOptions.includes(item.nameLv3)) {
                     tempOptions.push(item.nameLv3);
-                    options.push({ label: item.nameLv3, value: item.id })
+                    options.push({ label: item.nameLv3, value: item.nameLv3 })
                 }
-            })  
+            })
             this.setState({
                 optionCategories: options
             });
@@ -80,9 +79,18 @@ class Product extends Component {
     }
 
     searchProducts = () => {
-        const { search, selectedCategory } = this.state;
-        console.log(search + " " + JSON.stringify(selectedCategory[0]));
-        window.open(`/app/list-product/${search}?cate=${selectedCategory.label}`, "_self")
+        let url = "/app/list-product";
+        const { filter, selectedCategory } = this.state;
+        const search = filter.productEditName;
+        if (selectedCategory.label) {
+            if (search.trim()) {
+                url = url.concat(`/${search}`);
+            }
+            url = url.concat(`?cate=${selectedCategory.label}`)
+        } else {
+            url = url.concat(`/${search}`);
+        }
+        window.open(url, "_self")
     }
 
     handleClickRow = (row) => {
@@ -90,6 +98,7 @@ class Product extends Component {
     }
 
     render() {
+        const { filter } = this.state;
         return (
             <div>
                 <Fragment>
@@ -112,9 +121,13 @@ class Product extends Component {
                                             <Label className="form-group has-float-label">
                                                 <Input
                                                     type="text"
+                                                    defaultValue={filter.productEditName}
                                                     onChange={e => {
                                                         this.setState({
-                                                            search: e.target.value
+                                                            filter: {
+                                                                ...this.state.filter,
+                                                                productEditName: e.target.value
+                                                            }
                                                         });
                                                     }}
                                                 />
@@ -133,6 +146,10 @@ class Product extends Component {
                                                     value={this.state.selectedCategory}
                                                     onChange={(value) =>
                                                         this.setState({
+                                                            filter: {
+                                                                ...this.state.filter,
+                                                                categoryEditNameLv3: value.value
+                                                            },
                                                             selectedCategory: value
                                                         })
                                                     }
