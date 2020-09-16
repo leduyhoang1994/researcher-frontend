@@ -1,3 +1,4 @@
+import { object } from "yup";
 import { defaultDirection } from "../constants/defaultValues";
 
 export const mapOrder = (array, order, key) => {
@@ -28,7 +29,7 @@ export const getDateWithFormat = () => {
   return dd + '.' + mm + '.' + yyyy;
 }
 
-export const getCurrentTime=()=>{
+export const getCurrentTime = () => {
   const now = new Date();
   return now.getHours() + ":" + now.getMinutes()
 }
@@ -64,4 +65,13 @@ export const arrayColumn = (array, columnName) => {
 
 export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export function copySamplePropertiesObj(sourceObj, targetObj) {
+  if (typeof sourceObj == 'object' && typeof targetObj == 'object') {
+    Object.keys(targetObj).forEach(key => {
+      targetObj[key] = sourceObj[key]
+    })
+  }
+  return targetObj
 }

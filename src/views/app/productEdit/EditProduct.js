@@ -27,6 +27,7 @@ class EditProduct extends Component {
             optionOldProducts: [],
             optionProperties: [],
             optionIds: [],
+            sourceProduct: {},
             sourceProductSelected: null,
             redirect: false,
             loading: false,
@@ -221,7 +222,7 @@ class EditProduct extends Component {
         if (this.state.id) {
             let product = this.state.product;
             product.id = parseInt(this.state.id);
-            await Api.callAsync('put', PRODUCT_EDIT.all,
+            await Api.callAsync('put', PRODUCT_EDIT.allEdit,
                 product
             ).then(data => {
                 NotificationManager.success("Cập nhật thành công", "Thành công");
@@ -230,7 +231,7 @@ class EditProduct extends Component {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            const data = await Api.callAsync('post', PRODUCT_EDIT.all,
+            const data = await Api.callAsync('post', PRODUCTS.allEdit,
                 this.state.product
             ).then(data => {
                 return data.data;
