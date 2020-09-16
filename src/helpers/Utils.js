@@ -67,11 +67,48 @@ export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export function copySamplePropertiesObj(sourceObj, targetObj) {
-  if (typeof sourceObj == 'object' && typeof targetObj == 'object') {
-    Object.keys(targetObj).forEach(key => {
-      targetObj[key] = sourceObj[key]
-    })
+function buildFormData(formData, data, parentKey) {
+  if (data && typeof data === 'object' && !(data instanceof Date) && !(data instanceof File)) {
+    Object.keys(data).forEach(key => {
+      buildFormData(formData, data[key], parentKey ? `${parentKey}[${key}]` : key);
+    });
+  } else {
+    const value = data == null ? '' : data;
+
+    formData.append(parentKey, value);
   }
+}
+
+export const jsonToFormData = (data, formData) => {
+  if (!formData) formData = new FormData();
+
+  buildFormData(formData, data);
+
+  return formData;
+}
+
+export function copySamplePropertiesObj(sourceObj, targetObj) {
+  Object.keys(targetObj).forEach(key => {
+    targetObj[key] = sourceObj[key] ;
+  })
+
   return targetObj
+}
+
+export const parse = (file) => {
+  // Always return a Promise
+  return new Promise((resolve, reject) => {
+    let content = '';
+    const reader = new FileReader();
+    // Wait till complete
+    reader.onloadend = function (e) {
+      content = e.target.result;
+      resolve(content);
+    };
+    // Make sure to handle error states
+    reader.onerror = function (e) {
+      reject(e);
+    };
+    reader.readAsDataURL(file);
+  });
 }
