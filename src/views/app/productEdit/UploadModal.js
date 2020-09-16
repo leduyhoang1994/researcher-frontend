@@ -17,16 +17,16 @@ class UploadModal extends React.Component {
     onFormSubmit(e) {
         e.preventDefault() // Stop form submit
         console.log('Stop form submit')
-        console.log(e)
         // this.fileUpload(this.state.files);
     }
     onChange(e) {
-        console.log(e)
         this.setState({ files: e.target.files })
     }
 
     handlerImages = () => {
-        this.props.getListImages(this.state.files)
+        if (this.state.files) {
+            this.props.getListImages(this.state.files)
+        }
     }
 
     fileUpload = (files) => {
@@ -50,7 +50,7 @@ class UploadModal extends React.Component {
                 <ModalBody>
                     <form onSubmit={this.onFormSubmit}>
                         <h1>File Upload</h1><br />
-                        <input type="file" id='i_file' onChange={this.onChange} multiple />
+                        <input type="file" id='i_file' name='i_file' onChange={this.onChange} multiple />
                         {/* <button type="submit">Upload</button> */}
                     </form>
                 </ModalBody>

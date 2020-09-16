@@ -6,6 +6,8 @@ import UploadModal from './UploadModal';
 import ApiController from '../../../helpers/Api';
 import { PRODUCT_EDIT } from '../../../constants/api';
 import GlideComponent from "../../../components/carousel/GlideComponent";
+import { NotificationManager } from '../../../components/common/react-notifications';
+import MediaModal from './MediaModal';
 
 class Media extends React.Component {
     constructor(props) {
@@ -18,7 +20,11 @@ class Media extends React.Component {
                 videos: []
             },
             isUploadModalOpen: false,
-            featureImage: this.props.featureImage
+            isMediaModalOpen: false,
+            featureImage: this.props.featureImage,
+            mediaModal: null,
+            whereMediaModal: null,
+            typeMediaModal: null
         }
     }
 
@@ -40,8 +46,13 @@ class Media extends React.Component {
     }
 
     getListMedias = (files) => {
-        console.log(files[0])
         this.props.handleFiles(files)
+    }
+
+    removeImageLocal = (index) => {
+        if (window.confirm('Bạn có chắc chắn muốn xóa file này không?')) {
+            this.props.handleRemoveMediaLocal(index)
+        }
     }
 
     removeImage = (url) => {
@@ -50,26 +61,45 @@ class Media extends React.Component {
             ApiController.call('delete', `${PRODUCT_EDIT.media}`, {
                 filePath: newURL
             }, data => {
+                this.props.handleRemoveMediaServer()
                 this.loadProductMedia();
             });
-        } 
+        }
     }
 
-    renderMediaItem = (media) => {
+    renderMediaItem = (media, where, index, typeMedia) => {
+        let backgroundImage = `url('${media}')`;
+        if (typeMedia === 'video') backgroundImage = `url('/assets/img/video-thumbnail.png')`
+
         const style = {
-            backgroundImage: `url('${media}')`
+            backgroundImage: backgroundImage
         };
 
         return (
-            <div key={media} className="media-item">
-                <div className="media-item-show" style={style}>
-                    <div title="Đặt làm ảnh đại diện" onClick={() => {
-                        this.setFeatureImage(media)
-                    }} className="set-feature-btn">
-                        <i className="simple-icon-check" />
+            <div key={index || media} className="media-item">
+                <div name="media-view" className="media-item-show" style={style} onClick={(e) => {
+                    this.setState({
+                        mediaModal: media,
+                        whereMediaModal: where,
+                        typeMediaModal: typeMedia
+                    })
+                    this.toggleMediaModal()
+                }}>
+                    <div title={where === 'local' ? 'Ảnh chưa được lưu' : 'Đặt làm ảnh đại diện'} onClick={(e) => {
+                        if (where === 'local') {
+                            NotificationManager.error("Vui lòng lưu ảnh trước khi đặt ảnh đại diện", "Thất bại");
+                        } else {
+                            this.setFeatureImage(media);
+                        }
+                        e.stopPropagation()
+                    }}
+                        className={where === 'local' || typeMedia === 'video' ? '' : 'set-feature-btn'}
+                    >
+                        <i className={where === 'local' || typeMedia === 'video' ? '' : 'simple-icon-check'} />
                     </div>
-                    <div title="Xóa" onClick={() => {
-                        this.removeImage(media)
+                    <div title="Xóa" onClick={(e) => {
+                        where === 'local' ? this.removeImageLocal(index) : this.removeImage(media)
+                        e.stopPropagation()
                     }} className="remove-media-btn">
                         <i className="simple-icon-close" />
                     </div>
@@ -84,18 +114,36 @@ class Media extends React.Component {
         });
     }
 
+    toggleMediaModal = () => {
+        this.setState({
+            isMediaModalOpen: !this.state.isMediaModalOpen
+        });
+    }
+
     renderMedia = () => {
-        const { mediaItems,  } = this.state;
+        let { images, videos } = this.state.mediaItems
+        let { fileBase64 } = this.props
+
+        images = images || []
+        videos = videos || []
+        fileBase64 = fileBase64 || []
+
         return (
             <>
                 {
-                    mediaItems.images.map((mediaItem) => {
-                        return this.renderMediaItem(mediaItem);
+                    images.map((image) => {
+                        return this.renderMediaItem(image, 'server', null, 'image');
                     })
                 }
                 {
-                    mediaItems.videos.map((mediaItem) => {
-                        return this.renderMediaItem(mediaItem);
+                    videos.map((video) => {
+                        return this.renderMediaItem(video, 'server', null, 'video');
+                    })
+                }
+                {
+                    fileBase64.map((media, index) => {
+                        const arrMedia = media.split('#*#*#*#*#')
+                        return this.renderMediaItem(arrMedia[1], 'local', index, arrMedia[0]);
                     })
                 }
             </>
@@ -103,7 +151,7 @@ class Media extends React.Component {
     }
 
     renderFeatureImage = () => {
-        const { featureImage } = this.state;
+        const { featureImage } = this.props;
         const style = {
             width: "400px",
             height: "400px",
@@ -123,12 +171,15 @@ class Media extends React.Component {
 
     render() {
         const { mediaItems } = this.state;
+        const { fileBase64 } = this.props;
         let hasMedia = false
         let countMedias = 0
         if (mediaItems && mediaItems.images && mediaItems.videos) {
             hasMedia = mediaItems.images && mediaItems.videos ? mediaItems.images.length > 0 || mediaItems.videos.length > 0 : false;
             countMedias = mediaItems.images.length + mediaItems.videos.length;
         }
+
+        hasMedia = hasMedia || fileBase64;
 
         return (
             <div className="mb-4" style={{
@@ -183,7 +234,13 @@ class Media extends React.Component {
                     productId={this.state.productId}
                     reloadMedia={this.loadProductMedia}
                     getListImages={this.getListMedias}
-                    files={this.props.files}
+                />
+                <MediaModal
+                    isOpen={this.state.isMediaModalOpen}
+                    toggle={this.toggleMediaModal}
+                    media={this.state.mediaModal}
+                    where={this.state.whereMediaModal}
+                    type={this.state.typeMediaModal}
                 />
             </div>
         );

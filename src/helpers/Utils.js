@@ -85,3 +85,29 @@ export const jsonToFormData = (data, formData) => {
 
   return formData;
 }
+
+export function copySamplePropertiesObj(sourceObj, targetObj) {
+  Object.keys(targetObj).forEach(key => {
+    targetObj[key] = sourceObj[key] ;
+  })
+
+  return targetObj
+}
+
+export const parse = (file) => {
+  // Always return a Promise
+  return new Promise((resolve, reject) => {
+    let content = '';
+    const reader = new FileReader();
+    // Wait till complete
+    reader.onloadend = function (e) {
+      content = e.target.result;
+      resolve(content);
+    };
+    // Make sure to handle error states
+    reader.onerror = function (e) {
+      reject(e);
+    };
+    reader.readAsDataURL(file);
+  });
+}

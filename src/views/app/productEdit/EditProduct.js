@@ -1,15 +1,16 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { jsonToFormData } from '../../../helpers/Utils'
+import { jsonToFormData, parse } from '../../../helpers/Utils'
 import Property from './Property';
 import Api from '../../../helpers/Api';
+import { copySamplePropertiesObj } from '../../../helpers/Utils'
 import { NotificationManager } from '../../../components/common/react-notifications';
 import Media from './Media';
 import { AsyncPaginate } from 'react-select-async-paginate';
@@ -21,17 +22,40 @@ class EditProduct extends Component {
         super(props);
         this.state = {
             id: this.props.match.params.id || null,
-            product: {},
+            product: {
+                optionIds: [],
+                sourceProduct: {}
+            },
+            keyProperty: '',
+            keyMedia: '',
+            productEdit: {
+                name: '',
+                priceMax: 0,
+                priceMin: 0,
+                futurePriceMax: 0,
+                futurePriceMin: 0,
+                weight: 0,
+                serviceSla: '',
+                serviceCost: 0,
+                description: '',
+                transportation: '',
+                featureImage: '',
+                workshopIn: 0,
+                uboxIn: 0,
+                categoryEditId: 0,
+                productId: 0,
+                optionIds: [],
+                isPublished: false
+            },
             selectedCategory: "",
             optionCategories: [],
             selectedOldProduct: "",
             optionOldProducts: [],
-            optionProperties: [],
-            optionIds: [],
             sourceProductSelected: null,
             redirect: false,
             loading: false,
-            files: null,
+            files: [],
+            fileBase64: [],
             mediaItems: {
                 images: [],
                 videos: []
@@ -47,10 +71,23 @@ class EditProduct extends Component {
         })
     }
 
-    setFiles = (files) => {
-        console.log(`(setFiles) ${files}`)
+    handleFiles = async (fileList) => {
+        let { files, fileBase64 } = this.state;
+        const fileData = []
+
+        for await (const file of fileList) {
+            let content = await parse(file);
+            fileData.push(`${file.type.split('/')[0]}#*#*#*#*#` + content);
+        }
+
+        files = [...files, ...Array.from(fileList)]
+        fileBase64 = [...fileBase64, ...fileData]
+
+
         this.setState({
-            files: files
+            files: files,
+            fileBase64: fileBase64,
+            keyMedia: new Date().getTime()
         })
     }
 
@@ -85,12 +122,19 @@ class EditProduct extends Component {
         else if (productAddId) {
             ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
                 this.setState({
-                    sourceProduct: { productTitleVi: data.productTitleVi },
-                    product: { productId: productAddId },
+                    product: {
+                        ...this.state.product,
+                        sourceProduct: {
+                            productTitleVi: data.productTitleVi
+                        },
+                        productId: productAddId
+                    }
                 })
             })
 
         } else {
+            // NotificationManager.error("Sản phẩm không tồn tại!", "Thất bại");
+            // window.open(`/app/research`, "_self")
             this.loadCurrentProduct();
         }
         this.setState({ loading: false });
@@ -103,16 +147,12 @@ class EditProduct extends Component {
     }
 
     getProduct = (id) => {
-        const mediaItems = this.state.mediaItems
-        const product = this.state.product
         ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
-            mediaItems.images = data.images
-            mediaItems.videos = data.videos
-
-            Object.assign(product, data)
             this.setState({
-                product: product,
-                mediaItems: mediaItems
+                keyProperty: new Date().getTime(),
+                keyMedia: new Date().getTime(),
+                product: { ...data },
+                mediaItems: copySamplePropertiesObj(data, this.state.mediaItems)
             })
 
             this.state.optionCategories.forEach(item => {
@@ -134,8 +174,6 @@ class EditProduct extends Component {
     }
 
     getOldProducts = async (search, loadedOptions, { page }) => {
-        // const { productId } = this.state;
-
         const filter = {
             productTitleVi: {
                 "$cont": `%${search}%`
@@ -198,16 +236,17 @@ class EditProduct extends Component {
             })
         }
 
-        let product = this.state.product;
-        product.optionIds = optionId;
         this.setState({
-            product: product
+            product: {
+                ...this.state.product,
+                optionIds: optionId
+            }
         });
     }
 
     validateFields = async () => {
         const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "categoryId", () => {
+            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "categoryEditId", () => {
                 return [this.state.selectedOldProduct.value, "sourceProduct"]
             }];
         let success = true;
@@ -219,7 +258,8 @@ class EditProduct extends Component {
                     NotificationManager.error(`Trường ${fieldData[0]} cần phải nhập`);
                 }
             } else {
-                if (this.state[field] === "") {
+                if ((this.state.product[field] || "") == "") {
+                    console.log(this.state.product[field])
                     success = false;
                     NotificationManager.error(`Trường ${field} cần phải nhập`);
                 }
@@ -237,26 +277,62 @@ class EditProduct extends Component {
         }
     }
 
+    handleRemoveMediaServer = () => {
+        this.getProduct(this.state.id)
+    }
+
+    handleRemoveMediaLocal = (index) => {
+        let { files, fileBase64 } = this.state
+
+        if (files && files[index]) {
+            files.splice(index, 1)
+        }
+        if (fileBase64 && fileBase64[index]) {
+            fileBase64.splice(index, 1)
+        }
+
+        this.setState({
+            files: files,
+            fileBase64: fileBase64
+        })
+    }
+
     callApi = async () => {
+        const { files } = this.state
         if (this.state.id) {
-            let product = this.state.product;
-            product.id = parseInt(this.state.id);
+            // let product = this.state.product;
+            // product.id = parseInt(this.state.id);
+            let formData = new FormData()
+
+            formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.productEdit), formData)
+            if (files) {
+                files.forEach(file => {
+                    formData.append("file", file);
+                });
+            }
+
+            formData.append('id', parseInt(this.state.id));
             await Api.callAsync('put', PRODUCTS.allEdit,
-                product
+                formData
             ).then(data => {
                 NotificationManager.success("Cập nhật thành công", "Thành công");
                 this.loadCurrentProduct();
+                this.setState({
+                    keyMedia: new Date().getTime(),
+                    keyProperty: new Date().getTime(),
+                    files: [],
+                    fileBase64: []
+                })
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
             let formData = new FormData()
 
-            formData = jsonToFormData(this.state.product, formData)
+            formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.productEdit), formData)
 
-            if (this.state.files) {
-                const fileArray = Array.from(this.state.files);
-                fileArray.forEach(file => {
+            if (files) {
+                files.forEach(file => {
                     formData.append("file", file);
                 });
             }
@@ -270,11 +346,17 @@ class EditProduct extends Component {
             });
 
             if (data.success) {
-                // window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
-                // NotificationManager.success("Thêm mới thành công", "Thành công");
+                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
+                NotificationManager.success("Thêm mới thành công", "Thành công");
+                this.setState({
+                    keyMedia: new Date().getTime(),
+                    keyProperty: new Date().getTime(),
+                    files: [],
+                    fileBase64: []
+                })
 
-                // this.setRedirect(`/app/list-product/edit/${data.result.productEdit.id}`);
-                // this.renderRedirect();
+                this.setRedirect(`/app/list-product/edit/${data.result.productEdit.id}`);
+                this.renderRedirect();
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 const message = data?.message;
@@ -298,7 +380,7 @@ class EditProduct extends Component {
             )
         }
 
-        const data = this.state.product
+        const { fileBase64, product, keyMedia, mediaItems, keyProperty } = this.state
         return (
             <Fragment>
                 {this.renderRedirect()}
@@ -316,17 +398,22 @@ class EditProduct extends Component {
                                     <Colxx xxs="6">
                                         <Media
                                             productId={this.state.id}
-                                            key={data.featureImage}
+                                            key={keyMedia}
                                             setFeatureImage={url => {
                                                 this.setState({
                                                     product: {
+                                                        ...this.state.product,
                                                         featureImage: url
                                                     }
                                                 })
                                             }}
-                                            featureImage={data.featureImage}
-                                            handleFiles={this.setFiles}
-                                            mediaItems={this.state.mediaItems}
+                                            featureImage={product.featureImage}
+                                            handleFiles={this.handleFiles}
+                                            mediaItems={mediaItems}
+                                            // files={files}
+                                            fileBase64={fileBase64}
+                                            handleRemoveMediaLocal={this.handleRemoveMediaLocal}
+                                            handleRemoveMediaServer={this.handleRemoveMediaServer}
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
@@ -345,7 +432,7 @@ class EditProduct extends Component {
                                         <Label className="form-group has-float-label">
                                             <Input
                                                 type="text"
-                                                value={data.name}
+                                                value={product.name}
                                                 name="name"
                                                 onChange={this.handleChange}
                                             />
@@ -360,7 +447,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         name="priceMin"
                                                         min={0}
-                                                        value={data.priceMin}
+                                                        value={product.priceMin}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -371,7 +458,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="priceMax"
-                                                        value={data.priceMax}
+                                                        value={product.priceMax}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -385,7 +472,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="futurePriceMin"
-                                                        value={data.futurePriceMin}
+                                                        value={product.futurePriceMin}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -397,7 +484,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="futurePriceMax"
-                                                        value={data.futurePriceMax}
+                                                        value={product.futurePriceMax}
                                                         min={0}
                                                         onChange={this.handleChange}
                                                     />
@@ -422,10 +509,11 @@ class EditProduct extends Component {
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getOldProducts}
                                                         onChange={data => {
-                                                            let product = this.state.product;
-                                                            product.productId = data?.id;
                                                             this.setState({
-                                                                product: product,
+                                                                product: {
+                                                                    ...this.state.product,
+                                                                    productId: data?.id
+                                                                },
                                                                 sourceProductSelected: data
                                                             })
                                                         }
@@ -436,9 +524,9 @@ class EditProduct extends Component {
                                                         value={
                                                             this.state.sourceProductSelected ||
                                                             (
-                                                                data.sourceProduct ? {
-                                                                    id: data.productId,
-                                                                    productTitleVi: data.sourceProduct.productTitleVi
+                                                                product.sourceProduct ? {
+                                                                    id: product.productId,
+                                                                    productTitleVi: product.sourceProduct.productTitleVi
 
                                                                 } : null
                                                             )
@@ -452,7 +540,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="text"
                                                         name="serviceSla"
-                                                        value={data.serviceSla}
+                                                        value={product.serviceSla}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -464,7 +552,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="serviceCost"
-                                                        value={data.serviceCost}
+                                                        value={product.serviceCost}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -476,7 +564,7 @@ class EditProduct extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="weight"
-                                                        value={data.weight}
+                                                        value={product.weight}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -489,7 +577,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="text"
                                                         name="transportation"
-                                                        value={data.transportation}
+                                                        value={product.transportation}
                                                         onChange={this.handleChange}
                                                     />
                                                     <span>
@@ -500,7 +588,7 @@ class EditProduct extends Component {
                                                     <Input
                                                         type="number"
                                                         name="workshopIn"
-                                                        value={data.workshopIn}
+                                                        value={product.workshopIn}
                                                         min="0"
                                                         onChange={this.handleChange}
                                                     />
@@ -512,7 +600,7 @@ class EditProduct extends Component {
                                                     <Input type="number"
                                                         min="0"
                                                         name="uboxIn"
-                                                        value={data.uboxIn}
+                                                        value={product.uboxIn}
                                                         rows="1"
                                                         onChange={this.handleChange}
                                                     />
@@ -525,10 +613,10 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Property
-                                                    key={data.productId}
+                                                    key={keyProperty}
                                                     component={this}
-                                                    categoryId={data.categoryEditId} // category id of product
-                                                    productOptions={data.productEditOptions} // options fields of product data
+                                                    categoryId={product.categoryEditId} // category id of product
+                                                    productOptions={product.productEditOptions} // options fields of product data
                                                     setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>
@@ -538,7 +626,7 @@ class EditProduct extends Component {
                                     <Colxx xxs="12">
                                         <Label className="form-group has-float-label">
                                             <Input type="textarea"
-                                                value={data.description}
+                                                value={product.description}
                                                 name="description"
                                                 rows="5"
                                                 onChange={this.handleChange}
@@ -552,11 +640,12 @@ class EditProduct extends Component {
                                 <div className="text-right card-title">
                                     <Button
                                         className="mr-2"
-                                        color={data.isPublished ? "danger" : "success"}
+                                        color={product.isPublished ? "danger" : "success"}
                                         onClick={() => {
                                             let publish = this.state.product.isPublished;
                                             this.setState({
                                                 product: {
+                                                    ...this.state.product,
                                                     isPublished: !publish
                                                 }
 
@@ -565,7 +654,7 @@ class EditProduct extends Component {
                                             });
                                         }}
                                     >
-                                        {__(this.messages, data.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                        {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
                                     </Button>
                                     <Button
                                         className="mr-2"
