@@ -312,7 +312,10 @@ class EditProduct extends Component {
             }
 
             formData.append('id', parseInt(this.state.id));
-            await Api.callAsync('put', PRODUCTS.allEdit,
+
+            // console.log()
+
+            await Api.callAsync('put', PRODUCT_EDIT.all,
                 formData
             ).then(data => {
                 NotificationManager.success("Cập nhật thành công", "Thành công");
@@ -324,6 +327,7 @@ class EditProduct extends Component {
                     fileBase64: []
                 })
             }).catch(error => {
+                console.log(error)
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
@@ -337,7 +341,7 @@ class EditProduct extends Component {
                 });
             }
 
-            const data = await Api.callAsync('post', PRODUCTS.allEdit,
+            const data = await Api.callAsync('post', PRODUCT_EDIT.all,
                 formData
             ).then(data => {
                 return data.data;
