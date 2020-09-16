@@ -169,10 +169,10 @@ export function* watchRegisterSeller() {
 }
 
 function* registerSellerWithEmailPassword({ payload }) {
-    const { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address } = payload.user;
+    const { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address } = payload.user;
     const { history } = payload;
     try {
-        const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address);
+        const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
             // localStorage.setItem('user_details', JSON.stringify(registerSeller.result));
             yield put(registerSellerSuccess(registerSeller));
@@ -185,18 +185,18 @@ function* registerSellerWithEmailPassword({ payload }) {
     }
 }
 
-const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address) =>
+const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address) =>
     await Api.callAsync('post', SELLER.register, {
         firstName: firstName,
         lastName: lastName,
         username: userName,
-        phoneNumber: phone,
+        phoneNumber: phoneNumber,
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        city: selectedCity,
-        district: selectedDistrict,
-        town: selectedCommune,
+        city: city,
+        district: district,
+        town: town,
         address: address
     }).then(data => {
         return data.data;
@@ -223,7 +223,6 @@ function* logout({ payload }) {
 }
 
 export function* watchLogoutSeller() {
-    console.log("AAA");
     yield takeEvery(LOGOUT_SELLER, logoutSeller);
 }
 

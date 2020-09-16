@@ -1,7 +1,7 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Collapse, Button, Input } from 'reactstrap';
+import React, { Component } from 'react';
+import { Row, Collapse, Input } from 'reactstrap';
 import ReactTable from "react-table";
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';

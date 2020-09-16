@@ -1,8 +1,8 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Button, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import Products from './Products';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { ORDERS } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
@@ -114,7 +114,7 @@ class CartList extends Component {
         const { products } = this.state;
         let order = [];
         products.forEach(product => {
-            order.push({productEditId: product.id, quantity: product.quantity, description: ""})
+            order.push({ productEditId: product.id, quantity: product.quantity, description: "" })
         })
         Api.callAsync('post', ORDERS.all, {
             description: "string",

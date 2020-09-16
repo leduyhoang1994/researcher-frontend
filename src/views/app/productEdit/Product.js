@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 import ProductTable from './ProductTable';
@@ -17,7 +17,12 @@ class Product extends Component {
             optionCategories: [],
             selectedCategory: "",
             products: [],
-            search: "",
+            filter: {
+                productEditName: this.props.match.params.search || "",
+                categoryEditNameLv3: new URLSearchParams(this.props.location.search) || "",
+                page: 0,
+                size: 20
+            }
         };
         this.messages = this.props.intl.messages;
     }
@@ -28,10 +33,23 @@ class Product extends Component {
     }
 
     getProducts = () => {
+        let filter = this.state.filter;
+        const category = this.state.filter.categoryEditNameLv3.get("cate") || "";
+        filter.categoryEditNameLv3 = category;
+        this.setState({
+            filter: filter,
+            selectedCategory: { label: category, value: category }
+        })
+        this.filterProducts();
+    }
+
+    filterProducts = () => {
         let array = [];
-        ApiController.get(PRODUCTS.allEdit, {}, data => {
+        let filter = this.state.filter;
+
+        ApiController.post(PRODUCT_EDIT.filter, filter, data => {
             this.setState({
-                products: data
+                products: data.productEdits
             }, () => {
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
@@ -51,9 +69,9 @@ class Product extends Component {
             data.forEach(item => {
                 if (!tempOptions.includes(item.nameLv3)) {
                     tempOptions.push(item.nameLv3);
-                    options.push({ label: item.nameLv3, value: item.id })
+                    options.push({ label: item.nameLv3, value: item.nameLv3 })
                 }
-            })  
+            })
             this.setState({
                 optionCategories: options
             });
@@ -61,12 +79,18 @@ class Product extends Component {
     }
 
     searchProducts = () => {
-        const { search, selectedCategory } = this.state;
-        // ApiController.call('get', PRODUCTS.allEdit, {}, data => {
-        //     this.setState({
-        //         products: data
-        //     });
-        // })
+        let url = "/app/list-product";
+        const { filter, selectedCategory } = this.state;
+        const search = filter.productEditName;
+        if (selectedCategory.label) {
+            if (search.trim()) {
+                url = url.concat(`/${search}`);
+            }
+            url = url.concat(`?cate=${selectedCategory.label}`)
+        } else {
+            url = url.concat(`/${search}`);
+        }
+        window.open(url, "_self")
     }
 
     handleClickRow = (row) => {
@@ -74,6 +98,7 @@ class Product extends Component {
     }
 
     render() {
+        const { filter } = this.state;
         return (
             <div>
                 <Fragment>
@@ -96,9 +121,13 @@ class Product extends Component {
                                             <Label className="form-group has-float-label">
                                                 <Input
                                                     type="text"
+                                                    defaultValue={filter.productEditName}
                                                     onChange={e => {
                                                         this.setState({
-                                                            search: e.target.value
+                                                            filter: {
+                                                                ...this.state.filter,
+                                                                productEditName: e.target.value
+                                                            }
                                                         });
                                                     }}
                                                 />
@@ -113,11 +142,14 @@ class Product extends Component {
                                         <Colxx xxs="12">
                                             <Label className="form-group has-float-label">
                                                 <Select
-                                                    isMulti
                                                     options={this.state.optionCategories}
                                                     value={this.state.selectedCategory}
                                                     onChange={(value) =>
                                                         this.setState({
+                                                            filter: {
+                                                                ...this.state.filter,
+                                                                categoryEditNameLv3: value.value
+                                                            },
                                                             selectedCategory: value
                                                         })
                                                     }

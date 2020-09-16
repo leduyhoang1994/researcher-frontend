@@ -1,13 +1,8 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Card, CardBody, Row } from 'reactstrap';
-import { NavLink } from 'react-router-dom';
-import IntlMessages from '../../../helpers/IntlMessages';
-import { Fragment } from 'react';
-import { Colxx, Separator } from '../../../components/common/CustomBootstrap';
-import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { Link } from 'react-router-dom';
-import { CATEGORIES, PRODUCT_EDIT } from '../../../constants/api';
+import { Row } from 'reactstrap';
+import { Colxx } from '../../../components/common/CustomBootstrap';
+import { PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
 

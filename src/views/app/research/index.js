@@ -1,17 +1,14 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Button, CardFooter, Modal, CardHeader, ModalHeader, ModalTitle, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Button, CardFooter } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import IntlMessages from "../../../helpers/IntlMessages";
 import Filter from '../filter/Filter';
 import Category from '../category/Category';
 import ApiController from '../../../helpers/Api';
 import { CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { SITE_LIST } from '../../../constants/data';
-import categoriesData from '../../../data/categories';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
 import ResearchSetModal from './ResearchSetModal';
@@ -107,7 +104,7 @@ class Research extends Component {
 
     toggleResearchSetModal = () => {
         const isOpen = this.state.isOpenRadio;
-        if(!isOpen) {
+        if (!isOpen) {
             this.loadCateSets();
         }
         this.setState({ isOpenRadio: !isOpen });
@@ -219,7 +216,7 @@ class Research extends Component {
                         </Card>
                     </Colxx>
                 </Row>
-                
+
                 <ResearchSetModal
                     isOpenRadio={this.state.isOpenRadio}
                     toggleResearchSetModal={this.toggleResearchSetModal}

@@ -1,12 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Label, Input, CardFooter, Button } from 'reactstrap';
+import { Row } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
 import ApiController from '../../../helpers/Api';
-import { ORDERS, PRODUCTS } from '../../../constants/api';
-import { arrayColumn } from '../../../helpers/Utils';
+import { ORDERS } from '../../../constants/api';
 import OrderTable from './OrderTable';
 
 class OrderList extends Component {

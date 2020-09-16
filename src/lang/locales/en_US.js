@@ -23,7 +23,7 @@ module.exports = {
   "user.forgot-password-question": "Forget password?",
   "user.firstName": "First Name",
   "user.lastName": "Last Name",
-  "user.phone": "Your phone *",
+  "user.phoneNumber": "Your phone *",
   "user.login-button": "LOGIN",
   "user.register-button": "REGISTER",
   "user.reset-password-button": "RESET",
@@ -49,6 +49,7 @@ module.exports = {
   "menu.search" :"Search",
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
+  "menu.research": "Category",
 
 
  /* 04.Error Page */

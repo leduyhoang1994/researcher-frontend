@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { CATEGORIES, PRODUCTS } from '../../../constants/api';
+import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { jsonToFormData, parse } from '../../../helpers/Utils'
 import Property from './Property';
@@ -103,7 +103,7 @@ class EditProduct extends Component {
         const productId = new URLSearchParams(this.props.location.search).get("product-id");
         const productAddId = new URLSearchParams(this.props.location.search).get("productId");
         if (productId) {
-            const data = await ApiController.callAsync('get', `${PRODUCTS.allEdit}/source/${productId}`, {});
+            const data = await ApiController.callAsync('get', `${PRODUCT_EDIT.all}/source/${productId}`, {});
             const product = data.data.result;
 
             // if (product?.id) {
@@ -147,7 +147,7 @@ class EditProduct extends Component {
     }
 
     getProduct = (id) => {
-        ApiController.get(`${PRODUCTS.allEdit}/${id}`, {}, data => {
+        ApiController.get(`${PRODUCT_EDIT.all}/${id}`, {}, data => {
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
