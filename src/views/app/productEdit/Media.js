@@ -160,12 +160,12 @@ class Media extends React.Component {
             <>
                 {
                     images.map((image) => {
-                        return this.renderMediaItem(`${process.env.REACT_APP_API_BASE_PATH}${image}`, 'server', null, 'image');
+                        return this.renderMediaItem(`${image}`, 'server', null, 'image');
                     })
                 }
                 {
                     videos.map((video) => {
-                        return this.renderMediaItem(`${process.env.REACT_APP_API_BASE_PATH}${video}`, 'server', null, 'video');
+                        return this.renderMediaItem(`${video}`, 'server', null, 'video');
                     })
                 }
                 {
