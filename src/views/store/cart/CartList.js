@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Button, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import Products from './Products';
+import { connect } from "react-redux";
+import { changeCount } from "../../../redux/actions";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { ORDERS } from '../../../constants/api';
 import Api from '../../../helpers/Api';
@@ -46,14 +48,14 @@ class CartList extends Component {
         this.addTotals();
     }
 
-    getItem = id => {
-        const product = this.state.products.find(item => item.id === id);
+    getItem = obj => {
+        const product = this.state.products.find(item => (item.id === obj.id && item.optionIds === obj.optionIds));
         return product;
     }
 
-    increment = id => {
+    increment = obj => {
         let tempCart = this.state.cart;
-        const index = tempCart.indexOf(this.getItem(id));
+        const index = tempCart.indexOf(this.getItem(obj));
         let product = tempCart[index];
 
         product.quantity = parseInt(product.quantity) + 1;
@@ -65,11 +67,12 @@ class CartList extends Component {
             };
         })
         this.addTotals();
+        this.props.changeCount();
     }
 
-    decrement = id => {
+    decrement = obj => {
         let tempCart = this.state.cart;
-        const index = tempCart.indexOf(this.getItem(id));
+        const index = tempCart.indexOf(this.getItem(obj));
         let product = tempCart[index];
 
         if (product.quantity === 1) return;
@@ -82,13 +85,18 @@ class CartList extends Component {
             };
         })
         this.addTotals();
+        this.props.changeCount();
     }
 
-    remove = id => {
-        let tempProducts = [...this.state.products];
-        let tempCart = [...this.state.cart];
-        tempCart = tempCart.filter(item => item.id !== id);
-        tempProducts = tempProducts.filter(item => item.id !== id);
+    remove = obj => {
+        let tempProducts = this.state.products;
+        let tempCart = this.state.cart;
+        const index = tempCart.indexOf(this.getItem(obj));
+        if(index > -1) {
+            tempProducts.splice(index, 1);
+            tempCart.splice(index, 1);
+        }
+        
         localStorage.setItem("cart", JSON.stringify([...tempCart]));
         this.setState(() => {
             return {
@@ -97,6 +105,7 @@ class CartList extends Component {
             };
         }, () => {
             this.addTotals();
+            this.props.changeCount();
         })
     }
 
@@ -114,13 +123,21 @@ class CartList extends Component {
         const { products } = this.state;
         let order = [];
         products.forEach(product => {
-            order.push({ productEditId: product.id, quantity: product.quantity, description: "" })
+            order.push({ productEditId: product.id, optionIds: product.optionIds ,quantity: product.quantity, description: "" })
         })
         Api.callAsync('post', ORDERS.all, {
             description: "string",
             createOrderDetail: order
         }).then(data => {
-            NotificationManager.success("Đặt hàng thành công", "Thành công");
+            console.log(data);
+            if(data.data.statusCode == 200) {
+                NotificationManager.success("Đặt hàng thành công", "Thành công", 500);
+                localStorage.setItem("cart", JSON.stringify([]));
+                setTimeout(function(){ 
+                    window.open("/store", "_self")
+                }, 700);
+            }
+            
         }).catch(error => {
             NotificationManager.warning("Đặt hàng thất bại", "Thất bại");
         });
@@ -132,9 +149,10 @@ class CartList extends Component {
             return (
                 <div className="store">
                     <div className="products">
-                        {products.map((product) => {
+                        {products.map((product, index) => {
                             return (
                                 <Products
+                                    key={index}
                                     item={product}
                                     decrement={this.decrement}
                                     increment={this.increment}
@@ -188,5 +206,15 @@ class CartList extends Component {
 
     }
 }
+const mapStateToProps = ({ cart }) => {
+    const { count } = cart;
+    return {
+        cart
+    };
+};
 
-export default injectIntl(CartList);
+export default injectIntl(
+    connect(
+        mapStateToProps,
+        { changeCount }
+    )(CartList));

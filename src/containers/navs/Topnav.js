@@ -17,7 +17,8 @@ import {
   clickOnMobileMenu,
   logoutUser,
   logoutSeller,
-  changeLocale
+  changeLocale,
+  changeCount
 } from "../../redux/actions";
 
 import {
@@ -38,28 +39,29 @@ class TopNav extends Component {
     this.state = {
       isInFullScreen: false,
       searchKeyword: "",
-      quantity: 0,
+      quantity: this.props.count || 0,
     };
 
     this.userDetails = JSON.parse(localStorage.getItem("user_details"));
   }
 
-  updateCount = () => {
-    let cart = localStorage.getItem("cart") || [];
-    let count = 0;
-    cart = JSON.parse(cart);
-    if (cart) {
-      for (let item of cart) {
-        count += item.quantity;
-      }
-    }
-    this.setState({
-      quantity: count
-    })
-  }
+  // updateCount = () => {
+  //   let cart = localStorage.getItem("cart") || [];
+  //   let count = 0;
+  //   cart = JSON.parse(cart);
+  //   if (cart) {
+  //     for (let item of cart) {
+  //       count += item.quantity;
+  //     }
+  //   }
+  //   this.setState({
+  //     quantity: count
+  //   })
+  // }
 
   componentDidMount() {
-    this.updateCount();
+    // this.updateCount();
+    this.props.changeCount();
   }
 
   handleChangeLocale = (locale, direction) => {
@@ -312,10 +314,10 @@ class TopNav extends Component {
             <TopnavEasyAccess />
             {/* <TopnavNotifications /> */}
 
-            <Button style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
+            <Button href="/store/cart" style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
               <i className="simple-icon-basket" style={{ fontSize: "13pt", marginRight: "5px" }}></i>
               <span style={{ fontSize: "12px" }}>Giỏ hàng</span>
-              <Badge color="secondary" style={{ padding: "2px", marginLeft: "5px" }}>{this.state.quantity}</Badge>
+              <Badge color="secondary" style={{ padding: "2px", marginLeft: "5px" }}>{this.props.count}</Badge>
             </Button>
             <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"
@@ -356,19 +358,21 @@ class TopNav extends Component {
   }
 }
 
-const mapStateToProps = ({ menu, settings }) => {
+const mapStateToProps = ({ menu, settings, cart }) => {
   const { containerClassnames, menuClickCount, selectedMenuHasSubItems } = menu;
   const { locale } = settings;
+  const { count } = cart;
   return {
     containerClassnames,
     menuClickCount,
     selectedMenuHasSubItems,
-    locale
+    locale,
+    count
   };
 };
 export default injectIntl(
   connect(
     mapStateToProps,
-    { setContainerClassnames, clickOnMobileMenu, logoutSeller, logoutUser, changeLocale }
+    { setContainerClassnames, clickOnMobileMenu, logoutSeller, logoutUser, changeLocale, changeCount }
   )(TopNav)
 );

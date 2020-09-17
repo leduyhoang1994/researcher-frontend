@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 import "./style.scss";
 import { Card, CardBody, Button, CardSubtitle, CardText, CardImg } from 'reactstrap';
 import { __ } from '../../../helpers/IntlMessages';
+import { loadingSpinnerImg } from '../../../constants/defaultValues';
 
 const addToCart = products => {
     const { id, name, featureImage, priceMin, priceMax } = products;
@@ -35,6 +36,7 @@ class Product extends React.Component {
             width: 0,
             isAddedToCart: false
         }
+        this.imgRef = React.createRef();
     }
 
     innerDimensions = (node) => {
@@ -53,6 +55,10 @@ class Product extends React.Component {
         this.setState({
             width
         })
+    }
+
+    imgOnError = (e) => {
+        e.target.src = "/assets/img/default-image.png";
     }
 
     render() {
@@ -75,12 +81,23 @@ class Product extends React.Component {
                             height: `${this.state.width}px`,
                         }}
                     >
-                        <CardImg
+                        <img
+                            alt=""
+                            ref={e => {
+                                this.imgRef = e;
+                            }}
                             width="100%"
                             height="100%"
+                            onError={this.imgOnError}
+                            onLoad={() => {
+                                this.imgRef.style.backgroundImage = null;
+                            }}
                             style={{
+                                backgroundImage: `url(${loadingSpinnerImg})`,
+                                backgroundSize: "contain",
                                 objectFit: "contain",
-                            }} top src={product.featureImage} alt="Card image cap" />
+                            }} 
+                            src={`${process.env.REACT_APP_API_BASE_PATH}${product.featureImage}`} alt="Card image cap" />
                         {
                             /* 
                                 <Badge color="primary" pill className="position-absolute badge-top-left">NEW</Badge>

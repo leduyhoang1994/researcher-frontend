@@ -23,7 +23,7 @@ class OrderList extends Component {
 
     getProducts = () => {
         const id = this.state.setId;
-        ApiController.get(`${ORDERS.getBySellerId}/${id}`, {}, data => {
+        ApiController.get(`${ORDERS.getBySellerId}`, {}, data => {
             this.setState({
                 orders: data
             })
