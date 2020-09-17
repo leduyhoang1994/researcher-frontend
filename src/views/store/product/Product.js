@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 import "./style.scss";
 import { Card, CardBody, Button, CardSubtitle, CardText, CardImg } from 'reactstrap';
 import { __ } from '../../../helpers/IntlMessages';
+import { loadingSpinnerImg } from '../../../constants/defaultValues';
 
 const addToCart = products => {
     const { id, name, featureImage, priceMin, priceMax } = products;
@@ -35,6 +36,7 @@ class Product extends React.Component {
             width: 0,
             isAddedToCart: false
         }
+        this.imgRef = React.createRef();
     }
 
     innerDimensions = (node) => {
@@ -53,6 +55,10 @@ class Product extends React.Component {
         this.setState({
             width
         })
+    }
+
+    imgOnError = (e) => {
+        e.target.src = "/assets/img/default-image.png";
     }
 
     render() {
@@ -75,12 +81,23 @@ class Product extends React.Component {
                             height: `${this.state.width}px`,
                         }}
                     >
-                        <CardImg
+                        <img
+                            alt=""
+                            ref={e => {
+                                this.imgRef = e;
+                            }}
                             width="100%"
                             height="100%"
+                            onError={this.imgOnError}
+                            onLoad={() => {
+                                this.imgRef.style.backgroundImage = null;
+                            }}
                             style={{
+                                backgroundImage: `url(${loadingSpinnerImg})`,
+                                backgroundSize: "contain",
                                 objectFit: "contain",
-                            }} top src={product.featureImage} alt="Card image cap" />
+                            }} 
+                            src={`${process.env.REACT_APP_API_BASE_PATH}${product.featureImage}`} alt="Card image cap" />
                         {
                             /* 
                                 <Badge color="primary" pill className="position-absolute badge-top-left">NEW</Badge>
@@ -88,7 +105,7 @@ class Product extends React.Component {
                             */
                         }
                     </div>
-                    <CardBody className="product-body">
+                    <CardBody className="product-body mt-3">
                         <CardSubtitle title={product.name} className="font-weight-bold mb-2 product-subtitle">
                             {product.name}
                         </CardSubtitle>
@@ -98,11 +115,11 @@ class Product extends React.Component {
                         <CardText className="text-left text-normal mb-0">Phí ship nội địa TQ {product.serviceCost}</CardText>
                     </CardBody>
                 </NavLink>
-                <div className="align-center mt-3">
+                {/* <div className="align-center mt-3">
                     <Button
                         className="mr-2"
                         color="primary"
-                        disabled={isAddedToCart}
+                        disabled={isAddedToCart ? true : false}
                         onClick={() => {
                             addToCart(product);
                             this.setState({
@@ -112,7 +129,7 @@ class Product extends React.Component {
                     >
                         {__(this.messages, isAddedToCart ? "Đã thêm" : "Thêm vào giỏ")}
                     </Button>
-                </div>
+                </div> */}
             </Card>
         );
     }

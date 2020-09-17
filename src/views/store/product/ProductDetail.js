@@ -1,7 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Input, Label, Button, Card } from 'reactstrap';
-import { Colxx } from "../../../components/common/CustomBootstrap";
+import { Row, Input, Label, Button, Card, CardBody } from 'reactstrap';
+import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
+import { changeCount } from "../../../redux/actions";
+import { connect } from "react-redux";
 import { __ } from '../../../helpers/IntlMessages';
 import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
@@ -50,8 +53,6 @@ class ProductDetail extends Component {
         this.state = {
             id: this.props.match.params.id || null,
             product: {},
-            media: [],
-            detailImages: [],
             properties: [],
             isAddedToCart: false,
             options: null,
@@ -63,6 +64,17 @@ class ProductDetail extends Component {
 
     componentDidMount() {
         this.loadCurrentProduct();
+        this.loadLocalStorage();
+    }
+
+    loadCurrentProduct = () => {
+        const { id } = this.state;
+        if (id) {
+            this.getProduct(id);
+        }
+    }
+
+    loadLocalStorage = () => {
         let cart = localStorage.getItem("cart");
         cart = cart ? JSON.parse(cart) : [];
 
@@ -73,14 +85,6 @@ class ProductDetail extends Component {
                 })
 
             }
-        }
-    }
-
-    loadCurrentProduct = () => {
-        const { id } = this.state;
-        if (id) {
-            this.getProduct(id);
-            this.getMedia(id)
         }
     }
 
@@ -97,24 +101,17 @@ class ProductDetail extends Component {
         })
     }
 
-    getMedia = (id) => {
-        ApiController.get(`${PRODUCT_SELLER.all}/${id}/media`, {}, data => {
-            const arr = data.images;
-            let list = [];
-            arr.map((item, index) => {
-                return list.push({ id: index, img: item })
-            })
-            this.setState({
-                detailImages: list,
-            })
-        })
-    }
-
     addToCart = () => {
         const { optionIds } = this.state;
         const { id, name, featureImage, priceMin, priceMax, } = this.state.product;
         const quantity = this.state.quantity || 1;
-        const product = { id, name, featureImage, priceMin, priceMax, quantity, optionIds };
+        const property = [];
+        this.state.properties.map(item => {
+            if(optionIds.includes(item.id)) {
+                return property.push(item.value)
+            }
+        })
+        const product = { id, name, featureImage, priceMin, priceMax, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];
@@ -132,7 +129,7 @@ class ProductDetail extends Component {
         if (!flag) cart.push(product);
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công");
+        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 500);
     };
 
     setAttribute = (data) => {
@@ -152,18 +149,34 @@ class ProductDetail extends Component {
     };
 
     render() {
-        const { product, detailImages, isAddedToCart, properties } = this.state;
+        const { product, properties } = this.state;
         const options = convertOptions(properties);
-
+        const { images } = product;
+        let listImages = [];
+        if (images && product) {
+            listImages.push({ id: 0, img: `${process.env.REACT_APP_API_BASE_PATH}${product.featureImage}` });
+            let index = 0;
+            for (let i = 0; i < images.length; i++) {
+                if (product.featureImage != images[i]) {
+                    listImages.push({ id: ++index, img: `${process.env.REACT_APP_API_BASE_PATH}${images[i]}` });
+                }
+            }
+        }
         return (
-            <Fragment>
+            <Fragment >
                 <Row>
-                    <Colxx xxs="12" >
-                        <Card>
+                    <Colxx xxs="12">
+                        <Breadcrumb heading="menu.product" match={this.props.match} />
+                        {/* <Separator className="mb-5" /> */}
+                    </Colxx>
+                </Row>
+                <Row>
+                    <Card className="p-4 w-100">
+                        <CardBody>
                             <Row>
-                                <Colxx xxs="6" style={{ textAlign: "center" }}>
+                                <Colxx xxs="6" className="align-center" >
                                     {
-                                        detailImages.length > 0 && <GlideComponentThumbs settingsImages={
+                                        images && <GlideComponentThumbs settingsImages={
                                             {
                                                 bound: true,
                                                 rewind: false,
@@ -171,7 +184,7 @@ class ProductDetail extends Component {
                                                 startAt: 0,
                                                 gap: 5,
                                                 perView: 1,
-                                                data: detailImages,
+                                                data: listImages,
                                             }
                                         } settingsThumbs={
                                             {
@@ -181,7 +194,7 @@ class ProductDetail extends Component {
                                                 startAt: 0,
                                                 gap: 10,
                                                 perView: 5,
-                                                data: detailImages,
+                                                data: listImages,
                                                 breakpoints: {
                                                     576: {
                                                         perView: 4
@@ -219,12 +232,12 @@ class ProductDetail extends Component {
                                                 <Input
                                                     type="number"
                                                     name="quantity"
-                                                    min={0}
+                                                    min={1}
                                                     value={this.state.quantity}
                                                     // defaultValue="0"
                                                     onChange={e => {
                                                         this.setState({
-                                                            quantity: e.target.value
+                                                            quantity: parseInt(e.target.value)
                                                         })
                                                     }}
                                                 />
@@ -243,6 +256,7 @@ class ProductDetail extends Component {
                                                         this.setState({
                                                             isAddedToCart: true
                                                         });
+                                                        this.props.changeCount();
                                                         // } 
                                                         // else {
                                                         //     window.open("/store/cart", "_self")
@@ -257,53 +271,72 @@ class ProductDetail extends Component {
                                     </Row>
                                 </Colxx>
                             </Row>
-                        </Card>
-                    </Colxx>
+                        </CardBody>
+                    </Card>
                 </Row>
-                <Row className="mt-5">
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">Thời gian phát hàng của xưởng {product.workshopIn} ngày</p>
-                        </div>
-                    </Colxx>
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">Hình thức vận chuyển {product.transportation}</p>
-                        </div>
-                    </Colxx>
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">Thời gian giao hàng Ubox {product.uboxIn} ngày</p>
-                        </div>
-                    </Colxx>
-                </Row>
-                <Row >
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">Khối lượng {product.weight} kg</p>
+                <Row className="mt-2">
+                    <Card className="p-4 w-100">
+                        <Row>
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">Thời gian phát hàng của xưởng {product.workshopIn} ngày</p>
+                                </div>
+                            </Colxx>
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">Hình thức vận chuyển {product.transportation}</p>
+                                </div>
+                            </Colxx>
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">Thời gian giao hàng Ubox {product.uboxIn} ngày</p>
+                                </div>
+                            </Colxx>
+                        </Row>
+                        <Row >
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">Khối lượng {product.weight} kg</p>
 
-                        </div>
-                    </Colxx>
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">SLA dịch vụ {product.serviceSla}</p>
-                        </div>
-                    </Colxx>
-                    <Colxx xxs="4" >
-                        <div>
-                            <p className="mt-3 ml-3">Phí dịch vụ dự kiến {product.serviceCost}</p>
-                        </div>
-                    </Colxx>
+                                </div>
+                            </Colxx>
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">SLA dịch vụ {product.serviceSla}</p>
+                                </div>
+                            </Colxx>
+                            <Colxx xxs="4" >
+                                <div>
+                                    <p className="mt-3 ml-3">Phí dịch vụ dự kiến {product.serviceCost}</p>
+                                </div>
+                            </Colxx>
+                        </Row>
+                    </Card>
                 </Row>
-                <Row className="mt-5">
-                    <Colxx xxs="12" >
-                        <h2 className="mt-3 ml-3">Mô tả sản phẩm</h2>
-                        <p className="mt-3 ml-3">{product.description}</p>
-                    </Colxx>
+
+                <Row className="mt-2">
+                    <Card className="p-4 w-100">
+                        <Row>
+                            <Colxx xxs="12" >
+                                <h2 className="mt-3 ml-3">Mô tả sản phẩm</h2>
+                                <p className="mt-3 ml-3">{product.description}</p>
+                            </Colxx>
+                        </Row>
+                    </Card>
                 </Row>
             </Fragment >
         );
     }
 }
 
-export default injectIntl(ProductDetail);
+const mapStateToProps = ({ cart }) => {
+    const { count } = cart;
+    return {
+        cart
+    };
+};
+export default injectIntl(
+    connect(
+        mapStateToProps,
+        { changeCount }
+    )(ProductDetail));

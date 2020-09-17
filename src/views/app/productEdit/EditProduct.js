@@ -298,18 +298,22 @@ class EditProduct extends Component {
     }
 
     callApi = async () => {
-        const { files } = this.state
+        const { files } = this.state;
+        let { product } = this.state;
+        product.featureImage = product.featureImage.replace(`${process.env.REACT_APP_API_BASE_PATH}`, "");
+
         if (this.state.id) {
             // let product = this.state.product;
             // product.id = parseInt(this.state.id);
             let formData = new FormData()
 
-            formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.productEdit), formData)
+            formData = jsonToFormData(copySamplePropertiesObj(product, this.state.productEdit), formData)
             if (files) {
                 files.forEach(file => {
                     formData.append("file", file);
                 });
             }
+
 
             formData.append('id', parseInt(this.state.id));
 
@@ -340,6 +344,9 @@ class EditProduct extends Component {
                     formData.append("file", file);
                 });
             }
+
+            let image = formData.featureImage;
+            formData.featureImage = image.replace(`${process.env.REACT_APP_API_BASE_PATH}`, "");
 
             const data = await Api.callAsync('post', PRODUCT_EDIT.all,
                 formData

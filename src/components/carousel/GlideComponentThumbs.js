@@ -167,9 +167,9 @@ export default class GlideComponentThumbs extends React.Component {
           <div data-glide-el="track" className="glide__track">
             <div className="glide__slides">
               {
-                this.props.settingsImages.data.map(item => {
+                this.props.settingsImages.data.map((item, index) => {
                   return (
-                    <div key={item.id}>
+                    <div key={index}>
                       <div className="glide__slide" >
                         <img alt="detail" src={item.img} style={{
                           height: `450px`
@@ -189,7 +189,7 @@ export default class GlideComponentThumbs extends React.Component {
               {
                 this.props.settingsThumbs.data.map((item, index) => {
                   return (
-                    <div className={index === this.state.activeIndex ? "glide__slide active" : "glide__slide"} key={item.id} onClick={() => { this.onThumbClick(index) }}>
+                    <div className={index === this.state.activeIndex ? "glide__slide active" : "glide__slide"} key={index} onClick={() => { this.onThumbClick(index) }}>
                       <img alt="detail" src={item.img} style={{
                         height: `60px`
                       }} className="object-cover responsive border-0 border-radius img-fluid" />

@@ -1,15 +1,18 @@
 .homepage-menu {
+  ul {
+    padding: 0px;
+  }
   li {
     list-style:none !important;
     display: block;
   }
-  ul,li {
-    padding: 2px 5px;
+  li {
+    padding-left: 10px;
   }
 }
 .hover {
   &:hover {
-    background-color: white;
+    background-color: #f8f8f8;
   } 
 }
 .display-block {

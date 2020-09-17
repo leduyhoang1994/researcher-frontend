@@ -44,7 +44,7 @@ class Category extends Component {
         //use for filtering
         const fullPath = [...path, cate];
         return (
-            <span className="list-item-heading mb-0 truncate w-40 w-xs-100  mb-1 mt-1">
+            <span className="list-item-heading mb-0 truncate">
                 <span className="cursor-pointer hover display-block "
                 onClick={() => {
                     window.open(`/store/${cate}?lvl=${fullPath.indexOf(cate) + 1}`, "_self")

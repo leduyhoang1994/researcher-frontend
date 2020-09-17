@@ -36,3 +36,5 @@ export const isDarkSwitchActive = true;
 export const themeColorStorageKey="__theme_color";
 export const themeRadiusStorageKey = "__theme_radius";
 export const isDemo = false;
+
+export const loadingSpinnerImg = "/assets/img/spinner.gif";

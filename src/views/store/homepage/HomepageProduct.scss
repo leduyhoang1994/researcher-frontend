@@ -1,12 +1,12 @@
 .product {
     background: transparent;
     box-shadow: none;
-    padding: 10px;
-    padding-bottom: 10px;
+    padding: 0 10px 10px 10px;
+    // padding-bottom: 10px;
     height: 100%;
     cursor: pointer;
     transition: all 0.25s linear;
-    background: transparent;
+    background: whitesmoke;
     &:hover {
         box-shadow: 0 1px 15px rgba(0, 0, 0, 0.04), 0 1px 6px rgba(0, 0, 0, 0.04);
         background: white;
