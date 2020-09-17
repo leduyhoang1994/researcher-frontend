@@ -49,8 +49,9 @@ class Product extends Component {
 
         ApiController.post(PRODUCT_EDIT.filter, filter, data => {
             this.setState({
-                products: data.productEdits
+                products: data.productEdits || this.state.products
             }, () => {
+                if (this.state)
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
                     array.push(item);
