@@ -1,6 +1,9 @@
 /* SETTINGS */
 export const CHANGE_LOCALE = "CHANGE_LOCALE";
 
+/* CART */
+export const CHANGE_COUNT = "CHANGE_COUNT";
+
 /* AUTH */
 export const LOGIN_USER = "LOGIN_USER";
 export const LOGIN_USER_SUCCESS = "LOGIN_USER_SUCCESS";
@@ -36,6 +39,7 @@ export const MENU_CHANGE_HAS_SUB_ITEM_STATUS =
 /** ALERT */
 export const TOGGLE_ALERT = "SURVEY_SAVE";
 
+export * from "./cart/actions";
 export * from "./menu/actions";
 export * from "./settings/actions";
 export * from "./auth/actions";

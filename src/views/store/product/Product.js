@@ -88,7 +88,7 @@ class Product extends React.Component {
                             */
                         }
                     </div>
-                    <CardBody className="product-body">
+                    <CardBody className="product-body mt-3">
                         <CardSubtitle title={product.name} className="font-weight-bold mb-2 product-subtitle">
                             {product.name}
                         </CardSubtitle>
@@ -98,11 +98,11 @@ class Product extends React.Component {
                         <CardText className="text-left text-normal mb-0">Phí ship nội địa TQ {product.serviceCost}</CardText>
                     </CardBody>
                 </NavLink>
-                <div className="align-center mt-3">
+                {/* <div className="align-center mt-3">
                     <Button
                         className="mr-2"
                         color="primary"
-                        disabled={isAddedToCart}
+                        disabled={isAddedToCart ? true : false}
                         onClick={() => {
                             addToCart(product);
                             this.setState({
@@ -112,7 +112,7 @@ class Product extends React.Component {
                     >
                         {__(this.messages, isAddedToCart ? "Đã thêm" : "Thêm vào giỏ")}
                     </Button>
-                </div>
+                </div> */}
             </Card>
         );
     }

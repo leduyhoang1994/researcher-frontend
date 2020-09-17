@@ -46,9 +46,9 @@ class Homepage extends React.Component {
         if (level) {
             level = parseInt(level);
             switch (level) {
-                case 1:  categoryLv1 = this.state.categoryName; break ;
-                case 2:  categoryLv2 = this.state.categoryName; break ;
-                case 3:  categoryLv3 = this.state.categoryName; break ;
+                case 1: categoryLv1 = this.state.categoryName; break;
+                case 2: categoryLv2 = this.state.categoryName; break;
+                case 3: categoryLv3 = this.state.categoryName; break;
                 default: break;
             }
         } else {
@@ -82,20 +82,12 @@ class Homepage extends React.Component {
         const { products } = this.state;
         return (
             <Fragment>
-                <Row>
-                    <Colxx xxs="3">
-                        <Row>
-                            <Colxx xxs="12">
-                                <Category getProductByCategory={this.getProducts} />
-                            </Colxx>
-                        </Row>
+                <Row >
+                    <Colxx xxs="3" style={{ background: "white", padding: "0px !important" }}>
+                        <Category getProductByCategory={this.getProducts} />
                     </Colxx>
-                    <Colxx xxs="9">
-                        <Row>
-                            <Colxx xxs="12">
-                                <ProductList products={products} />
-                            </Colxx>
-                        </Row>
+                    <Colxx xxs="9" style={{ borderLeft: "2px solid #eee", background: "white" }}>
+                        <ProductList products={products} />
                     </Colxx>
                 </Row>
 

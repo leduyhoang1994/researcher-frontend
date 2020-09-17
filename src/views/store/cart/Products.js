@@ -34,7 +34,7 @@ class Products extends Component {
                                     decrement(item.id)
                                 }}
                             >-</button>
-                            <span>{item.quantity}</span>
+                            <span>{parseInt(item.quantity)}</span>
                             <button className="mb-1 w-5 w-xs-100 btn btn-primary"
                                 onClick={() => {
                                     increment(item.id)

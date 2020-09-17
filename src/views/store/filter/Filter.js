@@ -41,17 +41,29 @@ class Filter extends React.Component {
 
     render() {
         const { products } = this.state;
+        const count = products.reduce((count, item) => Object.keys(item).length === 0 ? count : count + 1, 0)
         return (
-            <Row>
-                {products[0] ? products.map((product, index) => {
-                    return (
-                        <Colxx xxs="3">
-                            <Product key={index} product={product} />
-                        </Colxx>
-                    )
-                }) : <h1 >Không tìm thấy sản phẩm nào!</h1>
-                }
-            </Row>
+            <>
+                <h3>Kết quả tìm kiếm cho '{this.state.search.get('s')}': {count} kết quả</h3>
+                <Row>
+                    {products[0] ? (
+                        <>
+                            {
+                                products.map((product, index) => {
+                                    return (
+                                        <Colxx xxs="3" key={index}>
+                                            <Product product={product} />
+                                        </Colxx>
+                                    )
+                                })
+                            }
+                        </>
+
+                    ) : <h1 >Không tìm thấy sản phẩm nào!</h1>
+                    }
+                </Row>
+            </>
+
         );
     }
 }

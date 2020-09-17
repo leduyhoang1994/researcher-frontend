@@ -20,7 +20,7 @@ class ProductList extends Component {
             <Row>
                 {products.map((product, index) => {
                     return (
-                        <Colxx key={index} xxs="3" style={{ padding: "10px 2px" }}>
+                        <Colxx key={index} xxs="3" style={{ padding: "0 2px" }}>
                             <Product
                                 product={product}
                                 handleClick={this.handleClick}

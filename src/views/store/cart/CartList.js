@@ -56,7 +56,7 @@ class CartList extends Component {
         const index = tempCart.indexOf(this.getItem(id));
         let product = tempCart[index];
 
-        product.quantity += 1;
+        product.quantity = parseInt(product.quantity) + 1;
         tempCart.splice(index, 1, product)
         localStorage.setItem("cart", JSON.stringify([...tempCart]));
         this.setState(() => {

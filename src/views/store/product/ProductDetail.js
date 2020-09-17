@@ -2,6 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Row, Input, Label, Button, Card } from 'reactstrap';
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
+import { changeCount } from "../../../redux/actions";
+import { connect } from "react-redux";
 import { __ } from '../../../helpers/IntlMessages';
 import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
@@ -57,12 +59,25 @@ class ProductDetail extends Component {
             options: null,
             optionIds: [],
             quantity: 1,
+            indexImage: null,
         };
         this.messages = this.props.intl.messages;
     }
 
     componentDidMount() {
         this.loadCurrentProduct();
+        this.loadLocalStorage();
+    }
+
+    loadCurrentProduct = () => {
+        const { id } = this.state;
+        if (id) {
+            this.getProduct(id);
+            this.getMedia(id);
+        }
+    }
+
+    loadLocalStorage = () => {
         let cart = localStorage.getItem("cart");
         cart = cart ? JSON.parse(cart) : [];
 
@@ -73,14 +88,6 @@ class ProductDetail extends Component {
                 })
 
             }
-        }
-    }
-
-    loadCurrentProduct = () => {
-        const { id } = this.state;
-        if (id) {
-            this.getProduct(id);
-            this.getMedia(id)
         }
     }
 
@@ -105,7 +112,7 @@ class ProductDetail extends Component {
                 return list.push({ id: index, img: item })
             })
             this.setState({
-                detailImages: list,
+                detailImages: list
             })
         })
     }
@@ -152,112 +159,118 @@ class ProductDetail extends Component {
     };
 
     render() {
-        const { product, detailImages, isAddedToCart, properties } = this.state;
+        const { product, detailImages, isAddedToCart, properties, indexImage } = this.state;
         const options = convertOptions(properties);
-
+        let images = [];
+        if (detailImages.length > 0 && product) {
+            images.push({ id: 0, img: product.featureImage });
+            for (let i = 0; i < detailImages.length; i++) {
+                if (product.featureImage != detailImages[i].img) {
+                    images.push(detailImages[i]);
+                }
+            }
+        }
         return (
-            <Fragment>
+            <Fragment >
                 <Row>
                     <Colxx xxs="12" >
-                        <Card>
-                            <Row>
-                                <Colxx xxs="6" style={{ textAlign: "center" }}>
-                                    {
-                                        detailImages.length > 0 && <GlideComponentThumbs settingsImages={
-                                            {
-                                                bound: true,
-                                                rewind: false,
-                                                focusAt: 0,
-                                                startAt: 0,
-                                                gap: 5,
-                                                perView: 1,
-                                                data: detailImages,
-                                            }
-                                        } settingsThumbs={
-                                            {
-                                                bound: true,
-                                                rewind: false,
-                                                focusAt: 0,
-                                                startAt: 0,
-                                                gap: 10,
-                                                perView: 5,
-                                                data: detailImages,
-                                                breakpoints: {
-                                                    576: {
-                                                        perView: 4
-                                                    },
-                                                    420: {
-                                                        perView: 3
-                                                    }
+                        <Row>
+                            <Colxx xxs="6" className="align-center" >
+                                {
+                                    detailImages.length > 0 && <GlideComponentThumbs settingsImages={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 5,
+                                            perView: 1,
+                                            data: images,
+                                        }
+                                    } settingsThumbs={
+                                        {
+                                            bound: true,
+                                            rewind: false,
+                                            focusAt: 0,
+                                            startAt: 0,
+                                            gap: 10,
+                                            perView: 5,
+                                            data: images,
+                                            breakpoints: {
+                                                576: {
+                                                    perView: 4
+                                                },
+                                                420: {
+                                                    perView: 3
                                                 }
                                             }
-                                        } />
-                                    }
-                                </Colxx>
-                                <Colxx xxs="6">
-                                    <h2>{product.name}</h2>
-                                    <Row className="mt-3">
-                                        <Colxx xxs="6">
-                                            <p className="product-price">{numberWithCommas(parseInt(product.priceMin))} VNĐ</p>
-                                            <p className="product-price">{numberWithCommas(parseInt(product.futurePriceMin))} VNĐ</p>
-                                            <div className="mt-4">
-                                                <h3>Thuộc tính sản phẩm</h3>
-                                                <Property
-                                                    properties={options}
-                                                    setAttribute={this.setAttribute}
-                                                />
-                                            </div>
-                                        </Colxx>
-                                        <Colxx xxs="6">
-                                            <p >Sản lượng bán tại site gốc 1244</p>
-                                        </Colxx>
-                                    </Row>
-                                    <Row>
-                                        <div className="mt-5">
-                                            <p className="float-left mt-3 ml-3">Số lượng</p>
-                                            <Label className="form-group has-float-label float-left ml-5">
-                                                <Input
-                                                    type="number"
-                                                    name="quantity"
-                                                    min={0}
-                                                    value={this.state.quantity}
-                                                    // defaultValue="0"
-                                                    onChange={e => {
-                                                        this.setState({
-                                                            quantity: e.target.value
-                                                        })
-                                                    }}
-                                                />
-                                            </Label>
+                                        }
+                                    } />
+                                }
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <h2>{product.name}</h2>
+                                <Row className="mt-3">
+                                    <Colxx xxs="6">
+                                        <p className="product-price">{numberWithCommas(parseInt(product.priceMin))} VNĐ</p>
+                                        <p className="product-price">{numberWithCommas(parseInt(product.futurePriceMin))} VNĐ</p>
+                                        <div className="mt-4">
+                                            <h3>Thuộc tính sản phẩm</h3>
+                                            <Property
+                                                properties={options}
+                                                setAttribute={this.setAttribute}
+                                            />
                                         </div>
-                                    </Row>
-                                    <Row className="mt-3">
-                                        <Colxx xxs="12">
-                                            <div className="text-left card-title float-left">
-                                                <Button
-                                                    className="mr-2"
-                                                    color="primary"
-                                                    onClick={() => {
-                                                        // if (!isAddedToCart) {
-                                                        this.addToCart();
-                                                        this.setState({
-                                                            isAddedToCart: true
-                                                        });
-                                                        // } 
-                                                        // else {
-                                                        //     window.open("/store/cart", "_self")
-                                                        // }
-                                                    }}
-                                                >
-                                                    {__(this.messages, "Thêm vào giỏ")}
-                                                </Button>
-                                            </div>
+                                    </Colxx>
+                                    <Colxx xxs="6">
+                                        <p >Sản lượng bán tại site gốc 1244</p>
+                                    </Colxx>
+                                </Row>
+                                <Row>
+                                    <div className="mt-5">
+                                        <p className="float-left mt-3 ml-3">Số lượng</p>
+                                        <Label className="form-group has-float-label float-left ml-5">
+                                            <Input
+                                                type="number"
+                                                name="quantity"
+                                                min={1}
+                                                value={this.state.quantity}
+                                                // defaultValue="0"
+                                                onChange={e => {
+                                                    this.setState({
+                                                        quantity: parseInt(e.target.value)
+                                                    })
+                                                }}
+                                            />
+                                        </Label>
+                                    </div>
+                                </Row>
+                                <Row className="mt-3">
+                                    <Colxx xxs="12">
+                                        <div className="text-left card-title float-left">
+                                            <Button
+                                                className="mr-2"
+                                                color="primary"
+                                                onClick={() => {
+                                                    // if (!isAddedToCart) {
+                                                    this.addToCart();
+                                                    this.setState({
+                                                        isAddedToCart: true
+                                                    });
+                                                    // } 
+                                                    // else {
+                                                    //     window.open("/store/cart", "_self")
+                                                    // }
+                                                }}
+                                            >
+                                                {__(this.messages, "Thêm vào giỏ")}
+                                            </Button>
+                                        </div>
 
-                                        </Colxx>
-                                    </Row>
-                                </Colxx>
-                            </Row>
-                        </Card>
+                                    </Colxx>
+                                </Row>
+                            </Colxx>
+                        </Row>
                     </Colxx>
                 </Row>
                 <Row className="mt-5">
@@ -306,4 +319,14 @@ class ProductDetail extends Component {
     }
 }
 
-export default injectIntl(ProductDetail);
+const mapStateToProps = ({ shoppingCart }) => {
+    return {
+        shoppingCart
+    };
+};
+export default injectIntl(
+    connect(
+        mapStateToProps,
+        { changeCount }
+    )(ProductDetail)
+);

@@ -10,6 +10,10 @@ const Register = React.lazy(() =>
   import(/* webpackChunkName: "user-register" */ './register')
 );
 
+const Test = React.lazy(() =>
+  import(/* webpackChunkName: "user-register" */ './test')
+);
+
 
 const User = ({ match }) => {
   return (
@@ -26,7 +30,12 @@ const User = ({ match }) => {
             path={`${match.url}/register`}
             render={props => <Register {...props} />}
           />
-          
+
+          <Route
+            path={`${match.url}/test`}
+            render={props => <Test {...props} />}
+          />
+
           <Redirect to="/error" />
         </Switch>
       </Suspense>
