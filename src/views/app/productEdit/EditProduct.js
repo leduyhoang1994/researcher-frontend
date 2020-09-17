@@ -506,6 +506,7 @@ class EditProduct extends Component {
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <AsyncPaginate
+                                                        isDisabled={ !!this.state.id }
                                                         className="react-select"
                                                         classNamePrefix="react-select"
                                                         defaultOptions

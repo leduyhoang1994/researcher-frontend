@@ -72,7 +72,8 @@ class Media extends React.Component {
         if (typeMedia === 'video') backgroundImage = `url('/assets/img/video-thumbnail.png')`
 
         const style = {
-            backgroundImage: backgroundImage
+            backgroundImage: backgroundImage,
+            cursor: "pointer"
         };
 
         return (
@@ -132,12 +133,12 @@ class Media extends React.Component {
             <>
                 {
                     images.map((image) => {
-                        return this.renderMediaItem(image, 'server', null, 'image');
+                        return this.renderMediaItem(`${process.env.REACT_APP_API_BASE_PATH}${image}`, 'server', null, 'image');
                     })
                 }
                 {
                     videos.map((video) => {
-                        return this.renderMediaItem(video, 'server', null, 'video');
+                        return this.renderMediaItem(`${process.env.REACT_APP_API_BASE_PATH}${video}`, 'server', null, 'video');
                     })
                 }
                 {
@@ -159,7 +160,7 @@ class Media extends React.Component {
             backgroundImage: `url('${featureImage || '/assets/img/default-image.png'}')`,
             maxHeight: "400px",
             backgroundSize: "cover",
-            backgroundPosition: "center"
+            backgroundPosition: "center",
         }
         return (
             <div className="mb-4 text-center">
