@@ -24,14 +24,14 @@ export default class DataTablePagination extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    return {page: props.page};
+    return { page: props.page };
   }
 
   getSafePage(page) {
     if (Number.isNaN(page)) {
       page = this.props.page;
     }
-    return Math.min(Math.max(page, 0), this.props.pages - 1);
+    return Math.min(Math.max(page, 0), this.props.pages);
   }
 
   changePageSize(size) {
@@ -79,7 +79,7 @@ export default class DataTablePagination extends Component {
     let pageCount = this.props.pages;
     let pageButtons = [];
     const buttonSize = 5;
-    const current_page = this.state.page + 1;
+    const current_page = this.state.page + (this.state.page === 0 ? 1 : 0);
 
     // pageButtons.push(
     //   <PaginationItem key={i} active={active}>
@@ -96,7 +96,9 @@ export default class DataTablePagination extends Component {
           pageButtons.push(
             <PaginationItem key={i} active={active}>
               <PaginationLink
-                onClick={() => this.pageClick(i)}
+                onClick={() => {
+                  this.pageClick(i);
+                }}
               >{i}</PaginationLink>
             </PaginationItem>
           );
@@ -106,7 +108,9 @@ export default class DataTablePagination extends Component {
       pageButtons.push(
         <PaginationItem key={i} active={active}>
           <PaginationLink
-            onClick={() => this.pageClick(i)}
+            onClick={() => {
+              this.pageClick(i);
+            }}
           >{i}</PaginationLink>
         </PaginationItem>
       );
@@ -117,7 +121,7 @@ export default class DataTablePagination extends Component {
   renderPageJump() {
     let pages = this.props.pages;
     let pageNumbers = [];
-    for (let i = 0; i < pages; i++) {
+    for (let i = 1; i <= pages; i++) {
       pageNumbers.push(
         <DropdownItem
           key={i}

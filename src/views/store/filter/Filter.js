@@ -1,10 +1,11 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Row, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { Row } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
+import DataTablePagination from '../../../components/DatatablePagination';
 
 class Filter extends React.Component {
 
@@ -13,7 +14,11 @@ class Filter extends React.Component {
         this.state = {
             search: new URLSearchParams(this.props.location.search),
             products: [],
-            isLoading: true
+            isLoading: true,
+            resultFilter: {},
+            dataTable: {
+                canPrevious: false,
+            }
         }
         this.messages = this.props.intl.messages;
     }
@@ -25,21 +30,61 @@ class Filter extends React.Component {
     getProducts() {
         let search = this.state.search.get('s');
         let array = [];
+        const page = this.state.dataTable.page || 0;
+        const size = this.state.dataTable.defaultPageSize || 10;
         this.setState({ isLoading: true });
-        ApiController.post(PRODUCT_EDIT.filter, { productEditName: search, page: 0, size: 10 }, data => {
+        ApiController.post(PRODUCT_EDIT.filter, { productEditName: search, page: page, size: size }, data => {
             this.setState({
-                products: data.productEdits
+                resultFilter: data
             }, () => {
-                this.state.products.forEach(item => {
+                this.state.resultFilter.productEdits.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
                     array.push(item);
                 });
+                const dataTable = {
+                    page: (this.state.resultFilter.nextPage - 1),
+                    pageSizeOptions: [10, 20, 50, 100],
+                    canPrevious: this.state.resultFilter.backPage > -1 ? true : false,
+                }
+                dataTable.defaultPageSize = dataTable.pageSizeOptions[0];
+                dataTable.pages = Math.ceil(this.state.resultFilter.total / dataTable.defaultPageSize);
+                dataTable.canNext = dataTable.pages > 1 ? true : false;
                 this.setState({
                     products: array,
-                    isLoading: false
+                    isLoading: false,
+                    dataTable: dataTable
                 })
             })
         })
+    }
+
+    onPageChange = (page) => {
+        console.log(page);
+        let {dataTable} = this.state;
+        dataTable.page = page;
+        if(page > 1) {
+            dataTable.canPrevious = true;
+        } else {
+            dataTable.canPrevious = false;
+        }
+        if(page < dataTable.pages - 1) {
+            dataTable.canNext = true;
+        } else {
+            dataTable.canNext = false;
+        }
+        this.setState({
+            dataTable: dataTable
+        })
+        this.getProducts();
+    }
+
+    onPageSizeChange = (size) => {
+        const {dataTable} = this.state;
+        dataTable.defaultPageSize = size;
+        this.setState({
+            dataTable: dataTable
+        })
+        this.getProducts();
     }
 
     renderLoading = () => {
@@ -49,7 +94,7 @@ class Filter extends React.Component {
     }
 
     render() {
-        const { products, isLoading } = this.state;
+        const { products, isLoading, dataTable } = this.state;
         const count = products.reduce((count, item) => Object.keys(item).length === 0 ? count : count + 1, 0)
         if (isLoading) {
             return this.renderLoading();
@@ -72,38 +117,20 @@ class Filter extends React.Component {
                             }
                         </Row>
                         <Row>
+                            {/* className="d-md-inline-flex" */}
                             <Colxx xxs="12" className="text-center">
-                                <Pagination aria-label="Page navigation example" className="d-md-inline-flex">
-                                    <PaginationItem>
-                                        <PaginationLink className="first" href="#">
-                                            <i className="simple-icon-control-start" />
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink className="prev" href="#">
-                                            <i className="simple-icon-arrow-left" />
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem active>
-                                        <PaginationLink href="#">2</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">3</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink className="next" href="#">
-                                            <i className="simple-icon-arrow-right" />
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink className="last" href="#">
-                                            <i className="simple-icon-control-end" />
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                </Pagination>
+                                <DataTablePagination
+                                    page={dataTable.page}
+                                    pages={dataTable.pages}
+                                    defaultPageSize={dataTable.defaultPageSize}
+                                    canPrevious={dataTable.canPrevious}
+                                    canNext={dataTable.canNext}
+                                    pageSizeOptions={dataTable.pageSizeOptions}
+                                    showPageSizeOptions={true}
+                                    showPageJump={true}
+                                    onPageChange={this.onPageChange}
+                                    onPageSizeChange={this.onPageSizeChange}
+                                />
                             </Colxx>
                         </Row>
                     </>
