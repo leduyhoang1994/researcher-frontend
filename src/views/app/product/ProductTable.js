@@ -105,6 +105,13 @@ const ProductTable = ({
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
+      Header: __(component.messages, "Nguồn sản phẩm"),
+      width: 100,
+      filterable: true,
+      accessor: "site",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
       Header: __(component.messages, "Link sản phẩm"),
       width: 100,
       filterable: true,

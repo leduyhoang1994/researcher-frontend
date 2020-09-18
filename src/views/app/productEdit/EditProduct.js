@@ -357,7 +357,6 @@ class EditProduct extends Component {
             });
 
             if (data.success) {
-                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
                 NotificationManager.success("Thêm mới thành công", "Thành công");
                 this.setState({
                     keyMedia: new Date().getTime(),
@@ -366,8 +365,7 @@ class EditProduct extends Component {
                     fileBase64: []
                 })
 
-                this.setRedirect(`/app/list-product/edit/${data.result.productEdit.id}`);
-                this.renderRedirect();
+                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 const message = data?.message;
@@ -513,7 +511,7 @@ class EditProduct extends Component {
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <AsyncPaginate
-                                                        isDisabled={ !!this.state.id }
+                                                        isDisabled={!!this.state.id}
                                                         className="react-select"
                                                         classNamePrefix="react-select"
                                                         defaultOptions
