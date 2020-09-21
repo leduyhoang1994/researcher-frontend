@@ -300,7 +300,7 @@ class EditProduct extends Component {
     callApi = async () => {
         const { files } = this.state;
         let { product } = this.state;
-        product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.MEDIA_BASE_PATH}`, "") : product.featureImage;
+        product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.REACT_APP_MEDIA_BASE_PATH}`, "") : product.featureImage;
 
         if (this.state.id) {
             // let product = this.state.product;

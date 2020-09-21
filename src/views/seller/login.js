@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import { Row, Card, CardTitle, Label, FormGroup, Button, Input } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
+import { loginSeller } from "../../redux/actions";
+import { validateName, validatePassword } from '../../helpers/Validate';
 
 import { NotificationManager } from "../../components/common/react-notifications";
 import { Formik, Form, Field } from "formik";
-
-import { loginSeller } from "../../redux/actions";
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -19,24 +20,15 @@ class Login extends Component {
   }
 
   onSellerLogin = (values) => {
-    const userName = this.state.userName;
     if (!this.props.loading) {
-      if (userName !== "" && values.password !== "") {
+      console.log(values);
+      if (values.userName !== "" && values.password !== "") {
+        const userName = values.userName;
         const password = values.password;
         const data = { userName, password }
         this.props.loginSeller(data, this.props.history);
       }
     }
-  }
-
-  validatePassword = (value) => {
-    let error;
-    if (!value) {
-      error = "Please enter your password";
-    } else if (value.length < 4) {
-      error = "Value must be longer than 3 characters";
-    }
-    return error;
   }
 
   componentDidUpdate() {
@@ -63,7 +55,7 @@ class Login extends Component {
             <div className="position-relative image-side ">
               <p className="text-white h2">Seller</p>
               <p className="white mb-0">
-                Vui lòng sử dụng "số điện thoại@lamita.vn" để đăng nhập
+                Vui lòng sử dụng tài khoản lamita để đăng nhập
               </p>
             </div>
             <div className="form-side">
@@ -79,19 +71,21 @@ class Login extends Component {
                 onSubmit={this.onSellerLogin}>
                 {({ errors, touched }) => (
                   <Form className="av-tooltip tooltip-label-bottom">
-                    <Label className="form-group has-float-label mb-4">
-                      <Input
-                        type="name"
+                    <FormGroup className="form-group has-float-label">
+                      <Label>
+                        <IntlMessages id="user.userName" />
+                      </Label>
+                      <Field
+                        className="form-control"
                         name="userName"
-                        defaultValue={this.state.userName}
-                        onChange={(e) => {
-                          this.setState({
-                            userName: e.target.value
-                          })
-                        }}
+                        validate={validateName}
                       />
-                      <IntlMessages id="user.userName" />
-                    </Label>
+                      {errors.userName && touched.userName && (
+                        <div className="invalid-feedback d-block">
+                          {errors.userName}
+                        </div>
+                      )}
+                    </FormGroup>
                     <FormGroup className="form-group has-float-label">
                       <Label>
                         <IntlMessages id="user.password" />
@@ -100,7 +94,7 @@ class Login extends Component {
                         className="form-control"
                         type="password"
                         name="password"
-                        validate={this.validatePassword}
+                        validate={validatePassword}
                       />
                       {errors.password && touched.password && (
                         <div className="invalid-feedback d-block">
@@ -109,9 +103,9 @@ class Login extends Component {
                       )}
                     </FormGroup>
                     <div className="d-flex justify-content-between align-items-center">
-                      <NavLink to={`/seller/register`}>
-                        <IntlMessages id="Đăng ký tài khoản" />
-                      </NavLink>
+                      {/* <NavLink to={`/user/forgot-password`}>
+                        <IntlMessages id="user.forgot-password-question" />
+                      </NavLink> */}
                       <Button
                         color="primary"
                         className={`btn-shadow btn-multiple-state ${this.props.loading ? "show-spinner" : ""}`}
@@ -125,8 +119,6 @@ class Login extends Component {
                         <span className="label"><IntlMessages id="user.login-button" /></span>
                       </Button>
                     </div>
-
-
                   </Form>
                 )}
               </Formik>

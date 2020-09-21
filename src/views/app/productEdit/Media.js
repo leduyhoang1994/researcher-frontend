@@ -21,7 +21,7 @@ class Media extends React.Component {
             },
             isUploadModalOpen: false,
             isMediaModalOpen: false,
-            featureImage: `${process.env.MEDIA_BASE_PATH}${this.props.featureImage}`,
+            featureImage: `${process.env.REACT_APP_MEDIA_BASE_PATH}${this.props.featureImage}`,
             mediaModal: null,
             whereMediaModal: null,
             typeMediaModal: null
@@ -38,12 +38,12 @@ class Media extends React.Component {
         let arrVideos = [];
         if (images) {
             for (let item of images) {
-                arrImages.push(`${process.env.MEDIA_BASE_PATH}${item}`);
+                arrImages.push(`${process.env.REACT_APP_MEDIA_BASE_PATH}${item}`);
             }
         }
         if (videos) {
             for (let item of videos) {
-                arrVideos.push(`${process.env.MEDIA_BASE_PATH}${item}`);
+                arrVideos.push(`${process.env.REACT_APP_MEDIA_BASE_PATH}${item}`);
             }
         }
         this.setState({
@@ -86,7 +86,7 @@ class Media extends React.Component {
     renderMediaItem = (media, where, index, typeMedia) => {
         let backgroundImage = "";
         // if (media.includes("assets/products")) {
-        //     backgroundImage = `url('${process.env.MEDIA_BASE_PATH}${media}')`;
+        //     backgroundImage = `url('${process.env.REACT_APP_MEDIA_BASE_PATH}${media}')`;
         // }
         // else {
         backgroundImage = `url('${media}')`;

@@ -18,7 +18,7 @@ class Products extends Component {
                                 className="list-item-heading mb-0 truncate w-40 w-xs-100  mb-1 mt-1"
                             >
                                 <span className="align-middle d-inline-block w-20 w-xs-100">
-                                    <img width="70" style={{ objectFit: "cover", height: "70px" }} src={`${process.env.MEDIA_BASE_PATH}${item.featureImage}`} alt="" />
+                                    <img width="70" style={{ objectFit: "cover", height: "70px" }} src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${item.featureImage}`} alt="" />
                                 </span>
                                 <span className="align-left d-inline-block w-80 w-xs-100 text-small">
                                     <p className="d-block">

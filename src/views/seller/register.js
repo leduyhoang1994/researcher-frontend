@@ -10,17 +10,26 @@ import { Colxx } from "../../components/common/CustomBootstrap";
 import { Formik, Form, Field } from "formik";
 import Select from 'react-select';
 import address from '../../data/address.json';
+import { validateName, validatePassword, validateEmailNoRequired, validatePhone } from '../../helpers/Validate';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      seller: {},
+      seller: {
+        firstName: "",
+        lastName: "",
+        userName: "",
+        phoneNumber: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        address: ""
+      },
       optionsCity: [],
       optionsDistrict: [],
       optionsCommune: [],
     };
-    this.handleChange = this.handleChange.bind(this)
   }
 
   componentWillMount() {
@@ -104,37 +113,16 @@ class Register extends Component {
   };
 
   onSellerRegister = (values) => {
-    let city, district, town;
-    const { email, password, confirmPassword } = values;
-    const { firstName, lastName, userName, phoneNumber, selectedCity, selectedDistrict, selectedCommune, address } = this.state.seller;
+    let city = "", district = "", town = "";
+    const { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, address } = values;
+    const { selectedCity, selectedDistrict, selectedCommune } = this.state.seller;
     if (selectedCity) city = selectedCity.label;
     if (selectedDistrict) district = selectedDistrict.label;
     if (selectedCommune) town = selectedCommune.label;
     const data = { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address }
-    console.log(data);
-    if (data.userName !== "" && data.phoneNumber !== "" && data.password !== "" && data.confirmPassword !== "") {
+    if (data.firstName !== "" && data.lastName !== "" && data.userName !== "" && data.phoneNumber !== "" && data.password !== "" && data.confirmPassword !== "") {
       this.props.registerSeller(data, this.props.history);
     }
-  }
-
-  validateEmail = (value) => {
-    let error;
-    if (value) {
-      if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-        error = "Invalid email address";
-      }
-    }
-    return error;
-  }
-
-  validatePassword = (value) => {
-    let error;
-    if (!value) {
-      error = "Please enter your password";
-    } else if (value.length < 6) {
-      error = "Value must be longer than 5 characters";
-    }
-    return error;
   }
 
   componentDidUpdate() {
@@ -150,19 +138,10 @@ class Register extends Component {
     }
   }
 
-  handleChange(event) {
-    let value = event.target.value;
-    let seller = this.state.seller;
-    seller[event.target.name] = value
-    this.setState({
-      seller: seller
-    });
-  }
-
   render() {
     const { seller, optionsCity, optionsDistrict, optionsCommune } = this.state;
-    const { email, password, confirmPassword } = this.state.seller;
-    const initialValues = { email, password, confirmPassword };
+    const { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, address } = seller;
+    const initialValues = { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, address };
 
     return (
       <Row className="h-100">
@@ -186,6 +165,7 @@ class Register extends Component {
               <CardTitle className="mb-4">
                 <IntlMessages id="user.register" />
               </CardTitle>
+
               <Formik
                 initialValues={initialValues}
                 onSubmit={this.onSellerRegister}>
@@ -193,24 +173,49 @@ class Register extends Component {
                   <Form>
                     <Row className="h-100">
                       <Colxx xxs="6">
-                        <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="firstName" onChange={this.handleChange} defaultValue={seller.firstName} />
-                          <IntlMessages id="user.firstName" />
-                        </Label>
-
-                        <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="userName" onChange={this.handleChange} defaultValue={seller.userName} />
-                          <IntlMessages id="user.userName" />
-                        </Label>
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
+                            <IntlMessages id="user.firstName" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="firstName"
+                            validate={validateName}
+                          />
+                          {errors.firstName && touched.firstName && (
+                            <div className="invalid-feedback d-block">
+                              {errors.firstName}
+                            </div>
+                          )}
+                        </FormGroup>
 
                         <FormGroup className="form-group has-float-label">
-                          <Label className="form-group has-float-label mb-4">
+                          <Label>
+                            <IntlMessages id="user.userName" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="userName"
+                            validate={validateName}
+                          />
+                          {errors.userName && touched.userName && (
+                            <div className="invalid-feedback d-block">
+                              {errors.userName}
+                            </div>
+                          )}
+                        </FormGroup>
+
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
                             <IntlMessages id="user.email" />
                           </Label>
                           <Field
+                            type="text"
                             className="form-control"
                             name="email"
-                            validate={this.validateEmail}
+                            validate={validateEmailNoRequired}
                           />
                           {errors.email && touched.email && (
                             <div className="invalid-feedback d-block">
@@ -226,7 +231,7 @@ class Register extends Component {
                             className="form-control"
                             type="password"
                             name="password"
-                            validate={this.validatePassword}
+                            validate={validatePassword}
                           />
                           {errors.password && touched.password && (
                             <div className="invalid-feedback d-block">
@@ -242,7 +247,7 @@ class Register extends Component {
                             className="form-control"
                             type="password"
                             name="confirmPassword"
-                            validate={this.validatePassword}
+                            validate={validatePassword}
                           />
                           {errors.confirmPassword && touched.confirmPassword && (
                             <div className="invalid-feedback d-block">
@@ -253,15 +258,39 @@ class Register extends Component {
                       </Colxx>
 
                       <Colxx xxs="6">
-                        <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="lastName" onChange={this.handleChange} defaultValue={seller.lastName} />
-                          <IntlMessages id="user.lastName" />
-                        </Label>
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
+                            <IntlMessages id="user.lastName" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="lastName"
+                            validate={validateName}
+                          />
+                          {errors.lastName && touched.lastName && (
+                            <div className="invalid-feedback d-block">
+                              {errors.lastName}
+                            </div>
+                          )}
+                        </FormGroup>
 
-                        <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="phoneNumber" required onChange={this.handleChange} defaultValue={seller.phoneNumber} />
-                          <IntlMessages id="user.phoneNumber" />
-                        </Label>
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
+                            <IntlMessages id="user.phoneNumber" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="phoneNumber"
+                            validate={validatePhone}
+                          />
+                          {errors.phoneNumber && touched.phoneNumber && (
+                            <div className="invalid-feedback d-block">
+                              {errors.phoneNumber}
+                            </div>
+                          )}
+                        </FormGroup>
 
                         <Label className="form-group has-float-label mb-4">
                           <Select
@@ -296,11 +325,21 @@ class Register extends Component {
                           <IntlMessages id="user.commune" />
                         </Label>
 
-                        <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="address" onChange={this.handleChange} defaultValue={seller.address} />
-                          <IntlMessages id="user.address" />
-                        </Label>
-
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
+                            <IntlMessages id="user.address" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="address"
+                          />
+                          {errors.address && touched.address && (
+                            <div className="invalid-feedback d-block">
+                              {errors.address}
+                            </div>
+                          )}
+                        </FormGroup>
                       </Colxx>
                     </Row>
 

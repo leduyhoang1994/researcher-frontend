@@ -154,11 +154,11 @@ class ProductDetail extends Component {
         const { images } = product;
         let listImages = [];
         if (images && product) {
-            listImages.push({ id: 0, img: `${process.env.MEDIA_BASE_PATH}${product.featureImage}` });
+            listImages.push({ id: 0, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}` });
             let index = 0;
             for (let i = 0; i < images.length; i++) {
                 if (product.featureImage != images[i]) {
-                    listImages.push({ id: ++index, img: `${process.env.MEDIA_BASE_PATH}${images[i]}` });
+                    listImages.push({ id: ++index, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${images[i]}` });
                 }
             }
         }
