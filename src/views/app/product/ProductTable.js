@@ -22,7 +22,11 @@ const ProductTable = ({
 }) => {
   const columns = () => [
     {
-      Header: __(component.messages, "Thao tác"),
+      Header: () => {
+        return <div className="text-center">
+          <input type="checkbox" onChange='' />
+        </div>
+      },
       accessor: 'id',
       sortable: false,
       width: selectable ? undefined : 150,

@@ -34,7 +34,8 @@ class Research extends Component {
             isOpenRadio: false,
             isShow: false,
             radioValue: "first-radio",
-            cateSetName: ""
+            cateSetName: "",
+            isSiteCodeCheckAll: {}
         };
         this.messages = this.props.intl.messages;
     }
@@ -63,14 +64,24 @@ class Research extends Component {
         });
     };
 
-    removeFromSelectedCats = (cate) => {
-        let { selectedCats } = this.state;
+    removeFromSelectedCats = (cates) => {
+        let { selectedCats, isSiteCodeCheckAll } = this.state;
 
-        selectedCats = selectedCats.filter(selectedCat => {
-            return JSON.stringify(selectedCat) !== JSON.stringify(cate);
-        });
+        let newCates = []
+
+        if (!Array.isArray(cates)) newCates.push(cates);
+        else newCates = [...cates]
+
+        for (const cate of newCates) {
+            selectedCats = selectedCats.filter(selectedCat => {
+                return JSON.stringify(selectedCat) !== JSON.stringify(cate);
+            });
+
+            delete isSiteCodeCheckAll[cate['site']]
+        }
 
         this.setState({
+            isSiteCodeCheckAll: isSiteCodeCheckAll,
             selectedCats: selectedCats
         });
     };
@@ -121,6 +132,31 @@ class Research extends Component {
             redirect: url
         })
     };
+
+
+    setSelectAll = (siteCode, checked) => {
+        const { categories } = this.state
+        const selectedData = categories[siteCode]
+
+        if (checked === true) {
+            for (const data of selectedData) {
+                this.addToSelectedCats(data)
+            }
+            const isSiteCodeCheckAll = this.state.isSiteCodeCheckAll
+            isSiteCodeCheckAll[siteCode] = siteCode
+            this.setState({
+                isSiteCodeCheckAll: isSiteCodeCheckAll
+            })
+        } else if (checked === false) {
+            this.removeFromSelectedCats(selectedData)
+            const isSiteCodeCheckAll = this.state.isSiteCodeCheckAll
+            delete isSiteCodeCheckAll[siteCode]
+            this.setState({
+                isSiteCodeCheckAll: isSiteCodeCheckAll
+            })
+        }
+    }
+
 
     loadCateSets = () => {
         ApiController.get(CATEGORIES.set, {}, data => {
@@ -222,6 +258,8 @@ class Research extends Component {
                                     addToSelectedCats={this.addToSelectedCats}
                                     removeFromSelectedCats={this.removeFromSelectedCats}
                                     existInSelectedCats={this.existInSelectedCats}
+                                    setSelectAll={this.setSelectAll}
+                                    isSiteCodeCheckAll={this.state.isSiteCodeCheckAll}
                                 />
                             </CardBody>
                             <CardFooter className="text-right">
