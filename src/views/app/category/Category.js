@@ -1,7 +1,7 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Collapse, Button, Input } from 'reactstrap';
+import React, { Component } from 'react';
+import { Row, Collapse, Input } from 'reactstrap';
 import ReactTable from "react-table";
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
@@ -19,7 +19,11 @@ class Category extends Component {
     this.messages = this.props.intl.messages;
   }
 
-  catTableColumn = () => [
+  handleCheckAll = (e) => {
+    this.props.setSelectAll(e.target.id, e.target.checked)
+  }
+
+  catTableColumn = (siteCode) => [
     {
       Header: __(this.messages, "Tên ngành hàng tầng 1"),
       accessor: "categoryNameViLevel1",
@@ -49,8 +53,15 @@ class Category extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Thao tác"),
+      Header: (e) => {
+        return (
+          <div className="text-center">
+            <input id={siteCode} type="checkbox" onChange={this.handleCheckAll} checked={this.props.isSiteCodeCheckAll[siteCode] ? true : false} />
+          </div>
+        );
+      },
       accessor: null,
+      sortable: false,
       maxWidth: 100,
       Cell: props => (
         <div className="text-center">
@@ -103,7 +114,7 @@ class Category extends Component {
               }
             }}
             data={cats}
-            columns={this.catTableColumn()}
+            columns={this.catTableColumn(site.code)}
             defaultPageSize={10}
             className="mb-4"
             PaginationComponent={DataTablePagination}
@@ -126,9 +137,10 @@ class Category extends Component {
 
     for (const countrySite of siteList) {
       if (categorySets[countrySite.code]) {
+
         render.push(
           <div key={countrySite.code}>
-            {this.renderCats(countrySite, true)}
+            {this.renderCats(countrySite, true, '')}
           </div>
         );
       }
@@ -137,7 +149,7 @@ class Category extends Component {
           if (categorySets[site.code]) {
             render.push(
               <div key={site.code}>
-                {this.renderCats(site)}
+                {this.renderCats(site, null, '')}
               </div>
             );
           }

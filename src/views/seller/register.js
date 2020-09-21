@@ -15,20 +15,10 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: "Tony",
-      lastName: "Stark",
-      userName: "",
-      phone: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      seller: {},
       optionsCity: [],
       optionsDistrict: [],
       optionsCommune: [],
-      selectedCity: null,
-      selectedDistrict: null,
-      selectedCommune: null,
-      address: "",
     };
     this.handleChange = this.handleChange.bind(this)
   }
@@ -54,10 +44,16 @@ class Register extends Component {
       optionsCommune: [],
     })
 
+    let seller = this.state.seller;
     let options = [];
-    this.setState({ selectedDistrict: null });
-    this.setState({ selectedCommune: null });
-    this.setState({ selectedCity });
+
+    seller.selectedCity = selectedCity;
+    seller.selectedDistrict = null;
+    seller.selectedCommune = null;
+
+    this.setState({
+      seller: seller
+    });
 
     const index = selectedCity.value;
     let district = Object.values(address)[index];
@@ -79,9 +75,15 @@ class Register extends Component {
     })
 
     let options = [];
-    this.setState({ selectedCommune: null });
-    this.setState({ selectedDistrict });
-    const index = this.state.selectedCity.value;
+    let seller = this.state.seller;
+    seller.selectedDistrict = selectedDistrict;
+    seller.selectedCommune = null;
+
+    this.setState({
+      seller: seller
+    });
+
+    const index = seller.selectedCity.value;
 
     let district = Object.values(address)[index];
     let temp = district[selectedDistrict.label];
@@ -96,18 +98,21 @@ class Register extends Component {
   };
 
   handleChangeCommune = selectedCommune => {
-    this.setState({ selectedCommune });
+    let seller = this.state.seller;
+    seller.selectedCommune = selectedCommune;
+    this.setState({ seller: seller });
   };
 
   onSellerRegister = (values) => {
+    let city, district, town;
     const { email, password, confirmPassword } = values;
-    const { firstName, lastName, userName, phone } = this.state;
-    let { selectedCity, selectedDistrict, selectedCommune } = this.state;
-    if (selectedCity) selectedCity = selectedCity.label;
-    if (selectedDistrict) selectedDistrict = selectedDistrict.label;
-    if (selectedCommune) selectedCommune = selectedCommune.label;
-    const data = { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune }
-    if (data.userName !== "" && data.phone !== "" && data.password !== "" && data.confirmPassword !== "") {
+    const { firstName, lastName, userName, phoneNumber, selectedCity, selectedDistrict, selectedCommune, address } = this.state.seller;
+    if (selectedCity) city = selectedCity.label;
+    if (selectedDistrict) district = selectedDistrict.label;
+    if (selectedCommune) town = selectedCommune.label;
+    const data = { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address }
+    console.log(data);
+    if (data.userName !== "" && data.phoneNumber !== "" && data.password !== "" && data.confirmPassword !== "") {
       this.props.registerSeller(data, this.props.history);
     }
   }
@@ -146,16 +151,17 @@ class Register extends Component {
   }
 
   handleChange(event) {
-    const value = event.target.value;
+    let value = event.target.value;
+    let seller = this.state.seller;
+    seller[event.target.name] = value
     this.setState({
-      ...this.state,
-      [event.target.name]: value
+      seller: seller
     });
   }
 
   render() {
-    const { email, password, confirmPassword, optionsCity, optionsDistrict, optionsCommune, selectedDistrict, selectedCommune, address } = this.state;
-    const { selectedCity } = this.state.optionsCity;
+    const { seller, optionsCity, optionsDistrict, optionsCommune } = this.state;
+    const { email, password, confirmPassword } = this.state.seller;
     const initialValues = { email, password, confirmPassword };
 
     return (
@@ -188,12 +194,12 @@ class Register extends Component {
                     <Row className="h-100">
                       <Colxx xxs="6">
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="firstName" onChange={this.handleChange} defaultValue={this.state.firstName} />
+                          <Input type="name" name="firstName" onChange={this.handleChange} defaultValue={seller.firstName} />
                           <IntlMessages id="user.firstName" />
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="userName" onChange={this.handleChange} defaultValue={this.state.userName} />
+                          <Input type="name" name="userName" onChange={this.handleChange} defaultValue={seller.userName} />
                           <IntlMessages id="user.userName" />
                         </Label>
 
@@ -248,20 +254,20 @@ class Register extends Component {
 
                       <Colxx xxs="6">
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="lastName" onChange={this.handleChange} defaultValue={this.state.lastName} />
+                          <Input type="name" name="lastName" onChange={this.handleChange} defaultValue={seller.lastName} />
                           <IntlMessages id="user.lastName" />
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="phone" required onChange={this.handleChange} defaultValue={this.state.phone} />
-                          <IntlMessages id="user.phone" />
+                          <Input type="name" name="phoneNumber" required onChange={this.handleChange} defaultValue={seller.phoneNumber} />
+                          <IntlMessages id="user.phoneNumber" />
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
                           <Select
                             className="react-select"
                             classNamePrefix="react-select"
-                            value={selectedCity}
+                            value={seller.selectedCity}
                             onChange={this.handleChangeCity}
                             options={optionsCity}
                           />
@@ -272,7 +278,7 @@ class Register extends Component {
                           <Select
                             className="react-select"
                             classNamePrefix="react-select"
-                            value={selectedDistrict}
+                            value={seller.selectedDistrict}
                             onChange={this.handleChangeDistrict}
                             options={optionsDistrict}
                           />
@@ -283,7 +289,7 @@ class Register extends Component {
                           <Select
                             className="react-select"
                             classNamePrefix="react-select"
-                            value={selectedCommune}
+                            value={seller.selectedCommune}
                             onChange={this.handleChangeCommune}
                             options={optionsCommune}
                           />
@@ -291,7 +297,7 @@ class Register extends Component {
                         </Label>
 
                         <Label className="form-group has-float-label mb-4">
-                          <Input type="name" name="address" onChange={this.handleChange} defaultValue={address} />
+                          <Input type="name" name="address" onChange={this.handleChange} defaultValue={seller.address} />
                           <IntlMessages id="user.address" />
                         </Label>
 

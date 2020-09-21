@@ -1,6 +1,9 @@
 /* SETTINGS */
 export const CHANGE_LOCALE = "CHANGE_LOCALE";
 
+/* CART */
+export const CHANGE_COUNT = "CHANGE_COUNT";
+
 /* AUTH */
 export const LOGIN_USER = "LOGIN_USER";
 export const LOGIN_USER_SUCCESS = "LOGIN_USER_SUCCESS";
@@ -24,6 +27,7 @@ export const REGISTER_SELLER = "REGISTER_SELLER";
 export const REGISTER_SELLER_SUCCESS = "REGISTER_SELLER_SUCCESS";
 export const REGISTER_SELLER_ERROR = "REGISTER_SELLER_ERROR";
 export const LOGOUT_SELLER = "LOGOUT_SELLER";
+
 /* MENU */
 export const MENU_SET_CLASSNAMES = "MENU_SET_CLASSNAMES";
 export const MENU_CONTAINER_ADD_CLASSNAME = "MENU_CONTAINER_ADD_CLASSNAME";
@@ -35,6 +39,7 @@ export const MENU_CHANGE_HAS_SUB_ITEM_STATUS =
 /** ALERT */
 export const TOGGLE_ALERT = "SURVEY_SAVE";
 
+export * from "./cart/actions";
 export * from "./menu/actions";
 export * from "./settings/actions";
 export * from "./auth/actions";

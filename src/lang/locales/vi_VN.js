@@ -24,7 +24,7 @@ module.exports = {
   "user.fullName": "Họ tên",
   "user.firstName": "Họ",
   "user.lastName": "Tên",
-  "user.phone": "Số điện thoại *",
+  "user.phoneNumber": "Số điện thoại *",
   "user.login-button": "ĐĂNG NHẬP",
   "user.register-button": "ĐĂNG KÝ",
   "user.reset-password-button": "CÀI ĐẶT LẠI",
@@ -65,6 +65,7 @@ module.exports = {
   "menu.student.info": "Thông tin",
   "menu.student.checkin-history": "Lịch sử Check In",
   "menu.checkin-history": "Lịch sử Check In",
+  "menu.research": "Ngành hàng",
 
  /* 04.Error Page */
  "pages.error-title": "Có gì đó không đúng!",
@@ -86,7 +87,12 @@ module.exports = {
 "menu.category": "Ngành hàng",
 "menu.list-cate": "Danh sách ngành hàng",
 "menu.product": "Sản phẩm",
+"menu.products": "Sản phẩm",
+"menu.store": "Danh sách sản phẩm",
 "menu.list-product": "Danh sách sản phẩm",
 "menu.detail": "Chi tiết",
 "menu.add": "Thêm mới",
+"menu.orders": "Đơn hàng",
+"menu.order-detail": "Chi tiết đơn hàng",
+
 };

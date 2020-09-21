@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { injectIntl } from "react-intl";
+import { Badge, Button } from "reactstrap";
 import {
   UncontrolledDropdown,
   DropdownItem,
@@ -11,24 +12,22 @@ import {
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
 
-import IntlMessages from "../../helpers/IntlMessages";
 import {
   setContainerClassnames,
   clickOnMobileMenu,
   logoutUser,
-  changeLocale
+  logoutSeller,
+  changeLocale,
+  changeCount
 } from "../../redux/actions";
 
 import {
   menuHiddenBreakpoint,
-  searchPathStore,
-  localeOptions,
   isDarkSwitchActive
 } from "../../constants/defaultValues";
 
 import { MobileMenuIcon, MenuIcon } from "../../components/svg";
 import TopnavEasyAccess from "./Topnav.EasyAccess";
-import TopnavNotifications from "./Topnav.Notifications";
 import TopnavDarkSwitch from "./Topnav.DarkSwitch";
 
 import { getDirection, setDirection } from "../../helpers/Utils";
@@ -39,10 +38,30 @@ class TopNav extends Component {
 
     this.state = {
       isInFullScreen: false,
-      searchKeyword: ""
+      searchKeyword: "",
+      quantity: this.props.count || 0,
     };
 
     this.userDetails = JSON.parse(localStorage.getItem("user_details"));
+  }
+
+  // updateCount = () => {
+  //   let cart = localStorage.getItem("cart") || [];
+  //   let count = 0;
+  //   cart = JSON.parse(cart);
+  //   if (cart) {
+  //     for (let item of cart) {
+  //       count += item.quantity;
+  //     }
+  //   }
+  //   this.setState({
+  //     quantity: count
+  //   })
+  // }
+
+  componentDidMount() {
+    // this.updateCount();
+    this.props.changeCount();
   }
 
   handleChangeLocale = (locale, direction) => {
@@ -175,7 +194,12 @@ class TopNav extends Component {
   };
 
   handleLogout = () => {
-    this.props.logoutUser(this.props.history);
+    if (this.props.home === "/store") {
+      this.props.logoutSeller(this.props.history);
+    } else {
+      this.props.logoutUser(this.props.history);
+    }
+    localStorage.removeItem('cart');
   };
 
   menuButtonClick = (e, menuClickCount, containerClassnames) => {
@@ -198,7 +222,7 @@ class TopNav extends Component {
   };
 
   render() {
-    const { containerClassnames, menuClickCount, locale } = this.props;
+    const { containerClassnames, menuClickCount } = this.props;
     const { messages } = this.props.intl;
     return (
       <nav className="navbar fixed-top">
@@ -280,13 +304,21 @@ class TopNav extends Component {
           <span className="logo d-none d-xs-block" />
           <span className="logo-mobile d-block d-xs-none" />
         </a>
-        <div className="navbar-right" style={{position: "relative"}}>
+
+        <div className="navbar-right" style={{ position: "relative" }}>
+
           {isDarkSwitchActive && <TopnavDarkSwitch />}
 
           <div className="header-icons d-inline-block align-middle">
 
             <TopnavEasyAccess />
             {/* <TopnavNotifications /> */}
+
+            <Button href="/store/cart" style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
+              <i className="simple-icon-basket" style={{ fontSize: "13pt", marginRight: "5px" }}></i>
+              <span style={{ fontSize: "12px" }}>Giỏ hàng</span>
+              <Badge color="secondary" style={{ padding: "2px", marginLeft: "5px" }}>{this.props.count}</Badge>
+            </Button>
             <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"
               type="button"
@@ -321,24 +353,26 @@ class TopNav extends Component {
             </UncontrolledDropdown>
           </div>
         </div>
-      </nav>
+      </nav >
     );
   }
 }
 
-const mapStateToProps = ({ menu, settings }) => {
+const mapStateToProps = ({ menu, settings, cart }) => {
   const { containerClassnames, menuClickCount, selectedMenuHasSubItems } = menu;
   const { locale } = settings;
+  const { count } = cart;
   return {
     containerClassnames,
     menuClickCount,
     selectedMenuHasSubItems,
-    locale
+    locale,
+    count
   };
 };
 export default injectIntl(
   connect(
     mapStateToProps,
-    { setContainerClassnames, clickOnMobileMenu, logoutUser, changeLocale }
+    { setContainerClassnames, clickOnMobileMenu, logoutSeller, logoutUser, changeLocale, changeCount }
   )(TopNav)
 );

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Input, Label } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
@@ -30,6 +30,17 @@ class ProductSet extends Component {
     this.getProductSet(setId);
   }
 
+  exportData = async () => {
+    const data = await ApiController.callAsync('get', `${PRODUCTS.set}/${this.state.setId}/export`, {});
+    const base64 = data.data.result.base64
+
+    let anchor = document.createElement('a');
+    anchor.setAttribute('id', 'id_export');
+    anchor.href = base64;
+    anchor.download = 'Sản phẩm nguồn.xlsx';
+    anchor.click();
+  }
+
   getProductSet = (id) => {
     ApiController.get(`${PRODUCTS.set}/${id}`, {}, data => {
       data.productSets = data.productSets.map(d => {
@@ -54,7 +65,7 @@ class ProductSet extends Component {
     }, data => {
       this.loadCurrentProductSet();
     }, {
-      
+
     });
   };
 
@@ -76,7 +87,7 @@ class ProductSet extends Component {
                   {__(this.messages, 'Bộ sản phẩm')} <b>{this.state.productSet.setName}</b>
                 </CardTitle>
                 <Row>
-                  <Colxx xxs="12">
+                  <Colxx xxs="11">
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
@@ -99,6 +110,19 @@ class ProductSet extends Component {
                       </span>
                     </Label>
                   </Colxx>
+                  <Colxx xxs="1">
+                    <div className="text-right card-title">
+                      <Button
+                        className="mr-2"
+                        color="primary"
+                        onClick={() => {
+                          this.exportData();
+                        }}
+                      >
+                        {__(this.messages, "Export")}
+                      </Button>
+                    </div>
+                  </Colxx>
                 </Row>
                 <Row>
                   <Colxx xxs="12">
@@ -110,8 +134,8 @@ class ProductSet extends Component {
                       filter={{
                         join: 'productSets||id,setId,productId',
                         s: {
-                          'productSets.setId' : {
-                            "$eq" : this.state.setId
+                          'productSets.setId': {
+                            "$eq": this.state.setId
                           }
                         }
                       }}

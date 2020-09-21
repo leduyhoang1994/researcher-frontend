@@ -18,7 +18,6 @@ class Property extends React.Component {
             propertiesOptions: {},
             propertiesAttributesValue: this.props.productOptions && this.normalizeProductAttribute(this.props.productOptions) || {},
             reloadOptions: {},
-            productId: this.props.productId
         };
     }
 
@@ -28,10 +27,10 @@ class Property extends React.Component {
 
     normalizeProductAttribute = (options) => {
         const result = {};
-        
+
         const temp = options;
-        
-        for(let index in temp) {
+
+        for (let index in temp) {
             const option = temp[index];
             if (!result[option.option.attribute.code]) {
                 result[option.option.attribute.code] = [];
@@ -40,7 +39,7 @@ class Property extends React.Component {
         }
 
         this.props.setProductAttribute(result);
-        
+
         return result;
     }
 

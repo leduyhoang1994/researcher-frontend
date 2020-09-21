@@ -1,54 +1,15 @@
-import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Label, Input, CardFooter, Button } from 'reactstrap';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
-import Breadcrumb from "../../../containers/navs/Breadcrumb";
+import React, { Component } from 'react';
+import { Row, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
-import ApiController from '../../../helpers/Api';
-import { CATEGORIES, PRODUCT_SELLER } from '../../../constants/api';
-import { arrayColumn } from '../../../helpers/Utils';
 import Product from './Product';
+import LazyLoad from 'react-lazyload';
 
 class ProductList extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            // products: [],
-            // categoryLv1: "",
-            // categoryLv2: "",
-            // categoryLv3: "",
-
-        };
         this.messages = this.props.intl.messages;
     }
-
-    componentDidMount() {
-        // this.getProducts();
-    }
-
-    // getProducts = () => {
-    //     let array = [];
-    //     const { categoryLv1, categoryLv2, categoryLv3 } = this.state;
-    //     ApiController.post(PRODUCT_SELLER.filter, {
-    //         categoryEditNameLv1: categoryLv1,
-    //         categoryEditNameLv2: categoryLv2,
-    //         categoryEditNameLv3: categoryLv3,
-    //         page: 0,
-    //         size: 10
-    //     }, data => {
-    //         this.setState({
-    //             products: data.productEdits
-    //         }, () => {
-    //             this.state.products.forEach(item => {
-    //                 if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
-    //                 array.push(item);
-    //             });
-    //             this.setState({
-    //                 products: array
-    //             })
-    //         })
-    //     })
-    // }
 
     handleClick = (id) => {
         window.open(`/store/products/detail/${id}`, "_self")
@@ -57,20 +18,20 @@ class ProductList extends Component {
     render() {
         const { products } = this.props;
         return (
-            <Row>
-                {products.map((product, index) => {
-                    return (
-                        <Colxx key={index} xxs="3" style={{ padding: "10px 2px" }}>
-                            <Product
-                                product={product}
-                                handleClick={this.handleClick}
-                            />
-                        </Colxx>
-                    )
-                })}
-
-
-            </Row>
+            <LazyLoad>
+                <Row>
+                    {products.map((product, index) => {
+                        return (
+                            <Colxx key={index} xxs="2" style={{ padding: "0 2px" }}>
+                                <Product
+                                    product={product}
+                                    handleClick={this.handleClick}
+                                />
+                            </Colxx>
+                        )
+                    })}
+                </Row>
+            </LazyLoad>
         )
     }
 }

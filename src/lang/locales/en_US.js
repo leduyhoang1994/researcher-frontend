@@ -23,7 +23,7 @@ module.exports = {
   "user.forgot-password-question": "Forget password?",
   "user.firstName": "First Name",
   "user.lastName": "Last Name",
-  "user.phone": "Your phone *",
+  "user.phoneNumber": "Your phone *",
   "user.login-button": "LOGIN",
   "user.register-button": "REGISTER",
   "user.reset-password-button": "RESET",
@@ -49,6 +49,7 @@ module.exports = {
   "menu.search" :"Search",
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
+  "menu.research": "Category",
 
 
  /* 04.Error Page */
@@ -69,9 +70,13 @@ module.exports = {
 "menu.category": "Category",
 "menu.list-cate": "List of categories",
 "menu.product": "Product",
+"menu.products": "Product",
 "menu.list-product": "List of products",
+"menu.store": "List of products",
 "menu.detail": "Detail",
 "menu.add": "Add New",
+"menu.orders": "Order",
+"menu.order-detail": "Order detail",
 
 
 /* 07.Dashboards */

@@ -47,7 +47,7 @@ const User = ({ match }) => {
           <Route
             exact
             path={`${match.url}/products`}
-            render={props => <ProductList {...props} />}
+            render={props => <HomePage {...props} />}
           />
           <Route
             path={`${match.url}/orders/detail/:id`}

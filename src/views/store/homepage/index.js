@@ -1,12 +1,15 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Row } from 'reactstrap';
+import { Row, Card, CardBody } from 'reactstrap';
 import { Fragment } from 'react';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import ProductList from '../product/ProductList';
 import Category from '../category/Category';
+import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
+import { slides, advert } from "../../../data/slideShow"
+import { NavLink } from "react-router-dom";
 
 class Homepage extends React.Component {
 
@@ -46,9 +49,9 @@ class Homepage extends React.Component {
         if (level) {
             level = parseInt(level);
             switch (level) {
-                case 1:  categoryLv1 = this.state.categoryName; break ;
-                case 2:  categoryLv2 = this.state.categoryName; break ;
-                case 3:  categoryLv3 = this.state.categoryName; break ;
+                case 1: categoryLv1 = this.state.categoryName; break;
+                case 2: categoryLv2 = this.state.categoryName; break;
+                case 3: categoryLv3 = this.state.categoryName; break;
                 default: break;
             }
         } else {
@@ -61,6 +64,7 @@ class Homepage extends React.Component {
             categoryEditNameLv1: categoryLv1,
             categoryEditNameLv2: categoryLv2,
             categoryEditNameLv3: categoryLv3,
+            isPublished: true,
             page: 0,
             size: 10
         }, data => {
@@ -80,26 +84,82 @@ class Homepage extends React.Component {
 
     render() {
         const { products } = this.state;
+
         return (
             <Fragment>
-                <Row>
-                    <Colxx xxs="3">
+                <Card className="p-0 w-100">
+                    <CardBody className="p-0">
                         <Row>
-                            <Colxx xxs="12">
-                                <Category getProductByCategory={this.getProducts} />
+                            <Colxx xxs="3">
+                                <Category />
+                            </Colxx>
+                            <Colxx xxs="9" className="text-center">
+                                <Row >
+                                    <Colxx xxs="9">
+                                        {
+                                            slides && <GlideComponentThumbs settingsImages={
+                                                {
+                                                    bound: true,
+                                                    rewind: false,
+                                                    focusAt: 0,
+                                                    startAt: 0,
+                                                    gap: 5,
+                                                    perView: 1,
+                                                    data: slides,
+                                                }
+                                            } settingsThumbs={
+                                                {
+                                                    bound: true,
+                                                    rewind: false,
+                                                    focusAt: 0,
+                                                    startAt: 0,
+                                                    gap: 10,
+                                                    perView: 5,
+                                                    data: slides,
+                                                    breakpoints: {
+                                                        576: {
+                                                            perView: 4
+                                                        },
+                                                        420: {
+                                                            perView: 3
+                                                        }
+                                                    }
+                                                }
+                                            } />
+                                        }
+                                    </Colxx>
+                                    <Colxx xxs="3">
+                                        {advert.map((item, index) => {
+                                            if(index < 3) {
+                                                return (
+                                                    <span key={index}>
+                                                        <img className="w-100" src={item.img} alt=""></img>
+                                                    </span>
+                                                )
+                                            }
+                                            
+                                        }
+
+                                            // <NavLink
+                                            //     to={`/#`}
+                                            //     className=""
+                                            // >
+                                            //     <span>a
+                                            //         <img src={item.img} alt=""></img>
+                                            //     </span>
+                                            // </NavLink>
+                                        )}
+                                    </Colxx>
+                                </Row>
                             </Colxx>
                         </Row>
-                    </Colxx>
-                    <Colxx xxs="9">
-                        <Row>
-                            <Colxx xxs="12">
-                                <ProductList products={products} />
-                            </Colxx>
-                        </Row>
-                    </Colxx>
-                </Row>
-
-
+                    </CardBody>
+                </Card>
+                <Card className="p-4 w-100 mt-2">
+                    <CardBody>
+                        <ProductList products={products} />
+                    </CardBody>
+                </Card>
             </Fragment>
         );
     }

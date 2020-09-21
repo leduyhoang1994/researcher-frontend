@@ -29,6 +29,7 @@
     "react-google-maps": "^9.4.5",
     "react-image-lightbox": "^5.1.0",
     "react-intl": "2.4.0",
+    "react-lazyload": "^3.0.0",
     "react-lines-ellipsis": "^0.14.1",
     "react-modal": "^3.11.2",
     "react-perfect-scrollbar": "^1.1.1",

@@ -104,7 +104,9 @@ const loginSellerWithEmailPasswordAsync = async (userName, password) =>
         password: password
     }).then(data => {
         return data.data;
-    }).catch(error => error);
+    }).catch(error => {
+        return error.response.data;
+    });
 
 
 const getUserDetails = async (token) =>
@@ -167,10 +169,10 @@ export function* watchRegisterSeller() {
 }
 
 function* registerSellerWithEmailPassword({ payload }) {
-    const { firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address } = payload.user;
+    const { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address } = payload.user;
     const { history } = payload;
     try {
-        const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address);
+        const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
             // localStorage.setItem('user_details', JSON.stringify(registerSeller.result));
             yield put(registerSellerSuccess(registerSeller));
@@ -183,18 +185,18 @@ function* registerSellerWithEmailPassword({ payload }) {
     }
 }
 
-const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phone, email, password, confirmPassword, selectedCity, selectedDistrict, selectedCommune, address) =>
+const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address) =>
     await Api.callAsync('post', SELLER.register, {
         firstName: firstName,
         lastName: lastName,
         username: userName,
-        phoneNumber: phone,
+        phoneNumber: phoneNumber,
         email: email,
         password: password,
         confirmPassword: confirmPassword,
-        city: selectedCity,
-        district: selectedDistrict,
-        town: selectedCommune,
+        city: city,
+        district: district,
+        town: town,
         address: address
     }).then(data => {
         return data.data;
@@ -221,17 +223,17 @@ function* logout({ payload }) {
 }
 
 export function* watchLogoutSeller() {
-    yield takeEvery(LOGOUT_USER, logoutSeller);
+    yield takeEvery(LOGOUT_SELLER, logoutSeller);
 }
 
 const logoutSellerAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
     await ApiController.callAsync("POST", SELLER.logout, null);
-    history.push('/')
+    history.push('/seller/login')
 }
 
 function* logoutSeller({ payload }) {
-    const { history } = payload
+    const { history } = payload;
     try {
         yield call(logoutSellerAsync, history);
         localStorage.removeItem('user_token');

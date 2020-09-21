@@ -1,26 +1,31 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Button, CardFooter, Modal, CardHeader, ModalHeader, ModalTitle, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Button, CardFooter } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import IntlMessages from "../../../helpers/IntlMessages";
 import Filter from '../filter/Filter';
 import Category from '../category/Category';
 import ApiController from '../../../helpers/Api';
 import { CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { SITE_LIST } from '../../../constants/data';
-import categoriesData from '../../../data/categories';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
 import ResearchSetModal from './ResearchSetModal';
+import { SITE_LIST } from '../../../constants/data';
+import { isObject } from 'formik';
 
 class Research extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterOptions: {},
+            filterOptions: {
+                topCates: SITE_LIST,
+                topSale: {
+                    min: "",
+                    max: ""
+                }
+            },
             categories: [],
             selectedCats: [],
             redirect: false,
@@ -29,7 +34,8 @@ class Research extends Component {
             isOpenRadio: false,
             isShow: false,
             radioValue: "first-radio",
-            cateSetName: ""
+            cateSetName: "",
+            isSiteCodeCheckAll: {}
         };
         this.messages = this.props.intl.messages;
     }
@@ -58,14 +64,24 @@ class Research extends Component {
         });
     };
 
-    removeFromSelectedCats = (cate) => {
-        let { selectedCats } = this.state;
+    removeFromSelectedCats = (cates) => {
+        let { selectedCats, isSiteCodeCheckAll } = this.state;
 
-        selectedCats = selectedCats.filter(selectedCat => {
-            return JSON.stringify(selectedCat) !== JSON.stringify(cate);
-        });
+        let newCates = []
+
+        if (!Array.isArray(cates)) newCates.push(cates);
+        else newCates = [...cates]
+
+        for (const cate of newCates) {
+            selectedCats = selectedCats.filter(selectedCat => {
+                return JSON.stringify(selectedCat) !== JSON.stringify(cate);
+            });
+
+            delete isSiteCodeCheckAll[cate['site']]
+        }
 
         this.setState({
+            isSiteCodeCheckAll: isSiteCodeCheckAll,
             selectedCats: selectedCats
         });
     };
@@ -76,12 +92,34 @@ class Research extends Component {
         });
     }
 
+    validateFilterOptions() {
+        const { filterOptions } = this.state;
+
+        if (filterOptions) {
+            for (const country of filterOptions.topCates) {
+                if (isObject(country) && country.top !== "") {
+                    return true
+                }
+                if (country.sites) {
+                    for (const site of country.sites) {
+                        if (isObject(site) && site.top !== "") {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     filter = () => {
         const { filterOptions } = this.state;
-        if (Object.keys(filterOptions).length === 0) {
+
+        if (this.validateFilterOptions() === false) {
             NotificationManager.error("Bạn cần chọn top thư mục của ít nhất 1 sàn", "Không thành công");
             return;
         }
+
         ApiController.call("POST", CATEGORIES.filter, filterOptions, data => {
             this.setState({
                 categories: data
@@ -95,6 +133,31 @@ class Research extends Component {
         })
     };
 
+
+    setSelectAll = (siteCode, checked) => {
+        const { categories } = this.state
+        const selectedData = categories[siteCode]
+
+        if (checked === true) {
+            for (const data of selectedData) {
+                this.addToSelectedCats(data)
+            }
+            const isSiteCodeCheckAll = this.state.isSiteCodeCheckAll
+            isSiteCodeCheckAll[siteCode] = siteCode
+            this.setState({
+                isSiteCodeCheckAll: isSiteCodeCheckAll
+            })
+        } else if (checked === false) {
+            this.removeFromSelectedCats(selectedData)
+            const isSiteCodeCheckAll = this.state.isSiteCodeCheckAll
+            delete isSiteCodeCheckAll[siteCode]
+            this.setState({
+                isSiteCodeCheckAll: isSiteCodeCheckAll
+            })
+        }
+    }
+
+
     loadCateSets = () => {
         ApiController.get(CATEGORIES.set, {}, data => {
             this.setState({ cateSetList: data });
@@ -107,7 +170,7 @@ class Research extends Component {
 
     toggleResearchSetModal = () => {
         const isOpen = this.state.isOpenRadio;
-        if(!isOpen) {
+        if (!isOpen) {
             this.loadCateSets();
         }
         this.setState({ isOpenRadio: !isOpen });
@@ -162,6 +225,7 @@ class Research extends Component {
                                     {__(this.messages, "Lọc top ngành hàng")}
                                 </CardTitle>
                                 <Filter
+                                    filterOptions={this.state.filterOptions}
                                     setFilterOptions={this.setFilterOptions}
                                 />
                             </CardBody>
@@ -194,6 +258,8 @@ class Research extends Component {
                                     addToSelectedCats={this.addToSelectedCats}
                                     removeFromSelectedCats={this.removeFromSelectedCats}
                                     existInSelectedCats={this.existInSelectedCats}
+                                    setSelectAll={this.setSelectAll}
+                                    isSiteCodeCheckAll={this.state.isSiteCodeCheckAll}
                                 />
                             </CardBody>
                             <CardFooter className="text-right">
@@ -219,7 +285,7 @@ class Research extends Component {
                         </Card>
                     </Colxx>
                 </Row>
-                
+
                 <ResearchSetModal
                     isOpenRadio={this.state.isOpenRadio}
                     toggleResearchSetModal={this.toggleResearchSetModal}

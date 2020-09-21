@@ -4,7 +4,7 @@ import Glide from '@glidejs/glide'
 import { getDirection } from "../../helpers/Utils";
 import "@glidejs/glide/dist/css/glide.core.min.css";
 import "@glidejs/glide/dist/css/glide.theme.min.css";
-
+import './style.scss';
 let resizeTimeOut = -1;
 let mountTimeOut = -1;
 
@@ -93,21 +93,21 @@ export default class GlideComponentThumbs extends React.Component {
   }
 
   onThumbClick(index) {
-    this.setState({activeIndex: index});
+    this.setState({ activeIndex: index });
     this.glideCarouselImages.go("=" + index);
   }
 
-  thumbsResize () {
+  thumbsResize() {
     let perView = Math.min(this.props.settingsThumbs.perView, this.props.settingsImages.data.length);
-    this.setState({thumbsPerView: perView});
-    if (this.state.total <= perView ) {
-      this.setState({renderArrows: false});
+    this.setState({ thumbsPerView: perView });
+    if (this.state.total <= perView) {
+      this.setState({ renderArrows: false });
     }
   }
 
-  imagesSwipeEnd () {
+  imagesSwipeEnd() {
     let gap = this.glideCarouselThumbs.index + this.state.thumbsPerView;
-    this.setState({activeIndex: this.glideCarouselImages.index});
+    this.setState({ activeIndex: this.glideCarouselImages.index });
     if (this.state.activeIndex >= gap) {
       this.glideCarouselThumbs.go(">");
     }
@@ -125,7 +125,7 @@ export default class GlideComponentThumbs extends React.Component {
 
     this.glideCarouselThumbs.on("resize", this.thumbsResize);
     this.glideCarouselImages.on("swipe.end", this.imagesSwipeEnd);
-    
+
     mountTimeOut = setTimeout(() => {
       var event = document.createEvent("HTMLEvents");
       event.initEvent("resize", false, false);
@@ -167,12 +167,13 @@ export default class GlideComponentThumbs extends React.Component {
           <div data-glide-el="track" className="glide__track">
             <div className="glide__slides">
               {
-                this.props.settingsImages.data.map(item => {
+                this.props.settingsImages.data.map((item, index) => {
                   return (
-                    <div key={item.id}>
-                      <div className="glide__slide">
-                        <img alt="detail" src={item.img}
-                          className="responsive border-0 border-radius img-fluid mb-3" />
+                    <div key={index}>
+                      <div className="glide__slide" >
+                        <img alt="detail" src={item.img} style={{
+                          height: `450px`
+                        }} className="object-contain responsive border-0 border-radius img-fluid mb-3" />
                       </div>
                     </div>
                   );
@@ -188,21 +189,22 @@ export default class GlideComponentThumbs extends React.Component {
               {
                 this.props.settingsThumbs.data.map((item, index) => {
                   return (
-                    <div className={index === this.state.activeIndex ? "glide__slide active" : "glide__slide"} key={item.id} onClick={() => {this.onThumbClick(index)}}>
-                      <img alt="detail" src={item.img}
-                        className="responsive border-0 border-radius img-fluid" />
+                    <div className={index === this.state.activeIndex ? "glide__slide active" : "glide__slide"} key={index} onClick={() => { this.onThumbClick(index) }}>
+                      <img alt="detail" src={item.img} style={{
+                        height: `60px`
+                      }} className="object-cover responsive border-0 border-radius img-fluid" />
                     </div>
                   );
                 })
               }
             </div>
           </div>
-          {this.state.renderArrows &&  (
+          {this.state.renderArrows && (
             <div className="glide__arrows" data-glide-el="controls">
               <button className="glide__arrow glide__arrow--left" data-glide-dir="<"><i
-              className="simple-icon-arrow-left"></i></button>
+                className="simple-icon-arrow-left"></i></button>
               <button className="glide__arrow glide__arrow--right" data-glide-dir=">"><i
-              className="simple-icon-arrow-right"></i></button>
+                className="simple-icon-arrow-right"></i></button>
             </div>
           )}
         </div>

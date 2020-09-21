@@ -22,7 +22,11 @@ const ProductTable = ({
 }) => {
   const columns = () => [
     {
-      Header: __(component.messages, "Thao tác"),
+      Header: () => {
+        return <div className="text-center">
+          <input type="checkbox" onChange='' />
+        </div>
+      },
       accessor: 'id',
       sortable: false,
       width: selectable ? undefined : 150,
@@ -102,6 +106,13 @@ const ProductTable = ({
       width: 500,
       filterable: true,
       accessor: "productTitleVi",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(component.messages, "Nguồn sản phẩm"),
+      width: 100,
+      filterable: true,
+      accessor: "site",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
