@@ -13,6 +13,8 @@ import { PRODUCTS } from '../../../constants/api';
 const ProductTable = ({
   data,
   component,
+  allProductSelected,
+  handleCheckall,
   existInSelectedProducts,
   addToSelectedProducts,
   removeFromSelectedProducts,
@@ -22,10 +24,13 @@ const ProductTable = ({
 }) => {
   const columns = () => [
     {
-      Header: () => {
-        return <div className="text-center">
-          <input type="checkbox" onChange='' />
-        </div>
+      Header: (e) => {
+        return (
+          <input type="checkbox" onChange={(event) => {
+            if (isFunction(handleCheckall))
+              handleCheckall(event.target.checked, e?.data)
+          }} checked={isFunction(allProductSelected) ? allProductSelected(e?.data.map(item => item._original)) : false} />
+        )
       },
       accessor: 'id',
       sortable: false,
