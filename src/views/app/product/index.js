@@ -74,11 +74,19 @@ class CreateTrainingClass extends Component {
     return exist;
   }
 
-  addToSelectedProducts = (product) => {
+  addToSelectedProducts = (products) => {
+    let newProducts = []
+
+    if (Array.isArray(products)) newProducts = [...products];
+    else newProducts.push(products);
+
     const { selectedProducts } = this.state;
-    let exist = this.existInSelectedProducts(product);
-    if (!exist) {
-      selectedProducts.push(product);
+
+    for (const product of newProducts) {
+      let exist = this.existInSelectedProducts(product);
+      if (!exist) {
+        selectedProducts.push(product);
+      }
     }
 
     this.setState({
@@ -86,12 +94,28 @@ class CreateTrainingClass extends Component {
     });
   };
 
-  removeFromSelectedProducts = (product) => {
+  allProductSelected = (datas) => {
+    console.log(datas)
+    if (Array.isArray(datas)) {
+      for (const data of datas)
+        if (this.existInSelectedProducts(data) === false) return false
+    }
+    return true
+  }
+
+  removeFromSelectedProducts = (products) => {
     let { selectedProducts } = this.state;
 
-    selectedProducts = selectedProducts.filter(selectedProduct => {
-      return JSON.stringify(selectedProduct) !== JSON.stringify(product);
-    });
+    let newProducts = []
+
+    if (Array.isArray(products)) newProducts = [...products]
+    else newProducts.push(products)
+
+    for (const product of newProducts) {
+      selectedProducts = selectedProducts.filter(selectedProduct => {
+        return JSON.stringify(selectedProduct) !== JSON.stringify(product);
+      });
+    }
 
     this.setState({
       selectedProducts: selectedProducts
@@ -102,6 +126,13 @@ class CreateTrainingClass extends Component {
     this.setState({
       productSetModalOpen: !this.state.productSetModalOpen
     });
+  }
+
+  handleCheckall = (checked, datas) => {
+    const newDatas = datas.map(data => data._original)
+    if (checked)
+      this.addToSelectedProducts(newDatas)
+    else this.removeFromSelectedProducts(newDatas)
   }
 
   render() {
@@ -187,6 +218,8 @@ class CreateTrainingClass extends Component {
                   existInSelectedProducts={this.existInSelectedProducts}
                   filterCate={this.state.categoriesFilter}
                   filter={filter}
+                  handleCheckall={this.handleCheckall}
+                  allProductSelected={this.allProductSelected}
                 />
               </CardBody>
               <CardFooter className="text-right">
