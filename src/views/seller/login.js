@@ -59,7 +59,7 @@ class Login extends Component {
               </p>
             </div>
             <div className="form-side">
-              <NavLink to={`/`} className="white">
+              <NavLink to={`/store`} className="white">
                 <span className="logo-single" />
               </NavLink>
               <CardTitle className="mb-4">

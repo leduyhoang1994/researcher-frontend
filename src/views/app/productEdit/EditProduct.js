@@ -500,6 +500,17 @@ class EditProduct extends Component {
                                                 </Label>
                                             </Colxx>
                                         </Row>
+                                        <Row>
+                                            <Colxx xxs="12">
+                                                <Property
+                                                    key={keyProperty}
+                                                    component={this}
+                                                    categoryId={product.categoryEditId} // category id of product
+                                                    productOptions={product.productEditOptions} // options fields of product data
+                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
+                                                />
+                                            </Colxx>
+                                        </Row>
                                     </Colxx>
                                 </Row>
                                 <Row>
@@ -618,15 +629,6 @@ class EditProduct extends Component {
                                             </Colxx>
                                         </Row>
                                         <Row>
-                                            <Colxx xxs="12">
-                                                <Property
-                                                    key={keyProperty}
-                                                    component={this}
-                                                    categoryId={product.categoryEditId} // category id of product
-                                                    productOptions={product.productEditOptions} // options fields of product data
-                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
-                                                />
-                                            </Colxx>
                                         </Row>
                                     </Colxx>
 
