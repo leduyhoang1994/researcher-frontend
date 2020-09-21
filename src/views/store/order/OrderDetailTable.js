@@ -11,7 +11,7 @@ const renderTable = (data) => {
         const { featureImage, name, priceMin, priceMax, quantity, calculatedPrice } = item
         return (
             <tr key={index}>
-                <td><img width="50" src={`${process.env.MEDIA_BASE_PATH}${featureImage}`} alt="avatar-img"/></td>
+                <td><img width="50" src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${featureImage}`} alt="avatar-img"/></td>
                 <td>{name}</td>
                 <td>{numberWithCommas(parseInt(priceMin))} VNĐ</td>
                 <td>{numberWithCommas(parseInt(priceMax))} VNĐ</td>

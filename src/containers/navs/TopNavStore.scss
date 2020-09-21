@@ -1,0 +1,21 @@
+.user-customer {
+    border: 1px solid transparent;
+    border-color: var(--theme-color-2);
+    /* padding: 3px; */
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+    display: inline-flex !important;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    i {
+        color: var(--theme-color-2);
+    }
+    &:hover {
+        background-color: var(--theme-color-2);
+        i {
+            color: white;
+        }
+    }
+}

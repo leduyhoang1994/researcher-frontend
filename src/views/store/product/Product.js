@@ -97,7 +97,7 @@ class Product extends React.Component {
                                 backgroundSize: "contain",
                                 objectFit: "contain",
                             }} 
-                            src={`${process.env.MEDIA_BASE_PATH}${product.featureImage}`} alt="Card image cap" />
+                            src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}`} alt="Card image cap" />
                         {
                             /* 
                                 <Badge color="primary" pill className="position-absolute badge-top-left">NEW</Badge>

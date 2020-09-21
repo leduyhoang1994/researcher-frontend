@@ -229,7 +229,7 @@ export function* watchLogoutSeller() {
 const logoutSellerAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
     await ApiController.callAsync("POST", SELLER.logout, null);
-    history.push('/seller/login')
+    history.push('/store')
 }
 
 function* logoutSeller({ payload }) {

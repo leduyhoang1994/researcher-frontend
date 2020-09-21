@@ -300,7 +300,7 @@ class EditProduct extends Component {
     callApi = async () => {
         const { files } = this.state;
         let { product } = this.state;
-        product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.MEDIA_BASE_PATH}`, "") : product.featureImage;
+        product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.REACT_APP_MEDIA_BASE_PATH}`, "") : product.featureImage;
 
         if (this.state.id) {
             // let product = this.state.product;
@@ -503,10 +503,10 @@ class EditProduct extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Property
-                                                    key={this.state.productId}
+                                                    key={keyProperty}
                                                     component={this}
-                                                    categoryId={this.state.idCategory} // category id of product
-                                                    productOptions={this.state.options} // options fields of product data
+                                                    categoryId={product.categoryEditId} // category id of product
+                                                    productOptions={product.productEditOptions} // options fields of product data
                                                     setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>

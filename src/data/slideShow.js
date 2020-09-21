@@ -1,27 +1,27 @@
 export const slides = [
   {
     id: "slide1",
-    img: "/assets/static-img/slide00.png"
+    src: "/assets/static-img/slide00.png"
   },
   {
     id: "slide2",
-    img: "/assets/static-img/slide01.png"
+    src: "/assets/static-img/slide01.png"
   },
   {
     id: "slide3",
-    img: "/assets/static-img/slide02.png"
+    src: "/assets/static-img/slide02.png"
   },
   {
     id: "slide4",
-    img: "/assets/static-img/slide03.png"
+    src: "/assets/static-img/slide03.png"
   },
   {
     id: "slide5",
-    img: "/assets/static-img/slide02.png"
+    src: "/assets/static-img/slide02.png"
   },
   {
     id: "slide6",
-    img: "/assets/static-img/slide03.png"
+    src: "/assets/static-img/slide03.png"
   },
 ]
 

@@ -1,6 +1,13 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Row, Card, CardBody } from 'reactstrap';
+import {
+    Row, Card, CardBody,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators,
+    CarouselCaption
+} from 'reactstrap';
 import { Fragment } from 'react';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_SELLER } from '../../../constants/api';
@@ -10,6 +17,7 @@ import Category from '../category/Category';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { slides, advert } from "../../../data/slideShow"
 import { NavLink } from "react-router-dom";
+import HomePageCarousel from './HomePageCarousel';
 
 class Homepage extends React.Component {
 
@@ -94,63 +102,36 @@ class Homepage extends React.Component {
                                 <Category />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
-                                <Row >
-                                    <Colxx xxs="9">
-                                        {
-                                            slides && <GlideComponentThumbs settingsImages={
-                                                {
-                                                    bound: true,
-                                                    rewind: false,
-                                                    focusAt: 0,
-                                                    startAt: 0,
-                                                    gap: 5,
-                                                    perView: 1,
-                                                    data: slides,
-                                                }
-                                            } settingsThumbs={
-                                                {
-                                                    bound: true,
-                                                    rewind: false,
-                                                    focusAt: 0,
-                                                    startAt: 0,
-                                                    gap: 10,
-                                                    perView: 5,
-                                                    data: slides,
-                                                    breakpoints: {
-                                                        576: {
-                                                            perView: 4
-                                                        },
-                                                        420: {
-                                                            perView: 3
-                                                        }
-                                                    }
-                                                }
-                                            } />
-                                        }
-                                    </Colxx>
-                                    <Colxx xxs="3">
-                                        {advert.map((item, index) => {
-                                            if(index < 3) {
-                                                return (
-                                                    <span key={index}>
-                                                        <img className="w-100" src={item.img} alt=""></img>
-                                                    </span>
-                                                )
-                                            }
-                                            
+                                <div className="p-0">
+                                    {
+                                        slides &&
+                                        <HomePageCarousel
+                                            items={slides}
+                                        />
+                                    }
+                                </div>
+                                <div className="p-0">
+                                    {advert.map((item, index) => {
+                                        if (index < 3) {
+                                            return (
+                                                <div key={index}>
+                                                    <img src={item.img} alt=""></img>
+                                                </div>
+                                            )
                                         }
 
-                                            // <NavLink
-                                            //     to={`/#`}
-                                            //     className=""
-                                            // >
-                                            //     <span>a
-                                            //         <img src={item.img} alt=""></img>
-                                            //     </span>
-                                            // </NavLink>
-                                        )}
-                                    </Colxx>
-                                </Row>
+                                    }
+
+                                        // <NavLink
+                                        //     to={`/#`}
+                                        //     className=""
+                                        // >
+                                        //     <span>a
+                                        //         <img src={item.img} alt=""></img>
+                                        //     </span>
+                                        // </NavLink>
+                                    )}
+                                </div>
                             </Colxx>
                         </Row>
                     </CardBody>
