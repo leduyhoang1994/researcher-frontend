@@ -183,7 +183,8 @@ const ProductTable = ({
     url: PRODUCTS.all,
     query: {
       ...filter,
-      s: filter?.s || null
+      s: filter?.s || null,
+      join: ["productSets", "productEdit"]
     }
   }
 

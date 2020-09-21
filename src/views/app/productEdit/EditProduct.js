@@ -419,7 +419,15 @@ class EditProduct extends Component {
                                             </Colxx>
                                         </Row>
                                         <Row>
-                                            {/* <Property categoryId={this.state.idCategory} /> */}
+                                            <Colxx xxs="12">
+                                                <Property
+                                                    key={this.state.productId}
+                                                    component={this}
+                                                    categoryId={this.state.idCategory} // category id of product
+                                                    productOptions={this.state.options} // options fields of product data
+                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
+                                                />
+                                            </Colxx>
                                         </Row>
                                     </Colxx>
                                 </Row>
@@ -525,15 +533,6 @@ class EditProduct extends Component {
                                             </Colxx>
                                         </Row>
                                         <Row>
-                                            <Colxx xxs="12">
-                                                <Property
-                                                    key={this.state.productId}
-                                                    component={this}
-                                                    categoryId={this.state.idCategory} // category id of product
-                                                    productOptions={this.state.options} // options fields of product data
-                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
-                                                />
-                                            </Colxx>
                                         </Row>
                                     </Colxx>
 

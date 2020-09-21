@@ -2,7 +2,7 @@ const multiMenu = [
   {
     id: "research",
     icon: "iconsminds-qr-code",
-    label: "Tìm kiếm",
+    label: "Sản phẩm nguồn",
     to: "/app/research",
     subs: [{
       icon: "iconsminds-qr-code",
@@ -27,16 +27,24 @@ const multiMenu = [
     ]
   },
   {
-    id: "cateList",
+    id: "ubox-product",
     icon: "iconsminds-qr-code",
-    label: "Ngành hàng",
-    to: "/app/list-cate",
-  },
-  {
-    id: "product",
-    icon: "iconsminds-qr-code",
-    label: "Sản phẩm",
-    to: "/app/list-product"
+    label: "Sản phẩm Ubox",
+    to: "/app/list-product",
+    subs: [
+      {
+        id: "cateList",
+        icon: "iconsminds-qr-code",
+        label: "Ngành hàng",
+        to: "/app/list-cate",
+      },
+      {
+        id: "product",
+        icon: "iconsminds-qr-code",
+        label: "Sản phẩm",
+        to: "/app/list-product"
+      }
+    ]
   }
 ];
 

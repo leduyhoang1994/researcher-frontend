@@ -104,10 +104,10 @@ class Property extends React.Component {
                     properties.map(property => {
                         return (
                             <Row key={`attribute-${property.attributeId}`}>
-                                <Colxx xxs="4">
+                                <Colxx xxs="3">
                                     {property.attribute?.label}
                                 </Colxx>
-                                <Colxx xxs="8">
+                                <Colxx xxs="9">
                                     <AsyncCreatable
                                         key={this.state.reloadOptions[property.attribute.code]}
                                         cache={false}
