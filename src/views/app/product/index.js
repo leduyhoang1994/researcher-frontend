@@ -179,7 +179,7 @@ class CreateTrainingClass extends Component {
             <Card>
               <CardBody>
                 <ProductTable
-                  key={filter.length}
+                  key={JSON.stringify(filter)}
                   component={this}
                   data={this.state.productList}
                   addToSelectedProducts={this.addToSelectedProducts}
