@@ -10,7 +10,7 @@ const dataTableColumns = [
         Header: "Hình ảnh",
         width: 150,
         accessor: "featureImage",
-        Cell: props => <img width="50" src={`${process.env.REACT_APP_API_BASE_PATH}${props.value}`} alt={props.value}/>
+        Cell: props => <img width="50" src={`${process.env.MEDIA_BASE_PATH}${props.value}`} alt={props.value}/>
     },
     {
         Header: "Trạng thái",

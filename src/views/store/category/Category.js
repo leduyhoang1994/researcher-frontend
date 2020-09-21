@@ -4,13 +4,17 @@ import { __ } from '../../../helpers/IntlMessages';
 import { CATEGORY_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import './Category.scss';
+import SubMenuPopup from './SubMenuPopup';
 
 class Category extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories: {}
+            categories: {},
+            subCategory: {},
+            isLoading: true,
         };
+
         this.messages = this.props.intl.messages;
     }
 
@@ -35,71 +39,59 @@ class Category extends Component {
             });
             categories = nestedCate;
             this.setState({
-                categories
+                categories,
+                isLoading: false
             });
         })
     }
 
-    renderCateName = (cate, path) => {
+    renderCateName = (categories, cate) => {
         //use for filtering
-        const fullPath = [...path, cate];
+        // const fullPath = [...path, cate];
         return (
-            <span className="list-item-heading mb-0 truncate">
-                <span className="cursor-pointer hover display-block "
+            <div className="mb-0 cateMenuLv1 d-flex" key={cate}
                 onClick={() => {
-                    window.open(`/store/${cate}?lvl=${fullPath.indexOf(cate) + 1}`, "_self")
-                    this.props.getProductByCategory(fullPath)}
-                }
-                >
+                    window.open(`/store/${cate}?lvl=1`, "_self")
+                }}>
+                <div className="cateName">
                     {cate}
-                </span>
-            </span>
+                </div>
+                <div className="arrow-right-wrapper">
+                    <div className="arrow-right"></div>
+                </div>
+                <SubMenuPopup
+                    cate={categories[cate]}
+                />
+            </div>
         );
     }
 
-    renderCategoriesRecursive = (cate, name = null, path = []) => {
-        const render = [];
-        if (name) {
-            path.push(name);
-        }
-        render.push(
-            Object.keys(cate).map(subCate => {
-                return (
-                    <li key={cate + "-" + subCate}>
-                        {this.renderCateName(subCate, path)}
-                        {
-                            typeof cate[subCate] === 'object' && (
-                                <ul>
-                                    {this.renderCategoriesRecursive(cate[subCate], subCate, path)}
-                                </ul>
-                            )
-                        }
-                    </li>
-                )
-            })
-        );
-        if (name) {
-            path.pop();
-        }
 
-        if (name) {
-            return render;
-        } else {
-            return (
-                <ul>
-                    {render}
-                </ul>
-            );
-        }
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
     }
 
     render() {
+        const { categories, isLoading, subCategory } = this.state;
+
+        if (isLoading) {
+            return this.renderLoading();
+        }
+
         return (
-            <div className="cate-menu homepage-menu">
-                {
-                    this.renderCategoriesRecursive(this.state.categories)
-                }
-            </div>
+            <>
+                <div className="cate-menu homepage-menu">
+                    {
+                        Object.keys(categories).map(category => {
+                            return (
+                                this.renderCateName(categories, category)
+                            )
+                        })
+                    }
+                </div>
+            </>
         );
     }
 }

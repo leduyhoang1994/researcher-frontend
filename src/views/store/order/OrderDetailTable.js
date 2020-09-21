@@ -1,11 +1,9 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import ReactTable from "react-table";
-import DataTablePagination from '../../../components/DatatablePagination';
 import "./style.scss";
 import { Row, Card, CardBody, Table } from "reactstrap";
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { numberWithCommas } from "../../../helpers/Utils";
 
 const renderTable = (data) => {
@@ -13,7 +11,7 @@ const renderTable = (data) => {
         const { featureImage, name, priceMin, priceMax, quantity, calculatedPrice } = item
         return (
             <tr key={index}>
-                <td><img width="50" src={`${process.env.REACT_APP_API_BASE_PATH}${featureImage}`} alt="avatar-img"/></td>
+                <td><img width="50" src={`${process.env.MEDIA_BASE_PATH}${featureImage}`} alt="avatar-img"/></td>
                 <td>{name}</td>
                 <td>{numberWithCommas(parseInt(priceMin))} VNĐ</td>
                 <td>{numberWithCommas(parseInt(priceMax))} VNĐ</td>

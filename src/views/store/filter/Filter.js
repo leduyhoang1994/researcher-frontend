@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { injectIntl } from 'react-intl';
-import { Row } from 'reactstrap';
+import { Card, CardBody, Row } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_EDIT } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
 import DataTablePagination from '../../../components/DatatablePagination';
+import Category from '../category/Category';
 
 class Filter extends React.Component {
 
@@ -60,14 +61,14 @@ class Filter extends React.Component {
 
     onPageChange = (page) => {
         console.log(page);
-        let {dataTable} = this.state;
+        let { dataTable } = this.state;
         dataTable.page = page;
-        if(page > 1) {
+        if (page > 1) {
             dataTable.canPrevious = true;
         } else {
             dataTable.canPrevious = false;
         }
-        if(page < dataTable.pages - 1) {
+        if (page < dataTable.pages - 1) {
             dataTable.canNext = true;
         } else {
             dataTable.canNext = false;
@@ -79,7 +80,7 @@ class Filter extends React.Component {
     }
 
     onPageSizeChange = (size) => {
-        const {dataTable} = this.state;
+        const { dataTable } = this.state;
         dataTable.defaultPageSize = size;
         this.setState({
             dataTable: dataTable
@@ -101,43 +102,54 @@ class Filter extends React.Component {
         }
 
         return (
-            <>
-                <h3>Kết quả tìm kiếm cho '{this.state.search.get('s')}': {count} kết quả</h3>
-                {products[0] ? (
-                    <>
-                        <Row>
-                            {
-                                products.map((product, index) => {
-                                    return (
-                                        <Colxx xxs="3" key={index}>
-                                            <Product product={product} />
-                                        </Colxx>
-                                    )
-                                })
-                            }
-                        </Row>
-                        <Row>
-                            {/* className="d-md-inline-flex" */}
-                            <Colxx xxs="12" className="text-center">
-                                <DataTablePagination
-                                    page={dataTable.page}
-                                    pages={dataTable.pages}
-                                    defaultPageSize={dataTable.defaultPageSize}
-                                    canPrevious={dataTable.canPrevious}
-                                    canNext={dataTable.canNext}
-                                    pageSizeOptions={dataTable.pageSizeOptions}
-                                    showPageSizeOptions={true}
-                                    showPageJump={true}
-                                    onPageChange={this.onPageChange}
-                                    onPageSizeChange={this.onPageSizeChange}
-                                />
-                            </Colxx>
-                        </Row>
-                    </>
+            <Fragment>
+                <Card className="p-1 w-100">
+                    <CardBody>
+                        {products[0] ? (
+                            <>
+                                <Row>
+                                    <Colxx xxs="3">
+                                        <Category />
+                                    </Colxx>
+                                    <Colxx xxs="9">
+                                        <h3>Kết quả tìm kiếm cho '{this.state.search.get('s')}': {count} kết quả</h3>
+                                        <Row>
+                                            {
+                                                products.map((product, index) => {
+                                                    return (
+                                                        <Colxx xxs="3" key={index}>
+                                                            <Product product={product} />
+                                                        </Colxx>
+                                                    )
+                                                })
+                                            }
+                                        </Row>
+                                    </Colxx>
+                                </Row>
+                                <Row>
+                                    {/* className="d-md-inline-flex" */}
+                                    <Colxx xxs="12" className="text-center mt-3">
+                                        <DataTablePagination
+                                            page={dataTable.page}
+                                            pages={dataTable.pages}
+                                            defaultPageSize={dataTable.defaultPageSize}
+                                            canPrevious={dataTable.canPrevious}
+                                            canNext={dataTable.canNext}
+                                            pageSizeOptions={dataTable.pageSizeOptions}
+                                            showPageSizeOptions={true}
+                                            showPageJump={true}
+                                            onPageChange={this.onPageChange}
+                                            onPageSizeChange={this.onPageSizeChange}
+                                        />
+                                    </Colxx>
+                                </Row>
+                            </>
 
-                ) : <h1 >Không tìm thấy sản phẩm nào!</h1>
-                }
-            </>
+                        ) : <h1 >Không tìm thấy sản phẩm nào!</h1>
+                        }
+                    </CardBody>
+                </Card>
+            </Fragment>
 
         );
     }
