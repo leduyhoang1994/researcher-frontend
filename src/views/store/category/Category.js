@@ -45,15 +45,19 @@ class Category extends Component {
         })
     }
 
+    onFilterByCategory = (cate, level) => {
+        window.open(`/store/${cate}?lvl=${level}`, "_self")
+    }
+
     renderCateName = (categories, cate) => {
         //use for filtering
         // const fullPath = [...path, cate];
         return (
-            <div className="mb-0 cateMenuLv1 d-flex" key={cate}
-                onClick={() => {
-                    window.open(`/store/${cate}?lvl=1`, "_self")
-                }}>
-                <div className="cateName">
+            <div className="mb-0 cateMenuLv1 d-flex" key={cate}>
+                <div className="cateName"
+                    onClick={() => {
+                        this.onFilterByCategory(cate, 1)
+                    }}>
                     {cate}
                 </div>
                 <div className="arrow-right-wrapper">
@@ -61,6 +65,7 @@ class Category extends Component {
                 </div>
                 <SubMenuPopup
                     cate={categories[cate]}
+                    onClickSubMenu={this.onFilterByCategory}
                 />
             </div>
         );
