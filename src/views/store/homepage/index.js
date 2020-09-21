@@ -87,15 +87,15 @@ class Homepage extends React.Component {
 
         return (
             <Fragment>
-                <Card className="p-1 w-100">
-                    <CardBody>
+                <Card className="p-0 w-100">
+                    <CardBody className="p-0">
                         <Row>
                             <Colxx xxs="3">
-                                <Category getProductByCategory={this.getProducts} />
+                                <Category />
                             </Colxx>
-                            <Colxx xxs="9" style={{ borderLeft: "2px solid #eee", textAlign: "center" }}>
+                            <Colxx xxs="9" className="text-center">
                                 <Row >
-                                    <Colxx xxs="9" style={{ marginTop: "-23px" }}>
+                                    <Colxx xxs="9">
                                         {
                                             slides && <GlideComponentThumbs settingsImages={
                                                 {
@@ -133,7 +133,7 @@ class Homepage extends React.Component {
                                             if(index < 3) {
                                                 return (
                                                     <span key={index}>
-                                                        <img src={item.img} alt=""></img>
+                                                        <img className="w-100" src={item.img} alt=""></img>
                                                     </span>
                                                 )
                                             }

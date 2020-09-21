@@ -21,7 +21,7 @@ class Media extends React.Component {
             },
             isUploadModalOpen: false,
             isMediaModalOpen: false,
-            featureImage: `${process.env.REACT_APP_API_BASE_PATH}${this.props.featureImage}`,
+            featureImage: `${process.env.MEDIA_BASE_PATH}${this.props.featureImage}`,
             mediaModal: null,
             whereMediaModal: null,
             typeMediaModal: null
@@ -33,30 +33,25 @@ class Media extends React.Component {
     }
 
     loadProductMedia = () => {
+        const { images, videos } = this.props.mediaItems;
+        let arrImages = [];
+        let arrVideos = [];
+        if (images) {
+            for (let item of images) {
+                arrImages.push(`${process.env.MEDIA_BASE_PATH}${item}`);
+            }
+        }
+        if (videos) {
+            for (let item of videos) {
+                arrVideos.push(`${process.env.MEDIA_BASE_PATH}${item}`);
+            }
+        }
         this.setState({
-            mediaItems: this.props.mediaItems
-        }, () => {
-            const { images } = this.state.mediaItems;
-            const { videos } = this.state.mediaItems;
-            let arrImages = [];
-            let arrVideos = [];
-            if (images) {
-                for (let item of images) {
-                    arrImages.push(`${process.env.REACT_APP_API_BASE_PATH}${item}`);
-                }
-            }
-            if (videos) {
-                for (let item of videos) {
-                    arrVideos.push(`${process.env.REACT_APP_API_BASE_PATH}${item}`);
-                }
-            }
-            this.setState({
-                mediaItems: {
-                    images: arrImages,
-                    videos: arrVideos
-                },
-            })
-        });
+            mediaItems: {
+                images: arrImages,
+                videos: arrVideos
+            },
+        })
     }
 
     setFeatureImage = (url) => {
@@ -91,10 +86,10 @@ class Media extends React.Component {
     renderMediaItem = (media, where, index, typeMedia) => {
         let backgroundImage = "";
         // if (media.includes("assets/products")) {
-        //     backgroundImage = `url('${process.env.REACT_APP_API_BASE_PATH}${media}')`;
+        //     backgroundImage = `url('${process.env.MEDIA_BASE_PATH}${media}')`;
         // }
         // else {
-            backgroundImage = `url('${media}')`;
+        backgroundImage = `url('${media}')`;
         // }
         if (typeMedia === 'video') backgroundImage = `url('/assets/img/video-thumbnail.png')`
 
