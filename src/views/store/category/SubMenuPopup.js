@@ -10,6 +10,7 @@ class SubMenuPopup extends Component {
         };
     }
 
+
     render() {
         const { cate } = this.props;
         return (
@@ -20,8 +21,9 @@ class SubMenuPopup extends Component {
                     Object.keys(cate).map(cateNameLv2 => {
                         return (
                             <div className="subMenuItem" key={cateNameLv2}>
-                                <b className="subMenuName subMenuLv2 cursor-pointer display-block w-100"  onClick={() => {
-                                    window.open(`/store/${cateNameLv2}?lvl=2`, "_self")
+                                <b className="subMenuName subMenuLv2 cursor-pointer display-block w-100"  
+                                onClick={() => {
+                                    this.props.onClickSubMenu(cateNameLv2, 2)
                                 }}>
                                     {cateNameLv2}
                                 </b>
@@ -31,7 +33,7 @@ class SubMenuPopup extends Component {
                                             <span className="subMenuName subMenuLv3 cursor-pointer display-block w-100"
                                                 key={cateNameLv3}
                                                 onClick={() => {
-                                                    window.open(`/store/${cateNameLv3}?lvl=3`, "_self")
+                                                    this.props.onClickSubMenu(cateNameLv3, 3)
                                                 }}>
                                                 {cateNameLv3}
                                             </span>
