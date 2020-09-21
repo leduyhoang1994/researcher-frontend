@@ -87,7 +87,7 @@ class ProductSet extends Component {
                   {__(this.messages, 'Bộ sản phẩm')} <b>{this.state.productSet.setName}</b>
                 </CardTitle>
                 <Row>
-                  <Colxx xxs="12">
+                  <Colxx xxs="11">
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
@@ -110,18 +110,20 @@ class ProductSet extends Component {
                       </span>
                     </Label>
                   </Colxx>
+                  <Colxx xxs="1">
+                    <div className="text-right card-title">
+                      <Button
+                        className="mr-2"
+                        color="primary"
+                        onClick={() => {
+                          this.exportData();
+                        }}
+                      >
+                        {__(this.messages, "Export")}
+                      </Button>
+                    </div>
+                  </Colxx>
                 </Row>
-                <div className="text-right card-title">
-                  <Button
-                    className="mr-2"
-                    color="primary"
-                    onClick={() => {
-                      this.exportData();
-                    }}
-                  >
-                    {__(this.messages, "Export")}
-                  </Button>
-                </div>
                 <Row>
                   <Colxx xxs="12">
                     <ProductTable

@@ -12,12 +12,20 @@ import { NotificationManager } from '../../../components/common/react-notificati
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
 import ResearchSetModal from './ResearchSetModal';
+import { SITE_LIST } from '../../../constants/data';
+import { isObject } from 'formik';
 
 class Research extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            filterOptions: {},
+            filterOptions: {
+                topCates: SITE_LIST,
+                topSale: {
+                    min: "",
+                    max: ""
+                }
+            },
             categories: [],
             selectedCats: [],
             redirect: false,
@@ -73,12 +81,34 @@ class Research extends Component {
         });
     }
 
+    validateFilterOptions() {
+        const { filterOptions } = this.state;
+
+        if (filterOptions) {
+            for (const country of filterOptions.topCates) {
+                if (isObject(country) && country.top !== "") {
+                    return true
+                }
+                if (country.sites) {
+                    for (const site of country.sites) {
+                        if (isObject(site) && site.top !== "") {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     filter = () => {
         const { filterOptions } = this.state;
-        if (Object.keys(filterOptions).length === 0) {
+
+        if (this.validateFilterOptions() === false) {
             NotificationManager.error("Bạn cần chọn top thư mục của ít nhất 1 sàn", "Không thành công");
             return;
         }
+
         ApiController.call("POST", CATEGORIES.filter, filterOptions, data => {
             this.setState({
                 categories: data
@@ -159,6 +189,7 @@ class Research extends Component {
                                     {__(this.messages, "Lọc top ngành hàng")}
                                 </CardTitle>
                                 <Filter
+                                    filterOptions={this.state.filterOptions}
                                     setFilterOptions={this.setFilterOptions}
                                 />
                             </CardBody>
