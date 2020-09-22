@@ -9,6 +9,7 @@ import { ORDERS } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { numberWithCommas } from "../../../helpers/Utils";
+
 class CartList extends Component {
     constructor(props) {
         super(props);
@@ -111,7 +112,7 @@ class CartList extends Component {
 
     addTotals = () => {
         let total = 0;
-        this.state.cart.map(item => {
+        this.state.cart.forEach(item => {
             total += (item.priceMin + item.priceMax) / 2 * item.quantity
         });
         this.setState({
@@ -123,23 +124,32 @@ class CartList extends Component {
         const { products } = this.state;
         let order = [];
         products.forEach(product => {
-            order.push({ productEditId: product.id, optionIds: product.optionIds ,quantity: product.quantity, description: "" })
+            order.push({ uboxProductId: product.id, optionIds: product.optionIds ,quantity: product.quantity, description: "" })
         })
         Api.callAsync('post', ORDERS.all, {
             description: "string",
             createOrderDetail: order
         }).then(data => {
             console.log(data);
-            if(data.data.statusCode == 200) {
-                NotificationManager.success("Đặt hàng thành công", "Thành công", 500);
+            if(data.data.statusCode === 200) {
+                NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
                 localStorage.setItem("cart", JSON.stringify([]));
                 setTimeout(function(){ 
                     window.open("/store", "_self")
-                }, 700);
+                }, 1000);
             }
             
         }).catch(error => {
-            NotificationManager.warning("Đặt hàng thất bại", "Thất bại");
+            NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
+            if(error.response.status === 401) {
+                setTimeout(function(){ 
+                    NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
+                    setTimeout(function(){ 
+                        window.open("/seller/login", "_self")
+                    }, 1500);
+                }, 1500);
+            }
+            
         });
     }
 
@@ -209,7 +219,7 @@ class CartList extends Component {
 const mapStateToProps = ({ cart }) => {
     const { count } = cart;
     return {
-        cart
+        count
     };
 };
 

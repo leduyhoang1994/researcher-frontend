@@ -1,6 +1,6 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Card, CardBody, Badge, CardSubtitle, CardText, CardImg } from 'reactstrap';
+import { Card, CardBody, CardSubtitle, CardText, CardImg } from 'reactstrap';
 
 class Product extends React.Component {
 
@@ -10,7 +10,7 @@ class Product extends React.Component {
     }
 
     render() {
-        const {product} = this.props;
+        // const {product} = this.props;
         return (
             <Card className="mb-4">
               <div className="position-relative">

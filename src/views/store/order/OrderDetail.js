@@ -46,14 +46,14 @@ class OrderDetail extends Component {
             let value = {};
             value.quantity = product.quantity;
             value.calculatedPrice = product.calculatedPrice;
-            if (product.productEdit.featureImage) {
-                value.featureImage = product.productEdit.featureImage;
+            if (product.uboxProduct.featureImage) {
+                value.featureImage = product.uboxProduct.featureImage;
             } else {
                 value.featureImage = "/assets/img/default-image.png"
             }
-            value.name = product.productEdit.name;
-            value.priceMax = product.productEdit.priceMax;
-            value.priceMin = product.productEdit.priceMin;
+            value.name = product.uboxProduct.name;
+            value.priceMax = product.uboxProduct.priceMax;
+            value.priceMin = product.uboxProduct.priceMin;
 
             data.push(value);
         })

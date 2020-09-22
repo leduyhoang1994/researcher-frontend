@@ -1,31 +1,30 @@
 import React from 'react';
 import { numberWithCommas } from "../../../helpers/Utils";
 import { injectIntl } from 'react-intl';
-import { Link, NavLink } from 'react-router-dom';
+import {  NavLink } from 'react-router-dom';
 import "./style.scss";
-import { Card, CardBody, Button, CardSubtitle, CardText, CardImg } from 'reactstrap';
-import { __ } from '../../../helpers/IntlMessages';
+import { Card, CardBody, CardSubtitle, CardText } from 'reactstrap';
 import { loadingSpinnerImg } from '../../../constants/defaultValues';
 
-const addToCart = products => {
-    const { id, name, featureImage, priceMin, priceMax } = products;
-    const quantity = 1;
-    const product = { id, name, featureImage, priceMin, priceMax, quantity };
+// const addToCart = products => {
+//     const { id, name, featureImage, priceMin, priceMax } = products;
+//     const quantity = 1;
+//     const product = { id, name, featureImage, priceMin, priceMax, quantity };
 
-    let cart = localStorage.getItem("cart");
+//     let cart = localStorage.getItem("cart");
 
-    cart = cart ? JSON.parse(cart) : [];
+//     cart = cart ? JSON.parse(cart) : [];
 
-    const found = cart.find(pr => {
-        return pr.id === product.id
-    })
+//     const found = cart.find(pr => {
+//         return pr.id === product.id
+//     })
 
-    if (!found) {
-        cart.push(product);
-    }
+//     if (!found) {
+//         cart.push(product);
+//     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-};
+//     localStorage.setItem("cart", JSON.stringify(cart));
+// };
 
 class Product extends React.Component {
 
@@ -63,11 +62,11 @@ class Product extends React.Component {
 
     render() {
         const { product } = this.props;
-        let cart = localStorage.getItem("cart");
-        cart = cart ? JSON.parse(cart) : [];
-        const isAddedToCart = cart.find(pr => {
-            return pr.id === product.id
-        });
+        // let cart = localStorage.getItem("cart");
+        // cart = cart ? JSON.parse(cart) : [];
+        // const isAddedToCart = cart.find(pr => {
+        //     return pr.id === product.id
+        // });
 
         return (
             <Card
@@ -82,7 +81,6 @@ class Product extends React.Component {
                         }}
                     >
                         <img
-                            alt=""
                             ref={e => {
                                 this.imgRef = e;
                             }}
@@ -97,7 +95,7 @@ class Product extends React.Component {
                                 backgroundSize: "contain",
                                 objectFit: "contain",
                             }} 
-                            src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}`} alt="Card image cap" />
+                            src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}`} alt="Card img" />
                         {
                             /* 
                                 <Badge color="primary" pill className="position-absolute badge-top-left">NEW</Badge>

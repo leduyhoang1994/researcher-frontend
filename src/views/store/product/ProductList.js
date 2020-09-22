@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import { Row } from "reactstrap";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Product from './Product';

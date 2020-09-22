@@ -4,11 +4,11 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import ProductTable from '../product/ProductTable';
-import { PRODUCTS } from '../../../constants/api';
+import SourceProductTable from '../source-product/SourceProductTable';
+import { SOURCE_PRODUCTS, SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
-class ProductSet extends Component {
+class SourceProductSets extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +31,7 @@ class ProductSet extends Component {
   }
 
   exportData = async () => {
-    const data = await ApiController.callAsync('get', `${PRODUCTS.set}/${this.state.setId}/export`, {});
+    const data = await ApiController.callAsync('get', `${SETS.products}/${this.state.setId}/export`, {});
     const base64 = data.data.result.base64
 
     let anchor = document.createElement('a');
@@ -42,7 +42,7 @@ class ProductSet extends Component {
   }
 
   getProductSet = (id) => {
-    ApiController.get(`${PRODUCTS.set}/${id}`, {}, data => {
+    ApiController.get(`${SETS.products}/${id}`, {}, data => {
       data.productSets = data.productSets.map(d => {
         return {
           ...d.product,
@@ -60,7 +60,7 @@ class ProductSet extends Component {
     const setItem = product.productSets.find(s => {
       return s.setId == this.state.setId
     })
-    ApiController.delete(`${PRODUCTS.removeFromSet}`, {
+    ApiController.delete(`${SOURCE_PRODUCTS.removeFromSet}`, {
       ids: [setItem?.id]
     }, data => {
       this.loadCurrentProductSet();
@@ -126,15 +126,15 @@ class ProductSet extends Component {
                 </Row>
                 <Row>
                   <Colxx xxs="12">
-                    <ProductTable
+                    <SourceProductTable
                       key={this.state.keyState}
                       component={this}
                       selectable={false}
                       removeFromSelectedProducts={this.removeFromProductSet}
                       filter={{
-                        join: 'productSets||id,setId,productId',
+                        join: 'sourceProductSets||id,setId,sourceProductId',
                         s: {
-                          'productSets.setId': {
+                          'sourceProductSets.setId': {
                             "$eq": this.state.setId
                           }
                         }
@@ -151,4 +151,4 @@ class ProductSet extends Component {
   }
 }
 
-export default injectIntl(ProductSet);
+export default injectIntl(SourceProductSets);

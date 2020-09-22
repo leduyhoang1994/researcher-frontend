@@ -69,15 +69,15 @@ class Homepage extends React.Component {
         }
 
         ApiController.post(PRODUCT_SELLER.filter, {
-            categoryEditNameLv1: categoryLv1,
-            categoryEditNameLv2: categoryLv2,
-            categoryEditNameLv3: categoryLv3,
+            uboxCategoryNameLv1: categoryLv1,
+            uboxCategoryNameLv2: categoryLv2,
+            uboxCategoryNameLv3: categoryLv3,
             isPublished: true,
             page: 0,
             size: 10
         }, data => {
             this.setState({
-                products: data.productEdits
+                products: data.uboxProducts
             }, () => {
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';

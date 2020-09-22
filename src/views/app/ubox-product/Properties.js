@@ -2,13 +2,12 @@ import React from 'react';
 import { Row } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { __ } from '../../../helpers/IntlMessages';
-import { useState } from 'react';
 import ApiController from '../../../helpers/Api';
-import { CATEGORY_EDIT, OPTIONS, PRODUCT_EDIT } from '../../../constants/api';
+import { UBOX_CATEGORIES, OPTIONS } from '../../../constants/api';
 import AsyncCreatable from 'react-select/lib/AsyncCreatable';
 import { isFunction } from 'formik';
 
-class Property extends React.Component {
+class Properties extends React.Component {
 
     constructor(props) {
         super(props);
@@ -16,7 +15,7 @@ class Property extends React.Component {
             loading: false,
             properties: [],
             propertiesOptions: {},
-            propertiesAttributesValue: this.props.productOptions && this.normalizeProductAttribute(this.props.productOptions) || {},
+            propertiesAttributesValue: (this.props.uboxProductOptions && this.normalizeProductAttribute(this.props.uboxProductOptions)) || {},
             reloadOptions: {},
         };
     }
@@ -38,32 +37,32 @@ class Property extends React.Component {
             result[option.option.attribute.code].push(option.option);
         }
 
-        this.props.setProductAttribute(result);
+        this.props.setUboxProductAttribute(result);
 
         return result;
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.categoryId !== prevProps.categoryId && this.props.categoryId !== undefined) {
+        if (this.props.uboxCategoryId !== prevProps.uboxCategoryId && this.props.uboxCategoryId !== undefined) {
             this.loadCategoryProperties();
         }
     }
 
-    loadCategoryProperties = (categoryId = null) => {
-        if (!categoryId) {
-            categoryId = this.props.categoryId;
+    loadCategoryProperties = (uboxCategoryId = null) => {
+        if (!uboxCategoryId) {
+            uboxCategoryId = this.props.uboxCategoryId;
         }
-        if (!categoryId) {
+        if (!uboxCategoryId) {
             return;
         }
         this.setState({
             loading: true
         });
 
-        ApiController.call("get", `${CATEGORY_EDIT.all}/${categoryId}`, {}, data => {
+        ApiController.call("get", `${UBOX_CATEGORIES.all}/${uboxCategoryId}`, {}, data => {
             this.setState({
                 loading: false,
-                properties: data
+                properties: data.uboxCategoryAttributes
             });
         });
     }
@@ -85,21 +84,23 @@ class Property extends React.Component {
 
     handleChange = (attribute, values) => {
         const { propertiesAttributesValue } = this.state;
-        const { setProductAttribute } = this.props;
+        const { setUboxProductAttribute } = this.props;
         propertiesAttributesValue[attribute.code] = values;
         this.setState({
             propertiesAttributesValue
         });
-        if (isFunction(setProductAttribute)) {
-            setProductAttribute(propertiesAttributesValue);
+        if (isFunction(setUboxProductAttribute)) {
+            setUboxProductAttribute(propertiesAttributesValue);
         }
     }
 
     renderProperties = () => {
         const { properties } = this.state;
+        
         return (
             <>
                 {
+                    
                     properties.map(property => {
                         return (
                             <Row key={`attribute-${property.attributeId}`}>
@@ -158,4 +159,4 @@ class Property extends React.Component {
     }
 }
 
-export default Property;
+export default Properties;

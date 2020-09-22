@@ -5,12 +5,13 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import Select, { createFilter } from 'react-select';
-import ProductTable from './ProductTable';
+import SourceProductTable from './SourceProductTable';
 import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';
-import { CATEGORIES } from '../../../constants/api';
-import ProductSetModal from './ProductSetModal';
+import { SOURCE_CATEGORIES } from '../../../constants/api';
+import SourceProductModal from './SourceProductModal';
 import { arrayColumn } from '../../../helpers/Utils';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class CreateTrainingClass extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class CreateTrainingClass extends Component {
       search: "",
       productList: JSON.parse(JSON.stringify(ProductList)),
       selectedProducts: [],
-      productSetModalOpen: false,
+      isOpenSourceProductModal: false,
       filter: {}
     };
     this.messages = this.props.intl.messages;
@@ -42,18 +43,31 @@ class CreateTrainingClass extends Component {
   }
 
   loadCategories = () => {
-    ApiController.call('get', CATEGORIES.all, {}, data => {
-      this.setState({
-        categoryOptions: data
+    ApiController.callAsync('get', SOURCE_CATEGORIES.all, {})
+      .then(data => {
+        this.setState({
+          categoryOptions: data.data.result
+        });
+        this.searchProducts();
+      }).catch(error => {
+        if (error.response) {
+          NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+          if (error.response.status === 401) {
+            setTimeout(function () {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+              setTimeout(function () {
+                window.open("/user/login", "_self")
+              }, 1500);
+            }, 1500);
+          }
+        }
       });
-      this.searchProducts();
-    })
   };
 
   searchProducts = () => {
     const { filter, categoriesFilter } = this.state;
     const s = categoriesFilter.length > 0 ? {
-      categoryId: {
+      sourceCategoryId: {
         "$in": arrayColumn(categoriesFilter, 'id')
       }
     } : {};
@@ -122,13 +136,13 @@ class CreateTrainingClass extends Component {
     });
   };
 
-  toggleProductSetModalOpen = () => {
+  toggleOpenSourceProductModal = () => {
     this.setState({
-      productSetModalOpen: !this.state.productSetModalOpen
+      isOpenSourceProductModal: !this.state.isOpenSourceProductModal
     });
   }
 
-  handleCheckall = (checked, datas) => {
+  handleCheckAll = (checked, datas) => {
     const newDatas = datas.map(data => data._original)
     if (checked)
       this.addToSelectedProducts(newDatas)
@@ -209,7 +223,7 @@ class CreateTrainingClass extends Component {
           <Colxx xxs="12">
             <Card>
               <CardBody>
-                <ProductTable
+                <SourceProductTable
                   key={JSON.stringify(filter)}
                   component={this}
                   data={this.state.productList}
@@ -218,14 +232,14 @@ class CreateTrainingClass extends Component {
                   existInSelectedProducts={this.existInSelectedProducts}
                   filterCate={this.state.categoriesFilter}
                   filter={filter}
-                  handleCheckall={this.handleCheckall}
+                  handleCheckAll={this.handleCheckAll}
                   allProductSelected={this.allProductSelected}
                 />
               </CardBody>
               <CardFooter className="text-right">
                 <Button
                   onClick={e => {
-                    this.toggleProductSetModalOpen()
+                    this.toggleOpenSourceProductModal()
                   }}
                 >
                   {__(this.messages, "Lưu bộ sản phẩm")}
@@ -234,9 +248,9 @@ class CreateTrainingClass extends Component {
             </Card>
           </Colxx>
         </Row>
-        <ProductSetModal
-          isOpen={this.state.productSetModalOpen}
-          toggleModal={this.toggleProductSetModalOpen}
+        <SourceProductModal
+          isOpen={this.state.isOpenSourceProductModal}
+          toggleModal={this.toggleOpenSourceProductModal}
           selectedProducts={this.state.selectedProducts}
         />
       </Fragment>

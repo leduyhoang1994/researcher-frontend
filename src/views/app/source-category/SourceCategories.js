@@ -8,7 +8,7 @@ import { SITE_LIST } from '../../../constants/data';
 import DataTablePagination from '../../../components/DatatablePagination';
 import './style.scss';
 
-class Category extends Component {
+class SourceCategories extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -176,4 +176,4 @@ class Category extends Component {
   }
 }
 
-export default injectIntl(Category);
+export default injectIntl(SourceCategories);

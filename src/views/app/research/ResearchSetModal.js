@@ -3,8 +3,9 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, I
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
-import { CATEGORIES } from '../../../constants/api';
+import { SOURCE_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class ResearchSetModal extends Component {
 
@@ -22,8 +23,20 @@ class ResearchSetModal extends Component {
     }
 
     loadProductSets = () => {
-        ApiController.get(CATEGORIES.set, {}, data => {
+        ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
+        .then(data => {
             this.setState({ cateSetList: data });
+        }).catch(error => {
+            console.log(error);
+            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+            if(error.response.status === 401) {
+                setTimeout(function(){ 
+                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                    setTimeout(function(){ 
+                        window.open("/user/login", "_self")
+                    }, 1500);
+                }, 1500);
+            }
         });
     }
 

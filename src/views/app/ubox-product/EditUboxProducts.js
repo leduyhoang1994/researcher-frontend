@@ -5,30 +5,47 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { CATEGORIES, PRODUCTS, PRODUCT_EDIT } from '../../../constants/api';
+import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { jsonToFormData, parse } from '../../../helpers/Utils'
-import Property from './Property';
+import Properties from './Properties';
 import Api from '../../../helpers/Api';
 import { copySamplePropertiesObj } from '../../../helpers/Utils'
 import { NotificationManager } from '../../../components/common/react-notifications';
-import Media from './Media';
+import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
 
-class EditProduct extends Component {
+class EditUboxProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
             id: this.props.match.params.id || null,
             product: {
                 optionIds: [],
-                sourceProduct: {}
+                sourceProduct: {},
+                description: "",
+                featureImage: "",
+                futurePriceMax: "",
+                futurePriceMin: "",
+                isPublished: true,
+                name: "",
+                priceMax: "",
+                priceMin: "",
+                serviceCost: "",
+                serviceSla: "",
+                sourceProductId: "",
+                transportation: "",
+                uboxCategoryId: "",
+                uboxIn: "",
+                uboxProductOptions: [],
+                weight: "",
+                workshopIn: "",
             },
             keyProperty: '',
             keyMedia: '',
-            productEdit: {
+            uboxProduct: {
                 name: '',
                 priceMax: 0,
                 priceMin: 0,
@@ -42,15 +59,15 @@ class EditProduct extends Component {
                 featureImage: '',
                 workshopIn: 0,
                 uboxIn: 0,
-                categoryEditId: 0,
-                productId: 0,
+                uboxCategoryId: 0,
+                sourceProductId: 0,
                 optionIds: [],
                 isPublished: false
             },
             selectedCategory: "",
-            optionCategories: [],
-            selectedOldProduct: "",
-            optionOldProducts: [],
+            optionUboxCategories: [],
+            selectedSourceProduct: "",
+            optionSourceProducts: [],
             sourceProductSelected: null,
             redirect: false,
             loading: false,
@@ -99,35 +116,36 @@ class EditProduct extends Component {
 
     async componentDidMount() {
         this.setState({ loading: true });
-        await this.getCategories();
-        const productId = new URLSearchParams(this.props.location.search).get("product-id");
-        const productAddId = new URLSearchParams(this.props.location.search).get("productId");
-        if (productId) {
-            const data = await ApiController.callAsync('get', `${PRODUCT_EDIT.all}/source/${productId}`, {});
+        await this.getUboxCategories();
+        const sourceProductId = new URLSearchParams(this.props.location.search).get("product-id");
+        const productAddId = new URLSearchParams(this.props.location.search).get("sourceProductId");
+        if (sourceProductId) {
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
             const product = data.data.result;
+            console.log(product);
 
             // if (product?.id) {
-            //     this.setRedirect(`/app/list-product/edit/${product.id}`);
+            //     this.setRedirect(`/app/ubox-products/edit/${product.id}`);
             //     this.renderRedirect();
             // } else {
-            //     this.setRedirect(`/app/list-product/add?productId=${productId}`);
+            //     this.setRedirect(`/app/ubox-products/add?sourceProductId=${sourceProductId}`);
             //     this.renderRedirect();
             // }
             if (product?.id) {
-                window.open(`/app/list-product/edit/${product.id}`, "_self");
+                window.open(`/app/ubox-products/edit/${product.id}`, "_self");
             } else {
-                window.open(`/app/list-product/add?productId=${productId}`, "_self");
+                window.open(`/app/ubox-products/add?sourceProductId=${sourceProductId}`, "_self");
             }
         }
         else if (productAddId) {
-            ApiController.get(`${PRODUCTS.all}/${productAddId}`, {}, data => {
+            ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
                 this.setState({
                     product: {
                         ...this.state.product,
                         sourceProduct: {
                             productTitleVi: data.productTitleVi
                         },
-                        productId: productAddId
+                        sourceProductId: productAddId
                     }
                 })
             })
@@ -147,7 +165,7 @@ class EditProduct extends Component {
     }
 
     getProduct = (id) => {
-        ApiController.get(`${PRODUCT_EDIT.all}/${id}`, {}, data => {
+        ApiController.get(`${UBOX_PRODUCTS.all}/${id}`, {}, data => {
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
@@ -155,31 +173,31 @@ class EditProduct extends Component {
                 mediaItems: copySamplePropertiesObj(data, this.state.mediaItems)
             })
 
-            this.state.optionCategories.forEach(item => {
-                if (item.value === this.state.product.categoryEditId) {
+            this.state.optionUboxCategories.forEach(item => {
+                if (item.value === this.state.product.uboxCategoryId) {
                     this.setState({
                         selectedCategory: { label: item.label, value: item.value }
                     })
                 }
             })
 
-            this.state.optionOldProducts.forEach(item => {
-                if (item.value === this.state.product.productId) {
+            this.state.optionSourceProducts.forEach(item => {
+                if (item.value === this.state.product.sourceProductId) {
                     this.setState({
-                        selectedOldProduct: { label: item.label, value: item.value }
+                        selectedSourceProduct: { label: item.label, value: item.value }
                     })
                 }
             })
         })
     }
 
-    getOldProducts = async (search, loadedOptions, { page }) => {
+    getSourceProducts = async (search, loadedOptions, { page }) => {
         const filter = {
             productTitleVi: {
                 "$cont": `%${search}%`
             }
         };
-        const data = await ApiController.getAsync(PRODUCTS.all, {
+        const data = await ApiController.getAsync(SOURCE_PRODUCTS.all, {
             s: JSON.stringify(filter),
             page: page,
             size: 20
@@ -196,22 +214,22 @@ class EditProduct extends Component {
         };
     }
 
-    getCategories = async () => {
-        const data = await ApiController.getAsync(CATEGORIES.allEdit, {});
+    getUboxCategories = async () => {
+        const data = await ApiController.getAsync(UBOX_CATEGORIES.all, {});
         let tempOptions = [];
-        let categories = [];
+        let UboxCategories = [];
         data.data.result.forEach(item => {
             if (!tempOptions.includes(item.nameLv3)) {
                 tempOptions.push(item.nameLv3);
-                categories.push({ label: item.nameLv3, value: item.id })
+                UboxCategories.push({ label: item.nameLv3, value: item.id })
             }
         })
-        this.setState({ optionCategories: categories });
+        this.setState({ optionUboxCategories: UboxCategories });
     }
 
     handleChangeCategory = (data) => {
         let product = this.state.product;
-        product.categoryEditId = data.value;
+        product.uboxCategoryId = data.value;
         this.setState({
             selectedCategory: data,
             product: product
@@ -227,7 +245,7 @@ class EditProduct extends Component {
         });
     }
 
-    setProductAttribute = (data) => {
+    setUboxProductAttribute = (data) => {
         let optionId = [];
         for (var items in data) {
             let arr = data[items];
@@ -246,8 +264,8 @@ class EditProduct extends Component {
 
     validateFields = async () => {
         const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "categoryEditId", () => {
-                return [this.state.selectedOldProduct.value, "sourceProduct"]
+            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
+                return [this.state.selectedSourceProduct.value, "sourceProduct"]
             }];
         let success = true;
         for await (const field of needToValidate) {
@@ -258,7 +276,7 @@ class EditProduct extends Component {
                     NotificationManager.error(`Trường ${fieldData[0]} cần phải nhập`);
                 }
             } else {
-                if ((this.state.product[field] || "") == "") {
+                if ((this.state.product[field] || "") === "") {
                     console.log(this.state.product[field])
                     success = false;
                     NotificationManager.error(`Trường ${field} cần phải nhập`);
@@ -307,7 +325,7 @@ class EditProduct extends Component {
             // product.id = parseInt(this.state.id);
             let formData = new FormData()
 
-            formData = jsonToFormData(copySamplePropertiesObj(product, this.state.productEdit), formData)
+            formData = jsonToFormData(copySamplePropertiesObj(product, this.state.uboxProduct), formData)
             if (files) {
                 files.forEach(file => {
                     formData.append("file", file);
@@ -319,7 +337,7 @@ class EditProduct extends Component {
 
             // console.log()
 
-            await Api.callAsync('put', PRODUCT_EDIT.all,
+            await Api.callAsync('put', UBOX_PRODUCTS.all,
                 formData
             ).then(data => {
                 NotificationManager.success("Cập nhật thành công", "Thành công");
@@ -337,7 +355,7 @@ class EditProduct extends Component {
         } else {
             let formData = new FormData()
 
-            formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.productEdit), formData)
+            formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.uboxProduct), formData)
 
             if (files) {
                 files.forEach(file => {
@@ -345,7 +363,7 @@ class EditProduct extends Component {
                 });
             }
 
-            const data = await Api.callAsync('post', PRODUCT_EDIT.all,
+            const data = await Api.callAsync('post', UBOX_PRODUCTS.all,
                 formData
             ).then(data => {
                 return data.data;
@@ -362,7 +380,7 @@ class EditProduct extends Component {
                     fileBase64: []
                 })
 
-                window.open(`/app/list-product/edit/${data.result.productEdit.id}`, "_self");
+                window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 const message = data?.message;
@@ -402,8 +420,8 @@ class EditProduct extends Component {
                             <CardBody>
                                 <Row>
                                     <Colxx xxs="6">
-                                        <Media
-                                            productId={this.state.id}
+                                        <Medias
+                                            sourceProductId={this.state.id}
                                             key={keyMedia}
                                             setFeatureImage={url => {
                                                 this.setState({
@@ -427,7 +445,7 @@ class EditProduct extends Component {
                                             <Select
                                                 className="react-select"
                                                 classNamePrefix="react-select"
-                                                options={this.state.optionCategories}
+                                                options={this.state.optionUboxCategories}
                                                 value={this.state.selectedCategory}
                                                 onChange={this.handleChangeCategory}
                                             />
@@ -502,12 +520,12 @@ class EditProduct extends Component {
                                         </Row>
                                         <Row>
                                             <Colxx xxs="12">
-                                                <Property
+                                                <Properties
                                                     key={keyProperty}
                                                     component={this}
-                                                    categoryId={product.categoryEditId} // category id of product
-                                                    productOptions={product.productEditOptions} // options fields of product data
-                                                    setProductAttribute={this.setProductAttribute} // callback function, called everytime product property change
+                                                    uboxCategoryId={product.uboxCategoryId} // category id of product
+                                                    uboxProductOptions={product.uboxProductOptions} // options fields of product data
+                                                    setUboxProductAttribute={this.setUboxProductAttribute} // callback function, called everytime product property change
                                                 />
                                             </Colxx>
                                         </Row>
@@ -525,12 +543,12 @@ class EditProduct extends Component {
                                                         defaultOptions
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
-                                                        loadOptions={this.getOldProducts}
+                                                        loadOptions={this.getSourceProducts}
                                                         onChange={data => {
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
-                                                                    productId: data?.id
+                                                                    sourceProductId: data?.id
                                                                 },
                                                                 sourceProductSelected: data
                                                             })
@@ -543,7 +561,7 @@ class EditProduct extends Component {
                                                             this.state.sourceProductSelected ||
                                                             (
                                                                 product.sourceProduct ? {
-                                                                    id: product.productId,
+                                                                    id: product.sourceProductId,
                                                                     productTitleVi: product.sourceProduct.productTitleVi
 
                                                                 } : null
@@ -684,4 +702,4 @@ class EditProduct extends Component {
     }
 }
 
-export default injectIntl(EditProduct);
+export default injectIntl(EditUboxProducts);

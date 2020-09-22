@@ -28,65 +28,94 @@ export const SELLER = {
   details: `${apiPath}/${seller}/info`,
 }
 
-/** Category */
-export const categories = 'categories';
-export const CATEGORIES = {
-  all: `${apiPath}/${categories}`,
-  filter: `${apiPath}/${categories}/filter`,
-  set: `${apiPath}/sets/${categories}`,
-  addToSet: `${apiPath}/sets/${categories}/list-add`,
-  removeFromSet: `${apiPath}/sets/${categories}/list-delete`,
-  allEdit: `${apiPath}/category-edits`,
+/** Source Category */
+export const source_categories = 'source-categories';
+export const SOURCE_CATEGORIES = {
+  all: `${apiPath}/${source_categories}`,
+  filter: `${apiPath}/${source_categories}/filter`,
+  set: `${apiPath}/sets/${source_categories}`,
+  addToSet: `${apiPath}/sets/${source_categories}/list-add`,
+  removeFromSet: `${apiPath}/sets/${source_categories}/list-delete`,
+  allEdit: `${apiPath}/ubox-categories`,
 }
 
-/** Product */
-export const products = 'products';
-export const PRODUCTS = {
-  all: `${apiPath}/${products}`,
-  filter: `${apiPath}/${products}/filter`,
-  set: `${apiPath}/sets/${products}`,
-  addToSet: `${apiPath}/sets/${products}/list-add`,
-  removeFromSet: `${apiPath}/sets/${products}/list-delete`,
+/** Ubox Category */
+export const uboxCategories = 'ubox-categories';
+export const UBOX_CATEGORIES = {
+  all: `${apiPath}/${uboxCategories}`,
+  level: `${apiPath}/${source_categories}/level`,
 }
 
-export const attributes = 'attributes';
-export const ATTRIBUTES = {
-  all: `${apiPath}/${attributes}`,
+/** Ubox Category Attributes*/
+export const uboxCategoryAttributes = 'ubox-category-attributes';
+export const UBOX_CATEGORY_ATTRIBUTES = {
+  all: `${apiPath}/${uboxCategoryAttributes}`,
+  detail: `${apiPath}/${uboxCategoryAttributes}/ubox-category`,
 }
 
-export const categoryEdit = 'category-edit-attributes';
-export const CATEGORY_EDIT = {
-  all: `${apiPath}/${categoryEdit}/category`,
+/** Ubox Category Seller View*/
+export const category_seller = 'ubox-category-seller-view';
+export const CATEGORY_SELLER = {
+  all: `${apiPath}/${category_seller}`,
 }
 
-export const productEdit = 'product-edits';
-export const PRODUCT_EDIT = {
-  all: `${apiPath}/${productEdit}`,
-  media: `${apiPath}/${productEdit}/media`,
-  filter: `${apiPath}/${productEdit}/filter`,
+/** Source Product */
+export const source_products = 'source-products';
+export const SOURCE_PRODUCTS = {
+  all: `${apiPath}/${source_products}`,
+  bulk: `${apiPath}/${source_products}/bulk`,
 }
 
+/** Ubox Product */
+export const ubox_products = 'ubox-products';
+export const UBOX_PRODUCTS = {
+  all: `${apiPath}/${ubox_products}`,
+  filter: `${apiPath}/${ubox_products}/filter`,
+  media: `${apiPath}/${ubox_products}/media`,
+  publish: `${apiPath}/${ubox_products}/publish`,
+  source: `${apiPath}/${ubox_products}/source`,
+  search: `${apiPath}/${ubox_products}/search`,
+}
+
+/** Source Product Seller View*/
+export const product_seller = 'ubox-product-seller-view';
+export const PRODUCT_SELLER = {
+  all: `${apiPath}/${product_seller}`,
+  filter: `${apiPath}/${product_seller}/filter`,
+}
+
+/** Ubox Product Options*/
+export const ubox_product_options = 'ubox-product-options';
+export const PRODUCT_OPTIONS = {
+  all: `${apiPath}/${ubox_product_options}`,
+}
+
+/** Options */
 export const options = 'options';
 export const OPTIONS = {
   create: `${apiPath}/${options}`,
   all: `${apiPath}/${options}/attribute`,
 };
 
+/** Attributes */
+export const attributes = 'attributes';
+export const ATTRIBUTES = {
+  all: `${apiPath}/${attributes}`,
+}
+
 /** Order */
 export const order = 'seller-orders';
 export const ORDERS = {
   all: `${apiPath}/${order}`,
-  getBySellerId: `${apiPath}/${order}/view-list`,
+  getBySeller: `${apiPath}/${order}/view-list`,
   details: `${apiPath}/${order}/view-detail`,
 }
 
-export const category_seller = 'category-seller-view';
-export const CATEGORY_SELLER = {
-  all: `${apiPath}/${category_seller}`,
-}
-
-export const product_seller = 'product-seller-view';
-export const PRODUCT_SELLER = {
-  all: `${apiPath}/${product_seller}`,
-  filter: `${apiPath}/${product_seller}/filter`,
+/** SET */
+export const sets = 'sets';
+export const SETS = {
+  products: `${apiPath}/${sets}/${source_products}`,
+  add: `${apiPath}/${sets}/${source_products}/list-add`,
+  delete: `${apiPath}/${sets}/${source_products}/list-add`,
+  categories: `${apiPath}/${sets}/${source_categories}`,
 }

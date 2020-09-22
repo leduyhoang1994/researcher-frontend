@@ -1,9 +1,9 @@
 import React from 'react';
 import { Modal, ModalBody } from 'reactstrap';
 import ApiController from '../../../helpers/Api';
-import { PRODUCT_EDIT } from '../../../constants/api';
+import { UBOX_PRODUCTS } from '../../../constants/api';
 
-class UploadModal extends React.Component {
+class UploadModals extends React.Component {
 
     constructor(props) {
         super(props);
@@ -38,7 +38,7 @@ class UploadModal extends React.Component {
             formData.append("file", file);
         });
         formData.append("id", productId);
-        ApiController.post(`${PRODUCT_EDIT.media}/images`, formData, data => {
+        ApiController.post(`${UBOX_PRODUCTS.media}/images`, formData, data => {
             this.props.reloadMedia();
             this.props.toggle();
         });
@@ -59,4 +59,4 @@ class UploadModal extends React.Component {
     }
 }
 
-export default UploadModal;
+export default UploadModals;

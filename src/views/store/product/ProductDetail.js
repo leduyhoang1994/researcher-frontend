@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Input, Label, Button, Card, CardBody } from 'reactstrap';
-import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { changeCount } from "../../../redux/actions";
@@ -79,7 +79,7 @@ class ProductDetail extends Component {
         cart = cart ? JSON.parse(cart) : [];
 
         for (let i = 0; i < cart.length; i++) {
-            if (cart[i].id == this.state.id) {
+            if (cart[i].id === this.state.id) {
                 this.setState({
                     isAddedToCart: !this.state.isAddedToCart
                 })
@@ -91,7 +91,7 @@ class ProductDetail extends Component {
     getProduct = (id) => {
         ApiController.get(`${PRODUCT_SELLER.all}/${id}`, {}, data => {
             let arr = [];
-            data.productEditOptions.forEach(item => {
+            data.uboxProductOptions.forEach(item => {
                 arr.push({ label: item.option.attribute.label, value: item.option.label, id: item.option.id })
             });
             this.setState({
@@ -106,7 +106,7 @@ class ProductDetail extends Component {
         const { id, name, featureImage, priceMin, priceMax, } = this.state.product;
         const quantity = this.state.quantity || 1;
         const property = [];
-        this.state.properties.map(item => {
+        this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
@@ -119,7 +119,7 @@ class ProductDetail extends Component {
 
         for (let i = 0; i < cart.length; i++)
             if (cart[i].id === product.id) {
-                if (JSON.stringify(cart[i].optionIds) == JSON.stringify(product.optionIds)) {
+                if (JSON.stringify(cart[i].optionIds) === JSON.stringify(product.optionIds)) {
                     cart[i].quantity++;
                     flag = true;
                     break;
@@ -157,7 +157,7 @@ class ProductDetail extends Component {
             listImages.push({ id: 0, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}` });
             let index = 0;
             for (let i = 0; i < images.length; i++) {
-                if (product.featureImage != images[i]) {
+                if (product.featureImage !== images[i]) {
                     listImages.push({ id: ++index, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${images[i]}` });
                 }
             }
@@ -332,7 +332,7 @@ class ProductDetail extends Component {
 const mapStateToProps = ({ cart }) => {
     const { count } = cart;
     return {
-        cart
+        count
     };
 };
 export default injectIntl(

@@ -8,69 +8,68 @@ import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Redirect } from 'react-router-dom';
 import ApiController from '../../../helpers/Api';
-import { CATEGORIES } from '../../../constants/api';
+import { SOURCE_CATEGORIES } from '../../../constants/api';
 
-class ProductSet extends Component {
+class SourceCategorySets extends Component {
   constructor(props) {
     super(props);
     this.state = {
       setId: this.props.match.params.id,
-      cateSet: {
-        categorySets: []
+      sourceCategorySet: {
+        setName: "",
+        sourceCategorySets: []
       }
     };
     this.messages = this.props.intl.messages;
   }
 
   componentDidMount() {
-    this.loadCurrentCateSet();
+    this.loadCurrentSourceCategorySet();
   }
 
-  loadCurrentCateSet = () => {
+  loadCurrentSourceCategorySet = () => {
     const { setId } = this.state;
-    this.getCateSet(setId);
+    this.getSourceCategorySet(setId);
   }
 
-  getCateSet = (id) => {
-    ApiController.get(`${CATEGORIES.set}/${id}`, {}, data => {
+  getSourceCategorySet = (id) => {
+    ApiController.get(`${SOURCE_CATEGORIES.set}/${id}`, {}, data => {
       this.setState({
-        cateSet: data
+        sourceCategorySet: data
       });
     })
   }
 
   removeFromProductSet = (cate) => {
-    let { cateSet } = this.state;
-    
-    ApiController.delete(`${CATEGORIES.removeFromSet}?ids[]=${cate.id}`, {}, data => {
-      this.loadCurrentCateSet();
+    ApiController.delete(`${SOURCE_CATEGORIES.removeFromSet}?ids=[${cate.id}]`, {}, data => {
+      this.loadCurrentSourceCategorySet();
     }, {
-      
+
     });
   };
 
   catTableColumn = () => [
     {
       Header: __(this.messages, "Tên ngành hàng tầng 1"),
-      accessor: "category.categoryNameViLevel1",
+      accessor: "categoryNameViLevel1",
       sortable: false,
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 2"),
       sortable: false,
-      accessor: "category.categoryNameViLevel2",
+      accessor: "categoryNameViLevel2",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 3"),
       sortable: false,
-      accessor: "category.categoryNameViLevel3",
+      accessor: "categoryNameViLevel3",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "Sàn"),
-      accessor: "category.site",
+      accessor: "site",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -110,6 +109,13 @@ class ProductSet extends Component {
     if (this.state.redirect) {
       return <Redirect to={`${this.state.redirect}`} />;
     }
+
+    const { sourceCategorySet } = this.state;
+    let source = [];
+    sourceCategorySet.sourceCategorySets.forEach(item => {
+      source.push(item.sourceCategory)
+    })
+
     return (
       <Fragment>
         <Row>
@@ -123,24 +129,21 @@ class ProductSet extends Component {
             <Card>
               <CardBody>
                 <CardTitle>
-                  {__(this.messages, 'Bộ ngành hàng')} <b>{this.state.cateSet.setName}</b>
+                  {__(this.messages, 'Bộ ngành hàng')} <b>{sourceCategorySet.setName}</b>
                 </CardTitle>
                 <Row>
                   <Colxx xxs="12">
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
-                        value={this.state.cateSet.setName}
+                        value={sourceCategorySet.setName}
                         onChange={e => {
-                          let { cateSet: cateSet } = this.state;
-
-                          cateSet.setName = e.target.value;
-
+                          sourceCategorySet.setName = e.target.value;
                           this.setState({
-                            cateSet: cateSet
+                            sourceCategorySet: sourceCategorySet
                           }, () => {
-                            this.cateSetList[this.indexOfSet] = cateSet;
-                            localStorage.setItem('cateSets', JSON.stringify(this.cateSetList));
+                            this.cateSetList[this.indexOfSet] = sourceCategorySet;
+                            localStorage.setItem('sourceCategorySets', JSON.stringify(this.cateSetList));
                           });
                         }}
                       />
@@ -153,7 +156,7 @@ class ProductSet extends Component {
                 <Row>
                   <Colxx xxs="12">
                     <ReactTable
-                      data={this.state.cateSet.categorySets}
+                      data={source}
                       columns={this.catTableColumn()}
                       defaultPageSize={10}
                       className="mb-4"
@@ -166,8 +169,8 @@ class ProductSet extends Component {
                 <Button
                   color="primary"
                   onClick={e => {
-                    localStorage.setItem('selectedItems', JSON.stringify(this.state.cateSet.categorySets));
-                    this.redirectTo("/app/products");
+                    localStorage.setItem('selectedItems', JSON.stringify(this.state.sourceCategorySet.sourceCategorySets));
+                    this.redirectTo("/app/source-products");
                   }}
                 >
                   {__(this.messages, "Tìm sản phẩm")}
@@ -181,4 +184,4 @@ class ProductSet extends Component {
   }
 }
 
-export default injectIntl(ProductSet);
+export default injectIntl(SourceCategorySets);

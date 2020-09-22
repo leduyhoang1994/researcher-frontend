@@ -4,11 +4,11 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import CateSeListTable from './CateSetTable';
-import { CATEGORIES } from '../../../constants/api';
+import SourceCategorySetTables from './SourceCategorySetTables';
+import { SOURCE_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
-class CateSet extends Component {
+class SourceCategorySets extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,7 +22,7 @@ class CateSet extends Component {
   }
 
   loadCateSets = () => {
-    ApiController.get(CATEGORIES.set, {}, data => {
+    ApiController.get(SOURCE_CATEGORIES.set, {}, data => {
       this.setState({ cateSetList: data });
     });
   }
@@ -45,7 +45,7 @@ class CateSet extends Component {
                 </CardTitle>
                 <Row>
                   <Colxx xxs="12">
-                    <CateSeListTable
+                    <SourceCategorySetTables
                       data={this.state.cateSetList}
                       component={this}
                     />
@@ -60,4 +60,4 @@ class CateSet extends Component {
   }
 }
 
-export default injectIntl(CateSet);
+export default injectIntl(SourceCategorySets);

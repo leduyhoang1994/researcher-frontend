@@ -6,7 +6,7 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import { Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-const ProductTableSet = ({
+const SourceCategorySetTables = ({
   data,
   component,
   existInSelectedProducts,
@@ -20,7 +20,7 @@ const ProductTableSet = ({
       sortable: false,
       accessor: "setName",
       Cell: props => <p className="text-muted">
-          <Link to={`/app/cate-sets/${props.original.id}`}>{props.value}</Link>
+          <Link to={`/app/source-category-sets/${props.original.id}`}>{props.value}</Link>
         </p>
     },
   ];
@@ -38,4 +38,4 @@ const ProductTableSet = ({
   );
 };
 
-export default injectIntl(ProductTableSet);
+export default injectIntl(SourceCategorySetTables);

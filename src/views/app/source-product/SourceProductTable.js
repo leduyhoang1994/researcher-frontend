@@ -8,13 +8,13 @@ import { isFunction } from 'formik';
 import Select from 'react-select';
 import ResourceTable from '../../../components/data-table';
 import "./style.scss";
-import { PRODUCTS } from '../../../constants/api';
+import { SOURCE_PRODUCTS } from '../../../constants/api';
 
-const ProductTable = ({
+const SourceProductTable = ({
   data,
   component,
   allProductSelected,
-  handleCheckall,
+  handleCheckAll,
   existInSelectedProducts,
   addToSelectedProducts,
   removeFromSelectedProducts,
@@ -27,8 +27,8 @@ const ProductTable = ({
       Header: (e) => {
         return (
           <input type="checkbox" onChange={(event) => {
-            if (isFunction(handleCheckall))
-              handleCheckall(event.target.checked, e?.data)
+            if (isFunction(handleCheckAll))
+              handleCheckAll(event.target.checked, e?.data)
           }} checked={isFunction(allProductSelected) ? allProductSelected(e?.data.map(item => item._original)) : false} />
         )
       },
@@ -69,7 +69,7 @@ const ProductTable = ({
               <Button
                 size="xs"
                 color="success"
-                href={`/app/list-product/edit?product-id=${props.value}`}
+                href={`/app/ubox-products/edit?product-id=${props.value}`}
               >
                 {__(component.messages, "Biên tập")}
               </Button>
@@ -84,7 +84,7 @@ const ProductTable = ({
       filterable: false,
       width: 50,
       accessor: "productImage",
-      Cell: props => <img width="50" src={props.value} />
+      Cell: props => <img width="50" src={props.value} alt=""/>
     },
     {
       Header: __(component.messages, "Tên ngành hàng tầng 3"),
@@ -196,11 +196,11 @@ const ProductTable = ({
   ];
 
   const apiResource = {
-    url: PRODUCTS.all,
+    url: SOURCE_PRODUCTS.all,
     query: {
       ...filter,
       s: filter?.s || null,
-      join: ["productSets", "productEdit"]
+      join: ["sourceProductSets", "uboxProducts"]
     }
   }
 
@@ -234,4 +234,4 @@ const ProductTable = ({
   );
 };
 
-export default injectIntl(ProductTable);
+export default injectIntl(SourceProductTable);

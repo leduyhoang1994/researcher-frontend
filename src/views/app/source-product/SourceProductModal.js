@@ -4,19 +4,19 @@ import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
 import ApiController from '../../../helpers/Api';
-import { PRODUCTS } from '../../../constants/api';
+import { SOURCE_PRODUCTS, SETS } from '../../../constants/api';
 import { arrayColumn } from '../../../helpers/Utils';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
-class ProductSetModal extends Component {
+class SourceProductModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedProducts: this.props.selectedProducts || [],
-      radioValue: "update-product-set",
-      listProductSet: [],
+      radioValue: "update-source-product-set",
+      listSourceProductSets: [],
       options: [],
-      productSetName: "",
+      sourceProductSetName: "",
       selected: ""
     };
   }
@@ -26,7 +26,7 @@ class ProductSetModal extends Component {
   }
 
   loadProductSets = () => {
-    ApiController.call('get', PRODUCTS.set, {}, data => {
+    ApiController.call('get', SETS.products, {}, data => {
       let options = [];
       if (data) {
         data.forEach(element => {
@@ -37,14 +37,14 @@ class ProductSetModal extends Component {
         });
       }
       this.setState({
-        listProductSet: data,
+        listSourceProductSets: data,
         options: options
       })
     });
   }
 
   handleChange = (data) => {
-    if (data === "add-new-product-set") {
+    if (data === "add-new-source-product-set") {
       this.setState({
         selected: null
       });
@@ -52,26 +52,26 @@ class ProductSetModal extends Component {
     this.setState({ radioValue: data });
   }
 
-  createProductSet = () => {
-    const { selectedProducts, listProductSet, selected } = this.state;
+  createSourceProductSet = () => {
+    const { selectedProducts, listSourceProductSets, selected } = this.state;
 
-    const productSetName = this.state.productSetName;
+    const sourceProductSetName = this.state.sourceProductSetName;
 
-    if (productSetName == null || productSetName === []) {
+    if (sourceProductSetName == null || sourceProductSetName === []) {
       return;
     }
 
     const productIds = arrayColumn(selectedProducts, "id");
 
-    if (this.state.radioValue === "update-product-set") {
+    if (this.state.radioValue === "update-source-product-set") {
       let setId = null;
-      listProductSet.forEach(product => {
+      listSourceProductSets.forEach(product => {
         if (product.setName === selected.value) {
           setId = product.id;
         }
       })
       //Add to existed cateSet
-      ApiController.post(PRODUCTS.addToSet, {
+      ApiController.post(SOURCE_PRODUCTS.addToSet, {
         setId: setId,
         itemId: productIds
       }, data => {
@@ -79,8 +79,8 @@ class ProductSetModal extends Component {
       });
     } else {
       //Create new cateSet
-      ApiController.post(PRODUCTS.set, {
-        setName: productSetName,
+      ApiController.post(SETS.products, {
+        setName: sourceProductSetName,
         ids: productIds
       }, data => {
         NotificationManager.success("Thành công", "Thành công");
@@ -94,9 +94,9 @@ class ProductSetModal extends Component {
   //   })
   // }
 
-  setProductSetName = (event) => {
+  setSourceProductSetName = (event) => {
     this.setState({
-      productSetName: event.target.value
+      sourceProductSetName: event.target.value
     })
   }
 
@@ -107,14 +107,10 @@ class ProductSetModal extends Component {
   };
 
   ShowInputArea = () => {
-    
-
-    if (this.state.radioValue === "update-product-set") {
+    if (this.state.radioValue === "update-source-product-set") {
       return (
         <div>
-          <Label>
-            Chọn bộ sản phẩm
-                  </Label>
+          <Label>Chọn bộ sản phẩm</Label>
           <Select
             options={this.state.options}
             value={this.state.selected}
@@ -125,16 +121,13 @@ class ProductSetModal extends Component {
     } else {
       return (
         <div>
-          <Label>
-            {/* <IntlMessages id="user.email" /> */}
-                      Nhập tên bộ sản phẩm
-                  </Label>
+          <Label>Nhập tên bộ sản phẩm</Label>
           <Input
             type="text"
             className="form-control"
             name="name"
-            value={this.state.productSetName}
-            onChange={this.setProductSetName}
+            value={this.state.sourceProductSetName}
+            onChange={this.setSourceProductSetName}
           />
         </div>
       )
@@ -143,7 +136,7 @@ class ProductSetModal extends Component {
 
   render() {
     const { isOpen, toggleModal } = this.props;
-    const { handleChange, createProductSet } = this;
+    const { handleChange, createSourceProductSet } = this;
 
     return (
       <div>
@@ -159,13 +152,13 @@ class ProductSetModal extends Component {
               <Colxx sm={10}>
                 <FormGroup check>
                   <Label check>
-                    <Input type="radio" name="radio" defaultChecked onClick={() => handleChange("update-product-set")} />
+                    <Input type="radio" name="radio" defaultChecked onClick={() => handleChange("update-source-product-set")} />
                     <IntlMessages id="forms.first-radio" />
                   </Label>
                 </FormGroup>
                 <FormGroup check>
                   <Label check>
-                    <Input type="radio" name="radio" onClick={() => handleChange("add-new-product-set")} />
+                    <Input type="radio" name="radio" onClick={() => handleChange("add-new-source-product-set")} />
                     <IntlMessages id="forms.second-radio" />
                   </Label>
                 </FormGroup>
@@ -186,7 +179,7 @@ class ProductSetModal extends Component {
             <Button variant="primary"
               onClick={() => {
                 toggleModal();
-                createProductSet();
+                createSourceProductSet();
               }}
             >Save</Button>
           </ModalFooter>
@@ -196,4 +189,4 @@ class ProductSetModal extends Component {
   }
 }
 
-export default ProductSetModal;
+export default SourceProductModal;

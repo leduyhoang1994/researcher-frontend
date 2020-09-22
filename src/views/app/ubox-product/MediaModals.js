@@ -1,7 +1,7 @@
 import React from 'react';
-import { Modal, ModalBody } from 'reactstrap';
+import { Modal } from 'reactstrap';
 
-class MediaModal extends React.Component {
+class MediaModals extends React.Component {
 
     constructor(props) {
         super(props);
@@ -32,4 +32,4 @@ class MediaModal extends React.Component {
     }
 }
 
-export default MediaModal;
+export default MediaModals;

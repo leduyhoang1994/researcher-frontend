@@ -4,15 +4,15 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import ProductSeListTable from './ProductSetTable';
-import { PRODUCTS } from '../../../constants/api';
+import SourceProductSetTables from './SourceProductSetTables';
+import { SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
-class ProductSet extends Component {
+class SourceProductSet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      productSetList : []
+      sourceProductSetList : []
     };
     this.messages = this.props.intl.messages;
   }
@@ -22,8 +22,8 @@ class ProductSet extends Component {
   }
 
   loadProductSets = () => {
-    ApiController.get(PRODUCTS.set, {}, data => {
-      this.setState({ productSetList: data });
+    ApiController.get(SETS.products, {}, data => {
+      this.setState({ sourceProductSetList: data });
     });
   }
   
@@ -45,8 +45,8 @@ class ProductSet extends Component {
                 </CardTitle>
                 <Row>
                   <Colxx xxs="12">
-                    <ProductSeListTable
-                      data={this.state.productSetList}
+                    <SourceProductSetTables
+                      data={this.state.sourceProductSetList}
                       component={this}
                     />
                   </Colxx>
@@ -60,4 +60,4 @@ class ProductSet extends Component {
   }
 }
 
-export default injectIntl(ProductSet);
+export default injectIntl(SourceProductSet);

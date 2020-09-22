@@ -7,27 +7,27 @@ const HomePage = React.lazy(() =>
 );
 
 const ProductList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/product/ProductList')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/product/ProductList')
 );
 
 const ProductDetail = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/product/ProductDetail')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/product/ProductDetail')
 );
 
 const OrderList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/order/OrderList')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/order/OrderList')
 );
 
 const CartList = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/cart/CartList')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/cart/CartList')
 );
 
 const OrderDetail = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/order/OrderDetail')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/order/OrderDetail')
 );
 
 const Filter = React.lazy(() =>
-  import(/* webpackChunkName: "product-set-123" */ '../store/filter/Filter')
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/filter/Filter')
 );
 
 const User = ({ match }) => {

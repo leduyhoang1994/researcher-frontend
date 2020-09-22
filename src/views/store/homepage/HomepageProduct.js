@@ -1,6 +1,6 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { Card, CardBody, Badge, CardSubtitle, CardText, CardImg } from 'reactstrap';
+import { Card, CardBody, CardText, CardImg } from 'reactstrap';
 import './HomepageProduct.scss';
 
 class HomepageProduct extends React.Component {

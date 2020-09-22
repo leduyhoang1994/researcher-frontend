@@ -2,19 +2,19 @@ import React from 'react';
 import { Row, Button } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import './Media.scss';
-import UploadModal from './UploadModal';
+import UploadModals from './UploadModals';
 import ApiController from '../../../helpers/Api';
-import { PRODUCT_EDIT } from '../../../constants/api';
+import { UBOX_PRODUCTS } from '../../../constants/api';
 import GlideComponent from "../../../components/carousel/GlideComponent";
 import { NotificationManager } from '../../../components/common/react-notifications';
-import MediaModal from './MediaModal';
+import MediaModals from './MediaModals';
 
-class Media extends React.Component {
+class Medias extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             files: null,
-            productId: this.props.productId,
+            sourceProductId: this.props.sourceProductId,
             mediaItems: {
                 images: [],
                 videos: []
@@ -74,7 +74,7 @@ class Media extends React.Component {
     removeImage = (url) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa file này không?')) {
             var newURL = url.replace(/^[a-z]{4,5}\:\/{2}[a-z0-9.]{1,}\:[0-9]{1,4}.(.*)/, '$1'); // http or https
-            ApiController.call('delete', `${PRODUCT_EDIT.media}`, {
+            ApiController.call('delete', `${UBOX_PRODUCTS.media}`, {
                 filePath: newURL
             }, data => {
                 this.props.handleRemoveMediaServer()
@@ -251,14 +251,14 @@ class Media extends React.Component {
                         </Button>
                     </Colxx>
                 </Row>
-                <UploadModal
+                <UploadModals
                     isOpen={this.state.isUploadModalOpen}
                     toggle={this.toggleUploadModal}
-                    productId={this.state.productId}
+                    sourceProductId={this.state.sourceProductId}
                     reloadMedia={this.loadProductMedia}
                     getListImages={this.getListMedias}
                 />
-                <MediaModal
+                <MediaModals
                     isOpen={this.state.isMediaModalOpen}
                     toggle={this.toggleMediaModal}
                     media={this.state.mediaModal}
@@ -270,4 +270,4 @@ class Media extends React.Component {
     }
 }
 
-export default Media;
+export default Medias;

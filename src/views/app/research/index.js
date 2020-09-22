@@ -5,9 +5,9 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import Filter from '../filter/Filter';
-import Category from '../category/Category';
+import SourceCategories from '../source-category/SourceCategories';
 import ApiController from '../../../helpers/Api';
-import { CATEGORIES } from '../../../constants/api';
+import { SOURCE_CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
@@ -120,7 +120,7 @@ class Research extends Component {
             return;
         }
 
-        ApiController.call("POST", CATEGORIES.filter, filterOptions, data => {
+        ApiController.call("POST", SOURCE_CATEGORIES.filter, filterOptions, data => {
             this.setState({
                 categories: data
             });
@@ -157,10 +157,21 @@ class Research extends Component {
         }
     }
 
-
     loadCateSets = () => {
-        ApiController.get(CATEGORIES.set, {}, data => {
+        ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
+        .then(data => {
             this.setState({ cateSetList: data });
+        }).catch(error => {
+            console.log(error);
+            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+            if(error.response.status === 401) {
+                setTimeout(function(){ 
+                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                    setTimeout(function(){ 
+                        window.open("/user/login", "_self")
+                    }, 1500);
+                }, 1500);
+            }
         });
     }
 
@@ -188,7 +199,7 @@ class Research extends Component {
 
         if (cateSet) {
             //Add to existed cateSet
-            ApiController.post(CATEGORIES.addToSet, {
+            ApiController.post(SOURCE_CATEGORIES.addToSet, {
                 setId: cateSet.value,
                 itemId: cateIds
             }, data => {
@@ -196,7 +207,7 @@ class Research extends Component {
             });
         } else {
             //Create new cateSet
-            ApiController.post(CATEGORIES.set, {
+            ApiController.post(SOURCE_CATEGORIES.set, {
                 setName: cateSetName,
                 ids: cateIds
             }, data => {
@@ -253,7 +264,7 @@ class Research extends Component {
                                 <CardTitle>
                                     {__(this.messages, "Danh sách top ngành hàng")}
                                 </CardTitle>
-                                <Category
+                                <SourceCategories
                                     categories={this.state.categories}
                                     addToSelectedCats={this.addToSelectedCats}
                                     removeFromSelectedCats={this.removeFromSelectedCats}
@@ -276,7 +287,7 @@ class Research extends Component {
                                     color="primary"
                                     onClick={e => {
                                         localStorage.setItem('selectedItems', JSON.stringify(this.state.selectedCats));
-                                        this.redirectTo("/app/products");
+                                        this.redirectTo("/app/source-products");
                                     }}
                                 >
                                     {__(this.messages, "Tìm sản phẩm")}

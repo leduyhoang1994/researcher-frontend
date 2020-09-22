@@ -19,7 +19,7 @@ class Property extends React.Component {
     componentDidUpdate() {
         const { properties } = this.props;
         const property = this.state.properties;
-        if (property.length != properties.length) {
+        if (property.length !== properties.length) {
             this.setState({
                 properties: properties
             }, () => {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import "./style.scss";
@@ -33,7 +32,7 @@ const dataTableColumns = [
     {
         Header: "Ngành hàng",
         width: 250,
-        accessor: "category.nameLv3",
+        accessor: "nameLv3",
         Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -93,7 +92,7 @@ const dataTableColumns = [
     },
 ]
 
-const ProductTable = (props) => {
+const UboxProductTables = (props) => {
     let data = props.products;
     return (
         <div>
@@ -122,4 +121,4 @@ const ProductTable = (props) => {
     );
 };
 
-export default injectIntl(ProductTable);
+export default injectIntl(UboxProductTables);

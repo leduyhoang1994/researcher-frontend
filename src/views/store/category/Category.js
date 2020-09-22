@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
 import { CATEGORY_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import './Category.scss';
@@ -79,7 +78,7 @@ class Category extends Component {
     }
 
     render() {
-        const { categories, isLoading, subCategory } = this.state;
+        const { categories, isLoading } = this.state;
 
         if (isLoading) {
             return this.renderLoading();

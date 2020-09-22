@@ -3,14 +3,14 @@ import { Row, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { CATEGORIES, ATTRIBUTES } from '../../../constants/api';
+import { SOURCE_CATEGORIES, ATTRIBUTES, UBOX_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Creatable } from 'react-select';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
-class EditCategory extends Component {
+class EditUboxCategories extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -58,7 +58,7 @@ class EditCategory extends Component {
     }
 
     getCategories = (setId) => {
-        ApiController.get(`${CATEGORIES.allEdit}/${setId}`, {}, data => {
+        ApiController.get(`${UBOX_CATEGORIES.all}/${setId}`, {}, data => {
             let option1 = {};
             option1.label = data.nameLv1;
             option1.value = data.nameLv1;
@@ -73,8 +73,8 @@ class EditCategory extends Component {
 
             const description = data.description;
 
-            if (data.categoryEditAttributes) {
-                let attributes = data.categoryEditAttributes;
+            if (data.uboxCategoryAttributes) {
+                let attributes = data.uboxCategoryAttributes;
                 let listOptions = [];
                 attributes.forEach(item => {
                     if (item.attribute) {
@@ -95,7 +95,22 @@ class EditCategory extends Component {
     }
 
     getAllCategories = () => {
-        ApiController.get(CATEGORIES.allEdit, {}, data => {
+        ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
+        .then(data => {
+            this.setState({ cateSetList: data });
+        }).catch(error => {
+            console.log(error);
+            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+            if(error.response.status === 401) {
+                setTimeout(function(){ 
+                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                    setTimeout(function(){ 
+                        window.open("/user/login", "_self")
+                    }, 1500);
+                }, 1500);
+            }
+        });
+        ApiController.get(UBOX_CATEGORIES.all, {}, data => {
             let options1 = [];
             let options2 = [];
             let options3 = [];
@@ -204,7 +219,7 @@ class EditCategory extends Component {
     callApi = async () => {
         const id = this.state.setId;
         if (id) {
-            await Api.callAsync('put', CATEGORIES.allEdit, {
+            await Api.callAsync('put', UBOX_CATEGORIES.all, {
                 id: parseInt(id),
                 nameLv1: this.state.categoryLv1.value,
                 nameLv2: this.state.categoryLv2.value,
@@ -212,13 +227,13 @@ class EditCategory extends Component {
                 description: this.state.valueText,
                 attributeIds: this.state.attributeIds
             }).then(data => {
-                window.open(`/app/list-cate/edit/${id}`, "_self")
+                window.open(`/app/ubox-categories/edit/${id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             }).catch(error => {
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
-            const data = await Api.callAsync('post', CATEGORIES.allEdit, {
+            const data = await Api.callAsync('post', UBOX_CATEGORIES.all, {
                 nameLv1: this.state.categoryLv1.value,
                 nameLv2: this.state.categoryLv2.value,
                 nameLv3: this.state.categoryLv3.value,
@@ -230,7 +245,7 @@ class EditCategory extends Component {
                 return error.response.data;
             });
             if (data.success) {
-                window.open(`/app/list-cate/edit/${data.result.categoryEdit.id}`, "_self")
+                window.open(`/app/ubox-categories/edit/${data.result.uboxCategory.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
@@ -362,4 +377,4 @@ class EditCategory extends Component {
     }
 }
 
-export default injectIntl(EditCategory);
+export default injectIntl(EditUboxCategories);

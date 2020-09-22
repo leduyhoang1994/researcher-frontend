@@ -4,11 +4,11 @@ import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
-import { CATEGORIES } from '../../../constants/api';
+import { UBOX_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 
-class Category extends Component {
+class UboxCategories extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,13 +22,13 @@ class Category extends Component {
   }
 
   getCategories = () => {
-    ApiController.get(CATEGORIES.allEdit, {}, data => {
+    ApiController.get(UBOX_CATEGORIES.all, {}, data => {
       this.setState({ categories: data });
     });
   }
 
   handleClickRow = (row) => {
-    window.open(`/app/list-cate/edit/${row.id}`, "_self")
+    window.open(`/app/ubox-categories/edit/${row.id}`, "_self")
   }
 
   render() {
@@ -47,7 +47,7 @@ class Category extends Component {
                 />
 
                 <div className="text-right card-title">
-                  <Link to="/app/list-cate/add">
+                  <Link to="/app/ubox-categories/add">
                     <Button
                       className="mr-2"
                       color="warning"
@@ -66,4 +66,4 @@ class Category extends Component {
   }
 }
 
-export default injectIntl(Category);
+export default injectIntl(UboxCategories);

@@ -12,17 +12,17 @@ const multiMenu = [
     {
       icon: "iconsminds-qr-code",
       label: "Danh sách ngành hàng",
-      to: "/app/cate-sets"
+      to: "/app/source-category-sets"
     },
     {
       icon: "iconsminds-qr-code",
       label: "Sản phẩm",
-      to: "/app/products"
+      to: "/app/source-products"
     },
     {
       icon: "iconsminds-qr-code",
       label: "Bộ Sản phẩm",
-      to: "/app/product-sets",
+      to: "/app/source-product-sets",
     }
     ]
   },
@@ -30,19 +30,19 @@ const multiMenu = [
     id: "ubox-product",
     icon: "iconsminds-qr-code",
     label: "Sản phẩm Ubox",
-    to: "/app/list-product",
+    to: "/app/ubox-products",
     subs: [
       {
         id: "cateList",
         icon: "iconsminds-qr-code",
         label: "Ngành hàng",
-        to: "/app/list-cate",
+        to: "/app/ubox-categories",
       },
       {
         id: "product",
         icon: "iconsminds-qr-code",
         label: "Sản phẩm",
-        to: "/app/list-product"
+        to: "/app/ubox-products"
       }
     ]
   }

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { injectIntl } from 'react-intl';
 import { Card, CardBody, Row } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
-import { PRODUCT_EDIT } from '../../../constants/api';
+import { UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
 import DataTablePagination from '../../../components/DatatablePagination';
@@ -34,11 +34,11 @@ class Filter extends React.Component {
         const page = this.state.dataTable.page || 0;
         const size = this.state.dataTable.defaultPageSize || 10;
         this.setState({ isLoading: true });
-        ApiController.post(PRODUCT_EDIT.filter, { productEditName: search, page: page, size: size }, data => {
+        ApiController.post(UBOX_PRODUCTS.filter, { uboxProductName: search, page: page, size: size }, data => {
             this.setState({
                 resultFilter: data
             }, () => {
-                this.state.resultFilter.productEdits.forEach(item => {
+                this.state.resultFilter.uboxProducts.forEach(item => {
                     if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
                     array.push(item);
                 });
@@ -108,7 +108,7 @@ class Filter extends React.Component {
                         {products[0] ? (
                             <>
                                 <Row>
-                                    <Colxx xxs="3">
+                                    <Colxx xxs="3" style={{ borderRight: "2px solid #eee" }}>
                                         <Category />
                                     </Colxx>
                                     <Colxx xxs="9">
@@ -124,25 +124,26 @@ class Filter extends React.Component {
                                                 })
                                             }
                                         </Row>
+                                        <Row>
+                                            {/* className="d-md-inline-flex" */}
+                                            <Colxx xxs="12" className="text-center mt-5">
+                                                <DataTablePagination
+                                                    page={dataTable.page}
+                                                    pages={dataTable.pages}
+                                                    defaultPageSize={dataTable.defaultPageSize}
+                                                    canPrevious={dataTable.canPrevious}
+                                                    canNext={dataTable.canNext}
+                                                    pageSizeOptions={dataTable.pageSizeOptions}
+                                                    showPageSizeOptions={true}
+                                                    showPageJump={true}
+                                                    onPageChange={this.onPageChange}
+                                                    onPageSizeChange={this.onPageSizeChange}
+                                                />
+                                            </Colxx>
+                                        </Row>
                                     </Colxx>
                                 </Row>
-                                <Row>
-                                    {/* className="d-md-inline-flex" */}
-                                    <Colxx xxs="12" className="text-center mt-3">
-                                        <DataTablePagination
-                                            page={dataTable.page}
-                                            pages={dataTable.pages}
-                                            defaultPageSize={dataTable.defaultPageSize}
-                                            canPrevious={dataTable.canPrevious}
-                                            canNext={dataTable.canNext}
-                                            pageSizeOptions={dataTable.pageSizeOptions}
-                                            showPageSizeOptions={true}
-                                            showPageJump={true}
-                                            onPageChange={this.onPageChange}
-                                            onPageSizeChange={this.onPageSizeChange}
-                                        />
-                                    </Colxx>
-                                </Row>
+
                             </>
 
                         ) : <h1 >Không tìm thấy sản phẩm nào!</h1>

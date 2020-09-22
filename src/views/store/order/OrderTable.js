@@ -1,10 +1,8 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import "./style.scss";
-import * as moment from 'moment'
 
 const dataTableColumns = [
     {

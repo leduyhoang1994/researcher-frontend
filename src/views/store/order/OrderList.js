@@ -11,7 +11,6 @@ class OrderList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            setId: 1,
             orders: [],
         };
         this.messages = this.props.intl.messages;
@@ -22,8 +21,7 @@ class OrderList extends Component {
     }
 
     getProducts = () => {
-        const id = this.state.setId;
-        ApiController.get(`${ORDERS.getBySellerId}`, {}, data => {
+        ApiController.get(`${ORDERS.getBySeller}`, {}, data => {
             this.setState({
                 orders: data
             })

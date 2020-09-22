@@ -3,10 +3,9 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
-import { Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-const ProductTableSet = ({
+const SourceProductSetTables = ({
   data,
   component,
   existInSelectedProducts,
@@ -20,7 +19,7 @@ const ProductTableSet = ({
       sortable: false,
       accessor: "setName",
       Cell: props => <p className="text-muted">
-          <Link to={`/app/product-sets/${props.original.id}`}>{props.value}</Link>
+          <Link to={`/app/source-product-sets/${props.original.id}`}>{props.value}</Link>
         </p>
     },
   ];
@@ -38,4 +37,4 @@ const ProductTableSet = ({
   );
 };
 
-export default injectIntl(ProductTableSet);
+export default injectIntl(SourceProductSetTables);
