@@ -25,7 +25,7 @@ class ResearchSetModal extends Component {
     loadProductSets = () => {
         ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
         .then(data => {
-            this.setState({ cateSetList: data });
+            this.setState({ cateSetList: data.data.result });
         }).catch(error => {
             console.log(error);
             NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
