@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import {  NavLink } from 'react-router-dom';
 import "./style.scss";
 import { Card, CardBody, CardSubtitle, CardText } from 'reactstrap';
-import { loadingSpinnerImg } from '../../../constants/defaultValues';
+import { defaultImg, loadingSpinnerImg } from '../../../constants/defaultValues';
 
 // const addToCart = products => {
 //     const { id, name, featureImage, priceMin, priceMax } = products;
@@ -57,7 +57,7 @@ class Product extends React.Component {
     }
 
     imgOnError = (e) => {
-        e.target.src = "/assets/products/default-image.png";
+        e.target.src = defaultImg;
     }
 
     render() {

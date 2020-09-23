@@ -6,6 +6,7 @@ import { ORDERS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import OrderDetailTable from './OrderDetailTable';
+import { defaultImg } from '../../../constants/defaultValues';
 
 class OrderDetail extends Component {
     constructor(props) {
@@ -49,7 +50,7 @@ class OrderDetail extends Component {
             if (product.uboxProduct.featureImage) {
                 value.featureImage = product.uboxProduct.featureImage;
             } else {
-                value.featureImage = "/assets/products/default-image.png"
+                value.featureImage = defaultImg
             }
             value.name = product.uboxProduct.name;
             value.priceMax = product.uboxProduct.priceMax;

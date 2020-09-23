@@ -41,11 +41,10 @@ class SourceCategorySets extends Component {
   }
 
   removeFromProductSet = (cate) => {
-    ApiController.delete(`${SOURCE_CATEGORIES.removeFromSet}?ids=[${cate.id}]`, {}, data => {
+    ApiController.delete(`${SOURCE_CATEGORIES.removeFromSet}`, {
+      ids: [cate?.categoryId]}, data => {
       this.loadCurrentSourceCategorySet();
-    }, {
-
-    });
+    }, {});
   };
 
   catTableColumn = () => [
@@ -112,8 +111,12 @@ class SourceCategorySets extends Component {
 
     const { sourceCategorySet } = this.state;
     let source = [];
+    
     sourceCategorySet.sourceCategorySets.forEach(item => {
-      source.push(item.sourceCategory)
+      let category = {};
+      category = item.sourceCategory;
+      category.categoryId = item.id;
+      source.push(category)
     })
 
     return (

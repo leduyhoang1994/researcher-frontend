@@ -8,11 +8,11 @@ const getMenuTitle = sub => {
 };
 
 const getUrl = (path, sub, index) => {
-  if (index === 0) {
-    return "";
-  } else {
+  // if (index === 0) {
+  //   return "";
+  // } else {
     return path.split(sub)[0] + sub;
-  }
+  // }
 };
 
 const BreadcrumbContainer = ({ heading, match }) => {

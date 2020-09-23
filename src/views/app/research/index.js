@@ -35,7 +35,7 @@ class Research extends Component {
             isShow: false,
             radioValue: "first-radio",
             cateSetName: "",
-            isSiteCodeCheckAll: {}
+            isSiteCodeCheckAll: {},
         };
         this.messages = this.props.intl.messages;
     }
@@ -52,16 +52,45 @@ class Research extends Component {
         return exist;
     }
 
+    getItemOfObject = (key, obj) => {
+        for (let index in obj) {
+            if (index === key) {
+                return { source: obj[index] };
+            }
+        }
+        return null;
+    }
+
     addToSelectedCats = (cate) => {
-        const { selectedCats } = this.state;
         let exist = this.existInSelectedCats(cate);
         if (!exist) {
-            selectedCats.push(cate);
-        }
+            const { selectedCats, categories, } = this.state;
+            const { site } = cate;
+            const { source } = this.getItemOfObject(site, categories);
+            const countSource = source.filter(function (item) {
+                if (item.id) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }).length;
 
-        this.setState({
-            selectedCats: selectedCats
-        });
+            selectedCats.push(cate);
+            let countSelectedCate = 0;
+            selectedCats.forEach(item => {
+                if(item.site === site) {
+                    countSelectedCate++;
+                }
+            })
+
+            if(countSource === countSelectedCate) {
+                this.setSelectAll(site, true);
+            }
+            
+            this.setState({
+                selectedCats: selectedCats
+            });
+        }
     };
 
     removeFromSelectedCats = (cates) => {
@@ -159,20 +188,20 @@ class Research extends Component {
 
     loadCateSets = () => {
         ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
-        .then(data => {
-            this.setState({ cateSetList: data });
-        }).catch(error => {
-            console.log(error);
-            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-            if(error.response.status === 401) {
-                setTimeout(function(){ 
-                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
-                    setTimeout(function(){ 
-                        window.open("/user/login", "_self")
+            .then(data => {
+                this.setState({ cateSetList: data });
+            }).catch(error => {
+                console.log(error);
+                NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+                if (error.response.status === 401) {
+                    setTimeout(function () {
+                        NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                        setTimeout(function () {
+                            window.open("/user/login", "_self")
+                        }, 1500);
                     }, 1500);
-                }, 1500);
-            }
-        });
+                }
+            });
     }
 
     cateSetName = (data) => {

@@ -18,6 +18,7 @@ import GlideComponentThumbs from "../../../components/carousel/GlideComponentThu
 import { slides, advert } from "../../../data/slideShow"
 import { NavLink } from "react-router-dom";
 import HomePageCarousel from './HomePageCarousel';
+import { defaultImg } from '../../../constants/defaultValues';
 
 class Homepage extends React.Component {
 
@@ -80,7 +81,7 @@ class Homepage extends React.Component {
                 products: data.uboxProducts
             }, () => {
                 this.state.products.forEach(item => {
-                    if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
+                    if (!item.featureImage) item.featureImage = defaultImg;
                     array.push(item);
                 });
                 this.setState({
@@ -102,7 +103,7 @@ class Homepage extends React.Component {
                                 <Category />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
-                                <div className="p-0">
+                                <div className="p-0 w-70 float-left">
                                     {
                                         slides &&
                                         <HomePageCarousel
@@ -110,7 +111,7 @@ class Homepage extends React.Component {
                                         />
                                     }
                                 </div>
-                                <div className="p-0">
+                                <div className="p-0 w-30 float-left">
                                     {advert.map((item, index) => {
                                         if (index < 3) {
                                             return (

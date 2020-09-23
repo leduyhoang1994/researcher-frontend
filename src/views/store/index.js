@@ -68,6 +68,10 @@ const User = ({ match }) => {
             render={props => <HomePage {...props} />}
           />
           <Route
+            path={`${match.url}/store`}
+            render={props => <HomePage {...props} />}
+          />
+          <Route
             path={`${match.url}/`}
             render={props => <HomePage {...props} />}
           />

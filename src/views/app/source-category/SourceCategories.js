@@ -67,10 +67,11 @@ class SourceCategories extends Component {
         <div className="text-center">
           <Input
             type="checkbox"
+            name={siteCode}
             checked={this.props.existInSelectedCats(props.original)}
             onChange={e => {
               if (e.target.checked) {
-                this.props.addToSelectedCats(props.original);
+                this.props.addToSelectedCats(props.original, e.target.name);
               } else {
                 this.props.removeFromSelectedCats(props.original);
               }

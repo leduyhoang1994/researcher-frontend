@@ -12,6 +12,7 @@ import GlideComponentThumbs from "../../../components/carousel/GlideComponentThu
 import { NotificationManager } from "../../../components/common/react-notifications";
 import { numberWithCommas } from "../../../helpers/Utils";
 import Property from "./Property";
+import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
 
 
@@ -102,9 +103,8 @@ class ProductDetail extends Component {
     }
 
     addToCart = () => {
-        const { optionIds } = this.state;
+        const { optionIds, quantity } = this.state;
         const { id, name, featureImage, priceMin, priceMax, } = this.state.product;
-        const quantity = this.state.quantity || 1;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
@@ -117,15 +117,15 @@ class ProductDetail extends Component {
         if (cart === null) cart = [];
         else cart = JSON.parse(cart);
 
-        for (let i = 0; i < cart.length; i++)
+        for (let i = 0; i < cart.length; i++) {
             if (cart[i].id === product.id) {
                 if (JSON.stringify(cart[i].optionIds) === JSON.stringify(product.optionIds)) {
-                    cart[i].quantity++;
+                    cart[i].quantity += quantity;
                     flag = true;
                     break;
                 }
             }
-
+        }
         if (!flag) cart.push(product);
 
         localStorage.setItem("cart", JSON.stringify(cart));
@@ -154,11 +154,11 @@ class ProductDetail extends Component {
         const { images } = product;
         let listImages = [];
         if (images && product) {
-            listImages.push({ id: 0, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}` });
+            listImages.push({ id: 0, img: product.featureImage ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}${defaultImg}` });
             let index = 0;
             for (let i = 0; i < images.length; i++) {
                 if (product.featureImage !== images[i]) {
-                    listImages.push({ id: ++index, img: `${process.env.REACT_APP_MEDIA_BASE_PATH}${images[i]}` });
+                    listImages.push({ id: ++index, img: images[i] ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${images[i]}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}${defaultImg}`});
                 }
             }
         }
@@ -166,7 +166,7 @@ class ProductDetail extends Component {
             <Fragment >
                 <Row>
                     <Colxx xxs="12">
-                        <Breadcrumb heading="menu.product" match={this.props.match} />
+                        <Breadcrumb heading="menu.products" match={this.props.match} />
                         {/* <Separator className="mb-5" /> */}
                     </Colxx>
                 </Row>
@@ -211,8 +211,8 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                            <p className="product-price">{numberWithCommas(parseInt(product.priceMin))} VNĐ</p>
-                                            <p className="product-price">{numberWithCommas(parseInt(product.futurePriceMin))} VNĐ</p>
+                                            <p className="product-price">{numberWithCommas(parseFloat(product.priceMin))} VNĐ</p>
+                                            <p className="product-price">{numberWithCommas(parseFloat(product.futurePriceMin))} VNĐ</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property

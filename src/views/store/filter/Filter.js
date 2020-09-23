@@ -7,6 +7,7 @@ import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
 import DataTablePagination from '../../../components/DatatablePagination';
 import Category from '../category/Category';
+import { defaultImg } from '../../../constants/defaultValues';
 
 class Filter extends React.Component {
 
@@ -39,7 +40,7 @@ class Filter extends React.Component {
                 resultFilter: data
             }, () => {
                 this.state.resultFilter.uboxProducts.forEach(item => {
-                    if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
+                    if (!item.featureImage) item.featureImage = defaultImg;
                     array.push(item);
                 });
                 const dataTable = {

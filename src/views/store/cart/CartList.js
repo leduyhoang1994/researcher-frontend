@@ -9,6 +9,7 @@ import { ORDERS } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { numberWithCommas } from "../../../helpers/Utils";
+import { defaultImg } from '../../../constants/defaultValues';
 
 class CartList extends Component {
     constructor(props) {
@@ -124,7 +125,7 @@ class CartList extends Component {
         const { products } = this.state;
         let order = [];
         products.forEach(product => {
-            order.push({ uboxProductId: product.id, optionIds: product.optionIds ,quantity: product.quantity, description: "" })
+            order.push({ uboxProductId: product.id, optionIds: product.optionIds ,quantity: product.quantity, description: "description" })
         })
         Api.callAsync('post', ORDERS.all, {
             description: "string",
@@ -160,6 +161,7 @@ class CartList extends Component {
                 <div className="store">
                     <div className="products">
                         {products.map((product, index) => {
+                            if(!product.featureImage) product.featureImage = defaultImg;
                             return (
                                 <Products
                                     key={index}

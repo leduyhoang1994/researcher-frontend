@@ -116,6 +116,7 @@ class Filter extends Component {
                             value={filterOptions.topSale.min}
                             className="form-control"
                             type="number"
+                            min={0}
                             onChange={e => {
                                 filterOptions.topSale.min = e.target.value ? parseInt(e.target.value) : "";
                                 this.setState({ filterOptions });
@@ -128,6 +129,7 @@ class Filter extends Component {
                             value={filterOptions.topSale.max}
                             className="form-control"
                             type="number"
+                            min={0}
                             onChange={e => {
                                 filterOptions.topSale.max = e.target.value ? parseInt(e.target.value) : "";
                                 this.setState({ filterOptions });

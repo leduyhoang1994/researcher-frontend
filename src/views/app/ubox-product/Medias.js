@@ -8,6 +8,7 @@ import { UBOX_PRODUCTS } from '../../../constants/api';
 import GlideComponent from "../../../components/carousel/GlideComponent";
 import { NotificationManager } from '../../../components/common/react-notifications';
 import MediaModals from './MediaModals';
+import { defaultImg } from '../../../constants/defaultValues';
 
 class Medias extends React.Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class Medias extends React.Component {
             },
             isUploadModalOpen: false,
             isMediaModalOpen: false,
-            featureImage: this.props.featureImage ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${this.props.featureImage}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}/assets/products/default-image.png`,
+            featureImage: this.props.featureImage ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${this.props.featureImage}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}${defaultImg}`,
             mediaModal: null,
             whereMediaModal: null,
             typeMediaModal: null

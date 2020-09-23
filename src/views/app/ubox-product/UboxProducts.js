@@ -10,6 +10,7 @@ import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
 import UboxProductTables from './UboxProductTables';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import { defaultImg } from '../../../constants/defaultValues';
 
 class UboxProducts extends Component {
     constructor(props) {
@@ -60,7 +61,6 @@ class UboxProducts extends Component {
     filterProducts = () => {
         let array = [];
         let filter = this.state.filter;
-        console.log(filter);
 
         ApiController.callAsync('post', UBOX_PRODUCTS.search, filter)
             .then(data => {
@@ -69,7 +69,7 @@ class UboxProducts extends Component {
                 }, () => {
                     if (this.state)
                         this.state.products.forEach(item => {
-                            if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
+                            if (!item.featureImage) item.featureImage = defaultImg;
                             array.push(item);
                         });
                     this.setState({
@@ -95,7 +95,7 @@ class UboxProducts extends Component {
         //     }, () => {
         //         if (this.state)
         //         this.state.products.forEach(item => {
-        //             if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
+        //             if (!item.featureImage) item.featureImage = defaultImg;
         //             array.push(item);
         //         });
         //         this.setState({

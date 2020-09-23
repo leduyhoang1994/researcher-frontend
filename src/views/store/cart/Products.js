@@ -34,10 +34,10 @@ class Products extends Component {
                                 </span>
                             </NavLink>
                             <p className="mb-1 text-small w-15 w-xs-100">
-                                {numberWithCommas(parseInt(item.priceMin))} VNĐ
+                                {numberWithCommas(parseFloat(item.priceMin))} VNĐ
                             </p>
                             <p className="mb-1 text-small w-15 w-xs-100">
-                                {numberWithCommas(parseInt(item.priceMax))} VNĐ
+                                {numberWithCommas(parseFloat(item.priceMax))} VNĐ
                             </p>
                             <button className="mb-1 w-5 w-xs-100 btn btn-primary"
                                 disabled={parseInt(item.quantity) <= 1 ? true : false}

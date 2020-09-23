@@ -3,7 +3,7 @@ import Switch from "rc-switch";
 import "rc-switch/assets/index.css";
 import { Tooltip } from "reactstrap";
 
-import { defaultColor,themeColorStorageKey } from "../../constants/defaultValues";
+import { defaultColor, themeColorStorageKey } from "../../constants/defaultValues";
 
 export default class TopnavDarkSwitch extends Component {
   constructor(props) {
@@ -13,11 +13,11 @@ export default class TopnavDarkSwitch extends Component {
       tooltipOpen: false
     };
   }
-  componentDidMount(){
-      const color = this.getColor();
-          this.setState({
-            switchChecked:color.indexOf('dark')>-1
-          })
+  componentDidMount() {
+    const color = this.getColor();
+    this.setState({
+      switchChecked: color.indexOf('dark') > -1
+    })
   }
 
   toggle = () => {
@@ -34,20 +34,20 @@ export default class TopnavDarkSwitch extends Component {
   changeMode = () => {
     let color = this.getColor();
 
-    if(color.indexOf('dark')>-1){
-        color= color.replace('dark','light')
-    }else if(color.indexOf('light')>-1){
-        color= color.replace('light','dark')
+    if (color.indexOf('dark') > -1) {
+      color = color.replace('dark', 'light')
+    } else if (color.indexOf('light') > -1) {
+      color = color.replace('light', 'dark')
     }
 
     this.setState({
-        switchChecked:color.indexOf('dark')>-1
-      },()=>{
-          localStorage.setItem(themeColorStorageKey,color)
-        setTimeout(() => {
-            window.location.reload();
-          }, 500);
-      })
+      switchChecked: color.indexOf('dark') > -1
+    }, () => {
+      localStorage.setItem(themeColorStorageKey, color)
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    })
   };
 
   render() {
@@ -66,7 +66,7 @@ export default class TopnavDarkSwitch extends Component {
           target={"Tooltip-Switch"}
           toggle={this.toggle}
         >
-          {this.getColor().indexOf('dark')>-1 ? "Light Mode" : "Dark Mode"}
+          {this.getColor().indexOf('dark') > -1 ? "Light Mode" : "Dark Mode"}
         </Tooltip>
       </div>
     );

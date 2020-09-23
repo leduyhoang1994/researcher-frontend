@@ -27,7 +27,7 @@ class SourceProductSets extends Component {
 
   loadCurrentProductSet = () => {
     const { setId } = this.state;
-    this.getProductSet(setId);
+    // this.getProductSet(setId);
   }
 
   exportData = async () => {

@@ -108,11 +108,10 @@ class CreateTrainingClass extends Component {
     });
   };
 
-  allProductSelected = (datas) => {
-    console.log(datas)
-    if (Array.isArray(datas)) {
-      for (const data of datas)
-        if (this.existInSelectedProducts(data) === false) return false
+  allProductSelected = (data) => {
+    if (Array.isArray(data)) {
+      for (const index of data)
+        if (this.existInSelectedProducts(index) === false) return false
     }
     return true
   }

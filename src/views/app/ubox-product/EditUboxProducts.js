@@ -332,7 +332,7 @@ class EditUboxProducts extends Component {
         const { files } = this.state;
         let { product } = this.state;
         product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.REACT_APP_MEDIA_BASE_PATH}`, "") : product.featureImage;
-        this.setState({isUpdating: true});
+        this.setState({ isUpdating: true });
         if (this.state.id) {
             // let product = this.state.product;
             // product.id = parseInt(this.state.id);
@@ -385,15 +385,17 @@ class EditUboxProducts extends Component {
             });
 
             if (data.success) {
-                NotificationManager.success("Thêm mới thành công", "Thành công");
+                NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
                 this.setState({
                     keyMedia: new Date().getTime(),
                     keyProperty: new Date().getTime(),
                     files: [],
                     fileBase64: []
                 })
+                setTimeout(() => {
+                    window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
+                }, 2000);
 
-                window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 const message = data?.message;
@@ -406,7 +408,7 @@ class EditUboxProducts extends Component {
                 }
             }
         }
-        this.setState({isUpdating: false});
+        this.setState({ isUpdating: false });
     }
 
     render() {
@@ -679,24 +681,26 @@ class EditUboxProducts extends Component {
                                     </Colxx>
                                 </Row>
                                 <div className="text-right card-title">
-                                    <Button
-                                        disabled={this.state.isUpdating}
-                                        className="mr-2"
-                                        color={product.isPublished ? "danger" : "success"}
-                                        onClick={() => {
-                                            let publish = this.state.product.isPublished;
-                                            this.setState({
-                                                product: {
-                                                    ...this.state.product,
-                                                    isPublished: !publish
-                                                }
-                                            }, () => {
-                                                this.editProduct();
-                                            });
-                                        }}
-                                    >
-                                        {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
-                                    </Button>
+                                    {
+                                        this.state.id ? (<Button
+                                            disabled={this.state.isUpdating}
+                                            className="mr-2"
+                                            color={product.isPublished ? "danger" : "success"}
+                                            onClick={() => {
+                                                let publish = this.state.product.isPublished;
+                                                this.setState({
+                                                    product: {
+                                                        ...this.state.product,
+                                                        isPublished: !publish
+                                                    }
+                                                }, () => {
+                                                    this.editProduct();
+                                                });
+                                            }}
+                                        >
+                                            {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                        </Button>) : (<></>)
+                                    }
                                     <Button
                                         disabled={this.state.isUpdating}
                                         className="mr-2"
