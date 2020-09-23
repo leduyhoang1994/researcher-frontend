@@ -57,7 +57,7 @@ class Product extends React.Component {
     }
 
     imgOnError = (e) => {
-        e.target.src = "/assets/img/default-image.png";
+        e.target.src = "/assets/products/default-image.png";
     }
 
     render() {

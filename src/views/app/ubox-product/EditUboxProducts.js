@@ -16,12 +16,14 @@ import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
+import { validateName, validateNumber } from '../../../helpers/Validate';
 
 class EditUboxProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
             id: this.props.match.params.id || null,
+            isUpdating: false,
             product: {
                 optionIds: [],
                 sourceProduct: {},
@@ -76,10 +78,11 @@ class EditUboxProducts extends Component {
             mediaItems: {
                 images: [],
                 videos: []
-            }
+            },
         };
         this.messages = this.props.intl.messages;
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeText = this.handleChangeText.bind(this);
+        this.handleChangeNumber = this.handleChangeNumber.bind(this);
     }
 
     setRedirect = (url) => {
@@ -236,8 +239,18 @@ class EditUboxProducts extends Component {
         })
     };
 
-    handleChange(event) {
-        let value = parseInt(event.target.value) || event.target.value;
+
+    handleChangeNumber(event) {
+        let value = parseInt(event.target.value);
+        let product = this.state.product;
+        product[event.target.name] = value
+        this.setState({
+            product: product
+        });
+    }
+
+    handleChangeText(event) {
+        let value = event.target.value;
         let product = this.state.product;
         product[event.target.name] = value
         this.setState({
@@ -319,7 +332,7 @@ class EditUboxProducts extends Component {
         const { files } = this.state;
         let { product } = this.state;
         product.featureImage = product.featureImage ? product.featureImage.replace(`${process.env.REACT_APP_MEDIA_BASE_PATH}`, "") : product.featureImage;
-
+        this.setState({isUpdating: true});
         if (this.state.id) {
             // let product = this.state.product;
             // product.id = parseInt(this.state.id);
@@ -347,9 +360,9 @@ class EditUboxProducts extends Component {
                     keyProperty: new Date().getTime(),
                     files: [],
                     fileBase64: []
-                })
+                });
             }).catch(error => {
-                console.log(error)
+                console.log(error.response)
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
@@ -393,6 +406,7 @@ class EditUboxProducts extends Component {
                 }
             }
         }
+        this.setState({isUpdating: false});
     }
 
     render() {
@@ -458,7 +472,7 @@ class EditUboxProducts extends Component {
                                                 type="text"
                                                 value={product.name}
                                                 name="name"
-                                                onChange={this.handleChange}
+                                                onChange={this.handleChangeText}
                                             />
                                             <span>
                                                 {__(this.messages, "Tên sản phẩm")}
@@ -472,7 +486,7 @@ class EditUboxProducts extends Component {
                                                         name="priceMin"
                                                         min={0}
                                                         value={product.priceMin}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá gốc Min")}
@@ -484,7 +498,7 @@ class EditUboxProducts extends Component {
                                                         name="priceMax"
                                                         value={product.priceMax}
                                                         min={0}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá gốc Max")}
@@ -498,7 +512,7 @@ class EditUboxProducts extends Component {
                                                         name="futurePriceMin"
                                                         value={product.futurePriceMin}
                                                         min={0}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá dự kiến Min")}
@@ -510,7 +524,7 @@ class EditUboxProducts extends Component {
                                                         name="futurePriceMax"
                                                         value={product.futurePriceMax}
                                                         min={0}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá dự kiến Max")}
@@ -577,7 +591,7 @@ class EditUboxProducts extends Component {
                                                         type="text"
                                                         name="serviceSla"
                                                         value={product.serviceSla}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeText}
                                                     />
                                                     <span>
                                                         {__(this.messages, "SLA dịch vụ")}
@@ -589,7 +603,7 @@ class EditUboxProducts extends Component {
                                                         min={0}
                                                         name="serviceCost"
                                                         value={product.serviceCost}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Phí dịch vụ dự kiến")}
@@ -601,7 +615,7 @@ class EditUboxProducts extends Component {
                                                         min={0}
                                                         name="weight"
                                                         value={product.weight}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Khối lượng")}
@@ -614,7 +628,7 @@ class EditUboxProducts extends Component {
                                                         type="text"
                                                         name="transportation"
                                                         value={product.transportation}
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeText}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Hình thức vận chuyển")}
@@ -626,7 +640,7 @@ class EditUboxProducts extends Component {
                                                         name="workshopIn"
                                                         value={product.workshopIn}
                                                         min="0"
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian phát hàng của xưởng")}
@@ -638,7 +652,7 @@ class EditUboxProducts extends Component {
                                                         name="uboxIn"
                                                         value={product.uboxIn}
                                                         rows="1"
-                                                        onChange={this.handleChange}
+                                                        onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian giao hàng Ubox")}
@@ -656,7 +670,7 @@ class EditUboxProducts extends Component {
                                                 value={product.description}
                                                 name="description"
                                                 rows="5"
-                                                onChange={this.handleChange}
+                                                onChange={this.handleChangeText}
                                             />
                                             <span>
                                                 {__(this.messages, "Mô tả")}
@@ -666,6 +680,7 @@ class EditUboxProducts extends Component {
                                 </Row>
                                 <div className="text-right card-title">
                                     <Button
+                                        disabled={this.state.isUpdating}
                                         className="mr-2"
                                         color={product.isPublished ? "danger" : "success"}
                                         onClick={() => {
@@ -675,7 +690,6 @@ class EditUboxProducts extends Component {
                                                     ...this.state.product,
                                                     isPublished: !publish
                                                 }
-
                                             }, () => {
                                                 this.editProduct();
                                             });
@@ -684,6 +698,7 @@ class EditUboxProducts extends Component {
                                         {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
                                     </Button>
                                     <Button
+                                        disabled={this.state.isUpdating}
                                         className="mr-2"
                                         color="primary"
                                         onClick={() => {

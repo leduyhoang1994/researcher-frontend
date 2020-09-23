@@ -80,7 +80,7 @@ class Homepage extends React.Component {
                 products: data.uboxProducts
             }, () => {
                 this.state.products.forEach(item => {
-                    if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
+                    if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
                     array.push(item);
                 });
                 this.setState({

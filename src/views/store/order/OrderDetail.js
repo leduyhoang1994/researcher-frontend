@@ -49,7 +49,7 @@ class OrderDetail extends Component {
             if (product.uboxProduct.featureImage) {
                 value.featureImage = product.uboxProduct.featureImage;
             } else {
-                value.featureImage = "/assets/img/default-image.png"
+                value.featureImage = "/assets/products/default-image.png"
             }
             value.name = product.uboxProduct.name;
             value.priceMax = product.uboxProduct.priceMax;

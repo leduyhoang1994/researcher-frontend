@@ -21,7 +21,7 @@ class Medias extends React.Component {
             },
             isUploadModalOpen: false,
             isMediaModalOpen: false,
-            featureImage: `${process.env.REACT_APP_MEDIA_BASE_PATH}${this.props.featureImage}`,
+            featureImage: this.props.featureImage ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${this.props.featureImage}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}/assets/products/default-image.png`,
             mediaModal: null,
             whereMediaModal: null,
             typeMediaModal: null
@@ -179,7 +179,7 @@ class Medias extends React.Component {
             width: "400px",
             height: "400px",
             maxWidth: "400px",
-            backgroundImage: `url('${featureImage || '/assets/img/default-image.png'}')`,
+            backgroundImage: `url('${featureImage}')`,
             maxHeight: "400px",
             backgroundSize: "cover",
             backgroundPosition: "center",

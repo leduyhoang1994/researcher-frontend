@@ -12,9 +12,11 @@ class MediaModals extends React.Component {
     renderMedia = () => {
         if (this.props.type === 'video')
             return (
-                <video width="100%" height="100%" controls >
-                    <source src={this.props.media} type="video/mp4" />
-                </video>
+                <>
+                    <video playsInline preload="metadata" id="video" width="100%" height="100%" controls >
+                        <source src={this.props.media} type="video/mp4" />
+                    </video>
+                </>
             )
         else
             return (

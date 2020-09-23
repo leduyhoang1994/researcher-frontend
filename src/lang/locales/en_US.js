@@ -69,7 +69,7 @@ module.exports = {
 // 0.6.Menu
 "menu.category": "Category",
 "menu.ubox-categories": "List of categories",
-"menu.product": "Product",
+"menu.products": "Product",
 "menu.source-products": "Product",
 "menu.ubox-products": "List of products",
 "menu.store": "List of products",

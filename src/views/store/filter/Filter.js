@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { injectIntl } from 'react-intl';
 import { Card, CardBody, Row } from 'reactstrap';
 import { Colxx } from '../../../components/common/CustomBootstrap';
-import { UBOX_PRODUCTS } from '../../../constants/api';
+import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Product from '../product/Product';
 import DataTablePagination from '../../../components/DatatablePagination';
@@ -34,12 +34,12 @@ class Filter extends React.Component {
         const page = this.state.dataTable.page || 0;
         const size = this.state.dataTable.defaultPageSize || 10;
         this.setState({ isLoading: true });
-        ApiController.post(UBOX_PRODUCTS.filter, { uboxProductName: search, page: page, size: size }, data => {
+        ApiController.post(PRODUCT_SELLER.filter, { uboxProductName: search, page: page, size: size }, data => {
             this.setState({
                 resultFilter: data
             }, () => {
                 this.state.resultFilter.uboxProducts.forEach(item => {
-                    if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
+                    if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
                     array.push(item);
                 });
                 const dataTable = {

@@ -86,7 +86,7 @@ module.exports = {
 // 0.8.Menu
 "menu.category": "Ngành hàng",
 "menu.ubox-categories": "Danh sách ngành hàng",
-"menu.product": "Sản phẩm",
+"menu.products": "Sản phẩm",
 "menu.source-products": "Sản phẩm",
 "menu.store": "Danh sách sản phẩm",
 "menu.ubox-products": "Danh sách sản phẩm",

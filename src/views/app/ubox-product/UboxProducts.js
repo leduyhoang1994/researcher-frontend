@@ -69,7 +69,7 @@ class UboxProducts extends Component {
                 }, () => {
                     if (this.state)
                         this.state.products.forEach(item => {
-                            if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
+                            if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
                             array.push(item);
                         });
                     this.setState({
@@ -95,7 +95,7 @@ class UboxProducts extends Component {
         //     }, () => {
         //         if (this.state)
         //         this.state.products.forEach(item => {
-        //             if (!item.featureImage) item.featureImage = '/assets/img/default-image.png';
+        //             if (!item.featureImage) item.featureImage = '/assets/products/default-image.png';
         //             array.push(item);
         //         });
         //         this.setState({

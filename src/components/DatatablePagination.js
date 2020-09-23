@@ -79,14 +79,14 @@ export default class DataTablePagination extends Component {
     let pageCount = this.props.pages;
     let pageButtons = [];
     const buttonSize = 5;
-    const current_page = this.state.page + (this.state.page === 0 ? 1 : 0);
+    const current_page = this.state.page;
 
     // pageButtons.push(
     //   <PaginationItem key={i} active={active}>
     //     <PaginationLink> . . . </PaginationLink>
     //   </PaginationItem>
     // );
-    for (let i = 1; i <= pageCount; i++) {
+    for (let i = 0; i < pageCount; i++) {
       let active = current_page === i ? true : false;
       if (pageCount > 10) {
         // if (i <= ((buttonSize - 1) / 2)) {
@@ -99,7 +99,7 @@ export default class DataTablePagination extends Component {
                 onClick={() => {
                   this.pageClick(i);
                 }}
-              >{i}</PaginationLink>
+              >{i + 1}</PaginationLink>
             </PaginationItem>
           );
         }
@@ -111,7 +111,7 @@ export default class DataTablePagination extends Component {
             onClick={() => {
               this.pageClick(i);
             }}
-          >{i}</PaginationLink>
+          >{i + 1}</PaginationLink>
         </PaginationItem>
       );
     }
@@ -121,7 +121,7 @@ export default class DataTablePagination extends Component {
   renderPageJump() {
     let pages = this.props.pages;
     let pageNumbers = [];
-    for (let i = 1; i <= pages; i++) {
+    for (let i = 0; i < pages; i++) {
       pageNumbers.push(
         <DropdownItem
           key={i}
