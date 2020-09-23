@@ -71,7 +71,7 @@ class SourceProductModal extends Component {
         }
       })
       //Add to existed cateSet
-      ApiController.post(SOURCE_PRODUCTS.addToSet, {
+      ApiController.post(SETS.add, {
         setId: setId,
         itemId: productIds
       }, data => {

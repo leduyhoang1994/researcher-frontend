@@ -3,7 +3,7 @@ import { Row, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { SOURCE_CATEGORIES, ATTRIBUTES, UBOX_CATEGORIES } from '../../../constants/api';
+import { SOURCE_CATEGORIES, ATTRIBUTES, UBOX_CATEGORIES, SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Creatable } from 'react-select';
@@ -95,7 +95,7 @@ class EditUboxCategories extends Component {
     }
 
     getAllCategories = () => {
-        ApiController.callAsync('get', SOURCE_CATEGORIES.set, {})
+        ApiController.callAsync('get', SETS.categories, {})
         .then(data => {
             this.setState({ cateSetList: data.data.result });
         }).catch(error => {

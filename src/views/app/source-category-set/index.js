@@ -5,7 +5,7 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import SourceCategorySetTables from './SourceCategorySetTables';
-import { SOURCE_CATEGORIES } from '../../../constants/api';
+import { SETS, SOURCE_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
 class SourceCategorySets extends Component {
@@ -22,7 +22,7 @@ class SourceCategorySets extends Component {
   }
 
   loadCateSets = () => {
-    ApiController.get(SOURCE_CATEGORIES.set, {}, data => {
+    ApiController.get(SETS.categories, {}, data => {
       this.setState({ cateSetList: data });
     });
   }

@@ -33,10 +33,6 @@ export const source_categories = 'source-categories';
 export const SOURCE_CATEGORIES = {
   all: `${apiPath}/${source_categories}`,
   filter: `${apiPath}/${source_categories}/filter`,
-  set: `${apiPath}/sets/${source_categories}`,
-  addToSet: `${apiPath}/sets/${source_categories}/list-add`,
-  removeFromSet: `${apiPath}/sets/${source_categories}/list-delete`,
-  allEdit: `${apiPath}/ubox-categories`,
 }
 
 /** Ubox Category */
@@ -116,6 +112,8 @@ export const sets = 'sets';
 export const SETS = {
   products: `${apiPath}/${sets}/${source_products}`,
   add: `${apiPath}/${sets}/${source_products}/list-add`,
-  delete: `${apiPath}/${sets}/${source_products}/list-add`,
+  delete: `${apiPath}/${sets}/${source_products}/list-delete`,
   categories: `${apiPath}/${sets}/${source_categories}`,
+  category_add: `${apiPath}/${sets}/${source_categories}/list-add`,
+  category_delete: `${apiPath}/${sets}/${source_categories}/list-delete`,
 }

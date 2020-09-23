@@ -8,7 +8,7 @@ import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Redirect } from 'react-router-dom';
 import ApiController from '../../../helpers/Api';
-import { SOURCE_CATEGORIES } from '../../../constants/api';
+import { SETS, SOURCE_CATEGORIES } from '../../../constants/api';
 
 class SourceCategorySets extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class SourceCategorySets extends Component {
   }
 
   getSourceCategorySet = (id) => {
-    ApiController.get(`${SOURCE_CATEGORIES.set}/${id}`, {}, data => {
+    ApiController.get(`${SETS.categories}/${id}`, {}, data => {
       this.setState({
         sourceCategorySet: data
       });
@@ -41,7 +41,7 @@ class SourceCategorySets extends Component {
   }
 
   removeFromProductSet = (cate) => {
-    ApiController.delete(`${SOURCE_CATEGORIES.removeFromSet}`, {
+    ApiController.delete(`${SETS.category_delete}`, {
       ids: [cate?.categoryId]}, data => {
       this.loadCurrentSourceCategorySet();
     }, {});
