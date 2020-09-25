@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import Filter from '../filter/Filter';
 import SourceCategories from '../source-category/SourceCategories';
 import ApiController from '../../../helpers/Api';
-import { SETS, SOURCE_CATEGORIES } from '../../../constants/api';
+import { CATEGORY_SETS, SOURCE_CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { Redirect } from 'react-router-dom';
 import { arrayColumn } from '../../../helpers/Utils';
@@ -187,7 +187,7 @@ class Research extends Component {
     }
 
     loadCateSets = () => {
-        ApiController.callAsync('get', SETS.categories, {})
+        ApiController.callAsync('get', CATEGORY_SETS.all, {})
             .then(data => {
                 this.setState({ cateSetList: data.data.result });
             }).catch(error => {
@@ -228,7 +228,7 @@ class Research extends Component {
 
         if (cateSet) {
             //Add to existed cateSet
-            ApiController.post(SETS.category_add, {
+            ApiController.post(CATEGORY_SETS.add, {
                 setId: cateSet.value,
                 itemId: cateIds
             }, data => {
@@ -236,7 +236,7 @@ class Research extends Component {
             });
         } else {
             //Create new cateSet
-            ApiController.post(SETS.categories, {
+            ApiController.post(CATEGORY_SETS.all, {
                 setName: cateSetName,
                 ids: cateIds
             }, data => {

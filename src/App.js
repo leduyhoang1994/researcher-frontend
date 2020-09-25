@@ -47,6 +47,9 @@ const ViewStore = React.lazy(() =>
 const ViewError = React.lazy(() =>
   import(/* webpackChunkName: "views-error" */ './views/error')
 );
+const Calculator = React.lazy(() =>
+  import(/* webpackChunkName: "views-error" */ './views/calculator')
+);
 
 const AuthRoute = ({ component: Component, authUser, ...rest }) => {
   return (
@@ -113,6 +116,10 @@ class App extends Component {
                   <Route
                     path="/store"
                     render={props => <ViewStore {...props} />}
+                  />
+                  <Route
+                    path="/calculator"
+                    render={props => <Calculator {...props} />}
                   />
                   <Route
                     path="/error"

@@ -5,7 +5,7 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import SourceProductTable from '../source-product/SourceProductTable';
-import { SOURCE_PRODUCTS, SETS } from '../../../constants/api';
+import { SOURCE_PRODUCTS, PRODUCT_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
 class SourceProductSets extends Component {
@@ -31,7 +31,7 @@ class SourceProductSets extends Component {
   }
 
   exportData = async () => {
-    const data = await ApiController.callAsync('get', `${SETS.products}/${this.state.setId}/export`, {});
+    const data = await ApiController.callAsync('get', `${PRODUCT_SETS.all}/${this.state.setId}/export`, {});
     const base64 = data.data.result.base64
 
     let anchor = document.createElement('a');
@@ -42,7 +42,7 @@ class SourceProductSets extends Component {
   }
 
   getProductSet = (id) => {
-    ApiController.get(`${SETS.products}/${id}`, {}, data => {
+    ApiController.get(`${PRODUCT_SETS.all}/${id}`, {}, data => {
       data.productSets = data.productSets.map(d => {
         return {
           ...d.product,

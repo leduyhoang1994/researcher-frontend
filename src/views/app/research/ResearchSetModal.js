@@ -3,7 +3,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, I
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
-import { SETS, SOURCE_CATEGORIES } from '../../../constants/api';
+import { CATEGORY_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
@@ -23,7 +23,7 @@ class ResearchSetModal extends Component {
     }
 
     loadProductSets = () => {
-        ApiController.callAsync('get', SETS.categories, {})
+        ApiController.callAsync('get', CATEGORY_SETS.all, {})
         .then(data => {
             this.setState({ cateSetList: data.data.result });
         }).catch(error => {

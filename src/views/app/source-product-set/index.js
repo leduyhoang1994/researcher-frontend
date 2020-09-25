@@ -5,7 +5,7 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import SourceProductSetTables from './SourceProductSetTables';
-import { SETS } from '../../../constants/api';
+import { PRODUCT_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
 class SourceProductSet extends Component {
@@ -22,7 +22,7 @@ class SourceProductSet extends Component {
   }
 
   loadProductSets = () => {
-    ApiController.get(SETS.products, {}, data => {
+    ApiController.get(PRODUCT_SETS.all, {}, data => {
       this.setState({ sourceProductSetList: data });
     });
   }

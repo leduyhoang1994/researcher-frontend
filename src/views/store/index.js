@@ -6,10 +6,6 @@ const HomePage = React.lazy(() =>
   import(/* webpackChunkName: "user-register" */ './homepage')
 );
 
-const ProductList = React.lazy(() =>
-  import(/* webpackChunkName: "source-product-set-123" */ '../store/product/ProductList')
-);
-
 const ProductDetail = React.lazy(() =>
   import(/* webpackChunkName: "source-product-set-123" */ '../store/product/ProductDetail')
 );

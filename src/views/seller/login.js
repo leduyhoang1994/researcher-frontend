@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Card, CardTitle, Label, FormGroup, Button, Input } from "reactstrap";
+import { Row, Card, CardTitle, Label, FormGroup, Button } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
 import { loginSeller } from "../../redux/actions";
@@ -103,6 +103,9 @@ class Login extends Component {
                       )}
                     </FormGroup>
                     <div className="d-flex justify-content-between align-items-center">
+                      <NavLink to={`/seller/register`}>
+                        <IntlMessages id="user.register" />
+                      </NavLink>
                       {/* <NavLink to={`/user/forgot-password`}>
                         <IntlMessages id="user.forgot-password-question" />
                       </NavLink> */}

@@ -4,7 +4,7 @@ import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
 import ApiController from '../../../helpers/Api';
-import { SOURCE_PRODUCTS, SETS } from '../../../constants/api';
+import { PRODUCT_SETS } from '../../../constants/api';
 import { arrayColumn } from '../../../helpers/Utils';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
@@ -26,7 +26,7 @@ class SourceProductModal extends Component {
   }
 
   loadProductSets = () => {
-    ApiController.call('get', SETS.products, {}, data => {
+    ApiController.call('get', PRODUCT_SETS.all, {}, data => {
       let options = [];
       if (data) {
         data.forEach(element => {
@@ -71,7 +71,7 @@ class SourceProductModal extends Component {
         }
       })
       //Add to existed cateSet
-      ApiController.post(SETS.add, {
+      ApiController.post(PRODUCT_SETS.add, {
         setId: setId,
         itemId: productIds
       }, data => {
@@ -79,7 +79,7 @@ class SourceProductModal extends Component {
       });
     } else {
       //Create new cateSet
-      ApiController.post(SETS.products, {
+      ApiController.post(PRODUCT_SETS.all, {
         setName: sourceProductSetName,
         ids: productIds
       }, data => {
