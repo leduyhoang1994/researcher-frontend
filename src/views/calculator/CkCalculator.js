@@ -3,7 +3,6 @@ import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
 
-CKEditor.instances.editor1.document.getDocumentElement().on( 'drop', function() { console.log( 1 ); } );
 
 class CkCalculator extends React.Component {
 
