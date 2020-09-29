@@ -16,3 +16,9 @@
 .ReactTable .rt-td {
   overflow: hidden !important;
 }
+.ReactTable {
+  height: 700px;
+}
+.ReactTable .rt-tbody {
+  overflow-x: hidden;
+}

@@ -40,7 +40,7 @@ const SourceProductTable = ({
         <div className="text-left">
           {
             selectable &&
-            <Input
+            <input
               type="checkbox"
               checked={existInSelectedProducts(props.original)}
               onChange={e => {
