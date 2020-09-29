@@ -1,10 +1,12 @@
 import React, { Component, Fragment } from "react";
 import Select from "react-select";
-import { FUNCTIONS, OPERATORS, FIELDS, CONSTANTS } from "../../constants/operator";
+import { FUNCTIONS, OPERATORS, FIELDS } from "../../constants/operator";
 import "./style.scss";
 import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import CkCalculator from "./CkCalculator";
+import ApiController from "../../helpers/Api";
+import { CONSTANTS } from "../../constants/api";
 
 class Calculator extends Component {
     constructor(props) {
@@ -14,26 +16,47 @@ class Calculator extends Component {
             optionOperators: [],
             optionFields: [],
             constants: [],
+            formulas: [],
             formula: "",
             prevFormula: "",
             field: "",
             content: ""
         }
         this.handleChangeText = this.handleChangeText.bind(this);
-        this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {
+        this.getConstants();
         this.setState({
             optionFunctions: FUNCTIONS,
             optionOperators: OPERATORS,
             optionFields: FIELDS,
-            constants: CONSTANTS,
+            // constants: CONSTANTS,
         })
     }
 
+    getConstants = () => {
+        let constants = [];
+        let formulas = [];
+        ApiController.call('get', CONSTANTS.all, {}, data => {
+            data.forEach(item => {
+                console.log(item);
+                if (item.type === "FORMULA") {
+                    formulas.push(item);
+                } else if (item.type === "VARIABLE") {
+                    constants.push(item);
+                }
+
+            })
+            this.setState({
+                formulas,
+                constants
+            })
+        });
+    }
+
     handleChangeFunc = (value) => {
-        let { formula, prevFormula } = this.state;
+        let { formula } = this.state;
         formula = formula.concat(`${value.value}`)
         this.setState({
             formula
@@ -55,46 +78,44 @@ class Calculator extends Component {
         })
     }
 
-    updateContent(newContent) {
+    onChangeEditor = (data) => {
+        let content = this.state.content;
+        content = content + "#" + data + "#";
+        console.log(content);
         this.setState({
-            content: newContent
+            content
         })
-    }
-
-    onChange(evt) {
-        console.log("onChange fired with event info: ", evt);
-        var newContent = evt.editor.getData();
-        this.setState({
-            content: newContent
-        })
-    }
-
-    onBlur(evt) {
-        console.log("onBlur event called with event info: ", evt);
-    }
-
-    afterPaste(evt) {
-        console.log("afterPaste event called with event info: ", evt);
     }
 
     allowDrop = (ev) => {
         ev.preventDefault();
     }
 
-    drop = (ev) => {
+    onDrop = (ev) => {
         ev.preventDefault();
-        var data = ev.dataTransfer.getData("item-transfer");
-        ev.target.appendChild(document.getElementById(data));
-        console.log(document.getElementById(data));
+        let data = ev.dataTransfer.getData("item-transfer");
+        console.log("value: " + data);
+        const node = document.createElement("span");                 // Create a <li> node
+        const textNode = document.createTextNode(data);
+        node.appendChild(textNode); 
+
+        const content = document.querySelector(".ck-content");
+        document.querySelector(".ck-content").appendChild(node);
+        // content.appendChild(data);
+        // let content = this.state.content;
+        // content = content + "#" + data  + "#";
+        console.log(content);
+        // this.setState({
+        //     content
+        // })
     }
 
-    drag = (ev) => {
-        console.log(ev.target.id);
+    onDrag = (ev) => {
         ev.dataTransfer.setData("item-transfer", ev.target.id);
     }
 
     render() {
-        const { constants, formula } = this.state;
+        const { constants, formulas, formula } = this.state;
         return (
             <Fragment >
                 <Card>
@@ -133,13 +154,15 @@ class Calculator extends Component {
                             </Colxx>
                             <Colxx xxs="10">
                                 {
-                                    constants.map((item, index) => {
+                                    constants && constants.map((item, index) => {
                                         return (
                                             <span key={item + index}
                                                 draggable="true"
+                                                id={item.label}
+                                                onDragStart={this.onDrag}
                                                 className="constants height-40 align-middle"
                                             >
-                                                {item.key}
+                                                {item.label}
                                             </span>
                                         )
                                     })
@@ -152,16 +175,16 @@ class Calculator extends Component {
                             </Colxx>
                             <Colxx xxs="10" id="constant-list">
                                 {
-                                    constants.map((item, index) => {
+                                    formulas && formulas.map((item, index) => {
                                         if (index < 5) {
                                             return (
                                                 <span key={item + index}
                                                     draggable="true"
-                                                    id={item.key}
-                                                    onDragStart={this.drag}
+                                                    id={item.label}
+                                                    onDragStart={this.onDrag}
                                                     className="constants height-40 align-middle"
                                                 >
-                                                    {item.key}
+                                                    {item.label}
                                                 </span>
                                             )
                                         }
@@ -170,34 +193,13 @@ class Calculator extends Component {
                             </Colxx>
                         </Row>
                         <Row className="mt-4">
-                            <Colxx xxs="12" onDrop={this.drop}>
-                                {/* <Label className="form-group has-float-label w-100"> */}
+                            <Colxx xxs="12">
                                 <CkCalculator
+                                    onDrop={this.onDrop}
+                                    allowDrop={this.allowDrop}
                                     content={this.state.content}
-                                    ckOptions={{
-                                        activeClass: "p10",
-                                        data: this.state.content,
-                                        // events: {
-                                        //     "blur": this.onBlur,
-                                        //     "afterPaste": this.afterPaste,
-                                        //     "change": this.onChange
-                                        // }
-                                    }}
+                                    onChangeEditor={this.onChangeEditor}
                                 />
-                                {/* <Input
-                                type="textarea"
-                                name="formula"
-                                rows="5"
-                                className="input-tag"
-                                value={this.state.formula}
-                                onChange={() => {
-                                    // this.handleChangeFunc()
-                                }}
-                            /> */}
-                                {/* <span>
-                                        {"Formula"}
-                                    </span> */}
-                                {/* </Label> */}
                             </Colxx>
                         </Row>
                         {/* <div className="w-15">

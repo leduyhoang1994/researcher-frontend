@@ -1,50 +1,42 @@
 import React from "react";
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import CKEditorInspector from '@ckeditor/ckeditor5-inspector';
-
 
 class CkCalculator extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
-            editorData: `<h2>Check our last minute deals!</h2>`,
         };
-        this.handleEditorDataChange = this.handleEditorDataChange.bind(this);
-        this.handleEditorInit = this.handleEditorInit.bind(this);
     }
 
     componentDidMount() {
-
-    }
-
-    handleEditorDataChange(evt, editor) {
-        console.log(evt);
-        console.log(editor.getData());
-        this.setState({
-            editorData: editor.getData()
-        });
-    }
-
-    handleEditorInit(editor) {
-        this.editor = editor;
-
-        this.setState({
-            editorData: editor.getData()
-        });
-        // CKEditor 5 inspector allows you to take a peek into the editor's model and view
-        // data layers. Use it to debug the application and learn more about the editor.
-        CKEditorInspector.attach(editor);
+        // const { editorData } = this.state;
+        // ClassicEditor
+        //     .create(document.querySelector('#editor'))
+        //     .then(editor => {
+        //         editor.setData(editorData);
+        //     })
+        //     .catch(error => {
+        //         console.log(false);
+        //         console.error(error);
+        //     });
     }
 
     render() {
         return (
-            <div>
+            <div id="editor" onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
                 <CKEditor
+                    data={this.props.content}
                     editor={ClassicEditor}
-                    onChange={this.handleEditorDataChange}
-                // onInit={this.handleEditorInit}
+                    config={{
+                        toolbar: ['heading', '|', 'bold', 'italic', 'blockQuote', 'link', 'numberedList', 'bulletedList', 'imageUpload', 'insertTable',
+                            'tableColumn', 'tableRow', 'mergeTableCells', 'mediaEmbed', '|', 'undo', 'redo']
+                    }}
+                    onChange={(event, editor) => {
+                        const data = editor.getData();
+                        // this.props.onChangeEditor(data);
+                        console.log({ event, editor, data });
+                    }}
                 />
             </div>
         );

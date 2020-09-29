@@ -119,3 +119,9 @@ export const CATEGORY_SETS = {
   add: `${apiPath}/${sets}/${source_categories}/list-add`,
   delete: `${apiPath}/${sets}/${source_categories}/list-delete`,
 }
+
+/** CONSTANTS */
+export const constants = 'constants';
+export const CONSTANTS = {
+  all: `${apiPath}/${constants}`,
+}
