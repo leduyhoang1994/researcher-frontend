@@ -1,43 +1,41 @@
 import React from "react";
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Input, Label } from "reactstrap";
 
 class CkCalculator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
         };
-    }
-
-    componentDidMount() {
-        // const { editorData } = this.state;
-        // ClassicEditor
-        //     .create(document.querySelector('#editor'))
-        //     .then(editor => {
-        //         editor.setData(editorData);
-        //     })
-        //     .catch(error => {
-        //         console.log(false);
-        //         console.error(error);
-        //     });
+        // this.messages = this.props.intl.messages;
     }
 
     render() {
+        const { content } = this.props;
         return (
-            <div id="editor" onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
-                <CKEditor
+            <div onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
+                <Label className="form-group has-float-label">
+                    <Input
+                        id="editor"
+                        rows={5}
+                        value={content}
+                        type="textarea"
+                        spellCheck="false"
+                        onChange={this.props.onChangeEditor}
+                    />
+                    <span>Formula</span>
+                </Label>
+
+                {/* <CKEditor
                     data={this.props.content}
                     editor={ClassicEditor}
-                    config={{
-                        toolbar: ['heading', '|', 'bold', 'italic', 'blockQuote', 'link', 'numberedList', 'bulletedList', 'imageUpload', 'insertTable',
-                            'tableColumn', 'tableRow', 'mergeTableCells', 'mediaEmbed', '|', 'undo', 'redo']
-                    }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
                         // this.props.onChangeEditor(data);
-                        console.log({ event, editor, data });
+                        console.log(data);
                     }}
-                />
+                /> */}
             </div>
         );
     }

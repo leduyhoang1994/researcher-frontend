@@ -13,26 +13,39 @@ class Calculator extends Component {
         super(props)
         this.state = {
             optionFunctions: [],
-            optionOperators: [],
             optionFields: [],
             constants: [],
             formulas: [],
+            fields: {},
+            detailFields: [],
             formula: "",
-            prevFormula: "",
             field: "",
             content: ""
         }
         this.handleChangeText = this.handleChangeText.bind(this);
+        // this.messages = this.props.intl.messages;
     }
 
     componentDidMount() {
+        this.getConstantsByType();
         this.getConstants();
+        this.getFunctionsMathjs();
         this.setState({
-            optionFunctions: FUNCTIONS,
-            optionOperators: OPERATORS,
-            optionFields: FIELDS,
-            // constants: CONSTANTS,
+            // optionFields: FIELDS,
         })
+    }
+
+    getConstantsByType = () => {
+        let optionFields = [];
+        ApiController.call('get', `${CONSTANTS.all}/field`, {}, data => {
+            for(let index in data) {
+                optionFields.push({label: index, value: index})
+            }
+            this.setState({
+                fields: data,
+                optionFields
+            })
+        });
     }
 
     getConstants = () => {
@@ -40,13 +53,11 @@ class Calculator extends Component {
         let formulas = [];
         ApiController.call('get', CONSTANTS.all, {}, data => {
             data.forEach(item => {
-                console.log(item);
                 if (item.type === "FORMULA") {
                     formulas.push(item);
-                } else if (item.type === "VARIABLE") {
+                } else if (item.type === "CUSTOM_VARIABLE" || "SYSTEM_VARIABLE") {
                     constants.push(item);
                 }
-
             })
             this.setState({
                 formulas,
@@ -55,19 +66,44 @@ class Calculator extends Component {
         });
     }
 
-    handleChangeFunc = (value) => {
-        let { formula } = this.state;
-        formula = formula.concat(`${value.value}`)
+    getFunctionsMathjs = () => {
+        let arrMath = []
+        Object.getOwnPropertyNames(Math).forEach(item => {
+            arrMath.push({ label: item, value: item });
+        })
         this.setState({
-            formula
+            optionFunctions: arrMath,
         })
     }
 
-    handleChangeField = (value) => {
-        let { field } = this.state;
-        field = field.concat(`${value.value}`)
+    handleChangeFunc = (value) => {
+        let element = document.getElementById('editor');
+
+        let startPosition = element.selectionStart;
+        let endPosition = element.selectionEnd;
+        let inputText = element.value;
+
+        let result = inputText.slice(0, startPosition) + value.value + "() " + inputText.slice(endPosition, inputText.length);
         this.setState({
-            field
+            content: result
+        })
+        element.focus();
+    }
+
+    handleChangeField = (value) => {
+        console.log(value);
+        let listFields = [];
+        let { fields } = this.state;
+        for(let index in fields) {
+            if(value.value === index) {
+                fields[index].forEach(item => {
+                    listFields.push(item);
+                })
+            }
+        }
+
+        this.setState({
+            detailFields: listFields
         })
     }
 
@@ -78,44 +114,52 @@ class Calculator extends Component {
         })
     }
 
-    onChangeEditor = (data) => {
-        let content = this.state.content;
-        content = content + "#" + data + "#";
-        console.log(content);
+    onChangeEditor = (e) => {
         this.setState({
-            content
+            content: e.target.value
         })
     }
 
-    allowDrop = (ev) => {
-        ev.preventDefault();
+    onClick = (ev) => {
+        let data = ev.target.id;
+        let element = document.getElementById('editor');
+
+        let startPosition = element.selectionStart;
+        let endPosition = element.selectionEnd;
+        let inputText = element.value;
+
+        let result = inputText.slice(0, startPosition) + data + inputText.slice(endPosition, inputText.length) + " ";
+        this.setState({
+            content: result
+        })
+        element.focus();
     }
 
-    onDrop = (ev) => {
-        ev.preventDefault();
-        let data = ev.dataTransfer.getData("item-transfer");
-        console.log("value: " + data);
-        const node = document.createElement("span");                 // Create a <li> node
-        const textNode = document.createTextNode(data);
-        node.appendChild(textNode); 
+    // onDrop = (ev) => {
+    //     ev.preventDefault();
+    //     let data = ev.dataTransfer.getData("item-transfer");
+    //     console.log("value: " + data);
+    //     const node = document.createElement("span");
+    //     const textNode = document.createTextNode(data);
+    //     node.appendChild(textNode);
 
-        const content = document.querySelector(".ck-content");
-        document.querySelector(".ck-content").appendChild(node);
-        // content.appendChild(data);
-        // let content = this.state.content;
-        // content = content + "#" + data  + "#";
-        console.log(content);
-        // this.setState({
-        //     content
-        // })
-    }
+    //     const content = document.querySelector(".ck-content");
+    //     document.querySelector(".ck-content").appendChild(node);
+    //     // content.appendChild(data);
+    //     // let content = this.state.content;
+    //     // content = content + "#" + data  + "#";
+    //     console.log(content);
+    //     // this.setState({
+    //     //     content
+    //     // })
+    // }
 
-    onDrag = (ev) => {
-        ev.dataTransfer.setData("item-transfer", ev.target.id);
-    }
+    // onDrag = (ev) => {
+    //     ev.dataTransfer.setData("item-transfer", ev.target.id);
+    // }
 
     render() {
-        const { constants, formulas, formula } = this.state;
+        const { constants, formulas, formula, detailFields } = this.state;
         return (
             <Fragment >
                 <Card>
@@ -141,11 +185,26 @@ class Calculator extends Component {
                             <Colxx xxs="10">
                                 <Select
                                     outline
-                                    className="react-select w-40 height-40"
+                                    className="react-select w-40 height-40 mb-3"
                                     classNamePrefix="react-select"
                                     options={this.state.optionFields}
                                     onChange={this.handleChangeField}
                                 />
+                                {
+                                    detailFields && detailFields.map((item, index) => {
+                                        return (
+                                            <span key={item + index}
+                                                // draggable="true"
+                                                id={item}
+                                                onClick={this.onClick}
+                                                // onDragStart={this.onDrag}
+                                                className="constants height-40 align-middle"
+                                            >
+                                                {item}
+                                            </span>
+                                        )
+                                    })
+                                }
                             </Colxx>
                         </Row>
                         <Row className="mt-4">
@@ -157,9 +216,10 @@ class Calculator extends Component {
                                     constants && constants.map((item, index) => {
                                         return (
                                             <span key={item + index}
-                                                draggable="true"
+                                                // draggable="true"
                                                 id={item.label}
-                                                onDragStart={this.onDrag}
+                                                onClick={this.onClick}
+                                                // onDragStart={this.onDrag}
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item.label}
@@ -179,9 +239,10 @@ class Calculator extends Component {
                                         if (index < 5) {
                                             return (
                                                 <span key={item + index}
-                                                    draggable="true"
+                                                    // draggable="true"
+                                                    onClick={this.onClick}
                                                     id={item.label}
-                                                    onDragStart={this.onDrag}
+                                                    // onDragStart={this.onDrag}
                                                     className="constants height-40 align-middle"
                                                 >
                                                     {item.label}
@@ -192,34 +253,43 @@ class Calculator extends Component {
                                 }
                             </Colxx>
                         </Row>
+                        <Row>
+                            <Colxx xxs="2" className="">
+                                <span className="vertical-align-middle">Functions:</span>
+                            </Colxx>
+                            <Colxx xxs="10">
+                                <div className="w-15">
+                                    <Select
+                                        outline
+                                        className="react-select selection w-100"
+                                        classNamePrefix="react-select"
+                                        options={this.state.optionFunctions}
+                                        onChange={this.handleChangeFunc}
+                                    />
+                                </div>
+                            </Colxx>
+                        </Row>
                         <Row className="mt-4">
                             <Colxx xxs="12">
                                 <CkCalculator
-                                    onDrop={this.onDrop}
-                                    allowDrop={this.allowDrop}
+                                    // onDrop={this.onDrop}
+                                    // allowDrop={this.allowDrop}
                                     content={this.state.content}
                                     onChangeEditor={this.onChangeEditor}
                                 />
                             </Colxx>
                         </Row>
-                        {/* <div className="w-15">
-                        <Select
-                            outline
-                            className="react-select pt-3 selection w-100"
-                            classNamePrefix="react-select"
-                            options={this.state.optionFunctions}
-                            onChange={this.handleChangeFunc}
-                        />
-                    </div>
-                    <div className="w-15">
-                        <Select
-                            outline
-                            className="react-select pt-3 selection w-100"
-                            classNamePrefix="react-select"
-                            options={this.state.optionOperators}
-                            onChange={this.handleChangeFunc}
-                        />
-                    </div> */}
+                        <div className="text-right card-title mt-2">
+                            <Button
+                                className="mr-0"
+                                color="primary"
+                                onClick={() => {
+                                    // this.add();
+                                }}
+                            >
+                                Thêm mới
+                            </Button>
+                        </div>
                     </CardBody>
                 </Card>
             </Fragment>
