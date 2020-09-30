@@ -16,8 +16,8 @@ class CkCalculator extends React.Component {
     };
 
     render() {
-        const { content } = this.props;
-
+        // const { content } = this.props;
+        const content = "<p contenteditable='false'>abc</p> <i contenteditable='false'>ghjk</i> <h3 contenteditable='false'>456789</h3>"
         return (
             <div onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
                 <Label id="label" className="w-100 has-float-label">
