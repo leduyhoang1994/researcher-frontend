@@ -233,9 +233,11 @@ class EditUboxProducts extends Component {
     handleChangeCategory = (data) => {
         let product = this.state.product;
         product.uboxCategoryId = data.value;
+        product.optionIds = [];
+        product.uboxProductOptions = [];
         this.setState({
             selectedCategory: data,
-            product: product
+            product
         })
     };
 
@@ -345,10 +347,7 @@ class EditUboxProducts extends Component {
                 });
             }
 
-
             formData.append('id', parseInt(this.state.id));
-
-            // console.log()
 
             await Api.callAsync('put', UBOX_PRODUCTS.all,
                 formData
@@ -362,7 +361,6 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 });
             }).catch(error => {
-                console.log(error.response)
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
@@ -393,7 +391,7 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 })
                 setTimeout(() => {
-                    window.open(`/app/ubox-products/edit/${data.result.id}`, "_self");
+                    window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
                 }, 2000);
 
             } else {
@@ -537,7 +535,7 @@ class EditUboxProducts extends Component {
                                         <Row>
                                             <Colxx xxs="12">
                                                 <Properties
-                                                    key={keyProperty}
+                                                    key={product.uboxCategoryId}
                                                     component={this}
                                                     uboxCategoryId={product.uboxCategoryId} // category id of product
                                                     uboxProductOptions={product.uboxProductOptions} // options fields of product data

@@ -23,7 +23,7 @@ class Properties extends React.Component {
     componentDidMount() {
         this.loadCategoryProperties();
     }
-
+    
     normalizeProductAttribute = (options) => {
         const result = {};
 
