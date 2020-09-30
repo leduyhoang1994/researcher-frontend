@@ -171,6 +171,8 @@ class Calculator extends Component {
         let flag = true;
         const { formula, content, formulas, constants } = this.state;
         var value = content.trim();
+        value = value.replaceAll("<span contenteditable='false'>", "");
+        value = value.replaceAll("</span>", "");
         formulas.forEach(item => {
             if (value.indexOf(item.code) !== -1) {
                 if (value.indexOf(`${item.code}()`) === -1) {
