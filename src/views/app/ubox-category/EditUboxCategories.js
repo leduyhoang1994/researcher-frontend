@@ -245,7 +245,7 @@ class EditUboxCategories extends Component {
                 return error.response.data;
             });
             if (data.success) {
-                window.open(`/app/ubox-categories/edit/${data.result.uboxCategory.id}`, "_self")
+                window.open(`/app/ubox-categories/edit/${data.result.id}`, "_self")
                 NotificationManager.success("Thành công", "Thành công");
             } else {
                 NotificationManager.warning("Thêm mới thất bại", "Thất bại");
