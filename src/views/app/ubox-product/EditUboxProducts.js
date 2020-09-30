@@ -393,7 +393,7 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 })
                 setTimeout(() => {
-                    window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
+                    window.open(`/app/ubox-products/edit/${data.result.id}`, "_self");
                 }, 2000);
 
             } else {
