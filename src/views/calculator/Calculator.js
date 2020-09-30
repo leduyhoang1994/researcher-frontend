@@ -1,12 +1,17 @@
 import React, { Component, Fragment } from "react";
-import Select from "react-select";
 import { FUNCTIONS, OPERATORS, FIELDS } from "../../constants/operator";
-import "./style.scss";
 import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import CkCalculator from "./CkCalculator";
 import ApiController from "../../helpers/Api";
+import Select from "react-select";
 import { CONSTANTS } from "../../constants/api";
+import { validateName } from '../../helpers/Validate';
+import { NotificationManager } from '../../components/common/react-notifications';
+import { failed, notify_add_success, success, notify_syntax_error, notify_add_failed, info, required_field } from "../../constants/constantTexts";
+import "./style.scss";
+import { getIndexTagOnKeyDown } from "../../helpers/Utils";
+
 
 class Calculator extends Component {
     constructor(props) {
@@ -17,10 +22,11 @@ class Calculator extends Component {
             constants: [],
             formulas: [],
             fields: {},
-            detailFields: [],
+            detailFields: {},
             formula: "",
             field: "",
-            content: ""
+            content: "abc",
+            index: 0,
         }
         this.handleChangeText = this.handleChangeText.bind(this);
         // this.messages = this.props.intl.messages;
@@ -30,16 +36,13 @@ class Calculator extends Component {
         this.getConstantsByType();
         this.getConstants();
         this.getFunctionsMathjs();
-        this.setState({
-            // optionFields: FIELDS,
-        })
     }
 
     getConstantsByType = () => {
         let optionFields = [];
         ApiController.call('get', `${CONSTANTS.all}/field`, {}, data => {
-            for(let index in data) {
-                optionFields.push({label: index, value: index})
+            for (let index in data) {
+                optionFields.push({ label: index, value: index })
             }
             this.setState({
                 fields: data,
@@ -77,13 +80,11 @@ class Calculator extends Component {
     }
 
     handleChangeFunc = (value) => {
+        const { index } = this.state;
         let element = document.getElementById('editor');
+        let inputText = element.innerText;
 
-        let startPosition = element.selectionStart;
-        let endPosition = element.selectionEnd;
-        let inputText = element.value;
-
-        let result = inputText.slice(0, startPosition) + value.value + "() " + inputText.slice(endPosition, inputText.length);
+        let result = inputText.slice(0, index) + "<article contenteditable='false'>" + value.value + "</article>()" + inputText.slice(index, inputText.length);
         this.setState({
             content: result
         })
@@ -91,19 +92,21 @@ class Calculator extends Component {
     }
 
     handleChangeField = (value) => {
-        console.log(value);
         let listFields = [];
         let { fields } = this.state;
-        for(let index in fields) {
-            if(value.value === index) {
+        const field = value.value;
+        for (let index in fields) {
+            if (field === index) {
                 fields[index].forEach(item => {
                     listFields.push(item);
                 })
             }
         }
+        const data = {};
+        data[field] = listFields;
 
         this.setState({
-            detailFields: listFields
+            detailFields: data
         })
     }
 
@@ -115,20 +118,26 @@ class Calculator extends Component {
     }
 
     onChangeEditor = (e) => {
+        console.log(e);
         this.setState({
             content: e.target.value
         })
     }
 
+    onBlurEditor = () => {
+        let element = document.getElementById("editor");
+        let index = getIndexTagOnKeyDown(element);
+        this.setState({
+            index
+        })
+    }
+
     onClick = (ev) => {
+        const { index } = this.state;
         let data = ev.target.id;
         let element = document.getElementById('editor');
-
-        let startPosition = element.selectionStart;
-        let endPosition = element.selectionEnd;
-        let inputText = element.value;
-
-        let result = inputText.slice(0, startPosition) + data + inputText.slice(endPosition, inputText.length) + " ";
+        let inputText = element.innerText;
+        let result = inputText.slice(0, index) + "<article contenteditable='false'>" + data + "</article>" + inputText.slice(index, inputText.length);
         this.setState({
             content: result
         })
@@ -158,15 +167,62 @@ class Calculator extends Component {
     //     ev.dataTransfer.setData("item-transfer", ev.target.id);
     // }
 
+    createFormula = () => {
+        let flag = true;
+        const { formula, content, formulas, constants } = this.state;
+        var value = content.trim();
+        formulas.forEach(item => {
+            if (value.indexOf(item.code) !== -1) {
+                if (value.indexOf(`${item.code}()`) === -1) {
+                    NotificationManager.warning(notify_syntax_error, failed);
+                    flag = false;
+                }
+            }
+        })
+        constants.forEach(item => {
+            if (value.indexOf(item.label) !== -1) {
+                if (value.indexOf(`"${item.label}"`) !== -1) {
+                    value = value.replaceAll(`"${item.label}"`, `${item.code}`);
+                } else {
+                    NotificationManager.warning(notify_syntax_error, failed);
+                    flag = false;
+                }
+            }
+        })
+        console.log(value);
+        const data = { label: formula, value: value, viewValue: content.trim(), type: "FORMULA" };
+        console.log(data);
+        if (flag) {
+            if (data.value && data.label) {
+                ApiController.callAsync('post', CONSTANTS.all, data)
+                    .then(data => {
+                        console.log(data);
+                        if (data.data.statusCode === 200) {
+                            NotificationManager.success(notify_add_success, success, 2000);
+                        }
+                    }).catch(error => {
+                        NotificationManager.warning(notify_add_failed, failed, 2000);
+                        setTimeout(() => {
+                            NotificationManager.info(error.response.data.message, info, 2000);
+                        }, 2500);
+                    });
+            } else {
+                NotificationManager.warning(required_field, failed);
+            }
+        }
+
+    }
+
     render() {
         const { constants, formulas, formula, detailFields } = this.state;
+        const key = Object.keys(detailFields).toString() || "";
         return (
             <Fragment >
                 <Card>
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
                             <Colxx xxs="2" >
-                                <span className="vertical-align-middle">FORMULA</span>
+                                <span className="vertical-align-middle">FORMULA NAME *</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Input
@@ -191,19 +247,18 @@ class Calculator extends Component {
                                     onChange={this.handleChangeField}
                                 />
                                 {
-                                    detailFields && detailFields.map((item, index) => {
+                                    detailFields[key] ? detailFields[key].map((item, index) => {
                                         return (
                                             <span key={item + index}
-                                                // draggable="true"
-                                                id={item}
+                                                id={`${key}.${item}`}
                                                 onClick={this.onClick}
-                                                // onDragStart={this.onDrag}
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item}
                                             </span>
                                         )
-                                    })
+                                    }) : <></>
+
                                 }
                             </Colxx>
                         </Row>
@@ -217,7 +272,7 @@ class Calculator extends Component {
                                         return (
                                             <span key={item + index}
                                                 // draggable="true"
-                                                id={item.label}
+                                                id={`"${item.label}"`}
                                                 onClick={this.onClick}
                                                 // onDragStart={this.onDrag}
                                                 className="constants height-40 align-middle"
@@ -241,7 +296,7 @@ class Calculator extends Component {
                                                 <span key={item + index}
                                                     // draggable="true"
                                                     onClick={this.onClick}
-                                                    id={item.label}
+                                                    id={`${item.label}()`}
                                                     // onDragStart={this.onDrag}
                                                     className="constants height-40 align-middle"
                                                 >
@@ -276,6 +331,7 @@ class Calculator extends Component {
                                     // allowDrop={this.allowDrop}
                                     content={this.state.content}
                                     onChangeEditor={this.onChangeEditor}
+                                    onBlurEditor={this.onBlurEditor}
                                 />
                             </Colxx>
                         </Row>
@@ -284,7 +340,7 @@ class Calculator extends Component {
                                 className="mr-0"
                                 color="primary"
                                 onClick={() => {
-                                    // this.add();
+                                    this.createFormula();
                                 }}
                             >
                                 Thêm mới

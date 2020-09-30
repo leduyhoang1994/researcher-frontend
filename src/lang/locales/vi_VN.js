@@ -17,7 +17,7 @@ module.exports = {
   "user.login-title": "Đăng nhập",
   "user.register": "Đăng ký",
   "user.forgot-password": "Quên mật khẩu",
-  "user.email": "Email",
+  "user.email": "E-mail *",
   "user.password": "Mật khẩu *",
   "user.confirmPassword": "Xác nhận mật khẩu *",
   "user.forgot-password-question": "Forget password?",

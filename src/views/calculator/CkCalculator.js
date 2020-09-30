@@ -2,39 +2,45 @@ import React from "react";
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Input, Label } from "reactstrap";
+import ContentEditable from 'react-contenteditable'
 
 class CkCalculator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        };
+        this.contentEditable = React.createRef();
         // this.messages = this.props.intl.messages;
     }
 
+    handleChange = evt => {
+        this.setState({ html: evt.target.value });
+    };
+
     render() {
         const { content } = this.props;
+
         return (
             <div onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
-                <Label className="form-group has-float-label">
-                    <Input
+                <Label id="label" className="w-100 has-float-label">
+                    <ContentEditable
                         id="editor"
-                        rows={5}
-                        value={content}
-                        type="textarea"
                         spellCheck="false"
+                        tagName='article'
+                        disabled={false}
+                        html={content}
                         onChange={this.props.onChangeEditor}
+                        onBlur={this.props.onBlurEditor}
                     />
-                    <span>Formula</span>
+                    <span>Formula *</span>
                 </Label>
 
                 {/* <CKEditor
-                    data={this.props.content}
+                    data={content}
                     editor={ClassicEditor}
-                    onChange={(event, editor) => {
-                        const data = editor.getData();
-                        // this.props.onChangeEditor(data);
-                        console.log(data);
-                    }}
+                    // onChange={(event, editor) => {
+                    //     const data = editor.getData();
+                    //     // this.props.onChangeEditor(data);
+                    //     console.log(data);
+                    // }}
                 /> */}
             </div>
         );
