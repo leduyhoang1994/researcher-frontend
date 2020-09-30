@@ -88,7 +88,7 @@ function* loginSellerWithEmailPassword({ payload }) {
             const userDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginSellerSuccess(loginSeller.result, userDetails));
-            window.open('/store', '_self');
+            // window.open('/store', '_self');
         } else {
             yield put(loginSellerError(loginSeller.message));
         }
@@ -121,9 +121,7 @@ const getUserDetails = async (token) =>
     }).catch(error => error);
 
 const getSellerDetails = async (token) =>
-    await Api.callAsync('get', SELLER.details, {
-        token: token
-    }, {
+    await Api.callAsync('get', SELLER.details, {}, {
         headers: {
             Authorization: 'Bearer ' + token //the token is a variable which holds the token
         }
