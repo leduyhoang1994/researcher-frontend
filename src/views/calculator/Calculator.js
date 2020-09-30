@@ -25,7 +25,7 @@ class Calculator extends Component {
             detailFields: {},
             formula: "",
             field: "",
-            content: "abc",
+            content: "<p contenteditable='false'>abc</p> <i contenteditable='false'>ghjk</i> <h3 contenteditable='false'>456789</h3>",
             index: 0,
         }
         this.handleChangeText = this.handleChangeText.bind(this);
@@ -137,7 +137,7 @@ class Calculator extends Component {
         let data = ev.target.id;
         let element = document.getElementById('editor');
         let inputText = element.innerText;
-        let result = inputText.slice(0, index) + "<article contenteditable='false'>" + data + "</article>" + inputText.slice(index, inputText.length);
+        let result = inputText.slice(0, index) + "<span contenteditable='false'>" + data + "</span>" + inputText.slice(index, inputText.length);
         this.setState({
             content: result
         })
