@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, CardBody, Input, Button } from 'reactstrap';
+import { Row, Card, CardBody, Input, Button, CardTitle } from 'reactstrap';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import Editor from "./Editor";
 import ApiController from "../../helpers/Api";
@@ -40,9 +40,13 @@ class Calculator extends Component {
         this.getFunctionsMathjs();
     }
 
+    reCallApi = () => {
+        this.getConstants();
+    }
+
     getCurrentFormula = () => {
         const { id } = this.state;
-        if(id) {
+        if (id) {
             ApiController.call('get', `${CONSTANTS.all}/${id}`, {}, data => {
                 this.setState({
                     formula: data.label,
@@ -232,40 +236,45 @@ class Calculator extends Component {
         let data = { label: formula, value: value, viewValue: content, type: "FORMULA" };
         if (flag) {
             if (data.value && data.label) {
-                if(this.state.id) {
+                if (this.state.id) {
                     data.id = this.state.id;
                     ApiController.callAsync('put', CONSTANTS.all, data)
-                    .then(data => {
-                        if (data.data.statusCode === 200) {
-                            NotificationManager.success(notify_update_success, success, 2000);
+                        .then(data => {
+                            if (data.data.statusCode === 200) {
+                                NotificationManager.success(notify_update_success, success, 2000);
+                                setTimeout(() => {
+                                    window.open(`/calculator/edit/${this.state.id}`, "_self");
+                                }, 2500);
+                            }
+                        }).catch(error => {
+                            NotificationManager.warning(notify_add_failed, failed, 2000);
                             setTimeout(() => {
-                                window.open(`/calculator/${this.state.id}`, "_self");
+                                NotificationManager.info(error.response.data.message, info, 2000);
                             }, 2500);
-                        }
-                    }).catch(error => {
-                        NotificationManager.warning(notify_add_failed, failed, 2000);
-                        setTimeout(() => {
-                            NotificationManager.info(error.response.data.message, info, 2000);
-                        }, 2500);
-                    });
+                        });
                 } else {
                     ApiController.callAsync('post', CONSTANTS.all, data)
-                    .then(data => {
-                        if (data.data.statusCode === 200) {
-                            NotificationManager.success(notify_add_success, success, 2000);
+                        .then(data => {
+                            if (data.data.statusCode === 200) {
+                                NotificationManager.success(notify_add_success, success, 1000);
+                                setTimeout(() => {
+                                    window.open(`/calculator/edit/${data.data.result.id}`, "_self");
+                                }, 1500);
+                            }
+                        }).catch(error => {
+                            NotificationManager.warning(notify_add_failed, failed, 2000);
                             setTimeout(() => {
-                                window.open("/calculator", "_self");
+                                NotificationManager.info(error.response.data.message, info, 2000);
                             }, 2500);
-                        }
-                    }).catch(error => {
-                        NotificationManager.warning(notify_add_failed, failed, 2000);
-                        setTimeout(() => {
-                            NotificationManager.info(error.response.data.message, info, 2000);
-                        }, 2500);
-                    });
+                        });
                 }
             } else {
-                NotificationManager.warning(required_field, failed);
+                if (!data.label) {
+                    NotificationManager.warning(`${required_field} tên công thức`, failed, 3000);
+                }
+                if (!data.value) {
+                    NotificationManager.warning(`${required_field} nội dung công thức`, failed, 3000);
+                }
             }
         }
 
@@ -288,6 +297,9 @@ class Calculator extends Component {
                             </Button>
                 </div>
                 <Card>
+                    <CardTitle className="mb-0">
+                        <h1 className="pl-3 mt-4 mb-0 pb-0 ml-4 xxs-10">FORMULA</h1>
+                    </CardTitle>
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
                             <Colxx xxs="2" >
@@ -412,7 +424,7 @@ class Calculator extends Component {
                                     this.createFormula();
                                 }}
                             >
-                                Thêm mới
+                                {this.state.id ? "Cập nhật" : "Thêm mới"}
                             </Button>
                         </div>
                     </CardBody>
@@ -420,6 +432,7 @@ class Calculator extends Component {
                 <ConstantModals
                     isOpen={this.state.isConstantModalOpen}
                     toggle={this.toggleConstantModal}
+                    getData={this.reCallApi}
                     clearConstantEdit={this.clearConstantEdit}
                 />
             </Fragment>
