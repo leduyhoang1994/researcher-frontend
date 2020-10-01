@@ -12,6 +12,7 @@ import { failed, notify_add_success, success, notify_syntax_error, notify_add_fa
 import "./style.scss";
 import { getIndexTagOnKeyDown } from "../../helpers/Utils";
 import { Redirect } from "react-router-dom";
+import ConstantModals from "./ConstantModals";
 
 
 class Calculator extends Component {
@@ -28,6 +29,7 @@ class Calculator extends Component {
             field: "",
             content: "",
             index: 0,
+            isConstantModalOpen: false,
         }
         this.handleChangeText = this.handleChangeText.bind(this);
         // this.messages = this.props.intl.messages;
@@ -68,6 +70,16 @@ class Calculator extends Component {
                 constants
             })
         });
+    }
+
+    toggleConstantModal = () => {
+        this.setState({
+            isConstantModalOpen: !this.state.isConstantModalOpen
+        });
+    }
+
+    clearConstantEdit = () => {
+
     }
 
     getFunctionsMathjs = () => {
@@ -240,7 +252,7 @@ class Calculator extends Component {
                         className="mr-0"
                         color="primary"
                         onClick={() => {
-                            window.open("/calculator/constants", "_self")
+                            this.toggleConstantModal();
                         }}
                     >
                         Thêm mới trường
@@ -376,6 +388,11 @@ class Calculator extends Component {
                         </div>
                     </CardBody>
                 </Card>
+                <ConstantModals
+                    isOpen={this.state.isConstantModalOpen}
+                    toggle={this.toggleConstantModal}
+                    clearConstantEdit={this.clearConstantEdit}
+                />
             </Fragment>
         )
     }

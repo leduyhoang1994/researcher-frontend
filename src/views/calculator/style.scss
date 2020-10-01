@@ -47,8 +47,10 @@
 #editor {
   font-size: 0.85rem !important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-  height: 150px;
+  height: 100px;
+  min-height: 50px;
   border: 1px solid #eee;
+  max-width: 100%;
   &:focus-within {
     background-color: white;
     border: 1px solid red !important;
@@ -70,4 +72,7 @@ article p,i,h3,article {
 }
 #label > article {
   display: block;
+}
+.button {
+  padding-bottom: 12px;
 }

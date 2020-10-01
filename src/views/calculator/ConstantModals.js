@@ -88,7 +88,11 @@ class ConstantModals extends React.Component {
             ApiController.callAsync('post', CONSTANTS.all, constant)
                 .then(data => {
                     NotificationManager.success("Thêm tham số thành công!", "Thành công");
-                    this.props.getData()
+                    try {
+                        this.props.getData()
+                    } catch (error) {
+                        
+                    }
                 }).catch(error => {
                     NotificationManager.warning("Tham số đã tồn tại!", "Thất bại", 1000);
                 });
@@ -122,7 +126,7 @@ class ConstantModals extends React.Component {
                     />
                 </Label>
                 <Label>
-                    <Button onClick={this.onFormSubmit}>{id ? "Sửa" : "Tạo"}</Button>
+                    <Button className="button" onClick={this.onFormSubmit}>{id ? "Sửa" : "Tạo"}</Button>
                 </Label>
             </>
         )

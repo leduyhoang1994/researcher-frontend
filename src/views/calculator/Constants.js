@@ -125,7 +125,7 @@ class Constants extends Component {
                                 {variable.map((item) => {
                                     return (
                                         <Row key={item.id}>
-                                            <Colxx xxs="9">
+                                            <Colxx xxs="8">
                                                 <Row>
                                                     <Colxx xxs="3">
                                                         <span className="w-100">
@@ -161,9 +161,9 @@ class Constants extends Component {
                                                     </Colxx>
                                                 </Row>
                                             </Colxx>
-                                            <Colxx xxs="3 pl-0">
+                                            <Colxx xxs="4 pl-0">
                                                 <Row>
-                                                    <Colxx xxs="8 pr-1" >
+                                                    <Colxx xxs="6 " >
                                                         <span className="w-100">
                                                             <Label className="has-float-label pb-3">
                                                                 <Input
@@ -178,40 +178,40 @@ class Constants extends Component {
                                                             </Label>
                                                         </span>
                                                     </Colxx>
-                                                    <Colxx xxs="4 pl-0">
+                                                    <Colxx xxs="6 ">
                                                         {
                                                             item.type === "CUSTOM_VARIABLE" ?
                                                                 (
                                                                     <Row>
-                                                                        <Colxx xxs="5">
+                                                                        <Colxx xxs="6">
                                                                             <span className="w-100">
                                                                                 <Button
                                                                                     outline
-                                                                                    className="pr-1 mr-1"
+                                                                                    className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         this.handleEdit(item)
                                                                                     }}
                                                                                 >
-                                                                                    <i className="simple-icon-options pr-0 mr-2" />
+                                                                                    <i className="iconsminds-gear-2 align-middle" />
                                                                                 </Button>
                                                                             </span>
                                                                         </Colxx>
-                                                                        <Colxx xxs="5">
+                                                                        <Colxx xxs="6 pl-0">
                                                                             <span className="w-100">
                                                                                 <Button
                                                                                     outline
-                                                                                    className="pr-1 ml-1"
+                                                                                    className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         this.handleRemove(item)
                                                                                     }}
                                                                                 >
-                                                                                    <i className="simple-icon-close pr-0 mr-2" />
+                                                                                    <i className="simple-icon-close align-middle" />
                                                                                 </Button>
                                                                             </span>
                                                                         </Colxx>
-                                                                        <Colxx xxs="2"></Colxx>
+                                                                        {/* <Colxx xxs="2"></Colxx> */}
                                                                     </Row>
                                                                 )
                                                                 : <></>
@@ -248,7 +248,7 @@ class Constants extends Component {
                                 {formula.map((item) => {
                                     return (
                                         <Row key={item.id}>
-                                            <Colxx xxs="9">
+                                            <Colxx xxs="8">
                                                 <Row>
                                                     <Colxx xxs="3">
                                                         <span className="w-100">
@@ -282,9 +282,9 @@ class Constants extends Component {
                                                     </Colxx>
                                                 </Row>
                                             </Colxx>
-                                            <Colxx xxs="3 pl-0">
+                                            <Colxx xxs="4">
                                                 <Row>
-                                                    <Colxx xxs="8 pr-1" >
+                                                    <Colxx xxs="6 pl-0" >
                                                         <span className="w-100">
                                                             <Label className="has-float-label pb-3">
                                                                 <Input
@@ -299,40 +299,39 @@ class Constants extends Component {
                                                             </Label>
                                                         </span>
                                                     </Colxx>
-                                                    <Colxx xxs="4 pl-0">
+                                                    <Colxx xxs="6 ">
                                                         {
                                                             item.type === "FORMULA" ?
                                                                 (
                                                                     <Row>
-                                                                        <Colxx xxs="5">
+                                                                        <Colxx xxs="6">
                                                                             <span className="w-100">
                                                                                 <Button
                                                                                     outline
-                                                                                    className="pr-1 mr-1"
+                                                                                    className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         // this.handleEdit(item)
                                                                                     }}
                                                                                 >
-                                                                                    <i className="simple-icon-options pr-0 mr-2" />
+                                                                                    <i className="iconsminds-gear-2 align-middle" />
                                                                                 </Button>
                                                                             </span>
                                                                         </Colxx>
-                                                                        <Colxx xxs="5">
+                                                                        <Colxx xxs="6 pl-0">
                                                                             <span className="w-100">
                                                                                 <Button
                                                                                     outline
-                                                                                    className="pr-1 ml-1"
+                                                                                    className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         this.handleRemove(item)
                                                                                     }}
                                                                                 >
-                                                                                    <i className="simple-icon-close pr-0 mr-2" />
+                                                                                    <i className="simple-icon-close align-middle" />
                                                                                 </Button>
                                                                             </span>
                                                                         </Colxx>
-                                                                        <Colxx xxs="2"></Colxx>
                                                                     </Row>
                                                                 )
                                                                 : <></>
