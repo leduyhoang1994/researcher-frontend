@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { FUNCTIONS, OPERATORS, FIELDS } from "../../constants/operator";
 import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
 import { Colxx } from "../../components/common/CustomBootstrap";
-import CkCalculator from "./CkCalculator";
+import Editor from "./Editor";
 import ApiController from "../../helpers/Api";
 import Select from "react-select";
 import { CONSTANTS } from "../../constants/api";
@@ -11,6 +11,7 @@ import { NotificationManager } from '../../components/common/react-notifications
 import { failed, notify_add_success, success, notify_syntax_error, notify_add_failed, info, required_field } from "../../constants/constantTexts";
 import "./style.scss";
 import { getIndexTagOnKeyDown } from "../../helpers/Utils";
+import { Redirect } from "react-router-dom";
 
 
 class Calculator extends Component {
@@ -25,7 +26,7 @@ class Calculator extends Component {
             detailFields: {},
             formula: "",
             field: "",
-            content: "<p contenteditable='false'>abc</p> <i contenteditable='false'>ghjk</i> <h3 contenteditable='false'>456789</h3>",
+            content: "",
             index: 0,
         }
         this.handleChangeText = this.handleChangeText.bind(this);
@@ -72,7 +73,7 @@ class Calculator extends Component {
     getFunctionsMathjs = () => {
         let arrMath = []
         Object.getOwnPropertyNames(Math).forEach(item => {
-            arrMath.push({ label: item, value: item });
+            arrMath.push({ label: item, value: item, code: item.toUpperCase() });
         })
         this.setState({
             optionFunctions: arrMath,
@@ -84,7 +85,7 @@ class Calculator extends Component {
         let element = document.getElementById('editor');
         let inputText = element.innerText;
 
-        let result = inputText.slice(0, index) + "<article contenteditable='false'>" + value.value + "</article>()" + inputText.slice(index, inputText.length);
+        let result = inputText.slice(0, index) + "<span contenteditable='false'>" + value.value + "</span>()" + inputText.slice(index, inputText.length);
         this.setState({
             content: result
         })
@@ -118,7 +119,6 @@ class Calculator extends Component {
     }
 
     onChangeEditor = (e) => {
-        console.log(e);
         this.setState({
             content: e.target.value
         })
@@ -133,49 +133,64 @@ class Calculator extends Component {
     }
 
     onClick = (ev) => {
-        const { index } = this.state;
+        const { index, detailFields } = this.state;
+        let constant = [...this.state.constants, ...this.state.optionFunctions];
+        const formulas = [...this.state.formulas];
+        constant.reverse();
+        const key = Object.keys(detailFields).toString() || "";
+
+        if (key) {
+            const fields = detailFields[key];
+            let arrFields = [];
+            fields.forEach(item => {
+                arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
+            })
+            constant = [...constant, ...arrFields];
+        }
+
         let data = ev.target.id;
         let element = document.getElementById('editor');
         let inputText = element.innerText;
-        let result = inputText.slice(0, index) + "<span contenteditable='false'>" + data + "</span>" + inputText.slice(index, inputText.length);
+        let leftResult = inputText.slice(0, index);
+        const middleResult = "<span contenteditable='false'>" + data + "</span>";
+        let rightResult = inputText.slice(index, inputText.length);
+
+        constant.forEach(item => {
+            if (leftResult.indexOf(item.label) !== -1) {
+                leftResult = leftResult.replaceAll(`${item.label}`, `<span contenteditable='false'>${item.label}</span>`);
+            }
+            if (rightResult.indexOf(item.label) !== -1) {
+                rightResult = rightResult.replaceAll(`${item.label}`, `<span contenteditable='false'>${item.label}</span>`);
+            }
+        })
+        formulas.forEach(item => {
+            if (leftResult.indexOf(item.label) !== -1) {
+                leftResult = leftResult.replaceAll(`${item.label}()`, `<span contenteditable='false'>${item.label}()</span>`);
+            }
+            if (rightResult.indexOf(item.label) !== -1) {
+                rightResult = rightResult.replaceAll(`${item.label}()`, `<span contenteditable='false'>${item.label}()</span>`);
+            }
+        })
+        let result = leftResult + middleResult + rightResult;
         this.setState({
             content: result
         })
         element.focus();
     }
 
-    // onDrop = (ev) => {
-    //     ev.preventDefault();
-    //     let data = ev.dataTransfer.getData("item-transfer");
-    //     console.log("value: " + data);
-    //     const node = document.createElement("span");
-    //     const textNode = document.createTextNode(data);
-    //     node.appendChild(textNode);
-
-    //     const content = document.querySelector(".ck-content");
-    //     document.querySelector(".ck-content").appendChild(node);
-    //     // content.appendChild(data);
-    //     // let content = this.state.content;
-    //     // content = content + "#" + data  + "#";
-    //     console.log(content);
-    //     // this.setState({
-    //     //     content
-    //     // })
-    // }
-
-    // onDrag = (ev) => {
-    //     ev.dataTransfer.setData("item-transfer", ev.target.id);
-    // }
-
     createFormula = () => {
         let flag = true;
         const { formula, content, formulas, constants } = this.state;
         var value = content.trim();
         value = value.replaceAll("<span contenteditable='false'>", "");
+        value = value.replaceAll(`<span contenteditable="false">`, "");
         value = value.replaceAll("</span>", "");
+        value = value.replaceAll("&nbsp;", " ");
         formulas.forEach(item => {
-            if (value.indexOf(item.code) !== -1) {
-                if (value.indexOf(`${item.code}()`) === -1) {
+            if (value.indexOf(item.label) !== -1) {
+                if (value.indexOf(`${item.label}()`) !== -1) {
+                    value = value.replaceAll(`${item.label}`, `${item.code}`);
+                } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
                 }
@@ -183,24 +198,24 @@ class Calculator extends Component {
         })
         constants.forEach(item => {
             if (value.indexOf(item.label) !== -1) {
-                if (value.indexOf(`"${item.label}"`) !== -1) {
-                    value = value.replaceAll(`"${item.label}"`, `${item.code}`);
+                if (value.indexOf(`${item.label}`) !== -1) {
+                    value = value.replaceAll(`${item.label}`, `${item.code}`);
                 } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
                 }
             }
         })
-        console.log(value);
-        const data = { label: formula, value: value, viewValue: content.trim(), type: "FORMULA" };
-        console.log(data);
+        const data = { label: formula, value: value, viewValue: content, type: "FORMULA" };
         if (flag) {
             if (data.value && data.label) {
                 ApiController.callAsync('post', CONSTANTS.all, data)
                     .then(data => {
-                        console.log(data);
                         if (data.data.statusCode === 200) {
                             NotificationManager.success(notify_add_success, success, 2000);
+                            setTimeout(() => {
+                                window.open("/calculator", "_self");
+                            }, 2500);
                         }
                     }).catch(error => {
                         NotificationManager.warning(notify_add_failed, failed, 2000);
@@ -220,6 +235,17 @@ class Calculator extends Component {
         const key = Object.keys(detailFields).toString() || "";
         return (
             <Fragment >
+                <div className="text-right card-title mt-2">
+                    <Button
+                        className="mr-0"
+                        color="primary"
+                        onClick={() => {
+                            window.open("/calculator/constants", "_self")
+                        }}
+                    >
+                        Thêm mới trường
+                            </Button>
+                </div>
                 <Card>
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
@@ -274,7 +300,7 @@ class Calculator extends Component {
                                         return (
                                             <span key={item + index}
                                                 // draggable="true"
-                                                id={`"${item.label}"`}
+                                                id={`${item.label}`}
                                                 onClick={this.onClick}
                                                 // onDragStart={this.onDrag}
                                                 className="constants height-40 align-middle"
@@ -328,7 +354,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="12">
-                                <CkCalculator
+                                <Editor
                                     // onDrop={this.onDrop}
                                     // allowDrop={this.allowDrop}
                                     content={this.state.content}

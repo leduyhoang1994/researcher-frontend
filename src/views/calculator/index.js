@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import StoreLayout from '../../layout/StoreLayout';
+import AppLayout from '../../layout/AppLayout';
 
 const Calculator = React.lazy(() =>
   import(/* webpackChunkName: "user-register" */ './Calculator')
@@ -10,7 +10,7 @@ const Constants = React.lazy(() =>
 );
 const Cal = ({ match }) => {
   return (
-    <StoreLayout>
+    <AppLayout>
       <Suspense fallback={<div className="loading" />}>
         <Switch>
           <Route
@@ -24,7 +24,7 @@ const Cal = ({ match }) => {
           <Redirect to="/error" />
         </Switch>
       </Suspense>
-    </StoreLayout>
+    </AppLayout>
   );
 };
 

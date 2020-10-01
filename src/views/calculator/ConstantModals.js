@@ -11,6 +11,7 @@ class ConstantModals extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: null,
             constant: {
                 label: "",
                 value: "",
@@ -24,6 +25,7 @@ class ConstantModals extends React.Component {
         const { constantEdit } = nextProps
         if (constantEdit) {
             this.setState({
+                id: constantEdit.id,
                 constant: {
                     ...this.state.constant,
                     label: constantEdit.label,
@@ -46,6 +48,7 @@ class ConstantModals extends React.Component {
     clearConstantEdit = () => {
         this.props.clearConstantEdit()
         this.setState({
+            id: null,
             constant: {
                 label: "",
                 value: "",
@@ -93,7 +96,7 @@ class ConstantModals extends React.Component {
     }
 
     renderMedia = () => {
-        const { constant } = this.state
+        const { constant, id } = this.state
         return (
             <>
                 <Label className="mr-2">
@@ -119,7 +122,7 @@ class ConstantModals extends React.Component {
                     />
                 </Label>
                 <Label>
-                    <Button onClick={this.onFormSubmit}>{constant.id ? "Sửa" : "Tạo"}</Button>
+                    <Button onClick={this.onFormSubmit}>{id ? "Sửa" : "Tạo"}</Button>
                 </Label>
             </>
         )
