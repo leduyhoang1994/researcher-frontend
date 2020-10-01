@@ -31,7 +31,7 @@ class Constants extends Component {
     }
 
     getVariable = () => {
-        ApiController.get(`${CONSTANTS.all}/variable`, {}, data => {
+        ApiController.get(`${CONSTANTS.type}/variable`, {}, data => {
             this.setState({
                 variable: data,
             })
@@ -39,7 +39,7 @@ class Constants extends Component {
     }
 
     getFormula = () => {
-        ApiController.get(`${CONSTANTS.all}/formula`, {}, data => {
+        ApiController.get(`${CONSTANTS.type}/formula`, {}, data => {
             this.setState({
                 formula: data,
                 isLoading: false,
@@ -119,10 +119,10 @@ class Constants extends Component {
                     <CardTitle className="mb-0">
                         <h1 className="p-3 ml-4 xxs-10">Variable</h1>
                     </CardTitle>
-                    <CardBody >
+                    <CardBody className="constant">
                         <Row >
                             <Colxx xxs="12">
-                                {variable.map((item) => {
+                                {variable && variable.map((item) => {
                                     return (
                                         <Row key={item.id}>
                                             <Colxx xxs="8">
@@ -242,7 +242,7 @@ class Constants extends Component {
                     <CardTitle className="mb-0">
                         <h1 className="p-3 ml-4 xxs-10">Formula</h1>
                     </CardTitle>
-                    <CardBody >
+                    <CardBody className="constant">
                         <Row >
                             <Colxx xxs="12">
                                 {formula.map((item) => {
@@ -311,7 +311,7 @@ class Constants extends Component {
                                                                                     className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
-                                                                                        // this.handleEdit(item)
+                                                                                        window.open(`/calculator/${item.id}`)
                                                                                     }}
                                                                                 >
                                                                                     <i className="iconsminds-gear-2 align-middle" />

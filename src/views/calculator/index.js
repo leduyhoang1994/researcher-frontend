@@ -18,6 +18,10 @@ const Cal = ({ match }) => {
             render={props => <Constants {...props} />}
           />
           <Route
+            path={`${match.url}/:id`}
+            render={props => <Calculator {...props} />}
+          />
+          <Route
             path={`${match.url}/`}
             render={props => <Calculator {...props} />}
           />

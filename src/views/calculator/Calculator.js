@@ -1,17 +1,14 @@
 import React, { Component, Fragment } from "react";
-import { FUNCTIONS, OPERATORS, FIELDS } from "../../constants/operator";
-import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
+import { Row, Card, CardBody, Input, Button } from 'reactstrap';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import Editor from "./Editor";
 import ApiController from "../../helpers/Api";
 import Select from "react-select";
 import { CONSTANTS } from "../../constants/api";
-import { validateName } from '../../helpers/Validate';
 import { NotificationManager } from '../../components/common/react-notifications';
-import { failed, notify_add_success, success, notify_syntax_error, notify_add_failed, info, required_field } from "../../constants/constantTexts";
+import { failed, notify_add_success, success, notify_syntax_error, notify_add_failed, info, required_field, notify_update_success } from "../../constants/constantTexts";
 import "./style.scss";
 import { getIndexTagOnKeyDown } from "../../helpers/Utils";
-import { Redirect } from "react-router-dom";
 import ConstantModals from "./ConstantModals";
 
 
@@ -19,6 +16,7 @@ class Calculator extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            id: this.props.match.params.id || null,
             optionFunctions: [],
             optionFields: [],
             constants: [],
@@ -36,14 +34,27 @@ class Calculator extends Component {
     }
 
     componentDidMount() {
+        this.getCurrentFormula();
         this.getConstantsByType();
         this.getConstants();
         this.getFunctionsMathjs();
     }
 
+    getCurrentFormula = () => {
+        const { id } = this.state;
+        if(id) {
+            ApiController.call('get', `${CONSTANTS.all}/${id}`, {}, data => {
+                this.setState({
+                    formula: data.label,
+                    content: data.viewValue
+                })
+            });
+        }
+    }
+
     getConstantsByType = () => {
         let optionFields = [];
-        ApiController.call('get', `${CONSTANTS.all}/field`, {}, data => {
+        ApiController.call('get', `${CONSTANTS.type}/field`, {}, data => {
             for (let index in data) {
                 optionFields.push({ label: index, value: index })
             }
@@ -218,10 +229,27 @@ class Calculator extends Component {
                 }
             }
         })
-        const data = { label: formula, value: value, viewValue: content, type: "FORMULA" };
+        let data = { label: formula, value: value, viewValue: content, type: "FORMULA" };
         if (flag) {
             if (data.value && data.label) {
-                ApiController.callAsync('post', CONSTANTS.all, data)
+                if(this.state.id) {
+                    data.id = this.state.id;
+                    ApiController.callAsync('put', CONSTANTS.all, data)
+                    .then(data => {
+                        if (data.data.statusCode === 200) {
+                            NotificationManager.success(notify_update_success, success, 2000);
+                            setTimeout(() => {
+                                window.open(`/calculator/${this.state.id}`, "_self");
+                            }, 2500);
+                        }
+                    }).catch(error => {
+                        NotificationManager.warning(notify_add_failed, failed, 2000);
+                        setTimeout(() => {
+                            NotificationManager.info(error.response.data.message, info, 2000);
+                        }, 2500);
+                    });
+                } else {
+                    ApiController.callAsync('post', CONSTANTS.all, data)
                     .then(data => {
                         if (data.data.statusCode === 200) {
                             NotificationManager.success(notify_add_success, success, 2000);
@@ -235,6 +263,7 @@ class Calculator extends Component {
                             NotificationManager.info(error.response.data.message, info, 2000);
                         }, 2500);
                     });
+                }
             } else {
                 NotificationManager.warning(required_field, failed);
             }

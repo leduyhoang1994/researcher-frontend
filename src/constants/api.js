@@ -124,4 +124,5 @@ export const CATEGORY_SETS = {
 export const constants = 'constants';
 export const CONSTANTS = {
   all: `${apiPath}/${constants}`,
+  type: `${apiPath}/${constants}/type`,
 }
