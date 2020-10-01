@@ -8,6 +8,7 @@ import ApiController from "../../helpers/Api";
 import { CONSTANTS } from '../../constants/api';
 import ConstantModals from './ConstantModals'
 import { NotificationManager } from "../../components/common/react-notifications";
+import ContentEditable from "react-contenteditable";
 
 class Constants extends Component {
     constructor(props) {
@@ -152,7 +153,7 @@ class Constants extends Component {
                                                                     disabled={true}
                                                                     className=""
                                                                     type="text"
-                                                                    value={item.value}
+                                                                    value={item.viewValue}
                                                                     name="value"
                                                                 />
                                                                 <span className="ml-3">
@@ -233,7 +234,7 @@ class Constants extends Component {
                     <CardTitle className="mb-0">
                         <h1 className="p-3 ml-4 xxs-10">Formula</h1>
                         <button className="mt-4 mr-3 btn btn-primary float-right" onClick={() => {
-                            // this.toggleConstantModal()
+                            window.open("/calculator", "_self")
                         }}>Thêm mới</button>
                     </CardTitle>
                     <CardBody >
@@ -263,12 +264,10 @@ class Constants extends Component {
                                                     <Colxx xxs="9 pl-0">
                                                         <span className="w-100">
                                                             <Label className="has-float-label pb-3">
-                                                                <Input
+                                                                <ContentEditable
+                                                                    id="editor"
                                                                     disabled={true}
-                                                                    className=""
-                                                                    type="text"
-                                                                    value={item.value}
-                                                                    name="value"
+                                                                    html={item.viewValue}
                                                                 />
                                                                 <span className="ml-3">
                                                                     <IntlMessages id="Giá trị" />
