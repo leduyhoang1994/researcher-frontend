@@ -1,7 +1,5 @@
 import React from "react";
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Input, Label } from "reactstrap";
+import { Label } from "reactstrap";
 import ContentEditable from 'react-contenteditable'
 
 class CkCalculator extends React.Component {

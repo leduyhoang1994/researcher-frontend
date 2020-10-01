@@ -117,9 +117,6 @@ class Constants extends Component {
                 <Card>
                     <CardTitle className="mb-0">
                         <h1 className="p-3 ml-4 xxs-10">Variable</h1>
-                        <button className="mt-4 mr-3 btn btn-primary float-right" onClick={() => {
-                            this.toggleConstantModal()
-                        }}>Thêm mới</button>
                     </CardTitle>
                     <CardBody >
                         <Row >
@@ -226,15 +223,23 @@ class Constants extends Component {
                                 })}
                             </Colxx>
                         </Row>
+                        <div className="text-right mt-2">
+                            <Button
+                                className="mr-0"
+                                color="primary"
+                                onClick={() => {
+                                    this.toggleConstantModal();
+                                }}
+                            >
+                                Thêm mới
+                            </Button>
+                        </div>
                     </CardBody>
                 </Card>
                 <hr />
                 <Card>
                     <CardTitle className="mb-0">
                         <h1 className="p-3 ml-4 xxs-10">Formula</h1>
-                        <button className="mt-4 mr-3 btn btn-primary float-right" onClick={() => {
-                            // this.toggleConstantModal()
-                        }}>Thêm mới</button>
                     </CardTitle>
                     <CardBody >
                         <Row >
@@ -341,6 +346,17 @@ class Constants extends Component {
                                 })}
                             </Colxx>
                         </Row>
+                        <div className="text-right mt-2">
+                            <Button
+                                className="mr-0"
+                                color="primary"
+                                onClick={() => {
+                                    window.open("/calculator", "_self");
+                                }}
+                            >
+                                Thêm mới
+                            </Button>
+                        </div>
                     </CardBody>
                 </Card>
                 <ConstantModals
