@@ -60,7 +60,7 @@ class SourceProductSets extends Component {
     const setItem = product.productSets.find(s => {
       return s.setId == this.state.setId
     })
-    ApiController.delete(`${SOURCE_PRODUCTS.removeFromSet}`, {
+    ApiController.delete(`${SOURCE_PRODUCTS.delete}`, {
       ids: [setItem?.id]
     }, data => {
       this.loadCurrentProductSet();
