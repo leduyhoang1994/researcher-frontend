@@ -139,7 +139,7 @@ export const removeVietnameseTones = (string) => {
   string = string.trim();
   // Remove punctuations
   // Bỏ dấu câu, kí tự đặc biệt
-  string = string.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
+  string = string.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, "");
   return string;
 }
 

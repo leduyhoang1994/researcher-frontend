@@ -85,7 +85,7 @@ class Constants extends Component {
             ApiController.callAsync('delete', `${CONSTANTS.all}/${item?.id}`, {})
                 .then(data => {
                     NotificationManager.success("Xóa tham số thành công!", "Thành công");
-                    if (item.type === "FORMULA") this.getFormula()
+                    if (item.type === "CUSTOM_FORMULA" || item.type === "SYSTEM_FORMULA") this.getFormula()
                     else this.getVariable()
                 }).catch(error => {
                     NotificationManager.warning("Xóa tham số thất bại!", "Thất bại", 1000);
@@ -179,26 +179,26 @@ class Constants extends Component {
                                                         </span>
                                                     </Colxx>
                                                     <Colxx xxs="6 ">
-                                                        {
-                                                            item.type === "CUSTOM_VARIABLE" ?
-                                                                (
-                                                                    <Row>
-                                                                        <Colxx xxs="6">
-                                                                            <span className="w-100">
-                                                                                <Button
-                                                                                    outline
-                                                                                    className="button"
-                                                                                    color="primary"
-                                                                                    onClick={() => {
-                                                                                        this.handleEdit(item)
-                                                                                    }}
-                                                                                >
-                                                                                    <i className="iconsminds-gear-2 align-middle" />
-                                                                                </Button>
-                                                                            </span>
-                                                                        </Colxx>
-                                                                        <Colxx xxs="6 pl-0">
-                                                                            <span className="w-100">
+                                                        <Row>
+                                                            <Colxx xxs="6">
+                                                                <span className="w-100">
+                                                                    <Button
+                                                                        outline
+                                                                        className="button"
+                                                                        color="primary"
+                                                                        onClick={() => {
+                                                                            this.handleEdit(item)
+                                                                        }}
+                                                                    >
+                                                                        <i className="iconsminds-gear-2 align-middle" />
+                                                                    </Button>
+                                                                </span>
+                                                            </Colxx>
+                                                            <Colxx xxs="6 pl-0">
+                                                                <span className="w-100">
+                                                                    {
+                                                                        item.type === "CUSTOM_VARIABLE" ?
+                                                                            (
                                                                                 <Button
                                                                                     outline
                                                                                     className="button"
@@ -209,13 +209,13 @@ class Constants extends Component {
                                                                                 >
                                                                                     <i className="simple-icon-close align-middle" />
                                                                                 </Button>
-                                                                            </span>
-                                                                        </Colxx>
-                                                                        {/* <Colxx xxs="2"></Colxx> */}
-                                                                    </Row>
-                                                                )
-                                                                : <></>
-                                                        }
+                                                                            )
+                                                                            : <></>
+                                                                    }
+                                                                </span>
+                                                            </Colxx>
+                                                            {/* <Colxx xxs="2"></Colxx> */}
+                                                        </Row>
                                                     </Colxx>
                                                 </Row>
                                             </Colxx>
@@ -300,26 +300,26 @@ class Constants extends Component {
                                                         </span>
                                                     </Colxx>
                                                     <Colxx xxs="6 ">
-                                                        {
-                                                            item.type === "FORMULA" ?
-                                                                (
-                                                                    <Row>
-                                                                        <Colxx xxs="6">
-                                                                            <span className="w-100">
-                                                                                <Button
-                                                                                    outline
-                                                                                    className="button"
-                                                                                    color="primary"
-                                                                                    onClick={() => {
-                                                                                        window.open(`/calculator/edit/${item.id}`)
-                                                                                    }}
-                                                                                >
-                                                                                    <i className="iconsminds-gear-2 align-middle" />
-                                                                                </Button>
-                                                                            </span>
-                                                                        </Colxx>
-                                                                        <Colxx xxs="6 pl-0">
-                                                                            <span className="w-100">
+                                                        <Row>
+                                                            <Colxx xxs="6">
+                                                                <span className="w-100">
+                                                                    <Button
+                                                                        outline
+                                                                        className="button"
+                                                                        color="primary"
+                                                                        onClick={() => {
+                                                                            window.open(`/calculator/edit/${item.id}`)
+                                                                        }}
+                                                                    >
+                                                                        <i className="iconsminds-gear-2 align-middle" />
+                                                                    </Button>
+                                                                </span>
+                                                            </Colxx>
+                                                            <Colxx xxs="6 pl-0">
+                                                                <span className="w-100">
+                                                                    {
+                                                                        item.type === "CUSTOM_FORMULA" ?
+                                                                            (
                                                                                 <Button
                                                                                     outline
                                                                                     className="button"
@@ -330,12 +330,13 @@ class Constants extends Component {
                                                                                 >
                                                                                     <i className="simple-icon-close align-middle" />
                                                                                 </Button>
-                                                                            </span>
-                                                                        </Colxx>
-                                                                    </Row>
-                                                                )
-                                                                : <></>
-                                                        }
+                                                                            )
+                                                                            : <></>
+                                                                    }
+                                                                </span>
+                                                            </Colxx>
+                                                        </Row>
+
                                                     </Colxx>
                                                 </Row>
                                             </Colxx>
