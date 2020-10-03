@@ -311,7 +311,7 @@ class Constants extends Component {
                                                                                     className="button"
                                                                                     color="primary"
                                                                                     onClick={() => {
-                                                                                        window.open(`/calculator/${item.id}`)
+                                                                                        window.open(`/calculator/edit/${item.id}`)
                                                                                     }}
                                                                                 >
                                                                                     <i className="iconsminds-gear-2 align-middle" />
@@ -349,7 +349,7 @@ class Constants extends Component {
                                 className="mr-0"
                                 color="primary"
                                 onClick={() => {
-                                    window.open("/calculator", "_self");
+                                    window.open("/calculator/edit", "_self");
                                 }}
                             >
                                 Thêm mới

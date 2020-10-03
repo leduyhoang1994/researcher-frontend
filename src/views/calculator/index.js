@@ -14,16 +14,16 @@ const Cal = ({ match }) => {
       <Suspense fallback={<div className="loading" />}>
         <Switch>
           <Route
-            path={`${match.url}/constants`}
-            render={props => <Constants {...props} />}
+            path={`${match.url}/edit/:id`}
+            render={props => <Calculator {...props} />}
           />
           <Route
-            path={`${match.url}/:id`}
+            path={`${match.url}/edit`}
             render={props => <Calculator {...props} />}
           />
           <Route
             path={`${match.url}/`}
-            render={props => <Calculator {...props} />}
+            render={props => <Constants {...props} />}
           />
           <Redirect to="/error" />
         </Switch>
