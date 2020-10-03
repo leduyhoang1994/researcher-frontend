@@ -88,7 +88,6 @@ const SourceProductTable = ({
     },
     {
       Header: __(component.messages, "Tên ngành hàng tầng 3"),
-      filterable: true,
       width: 300,
       accessor: "productCategoryVi",
       Cell: props => <p className="text-muted">{props.value}</p>,
@@ -109,21 +108,18 @@ const SourceProductTable = ({
     {
       Header: __(component.messages, "Tên sản phẩm"),
       width: 500,
-      filterable: true,
       accessor: "productTitleVi",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Nguồn sản phẩm"),
       width: 100,
-      filterable: true,
       accessor: "site",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Link sản phẩm"),
       width: 100,
-      filterable: true,
       accessor: "productLink",
       Cell: props => <div className="text-center">
         <a target="_blank" href={props.value}>Link</a>
@@ -132,64 +128,54 @@ const SourceProductTable = ({
     {
       Header: __(component.messages, "Doanh số bán ra"),
       accessor: "monthlySale",
-      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
       Header: __(component.messages, "Giá sản phẩm"),
       accessor: "priceStr",
-      filterable: true,
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Phí phát hành nội địa"),
       accessor: "productPrice",
-      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
       Header: __(component.messages, "Số lượng bán tối tiểu"),
       accessor: "minSale",
-      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
       Header: __(component.messages, "Địa điểm phát hàng"),
-      filterable: true,
       accessor: "productLocation",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Số lượng bán ra"),
       accessor: "topSale",
-      filterable: true,
       Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
       Header: __(component.messages, "Tên shop bán"),
       sortable: false,
-      filterable: true,
       accessor: "productShop",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Uy tín shop bán"),
       sortable: false,
-      filterable: true,
       accessor: "productShopRating",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Tỉ lệ khách quay lại"),
       sortable: false,
-      filterable: true,
       accessor: "rebuildRate",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(component.messages, "Ghi chú"),
       sortable: false,
-      filterable: true,
       accessor: "productShopRating",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
@@ -200,7 +186,7 @@ const SourceProductTable = ({
     query: {
       ...filter,
       s: filter?.s || null,
-      join: ["sourceProductSets", "uboxProducts"]
+      // join: ["sourceProductSets", "uboxProducts"]
     }
   }
 
@@ -211,6 +197,7 @@ const SourceProductTable = ({
         columns={columns()}
         defaultPageSize={25}
         className="mb-4"
+        filterable={false}
         getTrProps={(state, rowInfo) => {
           if (rowInfo && rowInfo.row && selectable) {
             return {
