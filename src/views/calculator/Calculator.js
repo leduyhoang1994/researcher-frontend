@@ -77,9 +77,9 @@ class Calculator extends Component {
         let formulas = [];
         ApiController.call('get', CONSTANTS.all, {}, data => {
             data.forEach(item => {
-                if (item.type === "FORMULA") {
+                if ((item.type === "SYSTEM_FORMULA") || (item.type === "CUSTOM_FORMULA")) {
                     formulas.push(item);
-                } else if (item.type === "CUSTOM_VARIABLE" || "SYSTEM_VARIABLE") {
+                } else if ((item.type === "CUSTOM_VARIABLE") || ("SYSTEM_VARIABLE")) {
                     constants.push(item);
                 }
             })
@@ -252,7 +252,7 @@ class Calculator extends Component {
                 }
             }
         })
-        let data = { label: formula, value: value, viewValue: content, type: "FORMULA" };
+        let data = { label: formula, value: value, viewValue: content, type: "CUSTOM_FORMULA" };
         if (flag) {
             if (data.value && data.label) {
                 if (this.state.id) {
@@ -296,6 +296,8 @@ class Calculator extends Component {
     render() {
         const { constants, formulas, formula, detailFields } = this.state;
         const key = Object.keys(detailFields).toString() || "";
+
+        console.log(formulas)
         return (
             <Fragment >
                 <div className="text-right card-title mt-2">
