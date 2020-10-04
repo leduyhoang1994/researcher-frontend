@@ -9,7 +9,7 @@ const dataTableColumns = [
         Header: "Hình ảnh",
         width: 150,
         accessor: "featureImage",
-        Cell: props => <img width="50" src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${props.value}`} alt={props.value}/>
+        Cell: props => <img width="50" src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${props.value}`} alt={props.value} />
     },
     {
         Header: "Trạng thái",
@@ -36,23 +36,23 @@ const dataTableColumns = [
         Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-        Header: "Giá gốc Max",
-        accessor: "priceMax",
+        Header: "Giá ubox",
+        accessor: "price",
         Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
-        Header: "Giá gốc Min",
-        accessor: "priceMin",
+        Header: "Giá nội bộ",
+        accessor: "internalPrice",
         Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
-        Header: "Giá dự kiến Max",
-        accessor: "futurePriceMax",
+        Header: "Giá bán tối thiểu",
+        accessor: "minPrice",
         Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
-        Header: "Giá dự kiến Min",
-        accessor: "futurePriceMin",
+        Header: "Giá bán đề xuất",
+        accessor: "offerPrice",
         Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
     },
     {
@@ -99,7 +99,7 @@ const UboxProductTables = (props) => {
             <ReactTable
                 data={data}
                 columns={dataTableColumns}
-                defaultPageSize={5}
+                defaultPageSize={10}
                 className="mb-4"
                 PaginationComponent={DataTablePagination}
                 getTrProps={(state, rowInfo) => {
@@ -115,6 +115,9 @@ const UboxProductTables = (props) => {
                     } else {
                         return {}
                     }
+                }}
+                style={{
+                    height: "550px"
                 }}
             />
         </div>

@@ -114,7 +114,7 @@ class CartList extends Component {
     addTotals = () => {
         let total = 0;
         this.state.cart.forEach(item => {
-            total += (item.priceMin + item.priceMax) / 2 * item.quantity
+            total += (item.internalPrice + item.price) / 2 * item.quantity
         });
         this.setState({
             total: total

@@ -281,12 +281,12 @@ export const FIELDS = [
     value: "Order Products"
   },
   // {
-  //   label: "priceMin",
-  //   value: "priceMin"
+  //   label: "internalPrice",
+  //   value: "internalPrice"
   // },
   // {
-  //   label: "priceMax",
-  //   value: "priceMax"
+  //   label: "price",
+  //   value: "price"
   // },
   // {
   //   label: "priceFutureMin",

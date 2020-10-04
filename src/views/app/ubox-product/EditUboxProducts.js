@@ -559,12 +559,6 @@ class EditUboxProducts extends Component {
                                                         defaultOptions
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
-<<<<<<< HEAD
-                                                        loadOptions={
-                                                            this.getSourceProducts
-                                                        }
-                                                        onChange={data => {
-=======
                                                         loadOptions={this.getSourceProducts}
                                                         onChange={async data => {
                                                             const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${data?.id}`, {});
@@ -576,7 +570,6 @@ class EditUboxProducts extends Component {
                                                                     },
                                                                 })
                                                             }
->>>>>>> 7f010136582a439c83f7e9b6a3d795c84f2cadc1
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
