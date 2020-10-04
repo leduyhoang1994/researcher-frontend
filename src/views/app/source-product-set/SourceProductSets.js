@@ -4,7 +4,7 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import SourceProductTable from '../source-product/SourceProductTable';
+import SourceProductTable from './SourceProductTables';
 import { SOURCE_PRODUCTS, PRODUCT_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 
@@ -13,7 +13,16 @@ class SourceProductSets extends Component {
     super(props);
     this.state = {
       setId: this.props.match.params.id,
+      filter: {
+        categoriesFilter: [],
+      },
+      pagination: {
+        page: 0,
+        pages: 1,
+        size: 25,
+      },
       productSet: {
+        setName: "",
         products: [],
         keyState: "key"
       }
@@ -27,7 +36,7 @@ class SourceProductSets extends Component {
 
   loadCurrentProductSet = () => {
     const { setId } = this.state;
-    // this.getProductSet(setId);
+    this.getProductSet(setId);
   }
 
   exportData = async () => {
@@ -43,34 +52,60 @@ class SourceProductSets extends Component {
 
   getProductSet = (id) => {
     ApiController.get(`${PRODUCT_SETS.all}/${id}`, {}, data => {
-      data.productSets = data.productSets.map(d => {
-        return {
-          ...d.product,
-          id: d.id
-        };
+      let products = [];
+      data.sourceProductSets.forEach(item => {
+        item.sourceProduct.setId = item.id;
+        products.push(item.sourceProduct)
       })
+
       this.setState({
-        productSet: data,
+        productSet: {
+          setName: data.setName,
+          products: products
+        },
         keyState: Math.random()
       });
     })
   }
 
   removeFromProductSet = (product) => {
-    const setItem = product.productSets.find(s => {
-      return s.setId == this.state.setId
-    })
-    ApiController.delete(`${SOURCE_PRODUCTS.removeFromSet}`, {
-      ids: [setItem?.id]
-    }, data => {
+    const ids = [product.setId];
+    ApiController.delete(`${PRODUCT_SETS.delete}`, {
+      ids: ids
+    }, () => {
       this.loadCurrentProductSet();
-    }, {
-
     });
   };
 
+  onPageChange = (page) => {
+    let { pagination } = this.state;
+    pagination.page = page;
+    if (page > 1) {
+      pagination.canPrevious = true;
+    } else {
+      pagination.canPrevious = false;
+    }
+    if (page < pagination.pages - 1) {
+      pagination.canNext = true;
+    } else {
+      pagination.canNext = false;
+    }
+    this.setState({
+      pagination: pagination
+    })
+    this.loadCurrentProductSet();
+  }
+
+  onPageSizeChange = (size) => {
+    const { pagination } = this.state;
+    pagination.size = size;
+    this.setState({
+      pagination: pagination
+    })
+    this.loadCurrentProductSet();
+  }
+
   render() {
-    const { setId } = this.state;
     return (
       <Fragment>
         <Row>
@@ -84,7 +119,7 @@ class SourceProductSets extends Component {
             <Card>
               <CardBody>
                 <CardTitle>
-                  {__(this.messages, 'Bộ sản phẩm')} <b>{this.state.productSet.setName}</b>
+                  {__(this.messages, 'Bộ sản phẩm')}
                 </CardTitle>
                 <Row>
                   <Colxx xxs="11">
@@ -128,17 +163,12 @@ class SourceProductSets extends Component {
                   <Colxx xxs="12">
                     <SourceProductTable
                       key={this.state.keyState}
+                      data={this.state.productSet.products}
+                      pagination={this.state.pagination}
                       component={this}
-                      selectable={false}
+                      onPageChange={this.onPageChange}
+                      onPageSizeChange={this.onPageSizeChange}
                       removeFromSelectedProducts={this.removeFromProductSet}
-                      filter={{
-                        join: 'sourceProductSets||id,setId,sourceProductId',
-                        s: {
-                          'sourceProductSets.setId': {
-                            "$eq": this.state.setId
-                          }
-                        }
-                      }}
                     />
                   </Colxx>
                 </Row>

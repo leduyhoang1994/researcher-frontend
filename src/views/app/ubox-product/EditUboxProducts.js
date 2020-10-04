@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { jsonToFormData, parse } from '../../../helpers/Utils'
+import { jsonToFormData, numberWithCommas, parse } from '../../../helpers/Utils'
 import Properties from './Properties';
 import Api from '../../../helpers/Api';
 import { copySamplePropertiesObj } from '../../../helpers/Utils'
@@ -16,7 +16,6 @@ import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
-import { validateName, validateNumber } from '../../../helpers/Validate';
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -29,12 +28,8 @@ class EditUboxProducts extends Component {
                 sourceProduct: {},
                 description: "",
                 featureImage: "",
-                futurePriceMax: "",
-                futurePriceMin: "",
                 isPublished: true,
                 name: "",
-                priceMax: "",
-                priceMin: "",
                 serviceCost: "",
                 serviceSla: "",
                 sourceProductId: "",
@@ -44,15 +39,15 @@ class EditUboxProducts extends Component {
                 uboxProductOptions: [],
                 weight: "",
                 workshopIn: "",
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             keyProperty: '',
             keyMedia: '',
             uboxProduct: {
                 name: '',
-                priceMax: 0,
-                priceMin: 0,
-                futurePriceMax: 0,
-                futurePriceMin: 0,
                 weight: 0,
                 serviceSla: '',
                 serviceCost: 0,
@@ -64,7 +59,11 @@ class EditUboxProducts extends Component {
                 uboxCategoryId: 0,
                 sourceProductId: 0,
                 optionIds: [],
-                isPublished: false
+                isPublished: false,
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             selectedCategory: "",
             optionUboxCategories: [],
@@ -125,15 +124,7 @@ class EditUboxProducts extends Component {
         if (sourceProductId) {
             const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
             const product = data.data.result;
-            console.log(product);
 
-            // if (product?.id) {
-            //     this.setRedirect(`/app/ubox-products/edit/${product.id}`);
-            //     this.renderRedirect();
-            // } else {
-            //     this.setRedirect(`/app/ubox-products/add?sourceProductId=${sourceProductId}`);
-            //     this.renderRedirect();
-            // }
             if (product?.id) {
                 window.open(`/app/ubox-products/edit/${product.id}`, "_self");
             } else {
@@ -142,6 +133,7 @@ class EditUboxProducts extends Component {
         }
         else if (productAddId) {
             ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
+                console.log(data);
                 this.setState({
                     product: {
                         ...this.state.product,
@@ -150,6 +142,8 @@ class EditUboxProducts extends Component {
                         },
                         sourceProductId: productAddId
                     }
+                }, () => {
+                    this.getPrice(productAddId);
                 })
             })
 
@@ -195,15 +189,11 @@ class EditUboxProducts extends Component {
     }
 
     getSourceProducts = async (search, loadedOptions, { page }) => {
-        const filter = {
-            productTitleVi: {
-                "$cont": `%${search}%`
-            }
-        };
         const data = await ApiController.getAsync(SOURCE_PRODUCTS.all, {
-            s: JSON.stringify(filter),
+            sourceProductName: search,
             page: page,
-            size: 20
+            size: 20,
+            type: "non-relation"
         });
 
         const hasMore = data.data.result.page < data.data.result.pageCount;
@@ -276,7 +266,7 @@ class EditUboxProducts extends Component {
     }
 
     validateFields = async () => {
-        const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
+        const needToValidate = ["name", "price", "internalPrice", "minPrice", "offerPrice", "serviceSla"
             , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
                 return [this.state.selectedSourceProduct.value, "sourceProduct"]
             }];
@@ -326,6 +316,18 @@ class EditUboxProducts extends Component {
             files: files,
             fileBase64: fileBase64
         })
+    }
+
+    getPrice = async(id) => {
+        const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${id}`, {});
+        if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
+            this.setState({
+                product: {
+                    ...this.state.product,
+                    ...uboxPrice.data.result
+                },
+            })
+        }
     }
 
     callApi = async () => {
@@ -484,52 +486,56 @@ class EditUboxProducts extends Component {
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMin"
+                                                        name="price"
                                                         min={0}
-                                                        value={product.priceMin}
+                                                        value={numberWithCommas(Number.parseFloat(product.price).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Min")}
+                                                        {__(this.messages, "Giá Ubox")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMax"
-                                                        value={product.priceMax}
                                                         min={0}
+                                                        name="internalPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.internalPrice).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Max")}
+                                                        {__(this.messages, "Giá nội bộ")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMin"
-                                                        value={product.futurePriceMin}
+                                                        name="minPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.minPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Min")}
+                                                        {__(this.messages, "Giá bán tối thiểu")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMax"
-                                                        value={product.futurePriceMax}
+                                                        name="offerPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.offerPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Max")}
+                                                        {__(this.messages, "Giá bán đề xuất")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -560,18 +566,19 @@ class EditUboxProducts extends Component {
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getSourceProducts}
-                                                        onChange={data => {
+                                                        onChange={async data => {
+                                                            this.getPrice(data?.id);
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
-                                                                    sourceProductId: data?.id
+                                                                    sourceProductId: data?.id,
                                                                 },
                                                                 sourceProductSelected: data
                                                             })
                                                         }
                                                         }
                                                         additional={{
-                                                            page: 1
+                                                            page: 0
                                                         }}
                                                         value={
                                                             this.state.sourceProductSelected ||

@@ -43,6 +43,12 @@ const multiMenu = [
         icon: "iconsminds-qr-code",
         label: "Sản phẩm",
         to: "/app/ubox-products"
+      },
+      {
+        id: "calculate",
+        icon: "iconsminds-qr-code",
+        label: "Tính phí dịch vụ",
+        to: "/calculator"
       }
     ]
   }

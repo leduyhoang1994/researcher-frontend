@@ -33,6 +33,7 @@ export const source_categories = 'source-categories';
 export const SOURCE_CATEGORIES = {
   all: `${apiPath}/${source_categories}`,
   filter: `${apiPath}/${source_categories}/filter`,
+  site: `${apiPath}/${source_categories}/site`,
 }
 
 /** Ubox Category */
@@ -71,6 +72,7 @@ export const UBOX_PRODUCTS = {
   publish: `${apiPath}/${ubox_products}/publish`,
   source: `${apiPath}/${ubox_products}/source`,
   search: `${apiPath}/${ubox_products}/search`,
+  price: `${apiPath}/${ubox_products}/price`,
 }
 
 /** Source Product Seller View*/
@@ -118,4 +120,11 @@ export const CATEGORY_SETS = {
   all: `${apiPath}/${sets}/${source_categories}`,
   add: `${apiPath}/${sets}/${source_categories}/list-add`,
   delete: `${apiPath}/${sets}/${source_categories}/list-delete`,
+}
+
+/** CONSTANTS */
+export const constants = 'constants';
+export const CONSTANTS = {
+  all: `${apiPath}/${constants}`,
+  type: `${apiPath}/${constants}/type`,
 }

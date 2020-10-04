@@ -104,14 +104,14 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, priceMin, priceMax, } = this.state.product;
+        const { id, name, featureImage, internalPrice, price, } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
         })
-        const product = { id, name, featureImage, priceMin, priceMax, quantity, optionIds, property };
+        const product = { id, name, featureImage, internalPrice, price, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];
@@ -211,8 +211,8 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                            <p className="product-price">{numberWithCommas(parseFloat(product.priceMin))} VNĐ</p>
-                                            <p className="product-price">{numberWithCommas(parseFloat(product.futurePriceMin))} VNĐ</p>
+                                            <p className="product-price">{numberWithCommas(parseFloat(product.internalPrice))} VNĐ</p>
+                                            <p className="product-price">{numberWithCommas(parseFloat(product.offerPrice))} VNĐ</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property

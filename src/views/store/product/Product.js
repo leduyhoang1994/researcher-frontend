@@ -7,9 +7,9 @@ import { Card, CardBody, CardSubtitle, CardText } from 'reactstrap';
 import { defaultImg, loadingSpinnerImg } from '../../../constants/defaultValues';
 
 // const addToCart = products => {
-//     const { id, name, featureImage, priceMin, priceMax } = products;
+//     const { id, name, featureImage, internalPrice, price } = products;
 //     const quantity = 1;
-//     const product = { id, name, featureImage, priceMin, priceMax, quantity };
+//     const product = { id, name, featureImage, internalPrice, price, quantity };
 
 //     let cart = localStorage.getItem("cart");
 
@@ -107,8 +107,8 @@ class Product extends React.Component {
                         <CardSubtitle title={product.name} className="font-weight-bold mb-2 product-subtitle">
                             {product.name}
                         </CardSubtitle>
-                        {/* <CardText className="product-price font-weight-bold text-left text-normal mb-0">{product.priceMin}</CardText> */}
-                        <CardText className="product-price font-weight-bold text-right text-normal mb-0">{numberWithCommas(product.priceMax)} VNĐ</CardText>
+                        {/* <CardText className="product-price font-weight-bold text-left text-normal mb-0">{product.internalPrice}</CardText> */}
+                        <CardText className="product-price font-weight-bold text-right text-normal mb-0">{numberWithCommas(product.price)} VNĐ</CardText>
                         <CardText className="text-left text-normal mb-0">Khối lượng {product.weight} kg</CardText>
                         <CardText className="text-left text-normal mb-0">Phí ship nội địa TQ {product.serviceCost}</CardText>
                     </CardBody>
