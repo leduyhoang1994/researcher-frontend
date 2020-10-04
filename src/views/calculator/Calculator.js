@@ -176,9 +176,9 @@ class Calculator extends Component {
         let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
         if (isFunction) {
-            middleResult = `<a contenteditable="false">${data}()</a>`;
+            middleResult = `<a contenteditable="false">${data}</a>() `;
         } else {
-            middleResult = `<a contenteditable="false">${data}</a>`;
+            middleResult = `<a contenteditable="false">${data}</a> `;
         }
 
         constant.forEach(item => {
@@ -231,10 +231,10 @@ class Calculator extends Component {
         let element = document.getElementById('editor_calculator');
         let value = element.innerText;
         formulas.forEach(item => {
-            const regex = new RegExp(`${item.label}\\b`, 'g');
+            // const regex = new RegExp(`${item.label}\\b`, 'g');
             if (value.indexOf(item.label) !== -1) {
                 if (value.indexOf(`${item.label}()`) !== -1) {
-                    value = value.replace(regex, `${item.code}`);
+                    value = value.replaceAll(`${item.label}()`, `${item.code}()`);
                 } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
@@ -242,16 +242,17 @@ class Calculator extends Component {
             }
         })
         constants.forEach(item => {
-            const regex = new RegExp(`${item.label}\\b`, 'g');
+            // const regex = new RegExp(`${item.label}\\b`, 'g');
             if (value.indexOf(item.label) !== -1) {
                 if (value.indexOf(`${item.label}`) !== -1) {
-                    value = value.replace(regex, `${item.code}`);
+                    value = value.replaceAll(`${item.label}`, `${item.code}`);
                 } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
                 }
             }
         })
+        console.log(value);
         let data = { label: formula, value: value, viewValue: content, type: "CUSTOM_FORMULA" };
         if (flag) {
             if (data.value && data.label) {
@@ -297,7 +298,6 @@ class Calculator extends Component {
         const { constants, formulas, formula, detailFields } = this.state;
         const key = Object.keys(detailFields).toString() || "";
 
-        console.log(formulas)
         return (
             <Fragment >
                 <div className="text-right card-title mt-2">

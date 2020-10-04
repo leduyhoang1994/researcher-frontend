@@ -10,6 +10,13 @@ import "./style.scss";
 import { SOURCE_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { Link } from 'react-router-dom';
+import { numberWithCommas } from '../../../helpers/Utils';
+import withFixedColumns from "react-table-hoc-fixed-columns";
+
+import "react-table/react-table.css";
+import 'react-table-hoc-fixed-columns/lib/styles.css'
+
+const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
 class SourceProductTable extends Component {
   constructor(props) {
@@ -27,40 +34,46 @@ class SourceProductTable extends Component {
     this.messages = this.props.component.props.intl.messages;
   }
 
-  columns = (allProductSelected, handleCheckAll,
-    existInSelectedProducts, addToSelectedProducts,
-    removeFromSelectedProducts, selectable, filterCate) => [
-      {
-        Header: __(this.messages, "Hành động"),
-        accessor: 'id',
-        sortable: false,
-        width: this.state.selectable ? undefined : 150,
-        filterable: false,
-        Cell: props => (
-          <div className="text-left">
-            {
+  columns = (selectable = true, filterCate) => [
+    {
+      Header: (e) => {
+        return (
+          <input type="checkbox" onChange={(event) => {
+            if (isFunction(this.props.handleCheckAll))
+              this.props.handleCheckAll(event.target.checked, e?.data)
+          }} checked={isFunction(this.props.allProductSelected) ? this.props.allProductSelected(e?.data.map(item => item._original)) : false} />
+        )
+      },
+      accessor: 'id',
+      sortable: false,
+      fixed: "left",
+      width: this.state.selectable ? undefined : 50,
+      filterable: false,
+      Cell: props => (
+        <div className="text-left">
+          {
+            selectable &&
+            <input
+              type="checkbox"
+              checked={this.props.existInSelectedProducts(props.original)}
+              onChange={e => {
+                if (e.target.checked) {
+                  this.props.addToSelectedProducts(props.original);
+                } else {
+                  this.props.removeFromSelectedProducts(props.original);
+                }
+              }}
+            />
+          }
+          {/* {
               selectable &&
-              <Input
-                type="checkbox"
-                checked={existInSelectedProducts(props.original)}
-                onChange={e => {
-                  if (e.target.checked) {
-                    addToSelectedProducts(props.original);
-                  } else {
-                    removeFromSelectedProducts(props.original);
-                  }
-                }}
-              />
-            }
-            {
-              !selectable &&
               <>
                 <Button
                   className="mr-2"
                   size="xs"
                   onClick={() => {
                     if (isFunction(removeFromSelectedProducts)) {
-                      removeFromSelectedProducts(props.original);
+                      this.props.removeFromSelectedProducts(props.original);
                     }
                   }}
                 >
@@ -74,119 +87,146 @@ class SourceProductTable extends Component {
                   {__(this.messages, "Biên tập")}
                 </Button>
               </>
-            }
-          </div>
-        )
-      },
-      {
-        Header: __(this.messages, "Ảnh"),
-        sortable: false,
-        filterable: false,
-        width: 100,
-        accessor: "productImage",
-        Cell: props => <img width="50" src={props.value} alt="" />
-      },
-      {
-        Header: __(this.messages, "Tên ngành hàng tầng 3"),
-        width: 150,
-        accessor: "productCategoryVi",
-        Cell: props => <p className="text-muted">{props.value}</p>,
-        Filter: ({ filter, onChange }) => {
-          return (
-            <Select
-              isClearable
-              className="react-select"
-              classNamePrefix="react-select"
-              options={filterCate}
-              onChange={event => onChange(event ? event.categoryNameViLevel3 : undefined)}
-              getOptionValue={option => option.categoryNameViLevel3}
-              getOptionLabel={option => option.categoryNameViLevel3}
-            />
-          );
-        }
-      },
-      {
-        Header: __(this.messages, "Tên sản phẩm"),
-        width: 500,
-        accessor: "productTitleVi",
-        Cell: props => <div className="text-left">
-          <a target="_blank" href={props.original.productLink}>{props.value}</a>
+            } */}
         </div>
-      },
-      {
-        Header: __(this.messages, "Nguồn sản phẩm"),
-        width: 100,
-        accessor: "site",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Doanh số bán ra"),
-        accessor: "monthlySale",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
-      },
-      {
-        Header: __(this.messages, "Giá sản phẩm"),
-        accessor: "priceStr",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Phí phát hành nội địa"),
-        accessor: "productPrice",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
-      },
-      {
-        Header: __(this.messages, "Số lượng bán tối tiểu"),
-        accessor: "minSale",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
-      },
-      {
-        Header: __(this.messages, "Địa điểm phát hàng"),
-        accessor: "productLocation",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Số lượng bán ra"),
-        accessor: "topSale",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
-      },
-      {
-        Header: __(this.messages, "Tên shop bán"),
-        sortable: false,
-        accessor: "productShop",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Uy tín shop bán"),
-        sortable: false,
-        accessor: "productShopRating",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Tỉ lệ khách quay lại"),
-        sortable: false,
-        accessor: "rebuildRate",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Ghi chú"),
-        sortable: false,
-        accessor: "productShopRating",
-        Cell: props => <p className="text-muted">{props.value}</p>
-      },
-    ];
+      )
+    },
+    {
+      Header: __(this.messages, "| Hình ảnh"),
+      sortable: false,
+      filterable: false,
+      width: 80,
+      fixed: "left",
+      accessor: "productImage",
+      Cell: props => <img width="50" src={props.value} alt="" />
+    },
+    {
+      Header: __(this.messages, "| Tên sản phẩm"),
+      width: 450,
+      fixed: "left",
+      accessor: "productTitleVi",
+      Cell: props => <div className="text-left">
+        <a target="_blank" href={props.original.productLink}>{props.value}</a>
+      </div>
+    },
+    {
+      Header: __(this.messages, "| Tên ngành hàng tầng 3"),
+      width: 150,
+      accessor: "productCategoryVi",
+      Cell: props => <p className="text-muted">{props.value}</p>,
+      Filter: ({ filter, onChange }) => {
+        return (
+          <Select
+            isClearable
+            className="react-select"
+            classNamePrefix="react-select"
+            options={filterCate}
+            onChange={event => onChange(event ? event.categoryNameViLevel3 : undefined)}
+            getOptionValue={option => option.categoryNameViLevel3}
+            getOptionLabel={option => option.categoryNameViLevel3}
+          />
+        );
+      }
+    },
+    {
+      Header: __(this.messages, "| Nguồn sản phẩm"),
+      width: 100,
+      accessor: "site",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "| Doanh số bán ra"),
+      accessor: "monthlySale",
+      Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+    },
+    {
+      Header: __(this.messages, "| Giá min"),
+      accessor: "minPrice",
+      Cell: props => <p className="text-muted">
+        {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+      </p>
+    },
+    {
+      Header: __(this.messages, "| Giá max"),
+      accessor: "maxPrice",
+      Cell: props => <p className="text-muted">
+        {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+      </p>
+    },
+    {
+      Header: __(this.messages, "| Phí phát hành nội địa"),
+      accessor: "productPrice",
+      Cell: props => <p className="text-muted">
+        {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+      </p>
+    },
+    {
+      Header: __(this.messages, "| Số lượng bán tối tiểu"),
+      accessor: "minSale",
+      Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+    },
+    {
+      Header: __(this.messages, "| Địa điểm phát hàng"),
+      accessor: "productLocation",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "| Số lượng bán ra"),
+      accessor: "topSale",
+      Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+    },
+    {
+      Header: __(this.messages, "| Tên shop bán"),
+      sortable: false,
+      accessor: "productShop",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "| Uy tín shop bán"),
+      sortable: false,
+      accessor: "productShopRating",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "| Tỉ lệ khách quay lại"),
+      sortable: false,
+      accessor: "rebuildRate",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
+      Header: __(this.messages, "| Ghi chú"),
+      sortable: false,
+      accessor: "productShopRating",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+  ];
+
+  getColumnWidth = (rows, accessor, headerText) => {
+    const maxWidth = 400
+    const magicSpacing = 10
+    const cellLength = Math.max(
+      ...rows.map(row => (row[accessor] || '').length),
+      headerText.length,
+    );
+    return Math.min(maxWidth, cellLength * magicSpacing)
+  }
 
   componentDidMount() {
     this.prepareQuery();
   }
 
-  prepareQuery = () => {
+  prepareQuery = (orderBy, desc) => {
     const { filter } = this.props;
-    const { sourceProductName, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = filter;
+    const { sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = filter;
     let site = [];
+    let sourceCategoryId = [];
     siteFilter.forEach(item => {
       site.push(item.value);
     })
-    const arrFilter = { sourceProductName, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
+    categoriesFilter.forEach(item => {
+      sourceCategoryId.push(item.id)
+    })
+    const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
     let data = {};
     for (let key in arrFilter) {
       const value = arrFilter[key] || null;
@@ -194,11 +234,24 @@ class SourceProductTable extends Component {
         data[key] = value;
       }
     }
-    const apiResource = {
-      url: SOURCE_PRODUCTS.all,
-      query: {
-        ...data,
-        s: filter?.s || null
+    let apiResource = {};
+    if (orderBy) {
+      apiResource = {
+        url: SOURCE_PRODUCTS.all,
+        query: {
+          ...data,
+          orderBy,
+          desc
+          // s: filter?.s || null
+        }
+      }
+    } else {
+      apiResource = {
+        url: SOURCE_PRODUCTS.all,
+        query: {
+          ...data,
+          // s: filter?.s || null
+        }
       }
     }
     this.loadData(apiResource);
@@ -270,9 +323,10 @@ class SourceProductTable extends Component {
 
     return (
       <div>
-        <ReactTable
+        <ReactTableFixedColumns
           data={data}
-          columns={this.columns(this.props)}
+          className="-striped"
+          columns={this.columns()}
           defaultPageSize={25}
           filterable={false}
           showPageJump={true}
@@ -283,6 +337,10 @@ class SourceProductTable extends Component {
           canPrevious={false}
           canNext={true}
           showPageSizeOptions={true}
+          onSortedChange={val => {
+            const { id, desc } = val[0];
+            this.prepareQuery(id, desc);
+          }}
           onPageChange={this.onPageChange}
           onPageSizeChange={this.onPageSizeChange}
           PaginationComponent={DataTablePagination}

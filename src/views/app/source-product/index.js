@@ -30,7 +30,6 @@ class CreateTrainingClass extends Component {
         maxMonthlySale: null,
         minPriceMax: null,
         maxPriceMax: null,
-        type: "non-relation"
       },
       collapse: false,
       keySearch: false,
@@ -79,7 +78,6 @@ class CreateTrainingClass extends Component {
   }
 
   onChangeCategory = value => {
-    console.log(value);
     let { filter } = this.state;
     filter.categoriesFilter = value;
     this.setState({
@@ -120,13 +118,6 @@ class CreateTrainingClass extends Component {
 
   searchProducts = () => {
     const { filter } = this.state;
-    const s = filter.categoriesFilter.length > 0 ? {
-      sourceCategoryId: {
-        "$in": arrayColumn(filter.categoriesFilter, 'id')
-      }
-    } : {};
-
-    filter.s = s;
     this.setState({
       filter: filter,
       keySearch: !this.state.keySearch
@@ -244,7 +235,7 @@ class CreateTrainingClass extends Component {
                         }}
                       />
                       <span>
-                        {__(this.messages, "Thư mục")}
+                        {__(this.messages, "Ngành hàng")}
                       </span>
                     </Label>
                   </Colxx>
@@ -359,7 +350,7 @@ class CreateTrainingClass extends Component {
                           }}
                         />
                         <span>
-                          {__(this.messages, "Giá sản phẩm từ")}
+                          {__(this.messages, "Giá sản phẩm max từ")}
                         </span>
                       </Label>
                     </Colxx>
@@ -381,7 +372,7 @@ class CreateTrainingClass extends Component {
                           }}
                         />
                         <span>
-                          {__(this.messages, "Giá sản phẩm đến")}
+                          {__(this.messages, "Giá sản phẩm max đến")}
                         </span>
                       </Label>
                     </Colxx>

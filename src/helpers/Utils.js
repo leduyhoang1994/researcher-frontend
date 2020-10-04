@@ -64,7 +64,7 @@ export const arrayColumn = (array, columnName) => {
 }
 
 export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 function buildFormData(formData, data, parentKey) {

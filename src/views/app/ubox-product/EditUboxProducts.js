@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { jsonToFormData, parse } from '../../../helpers/Utils'
+import { jsonToFormData, numberWithCommas, parse } from '../../../helpers/Utils'
 import Properties from './Properties';
 import Api from '../../../helpers/Api';
 import { copySamplePropertiesObj } from '../../../helpers/Utils'
@@ -16,7 +16,6 @@ import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
-import { validateName, validateNumber } from '../../../helpers/Validate';
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -125,15 +124,7 @@ class EditUboxProducts extends Component {
         if (sourceProductId) {
             const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
             const product = data.data.result;
-            console.log(product);
 
-            // if (product?.id) {
-            //     this.setRedirect(`/app/ubox-products/edit/${product.id}`);
-            //     this.renderRedirect();
-            // } else {
-            //     this.setRedirect(`/app/ubox-products/add?sourceProductId=${sourceProductId}`);
-            //     this.renderRedirect();
-            // }
             if (product?.id) {
                 window.open(`/app/ubox-products/edit/${product.id}`, "_self");
             } else {
@@ -142,6 +133,7 @@ class EditUboxProducts extends Component {
         }
         else if (productAddId) {
             ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
+                console.log(data);
                 this.setState({
                     product: {
                         ...this.state.product,
@@ -150,6 +142,8 @@ class EditUboxProducts extends Component {
                         },
                         sourceProductId: productAddId
                     }
+                }, () => {
+                    this.getPrice(productAddId);
                 })
             })
 
@@ -324,6 +318,18 @@ class EditUboxProducts extends Component {
         })
     }
 
+    getPrice = async(id) => {
+        const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${id}`, {});
+        if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
+            this.setState({
+                product: {
+                    ...this.state.product,
+                    ...uboxPrice.data.result
+                },
+            })
+        }
+    }
+
     callApi = async () => {
         const { files } = this.state;
         let { product } = this.state;
@@ -484,7 +490,7 @@ class EditUboxProducts extends Component {
                                                         type="number"
                                                         name="price"
                                                         min={0}
-                                                        value={Number.parseFloat(product.price).toFixed(0)}
+                                                        value={numberWithCommas(Number.parseFloat(product.price).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
@@ -497,7 +503,7 @@ class EditUboxProducts extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="internalPrice"
-                                                        value={Number.parseFloat(product.internalPrice).toFixed(0)}
+                                                        value={numberWithCommas(Number.parseFloat(product.internalPrice).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
@@ -511,7 +517,7 @@ class EditUboxProducts extends Component {
                                                         disabled={true}
                                                         type="number"
                                                         name="minPrice"
-                                                        value={Number.parseFloat(product.minPrice).toFixed(0)}
+                                                        value={numberWithCommas(Number.parseFloat(product.minPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
@@ -524,7 +530,7 @@ class EditUboxProducts extends Component {
                                                         disabled={true}
                                                         type="number"
                                                         name="offerPrice"
-                                                        value={Number.parseFloat(product.offerPrice).toFixed(0)}
+                                                        value={numberWithCommas(Number.parseFloat(product.offerPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
@@ -561,15 +567,7 @@ class EditUboxProducts extends Component {
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getSourceProducts}
                                                         onChange={async data => {
-                                                            const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${data?.id}`, {});
-                                                            if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
-                                                                this.setState({
-                                                                    product: {
-                                                                        ...this.state.product,
-                                                                        ...uboxPrice.data.result
-                                                                    },
-                                                                })
-                                                            }
+                                                            this.getPrice(data?.id);
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
