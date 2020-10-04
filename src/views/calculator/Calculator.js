@@ -374,19 +374,17 @@ class Calculator extends Component {
                             <Colxx xxs="10" id="constant-list">
                                 {
                                     formulas && formulas.map((item, index) => {
-                                        if (index < 5) {
-                                            return (
-                                                <span key={item + index}
-                                                    // draggable="true"
-                                                    onClick={this.onClick}
-                                                    id={`${item.label}()`}
-                                                    // onDragStart={this.onDrag}
-                                                    className="constants height-40 align-middle"
-                                                >
-                                                    {item.label}
-                                                </span>
-                                            )
-                                        }
+                                        return (
+                                            <span key={item + index}
+                                                // draggable="true"
+                                                onClick={this.onClick}
+                                                id={`${item.label}()`}
+                                                // onDragStart={this.onDrag}
+                                                className="constants height-40 align-middle"
+                                            >
+                                                {item.label}
+                                            </span>
+                                        )
                                     })
                                 }
                             </Colxx>

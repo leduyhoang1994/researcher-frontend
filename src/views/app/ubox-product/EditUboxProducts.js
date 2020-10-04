@@ -29,12 +29,8 @@ class EditUboxProducts extends Component {
                 sourceProduct: {},
                 description: "",
                 featureImage: "",
-                futurePriceMax: "",
-                futurePriceMin: "",
                 isPublished: true,
                 name: "",
-                priceMax: "",
-                priceMin: "",
                 serviceCost: "",
                 serviceSla: "",
                 sourceProductId: "",
@@ -44,15 +40,15 @@ class EditUboxProducts extends Component {
                 uboxProductOptions: [],
                 weight: "",
                 workshopIn: "",
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             keyProperty: '',
             keyMedia: '',
             uboxProduct: {
                 name: '',
-                priceMax: 0,
-                priceMin: 0,
-                futurePriceMax: 0,
-                futurePriceMin: 0,
                 weight: 0,
                 serviceSla: '',
                 serviceCost: 0,
@@ -64,7 +60,11 @@ class EditUboxProducts extends Component {
                 uboxCategoryId: 0,
                 sourceProductId: 0,
                 optionIds: [],
-                isPublished: false
+                isPublished: false,
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             selectedCategory: "",
             optionUboxCategories: [],
@@ -276,7 +276,7 @@ class EditUboxProducts extends Component {
     }
 
     validateFields = async () => {
-        const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
+        const needToValidate = ["name", "price", "internalPrice", "minPrice", "offerPrice", "serviceSla"
             , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
                 return [this.state.selectedSourceProduct.value, "sourceProduct"]
             }];
@@ -484,52 +484,56 @@ class EditUboxProducts extends Component {
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMin"
+                                                        name="price"
                                                         min={0}
-                                                        value={product.priceMin}
+                                                        value={product.price}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Min")}
+                                                        {__(this.messages, "Giá Ubox")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMax"
-                                                        value={product.priceMax}
                                                         min={0}
+                                                        name="internalPrice"
+                                                        value={product.internalPrice}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Max")}
+                                                        {__(this.messages, "Giá nội bộ")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMin"
-                                                        value={product.futurePriceMin}
+                                                        name="minPrice"
+                                                        value={product.minPrice}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Min")}
+                                                        {__(this.messages, "Giá bán tối thiểu")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMax"
-                                                        value={product.futurePriceMax}
+                                                        name="offerPrice"
+                                                        value={product.offerPrice}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Max")}
+                                                        {__(this.messages, "Giá bán đề xuất")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -560,11 +564,20 @@ class EditUboxProducts extends Component {
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getSourceProducts}
-                                                        onChange={data => {
+                                                        onChange={async data => {
+                                                            const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${data?.id}`, {});
+                                                            if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
+                                                                this.setState({
+                                                                    product: {
+                                                                        ...this.state.product,
+                                                                        ...uboxPrice.data.result
+                                                                    },
+                                                                })
+                                                            }
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
-                                                                    sourceProductId: data?.id
+                                                                    sourceProductId: data?.id,
                                                                 },
                                                                 sourceProductSelected: data
                                                             })
