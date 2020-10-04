@@ -75,7 +75,6 @@ class ResourceTable extends Component {
       pagination.current_page = Number(response.page);
       pagination.page = Number(response.page);
       pagination.defaultPageSize = Number(response.count);
-      console.log(pagination);
       this.setState({
         data: response.data,
         pagination: pagination,

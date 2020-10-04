@@ -6,10 +6,12 @@ import ApiController from "../../helpers/Api";
 import Select from "react-select";
 import { CONSTANTS } from "../../constants/api";
 import { NotificationManager } from '../../components/common/react-notifications';
-import { failed, notify_add_success, success, notify_syntax_error, notify_add_failed, info, required_field, notify_update_success } from "../../constants/constantTexts";
+import { failed, notify_add_success, success, notify_syntax_error, required_field, notify_update_success } from "../../constants/constantTexts";
 import "./style.scss";
 import { getIndexTagOnKeyDown } from "../../helpers/Utils";
 import ConstantModals from "./ConstantModals";
+import { isFunction } from "formik";
+const math = require('mathjs')
 
 
 class Calculator extends Component {
@@ -31,6 +33,7 @@ class Calculator extends Component {
         }
         this.handleChangeText = this.handleChangeText.bind(this);
         // this.messages = this.props.intl.messages;
+
     }
 
     componentDidMount() {
@@ -93,30 +96,18 @@ class Calculator extends Component {
         });
     }
 
-    clearConstantEdit = () => {
-
-    }
+    clearConstantEdit = () => { }
 
     getFunctionsMathjs = () => {
         let arrMath = []
-        Object.getOwnPropertyNames(Math).forEach(item => {
-            arrMath.push({ label: item, value: item, code: item.toUpperCase() });
+        Object.getOwnPropertyNames(math).forEach(item => {
+            if(isFunction(math[item])) {
+                arrMath.push({ label: item, value: item, code: item.toUpperCase() });
+            }
         })
         this.setState({
             optionFunctions: arrMath,
         })
-    }
-
-    handleChangeFunc = (value) => {
-        const { index } = this.state;
-        let element = document.getElementById('editor');
-        let inputText = element.innerText;
-
-        let result = inputText.slice(0, index) + "<span contenteditable='false'>" + value.value + "</span>()" + inputText.slice(index, inputText.length);
-        this.setState({
-            content: result
-        })
-        element.focus();
     }
 
     handleChangeField = (value) => {
@@ -151,19 +142,22 @@ class Calculator extends Component {
         })
     }
 
+    getIndex = (i) => {
+    }
+
     onBlurEditor = () => {
-        let element = document.getElementById("editor");
+        let element = document.getElementById("editor_calculator");
         let index = getIndexTagOnKeyDown(element);
         this.setState({
             index
         })
     }
 
-    onClick = (ev) => {
-        const { index, detailFields } = this.state;
-        let constant = [...this.state.constants, ...this.state.optionFunctions];
-        const formulas = [...this.state.formulas];
+    formatContentEditor = (data, isFunction) => {
+        const { index, detailFields, optionFunctions, formulas } = this.state;
+        let constant = [...this.state.constants];
         constant.reverse();
+        optionFunctions.reverse();
         const key = Object.keys(detailFields).toString() || "";
 
         if (key) {
@@ -175,30 +169,56 @@ class Calculator extends Component {
             constant = [...constant, ...arrFields];
         }
 
-        let data = ev.target.id;
-        let element = document.getElementById('editor');
+        let element = document.getElementById('editor_calculator');
         let inputText = element.innerText;
+        console.log(inputText);
         let leftResult = inputText.slice(0, index);
-        const middleResult = "<span contenteditable='false'>" + data + "</span>";
         let rightResult = inputText.slice(index, inputText.length);
+        let middleResult = "";
+        if (isFunction) {
+            middleResult = `<a contenteditable="false">${data}()</a>`;
+        } else {
+            middleResult = `<a contenteditable="false">${data}</a>`;
+        }
 
         constant.forEach(item => {
-            if (leftResult.indexOf(item.label) !== -1) {
-                leftResult = leftResult.replaceAll(`${item.label}`, `<span contenteditable='false'>${item.label}</span>`);
-            }
-            if (rightResult.indexOf(item.label) !== -1) {
-                rightResult = rightResult.replaceAll(`${item.label}`, `<span contenteditable='false'>${item.label}</span>`);
-            }
+            const regex = new RegExp(`${item.label}\\b`, 'g');
+            leftResult = leftResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
         })
+
+        optionFunctions.forEach(item => {
+            const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+            leftResult = leftResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
+        })
+
         formulas.forEach(item => {
-            if (leftResult.indexOf(item.label) !== -1) {
-                leftResult = leftResult.replaceAll(`${item.label}()`, `<span contenteditable='false'>${item.label}()</span>`);
+            const label = `${item.label}()`;
+            if(leftResult.indexOf(label) !== -1) {
+                leftResult = leftResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
             }
-            if (rightResult.indexOf(item.label) !== -1) {
-                rightResult = rightResult.replaceAll(`${item.label}()`, `<span contenteditable='false'>${item.label}()</span>`);
+            if(rightResult.indexOf(label) !== -1) {
+                rightResult = rightResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
             }
         })
-        let result = leftResult + middleResult + rightResult;
+
+        return (leftResult + middleResult + rightResult);
+    }
+
+    handleChangeFunc = (value) => {
+        const element = document.getElementById('editor_calculator');
+        let result = this.formatContentEditor(value.value, true);
+        this.setState({
+            content: result
+        })
+        element.focus();
+    }
+
+    onClick = (ev) => {
+        let data = ev.target.id;
+        const element = document.getElementById('editor_calculator');
+        let result = this.formatContentEditor(data, false);
         this.setState({
             content: result
         })
@@ -208,15 +228,13 @@ class Calculator extends Component {
     createFormula = () => {
         let flag = true;
         const { formula, content, formulas, constants } = this.state;
-        var value = content.trim();
-        value = value.replaceAll("<span contenteditable='false'>", "");
-        value = value.replaceAll(`<span contenteditable="false">`, "");
-        value = value.replaceAll("</span>", "");
-        value = value.replaceAll("&nbsp;", " ");
+        let element = document.getElementById('editor_calculator');
+        let value = element.innerText;
         formulas.forEach(item => {
+            const regex = new RegExp(`${item.label}\\b`, 'g');
             if (value.indexOf(item.label) !== -1) {
                 if (value.indexOf(`${item.label}()`) !== -1) {
-                    value = value.replaceAll(`${item.label}`, `${item.code}`);
+                    value = value.replace(regex, `${item.code}`);
                 } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
@@ -224,9 +242,10 @@ class Calculator extends Component {
             }
         })
         constants.forEach(item => {
+            const regex = new RegExp(`${item.label}\\b`, 'g');
             if (value.indexOf(item.label) !== -1) {
                 if (value.indexOf(`${item.label}`) !== -1) {
-                    value = value.replaceAll(`${item.label}`, `${item.code}`);
+                    value = value.replace(regex, `${item.code}`);
                 } else {
                     NotificationManager.warning(notify_syntax_error, failed);
                     flag = false;
@@ -247,10 +266,7 @@ class Calculator extends Component {
                                 }, 2500);
                             }
                         }).catch(error => {
-                            NotificationManager.warning(notify_add_failed, failed, 2000);
-                            setTimeout(() => {
-                                NotificationManager.info(error.response.data.message, info, 2000);
-                            }, 2500);
+                            NotificationManager.warning(error.response.data.message, failed, 2000);
                         });
                 } else {
                     ApiController.callAsync('post', CONSTANTS.all, data)
@@ -262,10 +278,7 @@ class Calculator extends Component {
                                 }, 1500);
                             }
                         }).catch(error => {
-                            NotificationManager.warning(notify_add_failed, failed, 2000);
-                            setTimeout(() => {
-                                NotificationManager.info(error.response.data.message, info, 2000);
-                            }, 2500);
+                            NotificationManager.warning(error.response.data.message, failed, 2000);
                         });
                 }
             } else {
@@ -305,7 +318,7 @@ class Calculator extends Component {
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
                             <Colxx xxs="2" >
-                                <span className="vertical-align-middle">FORMULA NAME *</span>
+                                <a className="vertical-align-middle">FORMULA NAME *</a>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Input
@@ -319,7 +332,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">FIELD</span>
+                                <a className="vertical-align-middle">FIELD</a>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Select
@@ -332,13 +345,13 @@ class Calculator extends Component {
                                 {
                                     detailFields[key] ? detailFields[key].map((item, index) => {
                                         return (
-                                            <span key={item + index}
+                                            <a key={item + index}
                                                 id={`${key}.${item}`}
                                                 onClick={this.onClick}
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item}
-                                            </span>
+                                            </a>
                                         )
                                     }) : <></>
 
@@ -347,13 +360,13 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Constants:</span>
+                                <a className="vertical-align-middle">Constants:</a>
                             </Colxx>
                             <Colxx xxs="10">
                                 {
                                     constants && constants.map((item, index) => {
                                         return (
-                                            <span key={item + index}
+                                            <a key={item + index}
                                                 // draggable="true"
                                                 id={`${item.label}`}
                                                 onClick={this.onClick}
@@ -361,7 +374,7 @@ class Calculator extends Component {
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item.label}
-                                            </span>
+                                            </a>
                                         )
                                     })
                                 }
@@ -369,7 +382,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Formulas:</span>
+                                <a className="vertical-align-middle">Formulas:</a>
                             </Colxx>
                             <Colxx xxs="10" id="constant-list">
                                 {
@@ -391,7 +404,7 @@ class Calculator extends Component {
                         </Row>
                         <Row>
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Functions:</span>
+                                <a className="vertical-align-middle">Functions:</a>
                             </Colxx>
                             <Colxx xxs="10">
                                 <div className="w-15">

@@ -47,6 +47,7 @@ class Filter extends Component {
                                             readOnly={parentSite.disabled}
                                             className="form-control"
                                             type="number"
+                                            min={0}
                                             onChange={e => {
                                                 filterOptions.topCates[index].top = e.target.value ? parseInt(e.target.value) : "";
                                                 // if (filterOptions.topCates[index].sites) {
@@ -76,6 +77,7 @@ class Filter extends Component {
                                                         value={site.top}
                                                         className="form-control"
                                                         type="number"
+                                                        min={0}
                                                         onChange={e => {
                                                             filterOptions.topCates[index].sites[childIndex].top = e.target.value ? parseInt(e.target.value) : "";
                                                             this.setState({ filterOptions });

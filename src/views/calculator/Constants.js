@@ -270,7 +270,7 @@ class Constants extends Component {
                                                         <span className="w-100">
                                                             <Label className="has-float-label pb-3">
                                                                 <ContentEditable
-                                                                    id="editor"
+                                                                    id="editor_calculator"
                                                                     disabled={true}
                                                                     html={item.viewValue}
                                                                 />

@@ -2,11 +2,13 @@ import React from "react";
 import { Label } from "reactstrap";
 import ContentEditable from 'react-contenteditable'
 
-class CkCalculator extends React.Component {
+class Editor extends React.Component {
     constructor(props) {
         super(props);
         this.contentEditable = React.createRef();
         // this.messages = this.props.intl.messages;
+        var HtmlToReactParser = require('html-to-react').Parser;
+        this.htmlToReactParser = new HtmlToReactParser();
     }
 
     handleChange = evt => {
@@ -14,19 +16,25 @@ class CkCalculator extends React.Component {
     };
 
     render() {
-        const { content } = this.props;
+        let { content } = this.props;
+        // content = this.htmlToReactParser.parse(content);
+
         return (
-            <div onDrop={this.props.onDrop} onDragOver={this.props.allowDrop}>
+            <div>
                 <Label id="label" className="w-100 has-float-label">
                     <ContentEditable
-                        id="editor"
+                        id="editor_calculator"
+                        // contentEditable
                         spellCheck="false"
-                        tagName='article'
-                        disabled={false}
+                        // tagName='article'
+                        // disabled={false}
                         html={content}
                         onChange={this.props.onChangeEditor}
                         onBlur={this.props.onBlurEditor}
+                        onClick={this.props.onClickEditor}
                     />
+                        {/* {content} */}
+                    {/* </ContentEditable> */}
                     <span>Formula *</span>
                 </Label>
 
@@ -36,7 +44,6 @@ class CkCalculator extends React.Component {
                     // onChange={(event, editor) => {
                     //     const data = editor.getData();
                     //     // this.props.onChangeEditor(data);
-                    //     console.log(data);
                     // }}
                 /> */}
             </div>
@@ -44,4 +51,4 @@ class CkCalculator extends React.Component {
     }
 }
 
-export default CkCalculator;
+export default Editor;
