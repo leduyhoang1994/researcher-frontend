@@ -484,7 +484,7 @@ class EditUboxProducts extends Component {
                                                         type="number"
                                                         name="price"
                                                         min={0}
-                                                        value={product.price}
+                                                        value={Number.parseFloat(product.price).toFixed(0)}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
@@ -497,7 +497,7 @@ class EditUboxProducts extends Component {
                                                         type="number"
                                                         min={0}
                                                         name="internalPrice"
-                                                        value={product.internalPrice}
+                                                        value={Number.parseFloat(product.internalPrice).toFixed(0)}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
@@ -511,7 +511,7 @@ class EditUboxProducts extends Component {
                                                         disabled={true}
                                                         type="number"
                                                         name="minPrice"
-                                                        value={product.minPrice}
+                                                        value={Number.parseFloat(product.minPrice).toFixed(0)}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
@@ -524,7 +524,7 @@ class EditUboxProducts extends Component {
                                                         disabled={true}
                                                         type="number"
                                                         name="offerPrice"
-                                                        value={product.offerPrice}
+                                                        value={Number.parseFloat(product.offerPrice).toFixed(0)}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
