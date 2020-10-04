@@ -72,6 +72,7 @@ export const UBOX_PRODUCTS = {
   publish: `${apiPath}/${ubox_products}/publish`,
   source: `${apiPath}/${ubox_products}/source`,
   search: `${apiPath}/${ubox_products}/search`,
+  price: `${apiPath}/${ubox_products}/price`,
 }
 
 /** Source Product Seller View*/
