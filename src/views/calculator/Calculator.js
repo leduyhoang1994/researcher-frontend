@@ -318,7 +318,7 @@ class Calculator extends Component {
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
                             <Colxx xxs="2" >
-                                <a className="vertical-align-middle">FORMULA NAME *</a>
+                                <span className="vertical-align-middle">FORMULA NAME *</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Input
@@ -332,7 +332,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <a className="vertical-align-middle">FIELD</a>
+                                <span className="vertical-align-middle">FIELD</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Select
@@ -345,13 +345,13 @@ class Calculator extends Component {
                                 {
                                     detailFields[key] ? detailFields[key].map((item, index) => {
                                         return (
-                                            <a key={item + index}
+                                            <span key={item + index}
                                                 id={`${key}.${item}`}
                                                 onClick={this.onClick}
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item}
-                                            </a>
+                                            </span>
                                         )
                                     }) : <></>
 
@@ -360,13 +360,13 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <a className="vertical-align-middle">Constants:</a>
+                                <span className="vertical-align-middle">Constants:</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 {
                                     constants && constants.map((item, index) => {
                                         return (
-                                            <a key={item + index}
+                                            <span key={item + index}
                                                 // draggable="true"
                                                 id={`${item.label}`}
                                                 onClick={this.onClick}
@@ -374,7 +374,7 @@ class Calculator extends Component {
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item.label}
-                                            </a>
+                                            </span>
                                         )
                                     })
                                 }
@@ -382,13 +382,13 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <a className="vertical-align-middle">Formulas:</a>
+                                <span className="vertical-align-middle">Formulas:</span>
                             </Colxx>
                             <Colxx xxs="10" id="constant-list">
                                 {
                                     formulas && formulas.map((item, index) => {
                                         return (
-                                            <a key={item + index}
+                                            <span key={item + index}
                                                 // draggable="true"
                                                 onClick={this.onClick}
                                                 id={`${item.label}()`}
@@ -396,7 +396,7 @@ class Calculator extends Component {
                                                 className="constants height-40 align-middle"
                                             >
                                                 {item.label}
-                                            </a>
+                                            </span>
                                         )
                                     })
                                 }
@@ -404,7 +404,7 @@ class Calculator extends Component {
                         </Row>
                         <Row>
                             <Colxx xxs="2" className="">
-                                <a className="vertical-align-middle">Functions:</a>
+                                <span className="vertical-align-middle">Functions:</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <div className="w-15">

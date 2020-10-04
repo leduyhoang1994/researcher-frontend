@@ -195,15 +195,11 @@ class EditUboxProducts extends Component {
     }
 
     getSourceProducts = async (search, loadedOptions, { page }) => {
-        const filter = {
-            productTitleVi: {
-                "$cont": `%${search}%`
-            }
-        };
         const data = await ApiController.getAsync(SOURCE_PRODUCTS.all, {
-            s: JSON.stringify(filter),
+            sourceProductName: search,
             page: page,
-            size: 20
+            size: 20,
+            type: "non-relation"
         });
 
         const hasMore = data.data.result.page < data.data.result.pageCount;
@@ -559,7 +555,9 @@ class EditUboxProducts extends Component {
                                                         defaultOptions
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
-                                                        loadOptions={this.getSourceProducts}
+                                                        loadOptions={
+                                                            this.getSourceProducts
+                                                        }
                                                         onChange={data => {
                                                             this.setState({
                                                                 product: {
@@ -571,7 +569,7 @@ class EditUboxProducts extends Component {
                                                         }
                                                         }
                                                         additional={{
-                                                            page: 1
+                                                            page: 0
                                                         }}
                                                         value={
                                                             this.state.sourceProductSelected ||

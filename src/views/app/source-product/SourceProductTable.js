@@ -9,6 +9,7 @@ import Select from 'react-select';
 import "./style.scss";
 import { SOURCE_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { Link } from 'react-router-dom';
 
 class SourceProductTable extends Component {
   constructor(props) {
@@ -30,14 +31,7 @@ class SourceProductTable extends Component {
     existInSelectedProducts, addToSelectedProducts,
     removeFromSelectedProducts, selectable, filterCate) => [
       {
-        Header: (e) => {
-          return (
-            <input type="checkbox" onChange={(event) => {
-              if (isFunction(handleCheckAll))
-                handleCheckAll(event.target.checked, e?.data)
-            }} checked={isFunction(allProductSelected) ? allProductSelected(e?.data.map(item => item._original)) : false} />
-          )
-        },
+        Header: __(this.messages, "Hành động"),
         accessor: 'id',
         sortable: false,
         width: this.state.selectable ? undefined : 150,
@@ -88,13 +82,13 @@ class SourceProductTable extends Component {
         Header: __(this.messages, "Ảnh"),
         sortable: false,
         filterable: false,
-        width: 50,
+        width: 100,
         accessor: "productImage",
         Cell: props => <img width="50" src={props.value} alt="" />
       },
       {
         Header: __(this.messages, "Tên ngành hàng tầng 3"),
-        width: 300,
+        width: 150,
         accessor: "productCategoryVi",
         Cell: props => <p className="text-muted">{props.value}</p>,
         Filter: ({ filter, onChange }) => {
@@ -115,21 +109,15 @@ class SourceProductTable extends Component {
         Header: __(this.messages, "Tên sản phẩm"),
         width: 500,
         accessor: "productTitleVi",
-        Cell: props => <p className="text-muted">{props.value}</p>
+        Cell: props => <div className="text-left">
+          <a target="_blank" href={props.original.productLink}>{props.value}</a>
+        </div>
       },
       {
         Header: __(this.messages, "Nguồn sản phẩm"),
         width: 100,
         accessor: "site",
         Cell: props => <p className="text-muted">{props.value}</p>
-      },
-      {
-        Header: __(this.messages, "Link sản phẩm"),
-        width: 100,
-        accessor: "productLink",
-        Cell: props => <div className="text-center">
-          <a target="_blank" href={props.value}>Link</a>
-        </div>
       },
       {
         Header: __(this.messages, "Doanh số bán ra"),

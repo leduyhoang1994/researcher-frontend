@@ -32,7 +32,7 @@ class CreateTrainingClass extends Component {
         maxPriceMax: null,
         type: "non-relation"
       },
-      collapse: true,
+      collapse: false,
       keySearch: false,
     };
     this.messages = this.props.intl.messages;
@@ -315,7 +315,7 @@ class CreateTrainingClass extends Component {
                           }}
                         />
                         <span>
-                          {__(this.messages, "Doanh số tháng tối từ")}
+                          {__(this.messages, "Doanh số tháng từ")}
                         </span>
                       </Label>
                     </Colxx>
@@ -337,7 +337,7 @@ class CreateTrainingClass extends Component {
                           }}
                         />
                         <span>
-                          {__(this.messages, "Doanh số tháng tối đến")}
+                          {__(this.messages, "Doanh số tháng đến")}
                         </span>
                       </Label>
                     </Colxx>
@@ -389,7 +389,7 @@ class CreateTrainingClass extends Component {
                 </Collapse>
                 <div className="text-right">
                   <Button color="primary" onClick={this.toggleCollapse} className="mb-1">
-                    {__(this.messages, this.state.collapse ? "Bớt bộ lọc" : "Thêm bộ lọc")}
+                    {__(this.messages, this.state.collapse ? "Thu nhỏ" : "Mở rộng")}
                   </Button>
                 </div>
 

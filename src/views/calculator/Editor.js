@@ -7,8 +7,8 @@ class Editor extends React.Component {
         super(props);
         this.contentEditable = React.createRef();
         // this.messages = this.props.intl.messages;
-        var HtmlToReactParser = require('html-to-react').Parser;
-        this.htmlToReactParser = new HtmlToReactParser();
+        // var HtmlToReactParser = require('html-to-react').Parser;
+        // this.htmlToReactParser = new HtmlToReactParser();
     }
 
     handleChange = evt => {
