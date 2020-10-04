@@ -33,6 +33,7 @@ export const source_categories = 'source-categories';
 export const SOURCE_CATEGORIES = {
   all: `${apiPath}/${source_categories}`,
   filter: `${apiPath}/${source_categories}/filter`,
+  site: `${apiPath}/${source_categories}/site`,
 }
 
 /** Ubox Category */

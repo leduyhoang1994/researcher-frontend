@@ -44,7 +44,6 @@ class Editor extends React.Component {
                     // onChange={(event, editor) => {
                     //     const data = editor.getData();
                     //     // this.props.onChangeEditor(data);
-                    //     console.log(data);
                     // }}
                 /> */}
             </div>

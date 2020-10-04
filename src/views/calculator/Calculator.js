@@ -143,7 +143,6 @@ class Calculator extends Component {
     }
 
     getIndex = (i) => {
-        console.log("Clicked at: ", i);
     }
 
     onBlurEditor = () => {

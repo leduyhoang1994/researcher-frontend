@@ -191,7 +191,6 @@ class Research extends Component {
             .then(data => {
                 this.setState({ cateSetList: data.data.result });
             }).catch(error => {
-                console.log(error);
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
                 if (error.response.status === 401) {
                     setTimeout(function () {

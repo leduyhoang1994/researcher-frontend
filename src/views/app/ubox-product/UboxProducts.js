@@ -77,7 +77,6 @@ class UboxProducts extends Component {
                     })
                 })
             }).catch(error => {
-                console.log(JSON.stringify(error.response));
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
                 if (error.response.status === 401) {
                     setTimeout(function () {
@@ -130,7 +129,6 @@ class UboxProducts extends Component {
             selectedCategory.forEach(category => {
                 listCategory.push(category.label);
             })
-            console.log(listCategory);
             if (search.trim()) {
                 url = url.concat(`/${search}`);
             }

@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, CardTitle, Label, CardFooter, Button } from 'reactstrap';
+import { Row, Card, CardBody, CardTitle, Label, CardFooter, Button, Input, Collapse } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
@@ -17,36 +17,90 @@ class CreateTrainingClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      categoriesFilter: [],
       categoryOptions: [],
-      search: "",
+      siteOptions: [],
       productList: JSON.parse(JSON.stringify(ProductList)),
       selectedProducts: [],
       isOpenSourceProductModal: false,
-      filter: {}
+      filter: {
+        categoriesFilter: [],
+        sourceProductName: "",
+        siteFilter: [],
+        minMonthlySale: null,
+        maxMonthlySale: null,
+        minPriceMax: null,
+        maxPriceMax: null,
+        type: "non-relation"
+      },
+      collapse: true,
+      keySearch: false,
     };
     this.messages = this.props.intl.messages;
   }
 
   componentDidMount() {
-    if (localStorage.getItem('selectedItems')) {
-      const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
-      this.setState({
-        categoriesFilter: categoriesFilter.map(cate => cate.category || cate)
-      }, () => {
-        // localStorage.removeItem('selectedItems');
-        this.loadCategories();
-      });
-    } else {
-      this.loadCategories();
-    }
+    this.loadSites();
+    this.loadCategories();
   }
+
+  loadSites = () => {
+    ApiController.callAsync('get', SOURCE_CATEGORIES.site, {})
+      .then(data => {
+        let sites = [];
+        data.data.result.forEach(item => {
+          let val = item[Object.keys(item)[0]];
+          sites.push({ label: val, value: val })
+        })
+        this.setState({
+          siteOptions: sites
+        });
+        this.searchProducts();
+      }).catch(error => {
+        if (error.response) {
+          NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+          if (error.response.status === 401) {
+            setTimeout(function () {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+              setTimeout(function () {
+                window.open("/user/login", "_self")
+              }, 1500);
+            }, 1500);
+          }
+        }
+      });
+  }
+
+  onChangeSites = (value) => {
+    let { filter } = this.state;
+    filter.siteFilter = value;
+    this.setState({
+      filter
+    });
+  }
+
+  onChangeCategory = value => {
+    console.log(value);
+    let { filter } = this.state;
+    filter.categoriesFilter = value;
+    this.setState({
+      filter
+    });
+  }
+
+  toggleCollapse = () => {
+    this.setState({ collapse: !this.state.collapse });
+  };
 
   loadCategories = () => {
     ApiController.callAsync('get', SOURCE_CATEGORIES.all, {})
       .then(data => {
         this.setState({
           categoryOptions: data.data.result
+        }, () => {
+          if (localStorage.getItem('selectedItems')) {
+            const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
+            this.onChangeCategory(categoriesFilter);
+          }
         });
         this.searchProducts();
       }).catch(error => {
@@ -65,15 +119,18 @@ class CreateTrainingClass extends Component {
   };
 
   searchProducts = () => {
-    const { filter, categoriesFilter } = this.state;
-    const s = categoriesFilter.length > 0 ? {
+    const { filter } = this.state;
+    const s = filter.categoriesFilter.length > 0 ? {
       sourceCategoryId: {
-        "$in": arrayColumn(categoriesFilter, 'id')
+        "$in": arrayColumn(filter.categoriesFilter, 'id')
       }
     } : {};
 
     filter.s = s;
-    this.setState({ filter: filter });
+    this.setState({
+      filter: filter,
+      keySearch: !this.state.keySearch
+    });
   };
 
   existInSelectedProducts = (product) => {
@@ -149,7 +206,8 @@ class CreateTrainingClass extends Component {
   }
 
   render() {
-    const { filter } = this.state;
+    const { filter, collapse, keySearch } = this.state;
+    const { siteFilter } = filter;
     return (
       <Fragment>
         <Row>
@@ -166,14 +224,43 @@ class CreateTrainingClass extends Component {
                   {__(this.messages, 'Bộ lọc')}
                 </CardTitle>
 
-                {/* <Row>
-                  <Colxx xxs="12">
+                <Row>
+                  <Colxx xxs="6">
+                    <Label className="form-group has-float-label">
+                      <Select
+                        filterOption={createFilter({ ignoreAccents: false })}
+                        isMulti
+                        className="react-select"
+                        classNamePrefix="react-select"
+                        options={this.state.categoryOptions}
+                        getOptionValue={option => option.id}
+                        getOptionLabel={option => option.categoryNameViLevel3}
+                        value={filter.categoriesFilter}
+                        onChange={(value) => {
+                          this.onChangeCategory(value)
+                          setTimeout(() => {
+                            this.searchProducts();
+                          }, 500);
+                        }}
+                      />
+                      <span>
+                        {__(this.messages, "Thư mục")}
+                      </span>
+                    </Label>
+                  </Colxx>
+                  <Colxx xxs="6">
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
+                        className="form-control"
+                        name="name"
+                        defaultValue={filter.sourceProductName}
                         onChange={e => {
                           this.setState({
-                            search: e.target.value
+                            filter: {
+                              ...this.state.filter,
+                              sourceProductName: e.target.value
+                            }
                           });
                         }}
                       />
@@ -182,31 +269,130 @@ class CreateTrainingClass extends Component {
                       </span>
                     </Label>
                   </Colxx>
-                </Row> */}
-
-                <Row>
-                  <Colxx xxs="12">
-                    <Label className="form-group has-float-label">
-                      <Select
-                        filterOption={createFilter({ ignoreAccents: false })}
-                        isMulti
-                        options={this.state.categoryOptions}
-                        getOptionValue={option => option.id}
-                        getOptionLabel={option => option.categoryNameViLevel3}
-                        value={this.state.categoriesFilter}
-                        onChange={e => {
-                          this.setState({
-                            categoriesFilter: e
-                          });
-                          this.searchProducts();
-                        }}
-                      />
-                      <span>
-                        {__(this.messages, "Thư mục")}
-                      </span>
-                    </Label>
-                  </Colxx>
                 </Row>
+
+                <Collapse isOpen={collapse}>
+                  <Row>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Select
+                          filterOption={createFilter({ ignoreAccents: false })}
+                          isMulti
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          options={this.state.siteOptions}
+                          value={siteFilter.label}
+                          onChange={(value) => {
+                            this.onChangeSites(value)
+                            setTimeout(() => {
+                              this.searchProducts();
+                            }, 500);
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Nguồn sản phẩm")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                    <Colxx xxs="6">
+
+                    </Colxx>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Input
+                          type="number"
+                          min={0}
+                          className="form-control"
+                          name="minMonthlySale"
+                          defaultValue={filter.minMonthlySale}
+                          onChange={e => {
+                            this.setState({
+                              filter: {
+                                ...this.state.filter,
+                                minMonthlySale: e.target.value
+                              }
+                            });
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Doanh số tháng tối từ")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Input
+                          type="number"
+                          min={0}
+                          className="form-control"
+                          name="maxMonthlySale"
+                          defaultValue={filter.maxMonthlySale}
+                          onChange={e => {
+                            this.setState({
+                              filter: {
+                                ...this.state.filter,
+                                maxMonthlySale: e.target.value
+                              }
+                            });
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Doanh số tháng tối đến")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Input
+                          type="number"
+                          min={0}
+                          className="form-control"
+                          name="minPriceMax"
+                          defaultValue={filter.minPriceMax}
+                          onChange={e => {
+                            this.setState({
+                              filter: {
+                                ...this.state.filter,
+                                minPriceMax: e.target.value
+                              }
+                            });
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Giá sản phẩm từ")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Input
+                          type="number"
+                          min={0}
+                          className="form-control"
+                          name="maxPriceMax"
+                          defaultValue={filter.maxPriceMax}
+                          onChange={e => {
+                            this.setState({
+                              filter: {
+                                ...this.state.filter,
+                                maxPriceMax: e.target.value
+                              }
+                            });
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Giá sản phẩm đến")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                  </Row>
+                </Collapse>
+                <div className="text-right">
+                  <Button color="primary" onClick={this.toggleCollapse} className="mb-1">
+                    {__(this.messages, this.state.collapse ? "Bớt bộ lọc" : "Thêm bộ lọc")}
+                  </Button>
+                </div>
+
               </CardBody>
               <CardFooter className="text-right">
                 <Button
@@ -217,19 +403,19 @@ class CreateTrainingClass extends Component {
               </CardFooter>
             </Card>
           </Colxx>
-        </Row>
+        </Row >
         <Row>
           <Colxx xxs="12">
             <Card>
               <CardBody>
                 <SourceProductTable
-                  key={JSON.stringify(filter)}
+                  key={keySearch}
                   component={this}
                   data={this.state.productList}
                   addToSelectedProducts={this.addToSelectedProducts}
                   removeFromSelectedProducts={this.removeFromSelectedProducts}
                   existInSelectedProducts={this.existInSelectedProducts}
-                  filterCate={this.state.categoriesFilter}
+                  // filterCate={filter.categoriesFilter}
                   filter={filter}
                   handleCheckAll={this.handleCheckAll}
                   allProductSelected={this.allProductSelected}
@@ -252,7 +438,7 @@ class CreateTrainingClass extends Component {
           toggleModal={this.toggleOpenSourceProductModal}
           selectedProducts={this.state.selectedProducts}
         />
-      </Fragment>
+      </Fragment >
     );
   }
 }
