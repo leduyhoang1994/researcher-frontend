@@ -31,7 +31,7 @@ class SourceProductTable extends Component {
             accessor: 'id',
             sortable: false,
             fixed: "left",
-            width:  150,
+            width: 150,
             filterable: false,
             Cell: props => (
                 <div className="text-left">
@@ -62,7 +62,7 @@ class SourceProductTable extends Component {
             )
         },
         {
-            Header: __(this.messages, "| Hình ảnh"),
+            Header: __(this.messages, "Hình ảnh"),
             sortable: false,
             filterable: false,
             width: 80,
@@ -71,7 +71,7 @@ class SourceProductTable extends Component {
             Cell: props => <img width="50" src={props.value} alt="" />
         },
         {
-            Header: __(this.messages, "| Tên sản phẩm"),
+            Header: __(this.messages, "Tên sản phẩm"),
             width: 450,
             fixed: "left",
             accessor: "productTitleVi",
@@ -80,23 +80,10 @@ class SourceProductTable extends Component {
             </div>
         },
         {
-            Header: __(this.messages, "| Tên ngành hàng tầng 3"),
+            Header: __(this.messages, "Tên ngành hàng tầng 3"),
             width: 150,
             accessor: "productCategoryVi",
-            Cell: props => <p className="text-muted">{props.value}</p>,
-            Filter: ({ filter, onChange }) => {
-                return (
-                    <Select
-                        isClearable
-                        className="react-select"
-                        classNamePrefix="react-select"
-                        options={filterCate}
-                        onChange={event => onChange(event ? event.categoryNameViLevel3 : undefined)}
-                        getOptionValue={option => option.categoryNameViLevel3}
-                        getOptionLabel={option => option.categoryNameViLevel3}
-                    />
-                );
-            }
+            Cell: props => <p className="text-muted text-center">{props.value}</p>,
         },
         {
             Header: __(this.messages, "| Nguồn sản phẩm"),

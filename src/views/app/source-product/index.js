@@ -266,30 +266,6 @@ class CreateTrainingClass extends Component {
                   <Row>
                     <Colxx xxs="6">
                       <Label className="form-group has-float-label">
-                        <Select
-                          filterOption={createFilter({ ignoreAccents: false })}
-                          isMulti
-                          className="react-select"
-                          classNamePrefix="react-select"
-                          options={this.state.siteOptions}
-                          value={siteFilter.label}
-                          onChange={(value) => {
-                            this.onChangeSites(value)
-                            setTimeout(() => {
-                              this.searchProducts();
-                            }, 500);
-                          }}
-                        />
-                        <span>
-                          {__(this.messages, "Nguồn sản phẩm")}
-                        </span>
-                      </Label>
-                    </Colxx>
-                    <Colxx xxs="6">
-
-                    </Colxx>
-                    <Colxx xxs="6">
-                      <Label className="form-group has-float-label">
                         <Input
                           type="number"
                           min={0}
@@ -373,6 +349,27 @@ class CreateTrainingClass extends Component {
                         />
                         <span>
                           {__(this.messages, "Giá sản phẩm max đến")}
+                        </span>
+                      </Label>
+                    </Colxx>
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Select
+                          filterOption={createFilter({ ignoreAccents: false })}
+                          isMulti
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          options={this.state.siteOptions}
+                          value={siteFilter.label}
+                          onChange={(value) => {
+                            this.onChangeSites(value)
+                            setTimeout(() => {
+                              this.searchProducts();
+                            }, 500);
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Nguồn sản phẩm")}
                         </span>
                       </Label>
                     </Colxx>
