@@ -55,7 +55,7 @@ class SourceCategories extends Component {
     {
       Header: (e) => {
         return (
-          <div className="text-center">
+          <div className="text-right mr-2">
             <input id={siteCode} type="checkbox" onChange={this.handleCheckAll} checked={this.props.isSiteCodeCheckAll[siteCode] ? true : false} />
           </div>
         );
@@ -64,7 +64,7 @@ class SourceCategories extends Component {
       sortable: false,
       maxWidth: 100,
       Cell: props => (
-        <div className="text-center">
+        <div className="text-right">
           <Input
             type="checkbox"
             name={siteCode}

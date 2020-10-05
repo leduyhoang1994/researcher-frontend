@@ -267,7 +267,7 @@ class EditUboxProducts extends Component {
 
     validateFields = async () => {
         const needToValidate = ["name", "price", "internalPrice", "minPrice", "offerPrice", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
+            , "serviceCost", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
                 return [this.state.selectedSourceProduct.value, "sourceProduct"]
             }];
         let success = true;

@@ -16,7 +16,7 @@ export const USER = {
   logout: `${apiPath}/${user}/logout`,
   login: `${apiPath}/auth-users/login`,
   register: `${apiPath}/${user}/register`,
-  details: `${apiPath}/${user}/info`,
+  details: `${apiPath}/users/info`,
 }
 
 /** Auth Seller*/
@@ -25,7 +25,7 @@ export const SELLER = {
   logout: `${apiPath}/${seller}/logout`,
   login: `${apiPath}/${seller}/login`,
   register: `${apiPath}/${seller}/register`,
-  details: `${apiPath}/${seller}/info`,
+  details: `${apiPath}/seller/info`,
 }
 
 /** Source Category */

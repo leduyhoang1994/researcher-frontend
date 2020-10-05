@@ -108,9 +108,9 @@ class Product extends React.Component {
                             {product.name}
                         </CardSubtitle>
                         {/* <CardText className="product-price font-weight-bold text-left text-normal mb-0">{product.internalPrice}</CardText> */}
-                        <CardText className="product-price font-weight-bold text-right text-normal mb-0">{numberWithCommas(product.price)} VNĐ</CardText>
-                        <CardText className="text-left text-normal mb-0">Khối lượng {product.weight} kg</CardText>
-                        <CardText className="text-left text-normal mb-0">Phí ship nội địa TQ {product.serviceCost}</CardText>
+                        <CardText className="product_price font-weight-bold text-right text-normal mb-0">{numberWithCommas(Number.parseFloat(product.price).toFixed(0))} đ</CardText>
+                        <CardText className="text-left text-normal mb-0">Khối lượng {product.weight} g</CardText>
+                        <CardText className="text-left text-normal mb-0">Phí ship nội địa {numberWithCommas(Number.parseFloat(product.serviceCost).toFixed(0))} đ</CardText>
                     </CardBody>
                 </NavLink>
                 {/* <div className="align-center mt-3">

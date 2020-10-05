@@ -49,7 +49,7 @@ function* loginWithEmailPassword({ payload }) {
 
         if (loginUser.success) {
             localStorage.setItem('user_token', loginUser.result.accessToken);
-            const userDetails = yield call(getUserDetails, loginUser.result.accessToken);
+            const userDetails = getUserDetails( loginUser.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginUserSuccess(loginUser.result, userDetails));
             window.open('/', '_self');
@@ -85,10 +85,10 @@ function* loginSellerWithEmailPassword({ payload }) {
 
         if (loginSeller.success) {
             localStorage.setItem('user_token', loginSeller.result.accessToken);
-            const userDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
-            localStorage.setItem('user_details', JSON.stringify(userDetails));
-            yield put(loginSellerSuccess(loginSeller.result, userDetails));
-            // window.open('/store', '_self');
+            const sellerDetails = getSellerDetails(loginSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(sellerDetails));
+            yield put(loginSellerSuccess(loginSeller.result, sellerDetails));
+            window.open('/store', '_self');
         } else {
             yield put(loginSellerError(loginSeller.message));
         }
@@ -120,14 +120,14 @@ const getUserDetails = async (token) =>
         return data.data;
     }).catch(error => error);
 
-const getSellerDetails = async (token) =>
+const getSellerDetails = async (token) => {
     await Api.callAsync('get', SELLER.details, {}, {
-        headers: {
-            Authorization: 'Bearer ' + token //the token is a variable which holds the token
-        }
+        
     }).then(data => {
         return data.data;
     }).catch(error => error);
+    console.log();
+}
 
 
 export function* watchRegisterUser() {
@@ -175,8 +175,8 @@ function* registerSellerWithEmailPassword({ payload }) {
         const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
             localStorage.setItem('user_token', registerSeller.result.accessToken);
-            const userDetails = yield call(getUserDetails, registerSeller.result.accessToken);
-            localStorage.setItem('user_details', JSON.stringify(userDetails));
+            const sellerDetails = yield call(getSellerDetails, registerSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(sellerDetails));
             yield put(registerSellerSuccess(registerSeller));
             window.open('/store', '_self');
         } else {

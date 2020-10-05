@@ -96,19 +96,19 @@ class EditUboxCategories extends Component {
 
     getAllCategories = () => {
         ApiController.callAsync('get', CATEGORY_SETS.all, {})
-        .then(data => {
-            this.setState({ cateSetList: data.data.result });
-        }).catch(error => {
-            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-            if(error.response.status === 401) {
-                setTimeout(function(){ 
-                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
-                    setTimeout(function(){ 
-                        window.open("/user/login", "_self")
+            .then(data => {
+                this.setState({ cateSetList: data.data.result });
+            }).catch(error => {
+                NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+                if (error.response.status === 401) {
+                    setTimeout(function () {
+                        NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                        setTimeout(function () {
+                            window.open("/user/login", "_self")
+                        }, 1500);
                     }, 1500);
-                }, 1500);
-            }
-        });
+                }
+            });
         ApiController.get(UBOX_CATEGORIES.all, {}, data => {
             let options1 = [];
             let options2 = [];
@@ -216,41 +216,51 @@ class EditUboxCategories extends Component {
     };
 
     callApi = async () => {
-        const id = this.state.setId;
-        if (id) {
-            await Api.callAsync('put', UBOX_CATEGORIES.all, {
-                id: parseInt(id),
-                nameLv1: this.state.categoryLv1.value,
-                nameLv2: this.state.categoryLv2.value,
-                nameLv3: this.state.categoryLv3.value,
-                description: this.state.valueText,
-                attributeIds: this.state.attributeIds
-            }).then(data => {
-                window.open(`/app/ubox-categories/edit/${id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
-            }).catch(error => {
-                NotificationManager.warning("Cập nhật thất bại", "Thất bại");
-            });
-        } else {
-            const data = await Api.callAsync('post', UBOX_CATEGORIES.all, {
-                nameLv1: this.state.categoryLv1.value,
-                nameLv2: this.state.categoryLv2.value,
-                nameLv3: this.state.categoryLv3.value,
-                description: this.state.valueText,
-                attributeIds: this.state.attributeIds
-            }).then(data => {
-                return data.data;
-            }).catch(error => {
-                return error.response.data;
-            });
-            if (data.success) {
-                window.open(`/app/ubox-categories/edit/${data.result.uboxCategory.id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
+        const { categoryLv1, categoryLv2, categoryLv3, valueText, attributeIds } = this.state;
+        if (categoryLv1 && categoryLv2 && categoryLv3) {
+            const id = this.state.setId;
+            if (id) {
+                await Api.callAsync('put', UBOX_CATEGORIES.all, {
+                    id: parseInt(id),
+                    nameLv1: categoryLv1.value,
+                    nameLv2: categoryLv2.value,
+                    nameLv3: categoryLv3.value,
+                    description: valueText,
+                    attributeIds: attributeIds
+                }).then(data => {
+                    NotificationManager.success("Thành công", "Thành công", 700);
+                    setTimeout(() => {
+                        window.open(`/app/ubox-categories/edit/${id}`, "_self")
+                    }, 1000)
+                }).catch(error => {
+                    NotificationManager.warning("Cập nhật thất bại", "Thất bại");
+                });
             } else {
-                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                const data = await Api.callAsync('post', UBOX_CATEGORIES.all, {
+                    nameLv1: this.state.categoryLv1.value,
+                    nameLv2: this.state.categoryLv2.value,
+                    nameLv3: this.state.categoryLv3.value,
+                    description: this.state.valueText,
+                    attributeIds: this.state.attributeIds
+                }).then(data => {
+                    return data.data;
+                }).catch(error => {
+                    return error.response.data;
+                });
+                if (data.success) {
+                    NotificationManager.success("Thành công", "Thành công", 700);
+                    setTimeout(() => {
+                        window.open(`/app/ubox-categories/edit/${data.result.id}`, "_self")
+                    }, 1000)
+                } else {
+                    NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                }
             }
+        } else {
+            NotificationManager.warning("Nhập thiếu trường thông tin", "Thất bại");
         }
     }
+
     editCategory = async () => {
         if (this.state.categoryLv1.value !== ""
             && this.state.categoryLv2.value !== ""

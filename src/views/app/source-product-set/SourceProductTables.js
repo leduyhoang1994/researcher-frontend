@@ -20,6 +20,13 @@ class SourceProductTable extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            pagination: {
+                page: 0,
+                size: 25,
+                canNext: true,
+                canPrevious: false,
+                defaultPageSize: 25,
+            },
             sorted: [],
         };
         this.messages = this.props.component.props.intl.messages;
@@ -169,11 +176,48 @@ class SourceProductTable extends Component {
     }
 
     componentDidMount() {
-        // this.prepareQuery();
+        const { data } = this.props;
+        const { pagination } = this.state;
+        pagination.pages = Math.ceil(data.length / pagination.defaultPageSize);
+        pagination.canNext = pagination.pages > 1 ? true : false;
+        this.setState({
+            pagination: pagination
+        })
+    }
+
+    onPageChange = (page) => {
+        let { pagination } = this.state;
+        pagination.page = page;
+        if (page > 1) {
+            pagination.canPrevious = true;
+        } else {
+            pagination.canPrevious = false;
+        }
+        if (page < pagination.pages - 1) {
+            pagination.canNext = true;
+        } else {
+            pagination.canNext = false;
+        }
+        this.setState({
+            pagination: pagination
+        })
+    }
+
+    onPageSizeChange = (size) => {
+        const { pagination } = this.state;
+        pagination.size = size;
+        pagination.pages = Math.ceil(this.props.data.length / size)
+        if(pagination.page >= pagination.pages) {
+            pagination.page = 0;
+        }
+        this.setState({
+            pagination: pagination
+        })
     }
 
     render() {
-        const { data, pagination, removeFromSelectedProducts } = this.props;
+        const { data, removeFromSelectedProducts } = this.props;
+        const { pagination } = this.state;
 
         return (
             <div>
@@ -181,15 +225,13 @@ class SourceProductTable extends Component {
                     data={data}
                     className="-striped"
                     columns={this.columns()}
-                    defaultPageSize={25}
                     filterable={false}
                     showPageJump={true}
-                    current_page={pagination.page}
+                    // current_page={pagination.page}
                     page={pagination.page}
                     pages={pagination.pages}
-                    size={pagination.size}
-                    canPrevious={false}
-                    canNext={true}
+                    defaultPageSize={pagination.defaultPageSize}
+                    canPrevious={pagination.canPrevious}
                     showPageSizeOptions={true}
                     PaginationComponent={DataTablePagination}
                     onPageChange={this.onPageChange}

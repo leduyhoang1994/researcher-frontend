@@ -80,6 +80,7 @@ class ConstantModals extends React.Component {
             ApiController.callAsync('put', CONSTANTS.all, constant)
                 .then(data => {
                     NotificationManager.success("Sửa tham số thành công!", "Thành công");
+                    this.props.toggle()
                     this.props.getData()
                 }).catch(error => {
                     NotificationManager.warning("Sửa tham số thất bại!", "Thất bại", 1000);
@@ -88,6 +89,7 @@ class ConstantModals extends React.Component {
             ApiController.callAsync('post', CONSTANTS.all, constant)
                 .then(data => {
                     NotificationManager.success("Thêm tham số thành công!", "Thành công");
+                    this.props.toggle()
                     try {
                         this.props.getData()
                     } catch (error) {

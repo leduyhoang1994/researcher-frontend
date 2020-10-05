@@ -17,9 +17,9 @@ class SourceProductSets extends Component {
         categoriesFilter: [],
       },
       pagination: {
-        page: 0,
-        pages: 1,
-        size: 25,
+        // page: 0,
+        // pages: 1,
+        // size: 25,
       },
       productSet: {
         setName: "",
@@ -77,33 +77,7 @@ class SourceProductSets extends Component {
     });
   };
 
-  onPageChange = (page) => {
-    let { pagination } = this.state;
-    pagination.page = page;
-    if (page > 1) {
-      pagination.canPrevious = true;
-    } else {
-      pagination.canPrevious = false;
-    }
-    if (page < pagination.pages - 1) {
-      pagination.canNext = true;
-    } else {
-      pagination.canNext = false;
-    }
-    this.setState({
-      pagination: pagination
-    })
-    this.loadCurrentProductSet();
-  }
-
-  onPageSizeChange = (size) => {
-    const { pagination } = this.state;
-    pagination.size = size;
-    this.setState({
-      pagination: pagination
-    })
-    this.loadCurrentProductSet();
-  }
+  
 
   render() {
     return (
@@ -164,10 +138,10 @@ class SourceProductSets extends Component {
                     <SourceProductTable
                       key={this.state.keyState}
                       data={this.state.productSet.products}
-                      pagination={this.state.pagination}
+                      // pagination={this.state.pagination}
                       component={this}
-                      onPageChange={this.onPageChange}
-                      onPageSizeChange={this.onPageSizeChange}
+                      // onPageChange={this.onPageChange}
+                      // onPageSizeChange={this.onPageSizeChange}
                       removeFromSelectedProducts={this.removeFromProductSet}
                     />
                   </Colxx>

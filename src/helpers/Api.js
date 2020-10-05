@@ -5,7 +5,6 @@ import { isFunction } from "formik";
 Axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('user_token');
   config.headers.Authorization = 'Bearer ' + token;
-
   return config;
 });
 const ApiController = {
