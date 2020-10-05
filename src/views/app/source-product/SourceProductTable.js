@@ -22,14 +22,7 @@ class SourceProductTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      pagination: {
-        page: 0,
-        pages: 0,
-        size: this.props.defaultPageSize || 25,
-      },
       isLoading: true,
-      sorted: [],
     };
     this.messages = this.props.component.props.intl.messages;
   }
@@ -211,115 +204,8 @@ class SourceProductTable extends Component {
     return Math.min(maxWidth, cellLength * magicSpacing)
   }
 
-  componentDidMount() {
-    this.prepareQuery();
-  }
-
-  prepareQuery = (orderBy, desc) => {
-    const { filter } = this.props;
-    const { sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = filter;
-    let site = [];
-    let sourceCategoryId = [];
-    siteFilter.forEach(item => {
-      site.push(item.value);
-    })
-    categoriesFilter.forEach(item => {
-      sourceCategoryId.push(item.id)
-    })
-    const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
-    let data = {};
-    for (let key in arrFilter) {
-      const value = arrFilter[key] || null;
-      if (value != null && value.length > 0) {
-        data[key] = value;
-      }
-    }
-    let apiResource = {};
-    if (orderBy) {
-      apiResource = {
-        url: SOURCE_PRODUCTS.all,
-        query: {
-          ...data,
-          orderBy,
-          desc
-          // s: filter?.s || null
-        }
-      }
-    } else {
-      apiResource = {
-        url: SOURCE_PRODUCTS.all,
-        query: {
-          ...data,
-          // s: filter?.s || null
-        }
-      }
-    }
-    this.loadData(apiResource);
-  }
-
-  loadData = (apiResource) => {
-    let { url, query } = apiResource;
-    const { pagination, sorted } = this.state;
-    let newQuery = {};
-    newQuery.page = query.page || 0;
-    newQuery = {
-      ...query,
-      page: pagination.page,
-      size: pagination.size
-    };
-
-    if (sorted && sorted.id) {
-      const orderBy = sorted.id;
-      const orderDirection = sorted.desc === false ? "ASC" : "DESC";
-      newQuery.sort = `${orderBy},${orderDirection}`;
-    }
-
-    this.setState({ isLoading: true });
-
-    ApiController.call("GET", url, newQuery, response => {
-      pagination.pages = Number(response.pageCount);
-      pagination.current_page = Number(response.page);
-      pagination.page = Number(response.page);
-      pagination.defaultPageSize = Number(response.count);
-      this.setState({
-        data: response.data,
-        pagination: pagination,
-        isLoading: false
-      });
-    });
-  }
-
-  onPageChange = (page) => {
-    let { pagination } = this.state;
-    pagination.page = page;
-    if (page > 1) {
-      pagination.canPrevious = true;
-    } else {
-      pagination.canPrevious = false;
-    }
-    if (page < pagination.pages - 1) {
-      pagination.canNext = true;
-    } else {
-      pagination.canNext = false;
-    }
-    this.setState({
-      pagination: pagination
-    })
-    this.prepareQuery();
-  }
-
-  onPageSizeChange = (size) => {
-    const { pagination } = this.state;
-    pagination.size = size;
-    this.setState({
-      pagination: pagination
-    })
-    this.prepareQuery();
-  }
-
   render() {
-    const { existInSelectedProducts, addToSelectedProducts, removeFromSelectedProducts, selectable } = this.props;
-    const { data, pagination } = this.state;
+    const { data, pagination, existInSelectedProducts, addToSelectedProducts, removeFromSelectedProducts } = this.props;
 
     return (
       <div>
@@ -339,14 +225,14 @@ class SourceProductTable extends Component {
           showPageSizeOptions={true}
           onSortedChange={val => {
             const { id, desc } = val[0];
-            this.prepareQuery(id, desc);
+            this.props.prepareQuery(id, desc);
           }}
           onPageChange={this.onPageChange}
           onPageSizeChange={this.onPageSizeChange}
           PaginationComponent={DataTablePagination}
           manual
           getTrProps={(state, rowInfo) => {
-            if (rowInfo && rowInfo.row && selectable) {
+            if (rowInfo && rowInfo.row) {
               return {
                 onClick: (e) => {
                   if (existInSelectedProducts(rowInfo.original)) {

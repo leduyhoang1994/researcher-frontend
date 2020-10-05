@@ -101,7 +101,7 @@ class Calculator extends Component {
     getFunctionsMathjs = () => {
         let arrMath = []
         Object.getOwnPropertyNames(math).forEach(item => {
-            if(isFunction(math[item])) {
+            if (isFunction(math[item])) {
                 arrMath.push({ label: item, value: item, code: item.toUpperCase() });
             }
         })
@@ -176,10 +176,11 @@ class Calculator extends Component {
         let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
         if (isFunction) {
-            middleResult = `<a contenteditable="false">${data}</a>() `;
+            middleResult = `<a contenteditable="false">${data}</a>()`.concat("&nbsp;");
         } else {
-            middleResult = `<a contenteditable="false">${data}</a> `;
+            middleResult = `<a contenteditable="false">${data}</a>`.concat("&nbsp;");
         }
+        console.log(middleResult);
 
         constant.forEach(item => {
             const regex = new RegExp(`${item.label}\\b`, 'g');
@@ -195,10 +196,10 @@ class Calculator extends Component {
 
         formulas.forEach(item => {
             const label = `${item.label}()`;
-            if(leftResult.indexOf(label) !== -1) {
+            if (leftResult.indexOf(label) !== -1) {
                 leftResult = leftResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
             }
-            if(rightResult.indexOf(label) !== -1) {
+            if (rightResult.indexOf(label) !== -1) {
                 rightResult = rightResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
             }
         })
@@ -429,7 +430,17 @@ class Calculator extends Component {
                                 />
                             </Colxx>
                         </Row>
+
                         <div className="text-right card-title mt-2">
+                            <Button
+                                className="mr-3"
+                                color="info"
+                                onClick={() => {
+                                    window.open("/calculator", "_self")
+                                }}
+                            >
+                                Quay lại
+                            </Button>
                             <Button
                                 className="mr-0"
                                 color="primary"

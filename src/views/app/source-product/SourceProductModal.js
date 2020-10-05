@@ -77,6 +77,7 @@ class SourceProductModal extends Component {
       }, data => {
         NotificationManager.success("Thành công", "Thành công");
       });
+
     } else {
       //Create new cateSet
       ApiController.post(PRODUCT_SETS.all, {
@@ -137,6 +138,9 @@ class SourceProductModal extends Component {
   render() {
     const { isOpen, toggleModal } = this.props;
     const { handleChange, createSourceProductSet } = this;
+    const { radioValue, selected, sourceProductSetName } = this.state;
+
+    const isDisabled = radioValue === "update-source-product-set" ? !(radioValue === "update-source-product-set" && selected) : !(radioValue !== "update-source-product-set" && sourceProductSetName);
 
     return (
       <div>
@@ -175,8 +179,9 @@ class SourceProductModal extends Component {
               }}
             >
               Close
-                    </Button>
+            </Button>
             <Button variant="primary"
+              disabled={isDisabled}
               onClick={() => {
                 toggleModal();
                 createSourceProductSet();

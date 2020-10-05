@@ -8,7 +8,7 @@ import Select, { createFilter } from 'react-select';
 import SourceProductTable from './SourceProductTable';
 import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';
-import { SOURCE_CATEGORIES } from '../../../constants/api';
+import { SOURCE_CATEGORIES, SOURCE_PRODUCTS } from '../../../constants/api';
 import SourceProductModal from './SourceProductModal';
 import { arrayColumn } from '../../../helpers/Utils';
 import { NotificationManager } from '../../../components/common/react-notifications';
@@ -31,8 +31,15 @@ class CreateTrainingClass extends Component {
         minPriceMax: null,
         maxPriceMax: null,
       },
+      data: [],
+      pagination: {
+        page: 0,
+        pages: 0,
+        size: this.props.defaultPageSize || 25,
+      },
+      sorted: [],
       collapse: false,
-      keySearch: false,
+      keySearch: null,
     };
     this.messages = this.props.intl.messages;
   }
@@ -40,6 +47,7 @@ class CreateTrainingClass extends Component {
   componentDidMount() {
     this.loadSites();
     this.loadCategories();
+    this.prepareQuery();
   }
 
   loadSites = () => {
@@ -89,6 +97,107 @@ class CreateTrainingClass extends Component {
     this.setState({ collapse: !this.state.collapse });
   };
 
+  prepareQuery = (orderBy, desc) => {
+    const { sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = this.state.filter;
+    let site = [];
+    let sourceCategoryId = [];
+    siteFilter.forEach(item => {
+      site.push(item.value);
+    })
+    categoriesFilter.forEach(item => {
+      sourceCategoryId.push(item.id)
+    })
+    const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
+    let data = {};
+    for (let key in arrFilter) {
+      const value = arrFilter[key] || null;
+      if (value != null && value.length > 0) {
+        data[key] = value;
+      }
+    }
+    let apiResource = {};
+    if (orderBy) {
+      apiResource = {
+        url: SOURCE_PRODUCTS.all,
+        query: {
+          ...data,
+          orderBy,
+          desc
+          // s: filter?.s || null
+        }
+      }
+    } else {
+      apiResource = {
+        url: SOURCE_PRODUCTS.all,
+        query: {
+          ...data,
+          // s: filter?.s || null
+        }
+      }
+    }
+    this.loadData(apiResource);
+  }
+
+  loadData = (apiResource) => {
+    let { url, query } = apiResource;
+    const { pagination, sorted } = this.state;
+    let newQuery = {};
+    newQuery.page = query.page || 0;
+    newQuery = {
+      ...query,
+      page: pagination.page,
+      size: pagination.size
+    };
+
+    if (sorted && sorted.id) {
+      const orderBy = sorted.id;
+      const orderDirection = sorted.desc === false ? "ASC" : "DESC";
+      newQuery.sort = `${orderBy},${orderDirection}`;
+    }
+
+    this.setState({ isLoading: true });
+
+    ApiController.call("GET", url, newQuery, response => {
+      pagination.pages = Number(response.pageCount);
+      pagination.current_page = Number(response.page);
+      pagination.page = Number(response.page);
+      pagination.defaultPageSize = Number(response.count);
+      this.setState({
+        data: response.data,
+        pagination: pagination,
+        isLoading: false
+      });
+    });
+  }
+
+  onPageChange = (page) => {
+    let { pagination } = this.state;
+    pagination.page = page;
+    if (page > 1) {
+      pagination.canPrevious = true;
+    } else {
+      pagination.canPrevious = false;
+    }
+    if (page < pagination.pages - 1) {
+      pagination.canNext = true;
+    } else {
+      pagination.canNext = false;
+    }
+    this.setState({
+      pagination: pagination
+    })
+    this.prepareQuery();
+  }
+
+  onPageSizeChange = (size) => {
+    const { pagination } = this.state;
+    pagination.size = size;
+    this.setState({
+      pagination: pagination
+    })
+    this.prepareQuery();
+  }
+
   loadCategories = () => {
     ApiController.callAsync('get', SOURCE_CATEGORIES.all, {})
       .then(data => {
@@ -120,7 +229,7 @@ class CreateTrainingClass extends Component {
     const { filter } = this.state;
     this.setState({
       filter: filter,
-      keySearch: !this.state.keySearch
+      // keySearch: Math.random()
     });
   };
 
@@ -197,7 +306,7 @@ class CreateTrainingClass extends Component {
   }
 
   render() {
-    const { filter, collapse, keySearch } = this.state;
+    const { filter, collapse, keySearch, data, pagination } = this.state;
     const { siteFilter } = filter;
     return (
       <Fragment>
@@ -397,14 +506,13 @@ class CreateTrainingClass extends Component {
             <Card>
               <CardBody>
                 <SourceProductTable
-                  key={keySearch}
                   component={this}
-                  data={this.state.productList}
+                  data={data}
+                  pagination={pagination}
+                  prepareQuery={this.prepareQuery}
                   addToSelectedProducts={this.addToSelectedProducts}
                   removeFromSelectedProducts={this.removeFromSelectedProducts}
                   existInSelectedProducts={this.existInSelectedProducts}
-                  // filterCate={filter.categoriesFilter}
-                  filter={filter}
                   handleCheckAll={this.handleCheckAll}
                   allProductSelected={this.allProductSelected}
                 />

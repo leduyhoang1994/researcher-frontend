@@ -33,7 +33,7 @@ const SourceCategorySets = React.lazy(() =>
 );
 
 const UboxCategories = React.lazy(() =>
-  import(/* webpackChunkName: "source-product-set" */ './ubox-category/EditUboxCategories')
+  import(/* webpackChunkName: "source-product-set" */ './ubox-category/UboxCategories')
 );
 
 const EditUboxCategories = React.lazy(() =>
