@@ -171,7 +171,6 @@ class Calculator extends Component {
 
         let element = document.getElementById('editor_calculator');
         let inputText = element.innerText;
-        console.log(inputText);
         let leftResult = inputText.slice(0, index);
         let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
@@ -180,7 +179,6 @@ class Calculator extends Component {
         } else {
             middleResult = `<a contenteditable="false">${data}</a>`.concat("&nbsp;");
         }
-        console.log(middleResult);
 
         constant.forEach(item => {
             const regex = new RegExp(`${item.label}\\b`, 'g');
@@ -253,7 +251,6 @@ class Calculator extends Component {
                 }
             }
         })
-        console.log(value);
         let data = { label: formula, value: value, viewValue: content, type: "CUSTOM_FORMULA" };
         if (flag) {
             if (data.value && data.label) {

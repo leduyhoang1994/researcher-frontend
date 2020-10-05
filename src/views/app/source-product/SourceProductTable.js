@@ -227,8 +227,8 @@ class SourceProductTable extends Component {
             const { id, desc } = val[0];
             this.props.prepareQuery(id, desc);
           }}
-          onPageChange={this.onPageChange}
-          onPageSizeChange={this.onPageSizeChange}
+          onPageChange={this.props.onPageChange}
+          onPageSizeChange={this.props.onPageSizeChange}
           PaginationComponent={DataTablePagination}
           manual
           getTrProps={(state, rowInfo) => {

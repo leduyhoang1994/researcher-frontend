@@ -150,9 +150,11 @@ function* registerWithEmailPassword({ payload }) {
     try {
         const registerUser = yield call(registerWithEmailPasswordAsync, firstName, lastName, email, password, confirmPassword);
         if (registerUser.success) {
-            // localStorage.setItem('user_details', JSON.stringify(registerUser.result));
+            localStorage.setItem('user_token', registerUser.result.accessToken);
+            const userDetails = yield call(getUserDetails, registerUser.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(registerUserSuccess(registerUser));
-            window.open('/user/login', '_self');
+            window.open('/app', '_self');
         } else {
             yield put(registerUserError(registerUser));
         }
@@ -172,9 +174,11 @@ function* registerSellerWithEmailPassword({ payload }) {
     try {
         const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
-            // localStorage.setItem('user_details', JSON.stringify(registerSeller.result));
+            localStorage.setItem('user_token', registerSeller.result.accessToken);
+            const userDetails = yield call(getUserDetails, registerSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(registerSellerSuccess(registerSeller));
-            window.open('/seller/login', '_self');
+            window.open('/store', '_self');
         } else {
             yield put(registerSellerError(registerSeller));
         }

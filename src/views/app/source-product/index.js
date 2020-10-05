@@ -35,7 +35,7 @@ class CreateTrainingClass extends Component {
       pagination: {
         page: 0,
         pages: 0,
-        size: this.props.defaultPageSize || 25,
+        size: 25,
       },
       sorted: [],
       collapse: false,
@@ -515,6 +515,8 @@ class CreateTrainingClass extends Component {
                   existInSelectedProducts={this.existInSelectedProducts}
                   handleCheckAll={this.handleCheckAll}
                   allProductSelected={this.allProductSelected}
+                  onPageChange={this.onPageChange}
+                  onPageSizeChange={this.onPageSizeChange}
                 />
               </CardBody>
               <CardFooter className="text-right">
