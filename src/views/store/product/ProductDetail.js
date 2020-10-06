@@ -10,7 +10,7 @@ import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { NotificationManager } from "../../../components/common/react-notifications";
-import { numberWithCommas } from "../../../helpers/Utils";
+import { currencyFormat, numberWithCommas } from "../../../helpers/Utils";
 import Property from "./Property";
 import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
@@ -211,7 +211,7 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                            <p className="product-price" >{numberWithCommas(parseFloat(product.price).toFixed(0))} đ</p>
+                                <p className="product-price">{product?.price ? currencyFormat(parseFloat(product.price).toFixed(0)) + "đ": null}{}</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property

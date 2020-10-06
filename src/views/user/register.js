@@ -30,10 +30,13 @@ class Register extends Component {
   // }
 
   onUserRegister = (values) => {
-    console.log(values);
     if (values.firstName !== "" && values.lastName !== ""
       && values.email !== "" && values.password !== "" && values.confirmPassword !== "") {
+      if (values.password === values.confirmPassword) {
         this.props.registerUser(values, this.props.history);
+      } else {
+        NotificationManager.warning("Nhập lại mật khẩu không trùng mật khẩu", "Cảnh báo")
+      }
     }
   }
 
@@ -60,7 +63,7 @@ class Register extends Component {
   componentDidUpdate() {
     if (this.props.error) {
       NotificationManager.warning(
-        "Email is existed, please try another!",
+        this.props.error,
         "Register Error",
         3000,
         null,
@@ -132,7 +135,7 @@ class Register extends Component {
                         </div>
                       )}
                     </FormGroup>
-                    
+
                     <FormGroup className="form-group has-float-label">
                       <Label >
                         <IntlMessages id="user.email" />

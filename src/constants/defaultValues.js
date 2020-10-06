@@ -39,4 +39,4 @@ export const isDemo = false;
 
 export const loadingSpinnerImg = "/assets/img/spinner.gif";
 
-export const defaultImg = "/assets/products/default-image.png";
+export const defaultImg = "/default-image.png";

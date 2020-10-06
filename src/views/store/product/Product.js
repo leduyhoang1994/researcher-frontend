@@ -56,17 +56,21 @@ class Product extends React.Component {
         })
     }
 
+    setDefaultImage(linkImg, e) {
+        if (linkImg.search(defaultImg) !== -1) {
+            e.target.onError = null;
+        } else {
+            e.target.src = defaultImg;
+        }
+    }
+
     imgOnError = (e) => {
-        e.target.src = defaultImg;
+        const linkImg = e.target.src || "";
+        setTimeout(this.setDefaultImage(linkImg, e), 500)
     }
 
     render() {
         const { product } = this.props;
-        // let cart = localStorage.getItem("cart");
-        // cart = cart ? JSON.parse(cart) : [];
-        // const isAddedToCart = cart.find(pr => {
-        //     return pr.id === product.id
-        // });
 
         return (
             <Card

@@ -49,7 +49,7 @@ function* loginWithEmailPassword({ payload }) {
 
         if (loginUser.success) {
             localStorage.setItem('user_token', loginUser.result.accessToken);
-            const userDetails = getUserDetails( loginUser.result.accessToken);
+            const userDetails = yield call (getUserDetails, loginUser.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginUserSuccess(loginUser.result, userDetails));
             window.open('/', '_self');
@@ -85,7 +85,7 @@ function* loginSellerWithEmailPassword({ payload }) {
 
         if (loginSeller.success) {
             localStorage.setItem('user_token', loginSeller.result.accessToken);
-            const sellerDetails = getSellerDetails(loginSeller.result.accessToken);
+            const sellerDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(sellerDetails));
             yield put(loginSellerSuccess(loginSeller.result, sellerDetails));
             window.open('/store', '_self');
@@ -109,24 +109,20 @@ const loginSellerWithEmailPasswordAsync = async (userName, password) =>
     });
 
 
-const getUserDetails = async (token) =>
-    await Api.callAsync('get', USER.details, {
-        token: token
-    }, {
-        headers: {
-            Authorization: 'Bearer ' + token //the token is a variable which holds the token
-        }
-    }).then(data => {
-        return data.data;
-    }).catch(error => error);
-
-const getSellerDetails = async (token) => {
-    await Api.callAsync('get', SELLER.details, {}, {
+const getUserDetails = async () => {
+    return await Api.callAsync('get', USER.details, {}, {
         
     }).then(data => {
         return data.data;
     }).catch(error => error);
-    console.log();
+}
+
+const getSellerDetails = async () => {
+    return await Api.callAsync('get', SELLER.details, {}, {
+
+    }).then(data => {
+        return data.data;
+    }).catch(error => error);
 }
 
 
