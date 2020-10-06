@@ -119,38 +119,38 @@ class EditUboxProducts extends Component {
     async componentDidMount() {
         this.setState({ loading: true });
         await this.getUboxCategories();
-        const sourceProductId = new URLSearchParams(this.props.location.search).get("product-id");
-        const productAddId = new URLSearchParams(this.props.location.search).get("sourceProductId");
-        if (sourceProductId) {
-            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
+        const productId = new URLSearchParams(this.props.location.search).get("product-id");
+        const sourceProductId = new URLSearchParams(this.props.location.search).get("sourceProductId");
+        if (productId) {
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${productId}`, {});
             const product = data.data.result;
 
             if (product?.id) {
                 window.open(`/app/ubox-products/edit/${product.id}`, "_self");
             } else {
-                window.open(`/app/ubox-products/add?sourceProductId=${sourceProductId}`, "_self");
+                window.open(`/app/ubox-products/add?sourceProductId=${productId}`, "_self");
             }
         }
-        else if (productAddId) {
+        else if (sourceProductId) {
             //check if exist in ubox product
-            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${productAddId}`, {});
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
             const product = data?.data?.result;
 
             if (product?.id) {
                 window.open(`/app/ubox-products/edit/${product?.id}`, "_self");
             }
 
-            ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
+            ApiController.get(`${SOURCE_PRODUCTS.all}/${sourceProductId}`, {}, data => {
                 this.setState({
                     product: {
                         ...this.state.product,
                         sourceProduct: {
                             productTitleVi: data.productTitleVi
                         },
-                        sourceProductId: productAddId
+                        sourceProductId: sourceProductId,
                     }
                 }, () => {
-                    this.getPrice(productAddId);
+                    this.getSourceInfo(sourceProductId);
                 })
             })
 
@@ -325,8 +325,8 @@ class EditUboxProducts extends Component {
         })
     }
 
-    getPrice = async(id) => {
-        const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.price}/${id}`, {});
+    getSourceInfo = async (id) => {
+        const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.info}/${id}`, {});
         if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
             this.setState({
                 product: {
@@ -574,7 +574,7 @@ class EditUboxProducts extends Component {
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getSourceProducts}
                                                         onChange={async data => {
-                                                            this.getPrice(data?.id);
+                                                            this.getSourceInfo(data?.id);
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
@@ -627,6 +627,7 @@ class EditUboxProducts extends Component {
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        // disabled={true}
                                                         type="number"
                                                         min={0}
                                                         name="weight"
