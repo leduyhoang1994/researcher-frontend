@@ -121,7 +121,11 @@ class Register extends Component {
     if (selectedCommune) town = selectedCommune.label;
     const data = { firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address }
     if (data.firstName !== "" && data.lastName !== "" && data.userName !== "" && data.phoneNumber !== "" && data.password !== "" && data.confirmPassword !== "") {
-      this.props.registerSeller(data, this.props.history);
+      if (data.password === data.confirmPassword) {
+        this.props.registerSeller(data, this.props.history);
+      } else {
+        NotificationManager.warning("Nhập lại mật khẩu không trùng mật khẩu", "Cảnh báo")
+      }
     }
   }
 
@@ -209,7 +213,7 @@ class Register extends Component {
 
                         <FormGroup className="form-group has-float-label">
                           <Label>
-                            <IntlMessages id="user.email" />
+                            <IntlMessages id="user.email_" />
                           </Label>
                           <Field
                             type="text"
@@ -252,6 +256,21 @@ class Register extends Component {
                           {errors.confirmPassword && touched.confirmPassword && (
                             <div className="invalid-feedback d-block">
                               {errors.confirmPassword}
+                            </div>
+                          )}
+                        </FormGroup>
+                        <FormGroup className="form-group has-float-label">
+                          <Label>
+                            <IntlMessages id="user.address" />
+                          </Label>
+                          <Field
+                            type="text"
+                            className="form-control"
+                            name="address"
+                          />
+                          {errors.address && touched.address && (
+                            <div className="invalid-feedback d-block">
+                              {errors.address}
                             </div>
                           )}
                         </FormGroup>
@@ -325,21 +344,7 @@ class Register extends Component {
                           <IntlMessages id="user.commune" />
                         </Label>
 
-                        <FormGroup className="form-group has-float-label">
-                          <Label>
-                            <IntlMessages id="user.address" />
-                          </Label>
-                          <Field
-                            type="text"
-                            className="form-control"
-                            name="address"
-                          />
-                          {errors.address && touched.address && (
-                            <div className="invalid-feedback d-block">
-                              {errors.address}
-                            </div>
-                          )}
-                        </FormGroup>
+
                       </Colxx>
                     </Row>
 

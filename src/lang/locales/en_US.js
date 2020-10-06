@@ -18,6 +18,7 @@ module.exports = {
   "user.register": "Register",
   "user.forgot-password": "Forgot Password",
   "user.email": "E-mail *",
+  "user.email_": "E-mail",
   "user.password": "Password *",
   "user.confirmPassword": "Confirm Password *",
   "user.forgot-password-question": "Forget password?",
