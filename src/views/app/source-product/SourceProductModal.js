@@ -75,7 +75,9 @@ class SourceProductModal extends Component {
         setId: setId,
         itemId: productIds
       }, data => {
-        NotificationManager.success("Thành công", "Thành công");
+        NotificationManager.success("Thành công", "Thành công", 5000, () => {
+          window.open("/app/source-product-sets")
+        });
       });
 
     } else {
@@ -84,7 +86,9 @@ class SourceProductModal extends Component {
         setName: sourceProductSetName,
         ids: productIds
       }, data => {
-        NotificationManager.success("Thành công", "Thành công");
+        NotificationManager.success("Thành công", "Thành công", 5000, () => {
+          window.open("/app/source-product-sets")
+        });
       });
     }
   }

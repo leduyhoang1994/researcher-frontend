@@ -55,7 +55,7 @@ class SourceCategories extends Component {
     {
       Header: (e) => {
         return (
-          <div className="text-right mr-2">
+          <div className="text-right margin-right-5">
             <input id={siteCode} type="checkbox" onChange={this.handleCheckAll} checked={this.props.isSiteCodeCheckAll[siteCode] ? true : false} />
           </div>
         );

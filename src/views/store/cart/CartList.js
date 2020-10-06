@@ -28,7 +28,9 @@ class CartList extends Component {
     getCart = () => {
         let cart = localStorage.getItem("cart");
 
-        if (cart === null || cart.trim() === "") cart = [];
+        if (cart === null || cart.trim() === "") {
+            cart = [];
+        }
         else cart = JSON.parse(cart);
 
         this.setState({
@@ -115,7 +117,7 @@ class CartList extends Component {
         let total = 0;
         this.state.cart.forEach(item => {
             if(item.price) {
-                total += item.price * item.quantity;
+                total += item?.price * item?.quantity;
             }
         });
         this.setState({

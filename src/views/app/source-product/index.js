@@ -61,7 +61,7 @@ class CreateTrainingClass extends Component {
         this.setState({
           siteOptions: sites
         });
-        this.searchProducts();
+        this.prepareQuery();
       }).catch(error => {
         if (error.response) {
           NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
@@ -192,6 +192,7 @@ class CreateTrainingClass extends Component {
   onPageSizeChange = (size) => {
     const { pagination } = this.state;
     pagination.size = size;
+    pagination.pages = Math.ceil(this.props.data.length / size)
     this.setState({
       pagination: pagination
     })
@@ -209,7 +210,7 @@ class CreateTrainingClass extends Component {
             this.onChangeCategory(categoriesFilter);
           }
         });
-        this.searchProducts();
+        this.prepareQuery();
       }).catch(error => {
         if (error.response) {
           NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
@@ -223,14 +224,6 @@ class CreateTrainingClass extends Component {
           }
         }
       });
-  };
-
-  searchProducts = () => {
-    const { filter } = this.state;
-    this.setState({
-      filter: filter,
-      // keySearch: Math.random()
-    });
   };
 
   existInSelectedProducts = (product) => {
@@ -339,7 +332,7 @@ class CreateTrainingClass extends Component {
                         onChange={(value) => {
                           this.onChangeCategory(value)
                           setTimeout(() => {
-                            this.searchProducts();
+                            this.prepareQuery();
                           }, 500);
                         }}
                       />
@@ -473,7 +466,7 @@ class CreateTrainingClass extends Component {
                           onChange={(value) => {
                             this.onChangeSites(value)
                             setTimeout(() => {
-                              this.searchProducts();
+                              this.prepareQuery();
                             }, 500);
                           }}
                         />
@@ -493,7 +486,7 @@ class CreateTrainingClass extends Component {
               </CardBody>
               <CardFooter className="text-right">
                 <Button
-                  onClick={this.searchProducts}
+                  onClick={this.prepareQuery}
                 >
                   {__(this.messages, "Tìm kiếm")}
                 </Button>

@@ -59,7 +59,9 @@ class Products extends Component {
                                 onClick={() => {
                                     remove(item)
                                 }}
-                            >X</button>
+                            >
+                                <i className="simple-icon-close"></i>
+                            </button>
                             <p className="mb-1 w-5 w-xs-100">
                                 {item.totalPrice}
                             </p>

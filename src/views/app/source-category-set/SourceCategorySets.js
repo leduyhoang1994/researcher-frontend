@@ -72,7 +72,7 @@ class SourceCategorySets extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "#"),
+      Header: __(this.messages, "Xóa"),
       accessor: null,
       width: 150,
       Cell: props => {

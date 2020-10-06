@@ -167,10 +167,6 @@ class EditUboxCategories extends Component {
         }
     };
 
-    handleChangeInput = (value) => {
-        this.setState({ valueText: value });
-    }
-
     handleCreate1 = (newValue) => {
         let option = {};
         option.label = newValue;
@@ -266,12 +262,15 @@ class EditUboxCategories extends Component {
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {
 
-            const propertiesFilter = this.state.propertiesFilter;
-            this.setState({ attributeIds: [] });
+            let attributeIds = [];
+            const optionsOwnProperties = this.state.optionsOwnProperties;
+            optionsOwnProperties.forEach(item => {
+                attributeIds.push(item.label)
+            })
 
             ApiController.get(ATTRIBUTES.all, {}, data => {
                 data.forEach(item => {
-                    if (propertiesFilter.includes(item.label)) {
+                    if (attributeIds.includes(item.label)) {
                         this.setState({ attributeIds: [...this.state.attributeIds, item.id] });
                     }
                 });
@@ -286,9 +285,6 @@ class EditUboxCategories extends Component {
         const { optionsLv1, optionsLv2, optionsLv3, optionsProperties, optionsOwnProperties } = this.state;
         const { categoryLv1, categoryLv2, categoryLv3 } = this.state;
 
-        let getValueInput = (event) => {
-            this.handleChangeInput(event.target.value)
-        };
         return (
             <div>
                 <Fragment>
@@ -360,7 +356,14 @@ class EditUboxCategories extends Component {
                                 </span>
                             </Label>
                             <Label className="form-group has-float-label">
-                                <Input type="textarea" defaultValue={this.state.valueText} rows="3" onChange={getValueInput} />
+                                <Input type="textarea"
+                                    defaultValue={this.state.valueText}
+                                    rows="3"
+                                    onChange={e => {
+                                        this.setState({
+                                            valueText: e.target.value
+                                        })
+                                    }} />
                                 <span>
                                     {__(this.messages, "Mô tả")}
                                 </span>

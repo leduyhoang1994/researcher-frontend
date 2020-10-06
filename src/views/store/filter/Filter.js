@@ -20,6 +20,7 @@ class Filter extends React.Component {
             resultFilter: {},
             dataTable: {
                 canPrevious: false,
+                size: 10,
             }
         }
         this.messages = this.props.intl.messages;
@@ -81,8 +82,9 @@ class Filter extends React.Component {
     }
 
     onPageSizeChange = (size) => {
-        const { dataTable } = this.state;
-        dataTable.defaultPageSize = size;
+        const { dataTable, products } = this.state;
+        dataTable.size = size;
+        dataTable.pages = Math.ceil(products.length / size)
         this.setState({
             dataTable: dataTable
         })
