@@ -128,6 +128,12 @@ class SourceProductTable extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
+      Header: __(this.messages, "| Khối lượng (kg)"),
+      width: 100,
+      accessor: "crossBorderWeight",
+      Cell: props => <p className="text-muted">{props.value}</p>
+    },
+    {
       Header: __(this.messages, "| Doanh số bán ra"),
       accessor: "monthlySale",
       Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
@@ -148,7 +154,7 @@ class SourceProductTable extends Component {
     },
     {
       Header: __(this.messages, "| Phí phát hành nội địa"),
-      accessor: "productPrice",
+      accessor: "logisticFee",
       Cell: props => <p className="text-muted">
         {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
       </p>
@@ -160,7 +166,7 @@ class SourceProductTable extends Component {
     },
     {
       Header: __(this.messages, "| Địa điểm phát hàng"),
-      accessor: "productLocation",
+      accessor: "shopLocation",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -171,7 +177,7 @@ class SourceProductTable extends Component {
     {
       Header: __(this.messages, "| Tên shop bán"),
       sortable: false,
-      accessor: "productShop",
+      accessor: "shopName",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -183,7 +189,7 @@ class SourceProductTable extends Component {
     {
       Header: __(this.messages, "| Tỉ lệ khách quay lại"),
       sortable: false,
-      accessor: "rebuildRate",
+      accessor: "procurementRepetitionRate",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
