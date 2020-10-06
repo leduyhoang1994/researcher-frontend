@@ -66,6 +66,8 @@ module.exports = {
   "menu.student.checkin-history": "Lịch sử Check In",
   "menu.checkin-history": "Lịch sử Check In",
   "menu.research": "Ngành hàng",
+  "menu.source-category-sets": "Danh sách ngành hàng",
+  "menu.source-product-sets": "Danh sách bộ sản phẩm",
 
  /* 04.Error Page */
  "pages.error-title": "Có gì đó không đúng!",

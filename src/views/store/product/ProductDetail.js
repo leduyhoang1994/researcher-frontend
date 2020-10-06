@@ -129,7 +129,7 @@ class ProductDetail extends Component {
         if (!flag) cart.push(product);
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 500);
+        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
     };
 
     setAttribute = (data) => {

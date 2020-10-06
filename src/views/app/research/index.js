@@ -215,35 +215,6 @@ class Research extends Component {
         this.setState({ isOpenRadio: !isOpen });
     }
 
-    createCategoriesSet = (cateSet = null) => {
-        const { selectedCats } = this.state;
-
-        const cateSetName = this.state.cateSetName;
-
-        if (cateSetName == null || cateSetName === []) {
-            return;
-        }
-        const cateIds = arrayColumn(selectedCats, "id");
-
-        if (cateSet) {
-            //Add to existed cateSet
-            ApiController.post(CATEGORY_SETS.add, {
-                setId: cateSet.value,
-                itemId: cateIds
-            }, data => {
-                NotificationManager.success("Thành công", "Thành công");
-            });
-        } else {
-            //Create new cateSet
-            ApiController.post(CATEGORY_SETS.all, {
-                setName: cateSetName,
-                ids: cateIds
-            }, data => {
-                NotificationManager.success("Thành công", "Thành công");
-            });
-        }
-    }
-
     render() {
         if (this.state.redirect) {
             return <Redirect to={`${this.state.redirect}`} />;
@@ -326,11 +297,12 @@ class Research extends Component {
                 </Row>
 
                 <ResearchSetModal
+                    key={this.state.isOpenRadio}
                     isOpenRadio={this.state.isOpenRadio}
                     toggleResearchSetModal={this.toggleResearchSetModal}
                     handleChange={this.handleChange}
-                    createCateSet={this.createCategoriesSet}
                     cateSetName={this.cateSetName}
+                    selectedCats={this.state.selectedCats}
                 />
             </Fragment>
         );

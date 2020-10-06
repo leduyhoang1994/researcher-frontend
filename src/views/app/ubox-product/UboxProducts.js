@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import UboxProductTables from './UboxProductTables';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { defaultImg } from '../../../constants/defaultValues';
+import { arrayColumn } from '../../../helpers/Utils';
 
 class UboxProducts extends Component {
     constructor(props) {
@@ -30,44 +31,41 @@ class UboxProducts extends Component {
     }
 
     async componentDidMount() {
-        await this.getProducts();
         await this.getAllCategories();
+        await this.filterProducts();
     }
 
-    getProducts = () => {
-        let filter = this.state.filter;
-        const category = this.state.filter.uboxCategoryNameLv3.get("cate") || "";
-        if(category !== "") {
-            const listCategory = category.split(",");
-            filter.uboxCategoryNameLv3 = listCategory;
 
-            let selectedCategory = [];
-            listCategory.forEach(category => {
-                selectedCategory.push({label: category, value: category})
+
+    getAllCategories = () => {
+        ApiController.get(UBOX_CATEGORIES.all, {}, data => {
+            let options = [];
+            let tempOptions = [];
+            data.forEach(item => {
+                if (!tempOptions.includes(item.nameLv3)) {
+                    tempOptions.push(item.nameLv3);
+                    options.push({ label: item.nameLv3, value: item.nameLv3, id: item.id })
+                }
             })
             this.setState({
-                filter: filter,
-                selectedCategory: selectedCategory
-            })
-        } else {
-            this.setState({
-                filter: filter,
-            })
-        }
-        
-        this.filterProducts();
+                optionCategories: options
+            });
+        });
     }
 
     filterProducts = () => {
         let array = [];
-        let filter = this.state.filter;
+        let { filter, selectedCategory } = this.state;
+
+        const arrCategory = selectedCategory ? arrayColumn(selectedCategory, "value") : [];
+        filter.uboxCategoryNameLv3 = arrCategory;
 
         ApiController.callAsync('post', UBOX_PRODUCTS.search, filter)
             .then(data => {
                 this.setState({
                     products: data.data.result.uboxProducts
                 }, () => {
-                    if (this.state)
+                    if (this.state.products)
                         this.state.products.forEach(item => {
                             if (!item.featureImage) item.featureImage = defaultImg;
                             array.push(item);
@@ -87,57 +85,26 @@ class UboxProducts extends Component {
                     }, 1500);
                 }
             });
-
-        // ApiController.post(UBOX_PRODUCTS.filter, filter, data => {
-        //     this.setState({
-        //         products: data.uboxProducts || this.state.products
-        //     }, () => {
-        //         if (this.state)
-        //         this.state.products.forEach(item => {
-        //             if (!item.featureImage) item.featureImage = defaultImg;
-        //             array.push(item);
-        //         });
-        //         this.setState({
-        //             products: array
-        //         })
-        //     })
-        // })
     }
 
-    getAllCategories = () => {
-        ApiController.get(UBOX_CATEGORIES.all, {}, data => {
-            let options = [];
-            let tempOptions = [];
-            data.forEach(item => {
-                if (!tempOptions.includes(item.nameLv3)) {
-                    tempOptions.push(item.nameLv3);
-                    options.push({ label: item.nameLv3, value: item.nameLv3, id: item.id })
-                }
-            })
-            this.setState({
-                optionCategories: options
-            });
-        });
-    }
-
-    searchProducts = () => {
-        let url = "/app/ubox-products";
-        const { filter, selectedCategory } = this.state;
-        const search = filter.uboxProductName;
-        if (selectedCategory) {
-            let listCategory = [];
-            selectedCategory.forEach(category => {
-                listCategory.push(category.label);
-            })
-            if (search.trim()) {
-                url = url.concat(`/${search}`);
-            }
-            url = url.concat(`?cate=${listCategory}`)
-        } else {
-            url = url.concat(`/${search}`);
-        }
-        window.open(url, "_self")
-    }
+    // searchProducts = () => {
+    //     let url = "/app/ubox-products";
+    //     const { filter, selectedCategory } = this.state;
+    //     const search = filter.uboxProductName;
+    //     if (selectedCategory) {
+    //         let listCategory = [];
+    //         selectedCategory.forEach(category => {
+    //             listCategory.push(category.label);
+    //         })
+    //         if (search.trim()) {
+    //             url = url.concat(`/${search}`);
+    //         }
+    //         url = url.concat(`?cate=${listCategory}`)
+    //     } else {
+    //         url = url.concat(`/${search}`);
+    //     }
+    //     window.open(url, "_self")
+    // }
 
     handleClickRow = (row) => {
         window.open(`/app/ubox-products/edit/${row.id}`, "_self")
@@ -203,15 +170,11 @@ class UboxProducts extends Component {
                                                     isMulti
                                                     options={this.state.optionCategories}
                                                     value={this.state.selectedCategory}
-                                                    onChange={(value) =>
+                                                    onChange={(value) => {
                                                         this.setState({
-                                                            filter: {
-                                                                ...this.state.filter,
-                                                                uboxCategoryNameLv3: value.value
-                                                            },
                                                             selectedCategory: value
                                                         })
-                                                    }
+                                                    }}
                                                 />
                                                 <span>
                                                     {__(this.messages, "Thư mục")}
@@ -221,7 +184,7 @@ class UboxProducts extends Component {
                                     </Row>
                                     <div className="text-right">
                                         <Button
-                                            onClick={this.searchProducts}
+                                            onClick={this.filterProducts}
                                         >
                                             {__(this.messages, "Tìm kiếm")}
                                         </Button>
@@ -241,10 +204,10 @@ class UboxProducts extends Component {
                                         products={listProducts}
                                         handleClickRow={this.handleClickRow}
                                     />
-                                    <div className="text-right card-title">
+                                    <div className="text-right ">
                                         <Link to="/app/ubox-products/add">
                                             <Button
-                                                className="mr-2"
+                                                className=""
                                                 color="warning"
                                             >
                                                 {__(this.messages, "Thêm sản phẩm")}

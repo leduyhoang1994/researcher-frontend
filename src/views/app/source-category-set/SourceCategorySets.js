@@ -8,7 +8,7 @@ import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Redirect } from 'react-router-dom';
 import ApiController from '../../../helpers/Api';
-import { CATEGORY_SETS, SOURCE_CATEGORIES } from '../../../constants/api';
+import { CATEGORY_SETS } from '../../../constants/api';
 
 class SourceCategorySets extends Component {
   constructor(props) {

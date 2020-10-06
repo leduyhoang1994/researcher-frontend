@@ -144,7 +144,10 @@ class SourceProductModal extends Component {
     const { handleChange, createSourceProductSet } = this;
     const { radioValue, selected, sourceProductSetName } = this.state;
 
-    const isDisabled = radioValue === "update-source-product-set" ? !(radioValue === "update-source-product-set" && selected) : !(radioValue !== "update-source-product-set" && sourceProductSetName);
+    const update = "update-source-product-set";
+    const isDisabled = radioValue === update ? 
+    !(radioValue === update && selected) : 
+    !(radioValue !== update && sourceProductSetName);
 
     return (
       <div>

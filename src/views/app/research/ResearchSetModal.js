@@ -6,15 +6,17 @@ import Select from 'react-select';
 import { CATEGORY_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import { arrayColumn } from '../../../helpers/Utils';
 
 class ResearchSetModal extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            selectedCate: null,
             radioValue: "update-cate-set",
-            cateSetList: []
+            cateSetList: [],
+            selectedCate: null,
+            cateSetName: "",
         }
     }
 
@@ -49,7 +51,9 @@ class ResearchSetModal extends Component {
     }
 
     cateSetName = (data) => {
-        this.props.cateSetName(data)
+        this.setState({
+            cateSetName: data
+        })
     }
 
     handleChangeCate = (data) => {
@@ -91,17 +95,43 @@ class ResearchSetModal extends Component {
             return (
                 <div>
                     <Label>
-                        {/* <IntlMessages id="user.email" /> */}
                         Nhập tên ngành hàng
                     </Label>
                     <Input
                         type="text"
                         className="form-control"
                         name="name"
+                        defaultValue={this.state.cateSetName}
                         onChange={setName}
                     />
                 </div>
             )
+        }
+    }
+
+    createCategoriesSet = () => {
+        const { selectedCats } = this.props;
+        const cateIds = arrayColumn(selectedCats, "id");
+        const { radioValue } = this.state;
+
+        if (radioValue === "update-cate-set") {
+            //Add to existed cateSet
+            const { selectedCate } = this.state;
+            ApiController.post(CATEGORY_SETS.add, {
+                setId: selectedCate.value,
+                itemId: cateIds
+            }, data => {
+                NotificationManager.success("Thành công", "Thành công");
+            });
+        } else {
+            //Create new cateSet
+            const { cateSetName } = this.state;
+            ApiController.post(CATEGORY_SETS.all, {
+                setName: cateSetName,
+                ids: cateIds
+            }, data => {
+                NotificationManager.success("Thành công", "Thành công");
+            });
         }
     }
 
@@ -110,10 +140,12 @@ class ResearchSetModal extends Component {
             return null;
         }
 
-        let { createCateSet } = this.props;
-        let { handleChange } = this;
-        let { selectedCate } = this.state;
+        let { radioValue, selectedCate, cateSetName } = this.state;
+        const updateCateSet = "update-cate-set";
 
+        const isDisabled = radioValue === updateCateSet ? 
+        !(radioValue === updateCateSet && selectedCate) : 
+        !(radioValue !== updateCateSet && cateSetName);
         return (
             <div>
                 <Modal isOpen={true} toggle={this.props.toggleResearchSetModal}>
@@ -128,13 +160,13 @@ class ResearchSetModal extends Component {
                             <Colxx sm={10}>
                                 <FormGroup check>
                                     <Label check>
-                                        <Input type="radio" name="radio" defaultChecked onClick={() => handleChange("update-cate-set")} />
+                                        <Input type="radio" name="radio" defaultChecked onClick={() => this.handleChange("update-cate-set")} />
                                         <IntlMessages id="forms.first-radio" />
                                     </Label>
                                 </FormGroup>
                                 <FormGroup check>
                                     <Label check>
-                                        <Input type="radio" name="radio" onClick={() => handleChange("add-new-cate-set")} />
+                                        <Input type="radio" name="radio" onClick={() => this.handleChange("add-new-cate-set")} />
                                         <IntlMessages id="forms.second-radio" />
                                     </Label>
                                 </FormGroup>
@@ -156,9 +188,10 @@ class ResearchSetModal extends Component {
                             Close
                         </Button>
                         <Button variant="primary"
+                            disabled={isDisabled}
                             onClick={() => {
+                                this.createCategoriesSet()
                                 this.props.toggleResearchSetModal();
-                                createCateSet(selectedCate);
                             }}
                         >Save</Button>
                     </ModalFooter>

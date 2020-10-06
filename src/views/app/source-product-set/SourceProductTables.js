@@ -101,33 +101,37 @@ class SourceProductTable extends Component {
         {
             Header: __(this.messages, "| Doanh số bán ra"),
             accessor: "monthlySale",
-            Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+            Cell: props => <p className="text-muted">
+                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+            </p>
         },
         {
             Header: __(this.messages, "| Giá min"),
             accessor: "minPrice",
             Cell: props => <p className="text-muted">
-                {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
             </p>
         },
         {
             Header: __(this.messages, "| Giá max"),
             accessor: "maxPrice",
             Cell: props => <p className="text-muted">
-                {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
             </p>
         },
         {
             Header: __(this.messages, "| Phí phát hành nội địa"),
             accessor: "productPrice",
             Cell: props => <p className="text-muted">
-                {numberWithCommas(Number.parseFloat(props.value)).toLocaleString()} {props.original.site === "Shopee" ? "₫" : "¥"}
+                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
             </p>
         },
         {
             Header: __(this.messages, "| Số lượng bán tối tiểu"),
             accessor: "minSale",
-            Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+            Cell: props => <p className="text-muted">
+                {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
+            </p>
         },
         {
             Header: __(this.messages, "| Địa điểm phát hàng"),
@@ -137,7 +141,9 @@ class SourceProductTable extends Component {
         {
             Header: __(this.messages, "| Số lượng bán ra"),
             accessor: "topSale",
-            Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value)).toLocaleString()}</p>
+            Cell: props => <p className="text-muted">
+                {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
+            </p>
         },
         {
             Header: __(this.messages, "| Tên shop bán"),
@@ -207,7 +213,7 @@ class SourceProductTable extends Component {
         const { pagination } = this.state;
         pagination.size = size;
         pagination.pages = Math.ceil(this.props.data.length / size)
-        if(pagination.page >= pagination.pages) {
+        if (pagination.page >= pagination.pages) {
             pagination.page = 0;
         }
         this.setState({

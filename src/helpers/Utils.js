@@ -64,8 +64,13 @@ export const arrayColumn = (array, columnName) => {
 }
 
 export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+export const currencyFormat = (num) => {
+  return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+}
+
 
 function buildFormData(formData, data, parentKey) {
   if (data && typeof data === 'object' && !(data instanceof Date) && !(data instanceof File)) {

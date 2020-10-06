@@ -13,7 +13,7 @@ const dataTableColumns = [
     {
         Header: "Tổng giá đơn hàng",
         accessor: "totalPrice",
-        Cell: props => <p className="text-muted">{Number(props.value).toLocaleString()}</p>
+        Cell: props => <p className="text-muted">{Number.parseFloat(props.value).toFixed(0)}</p>
     },
     {
         Header: "Ngày tạo đơn",

@@ -19,8 +19,13 @@ class Filter extends React.Component {
             isLoading: true,
             resultFilter: {},
             dataTable: {
+                page: 0,
+                pages: 1,
+                canNext: false,
                 canPrevious: false,
                 size: 10,
+                pageSizeOptions: [10, 20, 50, 100],
+
             }
         }
         this.messages = this.props.intl.messages;
@@ -31,11 +36,12 @@ class Filter extends React.Component {
     }
 
     getProducts() {
+        let { dataTable } = this.state;
         let search = this.state.search.get('s');
         let array = [];
-        const page = this.state.dataTable.page || 0;
-        const size = this.state.dataTable.defaultPageSize || 10;
+        const { page, size } = dataTable;
         this.setState({ isLoading: true });
+
         ApiController.post(PRODUCT_SELLER.filter, { uboxProductName: search, page: page, size: size }, data => {
             this.setState({
                 resultFilter: data
@@ -44,14 +50,11 @@ class Filter extends React.Component {
                     if (!item.featureImage) item.featureImage = defaultImg;
                     array.push(item);
                 });
-                const dataTable = {
-                    page: (this.state.resultFilter.nextPage - 1),
-                    pageSizeOptions: [10, 20, 50, 100],
-                    canPrevious: this.state.resultFilter.backPage > -1 ? true : false,
-                }
-                dataTable.defaultPageSize = dataTable.pageSizeOptions[0];
-                dataTable.pages = Math.ceil(this.state.resultFilter.total / dataTable.defaultPageSize);
+                dataTable.page = this.state.resultFilter.nextPage - 1;
+                dataTable.pages = Math.ceil(this.state.resultFilter.total / dataTable.size);
                 dataTable.canNext = dataTable.pages > 1 ? true : false;
+                dataTable.canPrevious = this.state.resultFilter.backPage > -1 ? true : false;
+                
                 this.setState({
                     products: array,
                     isLoading: false,
@@ -62,10 +65,9 @@ class Filter extends React.Component {
     }
 
     onPageChange = (page) => {
-        console.log(page);
         let { dataTable } = this.state;
         dataTable.page = page;
-        if (page > 1) {
+        if (page >= 1) {
             dataTable.canPrevious = true;
         } else {
             dataTable.canPrevious = false;
@@ -85,6 +87,7 @@ class Filter extends React.Component {
         const { dataTable, products } = this.state;
         dataTable.size = size;
         dataTable.pages = Math.ceil(products.length / size)
+        console.log(dataTable, size);
         this.setState({
             dataTable: dataTable
         })
@@ -131,11 +134,12 @@ class Filter extends React.Component {
                                             {/* className="d-md-inline-flex" */}
                                             <Colxx xxs="12" className="text-center mt-5">
                                                 <DataTablePagination
+                                                    key={dataTable}
                                                     page={dataTable.page}
                                                     pages={dataTable.pages}
-                                                    defaultPageSize={dataTable.defaultPageSize}
+                                                    defaultPageSize={dataTable.size}
                                                     canPrevious={dataTable.canPrevious}
-                                                    canNext={dataTable.canNext}
+                                                    canNext={(dataTable?.page < dataTable?.pages - 1) ? true : false}
                                                     pageSizeOptions={dataTable.pageSizeOptions}
                                                     showPageSizeOptions={true}
                                                     showPageJump={true}

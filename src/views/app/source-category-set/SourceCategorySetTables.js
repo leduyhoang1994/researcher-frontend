@@ -3,7 +3,6 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
-import { Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 const SourceCategorySetTables = ({

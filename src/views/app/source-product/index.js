@@ -10,7 +10,6 @@ import ProductList from '../../../data/products';
 import ApiController from '../../../helpers/Api';
 import { SOURCE_CATEGORIES, SOURCE_PRODUCTS } from '../../../constants/api';
 import SourceProductModal from './SourceProductModal';
-import { arrayColumn } from '../../../helpers/Utils';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
 class CreateTrainingClass extends Component {
@@ -61,7 +60,6 @@ class CreateTrainingClass extends Component {
         this.setState({
           siteOptions: sites
         });
-        this.prepareQuery();
       }).catch(error => {
         if (error.response) {
           NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
@@ -97,7 +95,8 @@ class CreateTrainingClass extends Component {
     this.setState({ collapse: !this.state.collapse });
   };
 
-  prepareQuery = (orderBy, desc) => {
+  prepareQuery = (orderBy = null, desc) => {
+    const { pagination } = this.state;
     const { sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = this.state.filter;
     let site = [];
     let sourceCategoryId = [];
@@ -116,14 +115,15 @@ class CreateTrainingClass extends Component {
       }
     }
     let apiResource = {};
-    if (orderBy) {
+    if (orderBy && desc) {
       apiResource = {
         url: SOURCE_PRODUCTS.all,
         query: {
           ...data,
           orderBy,
-          desc
-          // s: filter?.s || null
+          desc,
+          page: pagination.page,
+          size: pagination.size
         }
       }
     } else {
@@ -131,7 +131,8 @@ class CreateTrainingClass extends Component {
         url: SOURCE_PRODUCTS.all,
         query: {
           ...data,
-          // s: filter?.s || null
+          page: pagination.page,
+          size: pagination.size
         }
       }
     }
@@ -140,24 +141,12 @@ class CreateTrainingClass extends Component {
 
   loadData = (apiResource) => {
     let { url, query } = apiResource;
-    const { pagination, sorted } = this.state;
-    let newQuery = {};
-    newQuery.page = query.page || 0;
-    newQuery = {
-      ...query,
-      page: pagination.page,
-      size: pagination.size
-    };
-
-    if (sorted && sorted.id) {
-      const orderBy = sorted.id;
-      const orderDirection = sorted.desc === false ? "ASC" : "DESC";
-      newQuery.sort = `${orderBy},${orderDirection}`;
-    }
-
+    console.log(query);
     this.setState({ isLoading: true });
 
-    ApiController.call("GET", url, newQuery, response => {
+    const { pagination } = this.state;
+
+    ApiController.call("GET", url, query, response => {
       pagination.pages = Number(response.pageCount);
       pagination.current_page = Number(response.page);
       pagination.page = Number(response.page);
@@ -210,7 +199,6 @@ class CreateTrainingClass extends Component {
             this.onChangeCategory(categoriesFilter);
           }
         });
-        this.prepareQuery();
       }).catch(error => {
         if (error.response) {
           NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
@@ -465,9 +453,6 @@ class CreateTrainingClass extends Component {
                           value={siteFilter.label}
                           onChange={(value) => {
                             this.onChangeSites(value)
-                            setTimeout(() => {
-                              this.prepareQuery();
-                            }, 500);
                           }}
                         />
                         <span>
@@ -525,6 +510,7 @@ class CreateTrainingClass extends Component {
           </Colxx>
         </Row>
         <SourceProductModal
+          key={this.state.isOpenSourceProductModal}
           isOpen={this.state.isOpenSourceProductModal}
           toggleModal={this.toggleOpenSourceProductModal}
           selectedProducts={this.state.selectedProducts}
