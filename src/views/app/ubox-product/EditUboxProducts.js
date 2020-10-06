@@ -132,8 +132,15 @@ class EditUboxProducts extends Component {
             }
         }
         else if (productAddId) {
+            //check if exist in ubox product
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${productAddId}`, {});
+            const product = data?.data?.result;
+
+            if (product?.id) {
+                window.open(`/app/ubox-products/edit/${product?.id}`, "_self");
+            }
+
             ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
-                console.log(data);
                 this.setState({
                     product: {
                         ...this.state.product,
@@ -395,7 +402,7 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 })
                 setTimeout(() => {
-                    window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
+                    window.open(`/app/ubox-products/edit/${data.result.id}`, "_self");
                 }, 2000);
 
             } else {
