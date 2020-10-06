@@ -95,7 +95,7 @@ class SourceProductTable extends Component {
     },
     {
       Header: __(this.messages, "Tên sản phẩm"),
-      width: 400,
+      width: 300,
       fixed: "left",
       accessor: "productTitleVi",
       Cell: props => <div className="text-left">
@@ -104,77 +104,65 @@ class SourceProductTable extends Component {
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 3"),
-      width: 150,
+      width: this.getColumnWidth("productCategoryVi", "Tên ngành hàng tầng 3"),
       accessor: "productCategoryVi",
-      Cell: props => <p className="text-muted">{props.value}</p>,
-      // Filter: ({ filter, onChange }) => {
-      //   return (
-      //     <Select
-      //       isClearable
-      //       className="react-select"
-      //       classNamePrefix="react-select"
-      //       options={filterCate}
-      //       onChange={event => onChange(event ? event.categoryNameViLevel3 : undefined)}
-      //       getOptionValue={option => option.categoryNameViLevel3}
-      //       getOptionLabel={option => option.categoryNameViLevel3}
-      //     />
-      //   );
-      // }
+      Cell: props => <p className="text-muted text-center">{props.value}</p>,
     },
     {
       Header: __(this.messages, "| Nguồn sản phẩm"),
-      width: 100,
+      width: this.getColumnWidth("site", "| Nguồn sản phẩm"),
       accessor: "site",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "| Khối lượng (kg)"),
-      width: 100,
-      accessor: "crossBorderWeight",
-      Cell: props => <p className="text-muted">{props.value}</p>
-    },
-    {
       Header: __(this.messages, "| Doanh số bán ra"),
+      width: this.getColumnWidth("monthlySale", "| Doanh số bán ra"),
       accessor: "monthlySale",
       Cell: props => <p className="text-muted">
-        {numberWithCommas(Number.parseFloat(props.value)) || null}
+        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
       </p>
     },
     {
       Header: __(this.messages, "| Giá min"),
+      width: this.getColumnWidth("minPrice", "| Giá min"),
       accessor: "minPrice",
       Cell: props => <p className="text-muted">
-        {numberWithCommas(Number.parseFloat(props.value))} {props.original.site === "Shopee" ? "₫" : "¥"}
+        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
       </p>
     },
     {
       Header: __(this.messages, "| Giá max"),
+      width: this.getColumnWidth("maxPrice", "| Giá max"),
       accessor: "maxPrice",
       Cell: props => <p className="text-muted">
-        {numberWithCommas(Number.parseFloat(props.value))} {props.original.site === "Shopee" ? "₫" : "¥"}
+        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
       </p>
     },
     {
       Header: __(this.messages, "| Phí phát hành nội địa"),
+      width: this.getColumnWidth("logisticFee", "| Phí phát hành nội địa"),
       accessor: "logisticFee",
       Cell: props => <p className="text-muted">
         {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
       </p>
     },
     {
-      Header: __(this.messages, "| Số lượng bán tối thiểu"),
+      Header: __(this.messages, "| Số lượng bán tối tiểu"),
+      width: this.getColumnWidth("minSale", "| Số lượng bán tối tiểu"),
       accessor: "minSale",
       Cell: props => <p className="text-muted">
-        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+        {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
       </p>
     },
     {
       Header: __(this.messages, "| Địa điểm phát hàng"),
+      width: this.getColumnWidth("shopLocation", "| Địa điểm phát hàng"),
       accessor: "shopLocation",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "| Số lượng bán ra"),
+      width: this.getColumnWidth("topSale", "| Số lượng bán ra"),
       accessor: "topSale",
       Cell: props => <p className="text-muted">
         {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
@@ -182,38 +170,44 @@ class SourceProductTable extends Component {
     },
     {
       Header: __(this.messages, "| Tên shop bán"),
+      width: this.getColumnWidth("shopName", "| Tên shop bán"),
       sortable: false,
       accessor: "shopName",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "| Uy tín shop bán"),
+      width: this.getColumnWidth("productShopRating", "| Uy tín shop bán"),
       sortable: false,
       accessor: "productShopRating",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "| Tỉ lệ khách quay lại"),
+      width: this.getColumnWidth("procurementRepetitionRate", "| Tỉ lệ khách quay lại"),
       sortable: false,
       accessor: "procurementRepetitionRate",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
       Header: __(this.messages, "| Ghi chú"),
+      width: this.getColumnWidth("productShopRating", "| Ghi chú"),
       sortable: false,
       accessor: "productShopRating",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
   ];
 
-  getColumnWidth = (rows, accessor, headerText) => {
-    const maxWidth = 400
+  getColumnWidth = (accessor, headerText) => {
+    const { data } = this.props;
+    const maxWidth = 150
     const magicSpacing = 10
     const cellLength = Math.max(
-      ...rows.map(row => (row[accessor] || '').length),
+      ...data.map(row => (row[accessor] || '').length),
       headerText.length,
     );
-    return Math.min(maxWidth, cellLength * magicSpacing)
+    let width = Math.min(maxWidth, cellLength * magicSpacing);
+    return Number.isNaN(width) ? maxWidth : width;
   }
 
   render() {
