@@ -29,22 +29,24 @@ class SourceProductSet extends Component {
   }
 
   removeFromProductSet = (original) => {
-    const ids = [original.id];
-    ApiController.callAsync('delete', PRODUCT_SETS.all, { ids: ids })
-      .then(data => {
-        NotificationManager.success("Xóa bộ sản phẩm thành công", "Thành công", 1500);
-        this.loadProductSets();
-      }).catch(error => {
-        NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-        if (error.response.status === 401) {
-          setTimeout(function () {
-            NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+    const ids = { ids: [original.id] };
+    if (window.confirm('Bạn có chắc chắn muốn xóa bộ sản phẩm này không?')) {
+      ApiController.callAsync('delete', PRODUCT_SETS.all, ids)
+        .then(data => {
+          NotificationManager.success("Xóa bộ sản phẩm thành công", "Thành công", 1500);
+          this.loadProductSets();
+        }).catch(error => {
+          NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+          if (error.response.status === 401) {
             setTimeout(function () {
-              window.open("/user/login", "_self")
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+              setTimeout(function () {
+                window.open("/user/login", "_self")
+              }, 1500);
             }, 1500);
-          }, 1500);
-        }
-      });
+          }
+        });
+    }
   }
 
   render() {

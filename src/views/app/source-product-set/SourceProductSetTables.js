@@ -5,32 +5,30 @@ import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
+import "./style.scss";
 
 const SourceProductSetTables = ({
   data,
   component,
   removeFromProductSet,
-  existInSelectedProducts,
-  addToSelectedProducts,
-  removeFromSelectedProducts
-}) => 
-{
+}) => {
   const columns = () => [
     {
       Header: __(component.messages, "Tên bộ sản phẩm"),
       sortable: false,
       accessor: "setName",
       Cell: props => <p className="text-muted">
-          <Link to={`/app/source-product-sets/${props.original.id}`}>{props.value}</Link>
-        </p>
+        <Link to={`/app/source-product-sets/${props.original.id}`}>{props.value}</Link>
+      </p>
     },
     {
       Header: __(component.messages, "Xóa"),
+      className:"text-right",
       sortable: false,
       accessor: null,
       Cell: props => {
         return (
-          <div>
+          <div className="">
             <Button
               color="danger"
               size="xs"

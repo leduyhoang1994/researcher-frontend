@@ -2,7 +2,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
-import { numberWithCommas } from '../../../helpers/Utils';
+import { numberWithCommas, numberFormat } from '../../../helpers/Utils';
 import "./style.scss";
 
 const dataTableColumns = [
@@ -39,7 +39,9 @@ const dataTableColumns = [
     {
         Header: "Giá ubox",
         accessor: "price",
-        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())} đ</p>
+        Cell: props => <p className="text-muted">
+            {numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())} đ
+        </p>
     },
     {
         Header: "Giá nội bộ",
@@ -57,25 +59,22 @@ const dataTableColumns = [
         Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())} đ</p>
     },
     {
-        Header: "Trọng lượng",
+        Header: "Khối lượng",
         accessor: "weight",
-        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())}</p>
+        Cell: props => <p className="text-muted">
+            {props.value ? numberFormat(Number.parseFloat(props.value), 3).toLocaleString() + " kg": null}
+        </p>
     },
     {
         Header: "SLA dịch vụ",
         accessor: "serviceSla",
         Cell: props => <p className="text-muted">{props.value}</p>
     },
-    {
-        Header: "Phí dịch vụ dự kiến",
-        accessor: "serviceCost",
-        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())} đ</p>
-    },
-    {
-        Header: "Mô tả",
-        accessor: "description",
-        Cell: props => <p className="text-muted">{props.value}</p>
-    },
+    // {
+    //     Header: "Phí dịch vụ dự kiến",
+    //     accessor: "serviceCost",
+    //     Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())} đ</p>
+    // },
     {
         Header: "Hình thức vận chuyển",
         accessor: "transportation",
@@ -84,12 +83,21 @@ const dataTableColumns = [
     {
         Header: "Thời gian phát hàng của xưởng",
         accessor: "workshopIn",
-        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())}</p>
+        Cell: props => <p className="text-muted">
+            {props.value ? numberFormat(Number.parseFloat(props.value), 2).toLocaleString() + " ngày" : null}
+        </p>
     },
     {
         Header: "Thời gian giao hàng Ubox",
         accessor: "uboxIn",
-        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0).toLocaleString())}</p>
+        Cell: props => <p className="text-muted">
+            {props.value ? numberFormat(Number.parseFloat(props.value), 2).toLocaleString() + " ngày" : null}
+        </p>
+    },
+    {
+        Header: "Mô tả",
+        accessor: "description",
+        Cell: props => <p className="text-muted">{props.value}</p>
     },
 ]
 

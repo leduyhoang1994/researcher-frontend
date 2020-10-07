@@ -67,8 +67,23 @@ export const numberWithCommas = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+export const numberFormat = (number, p, ts, dp) => {
+  var t = [];
+  if (typeof p == 'undefined') p = 2;
+  if (typeof ts == 'undefined') ts = '.';
+  if (typeof dp == 'undefined') dp = ',';
+
+  number = Number(number).toFixed(p).split('.');
+
+  for (var iLen = number[0].length, i = iLen ? iLen % 3 || 3 : 0, j = 0; i <= iLen; i += 3) {
+    t.push(number[0].substring(j, i));
+    j = i;
+  }
+  return t.join(ts) + (number[1] ? dp + number[1] : '');
+}
+
 export const currencyFormatNDT = (number) => {
-  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'NDT' }).format(number);
+  return new Intl.NumberFormat('zh-CN').format(number);
 }
 
 export const currencyFormatVND = (number) => {

@@ -132,7 +132,6 @@ class ResearchSetModal extends Component {
                 setName: cateSetName,
                 ids: cateIds
             }, data => {
-                console.log(data);
                 NotificationManager.success("Xem chi tiết tại đây", "Thành công", 1500, () => {
                     window.open(`/app/source-category-sets/${data.id}`);
                 });

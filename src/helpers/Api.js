@@ -59,7 +59,8 @@ const ApiController = {
   },
 
   deleteAsync: async (url, data, options) => {
-    return await Axios.delete(url, data, options);
+    const optionCustom = { data: data }
+    return await Axios.delete(url, optionCustom);
   },
 
   call: (method, url, data, callback, options = {}) => {

@@ -273,9 +273,15 @@ class EditUboxProducts extends Component {
     }
 
     validateFields = async () => {
-        const needToValidate = ["name", "price", "internalPrice", "minPrice", "offerPrice", "serviceSla"
-            , "serviceCost", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
-                return [this.state.selectedSourceProduct.value, "sourceProduct"]
+        const needToValidate = [
+            {name: "Tên sản phẩm"}, {price: "Giá ubox"}, 
+            {internalPrice: "Giá nội bộ"}, {minPrice: "Giá bán tối thiểu"}, 
+            {offerPrice: "Giá bán đề xuất"}, {serviceSla: "Dịch vụ SLA"},
+            {transportation: "Hình thức vận chuyển"}, 
+            {workshopIn: "Thời gian phát hàng của cửa hàng"}, 
+            {uboxIn: "Thời gian giao hàng Ubox"}, {uboxCategoryId: "Ngành hàng"}, 
+            () => {
+                return [this.state.product.sourceProductId, {sourceProduct: "Nguồn sản phẩm"}]
             }];
         let success = true;
         for await (const field of needToValidate) {
@@ -283,13 +289,17 @@ class EditUboxProducts extends Component {
                 const fieldData = field();
                 if (fieldData[0] === "") {
                     success = false;
-                    NotificationManager.error(`Trường ${fieldData[0]} cần phải nhập`);
+                    NotificationManager.error(`Trường ${fieldData[1].sourceProduct} cần phải nhập`);
                 }
             } else {
-                if ((this.state.product[field] || "") === "") {
-                    console.log(this.state.product[field])
+                let fieldName = "", fieldValue = "";
+                for(let key in field) {
+                    fieldName = key;
+                    fieldValue = field[key];
+                }
+                if ((this.state.product[fieldName] || "") === "") {
                     success = false;
-                    NotificationManager.error(`Trường ${field} cần phải nhập`);
+                    NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
                 }
             }
         }
@@ -371,7 +381,6 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 });
             }).catch(error => {
-                console.log(error.response)
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
@@ -623,7 +632,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Khối lượng *")}
+                                                        {__(this.messages, "Khối lượng (kg)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -648,7 +657,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Thời gian phát hàng của *")}
+                                                        {__(this.messages, "Thời gian phát hàng của cửa hàng *")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">

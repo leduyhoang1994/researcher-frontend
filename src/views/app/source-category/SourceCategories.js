@@ -7,6 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
 import DataTablePagination from '../../../components/DatatablePagination';
 import './style.scss';
+import { numberWithCommas } from '../../../helpers/Utils';
 
 class SourceCategories extends Component {
   constructor(props) {
@@ -50,7 +51,9 @@ class SourceCategories extends Component {
     {
       Header: __(this.messages, "Tổng sale"),
       accessor: "monthlySale",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <p className="text-muted">
+        {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
+      </p>
     },
     {
       Header: (e) => {

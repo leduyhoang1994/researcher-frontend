@@ -7,6 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import SourceCategorySetTables from './SourceCategorySetTables';
 import { CATEGORY_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class SourceCategorySets extends Component {
   constructor(props) {
@@ -25,6 +26,27 @@ class SourceCategorySets extends Component {
     ApiController.get(CATEGORY_SETS.all, {}, data => {
       this.setState({ cateSetList: data });
     });
+  }
+
+  removeFromCategorySet = (original) => {
+    const ids = { ids: [original.id] };
+    if (window.confirm('Bạn có chắc chắn muốn xóa bộ ngành hàng này không?')) {
+      ApiController.callAsync('delete', CATEGORY_SETS.all, ids)
+        .then(data => {
+          NotificationManager.success("Xóa bộ ngành hàng thành công", "Thành công", 1500);
+          this.loadCateSets();
+        }).catch(error => {
+          NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+          if (error.response.status === 401) {
+            setTimeout(function () {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+              setTimeout(function () {
+                window.open("/user/login", "_self")
+              }, 1500);
+            }, 1500);
+          }
+        });
+    }
   }
   
   render() {
@@ -48,6 +70,7 @@ class SourceCategorySets extends Component {
                     <SourceCategorySetTables
                       data={this.state.cateSetList}
                       component={this}
+                      removeFromCategorySet={this.removeFromCategorySet}
                     />
                   </Colxx>
                 </Row>

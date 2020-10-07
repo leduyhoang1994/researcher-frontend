@@ -115,7 +115,7 @@ class CreateTrainingClass extends Component {
       }
     }
     let apiResource = {};
-    if (orderBy && desc) {
+    if (orderBy?.length) {
       apiResource = {
         url: SOURCE_PRODUCTS.all,
         query: {
@@ -141,7 +141,6 @@ class CreateTrainingClass extends Component {
 
   loadData = (apiResource) => {
     let { url, query } = apiResource;
-    console.log(query);
     this.setState({ isLoading: true });
 
     const { pagination } = this.state;
@@ -319,9 +318,6 @@ class CreateTrainingClass extends Component {
                         value={filter.categoriesFilter}
                         onChange={(value) => {
                           this.onChangeCategory(value)
-                          setTimeout(() => {
-                            this.prepareQuery();
-                          }, 500);
                         }}
                       />
                       <span>

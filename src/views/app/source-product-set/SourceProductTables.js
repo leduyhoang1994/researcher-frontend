@@ -6,7 +6,7 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import { Button } from 'reactstrap';
 import { isFunction } from 'formik';
 import "./style.scss";
-import { currencyFormatNDT, currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
+import { currencyFormatNDT, currencyFormatVND, numberFormat, numberWithCommas } from '../../../helpers/Utils';
 import withFixedColumns from "react-table-hoc-fixed-columns";
 
 import "react-table/react-table.css";
@@ -106,13 +106,21 @@ class SourceProductTable extends Component {
             </p>
         },
         {
+            Header: __(this.messages, "| Khối lượng"),
+            width: this.getColumnWidth("crossBorderWeight", "| Khối lượng"),
+            accessor: "crossBorderWeight",
+            Cell: props => <p className="text-muted">
+                {props.value ? (numberFormat(Number.parseFloat(props.value), 3) + " kg") : null}
+            </p>
+        },
+        {
             Header: __(this.messages, "| Giá min"),
             width: this.getColumnWidth("minPrice", "| Giá min"),
             accessor: "minPrice",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) :
-                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
                     : null
                 }
             </p>
@@ -123,8 +131,8 @@ class SourceProductTable extends Component {
             accessor: "maxPrice",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) :
-                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
                     : null
                 }
             </p>
@@ -135,8 +143,8 @@ class SourceProductTable extends Component {
             accessor: "logisticFee",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) :
-                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
                     : null
                 }
             </p>

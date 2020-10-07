@@ -4,23 +4,42 @@ import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import "./style.scss";
 
 const SourceCategorySetTables = ({
   data,
   component,
-  existInSelectedProducts,
-  addToSelectedProducts,
-  removeFromSelectedProducts
-}) => 
-{
+  removeFromCategorySet,
+}) => {
   const columns = () => [
     {
       Header: __(component.messages, "Tên danh sách"),
       sortable: false,
       accessor: "setName",
       Cell: props => <p className="text-muted">
-          <Link to={`/app/source-category-sets/${props.original.id}`}>{props.value}</Link>
-        </p>
+        <Link to={`/app/source-category-sets/${props.original.id}`}>{props.value}</Link>
+      </p>
+    },
+    {
+      Header: __(component.messages, "Xóa"),
+      sortable: false,
+      accessor: null,
+      Cell: props => {
+        return (
+          <div className="text-right">
+            <Button
+              color="danger"
+              size="xs"
+              onClick={() => {
+                removeFromCategorySet(props.original)
+              }}
+            >
+              X
+            </Button>
+          </div>
+        )
+      }
     },
   ];
 
