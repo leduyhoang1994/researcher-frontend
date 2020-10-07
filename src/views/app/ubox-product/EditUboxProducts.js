@@ -16,6 +16,7 @@ import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
+import CategoryModals from './CategoryModals';
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -78,15 +79,23 @@ class EditUboxProducts extends Component {
                 images: [],
                 videos: []
             },
+            isOpenCategoryModal: false,
         };
         this.messages = this.props.intl.messages;
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handleChangeNumber = this.handleChangeNumber.bind(this);
+        this.toggleOpenCategoryModal = this.toggleOpenCategoryModal.bind(this);
     }
 
     setRedirect = (url) => {
         this.setState({
             redirect: url
+        })
+    }
+
+    toggleOpenCategoryModal() {
+        this.setState({
+            isOpenCategoryModal: !this.state.isOpenCategoryModal
         })
     }
 
@@ -274,14 +283,14 @@ class EditUboxProducts extends Component {
 
     validateFields = async () => {
         const needToValidate = [
-            {name: "Tên sản phẩm"}, {price: "Giá ubox"}, 
-            {internalPrice: "Giá nội bộ"}, {minPrice: "Giá bán tối thiểu"}, 
-            {offerPrice: "Giá bán đề xuất"}, {serviceSla: "Dịch vụ SLA"},
-            {transportation: "Hình thức vận chuyển"}, 
-            {workshopIn: "Thời gian phát hàng của cửa hàng"}, 
-            {uboxIn: "Thời gian giao hàng Ubox"}, {uboxCategoryId: "Ngành hàng"}, 
+            { name: "Tên sản phẩm" }, { price: "Giá ubox" },
+            { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
+            { offerPrice: "Giá bán đề xuất" }, { serviceSla: "Dịch vụ SLA" },
+            { transportation: "Hình thức vận chuyển" },
+            { workshopIn: "Thời gian phát hàng của cửa hàng" },
+            { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
             () => {
-                return [this.state.product.sourceProductId, {sourceProduct: "Nguồn sản phẩm"}]
+                return [this.state.product.sourceProductId, { sourceProduct: "Nguồn sản phẩm" }]
             }];
         let success = true;
         for await (const field of needToValidate) {
@@ -293,7 +302,7 @@ class EditUboxProducts extends Component {
                 }
             } else {
                 let fieldName = "", fieldValue = "";
-                for(let key in field) {
+                for (let key in field) {
                     fieldName = key;
                     fieldValue = field[key];
                 }
@@ -475,18 +484,32 @@ class EditUboxProducts extends Component {
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
-                                        <Label className="form-group has-float-label">
-                                            <Select
-                                                className="react-select"
-                                                classNamePrefix="react-select"
-                                                options={this.state.optionUboxCategories}
-                                                value={this.state.selectedCategory}
-                                                onChange={this.handleChangeCategory}
-                                            />
-                                            <span>
-                                                {__(this.messages, "Ngành hàng *")}
+                                        <div className="d-flex flex-grow-1 min-width-zero">
+                                            <Label className="form-group has-float-label w-90">
+                                                <Select
+                                                    className="react-select"
+                                                    classNamePrefix="react-select"
+                                                    options={this.state.optionUboxCategories}
+                                                    value={this.state.selectedCategory}
+                                                    onChange={this.handleChangeCategory}
+                                                />
+                                                <span>
+                                                    {__(this.messages, "Ngành hàng *")}
+                                                </span>
+                                            </Label>
+                                            <span className="w-10">
+                                                <Button
+                                                    outline
+                                                    className="button"
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        this.toggleOpenCategoryModal()
+                                                    }}
+                                                >
+                                                    <i className="iconsminds-gear-2 align-middle" />
+                                                </Button>
                                             </span>
-                                        </Label>
+                                        </div>
                                         <Label className="form-group has-float-label">
                                             <Input
                                                 type="text"
@@ -728,6 +751,11 @@ class EditUboxProducts extends Component {
                         </Card>
                     </Colxx>
                 </Row>
+                <CategoryModals
+                    key={this.state.isOpenCategoryModal}
+                    isOpenModal={this.state.isOpenCategoryModal}
+                    toggleOpenCategoryModal={this.toggleOpenCategoryModal}
+                />
             </Fragment>
         );
     }
