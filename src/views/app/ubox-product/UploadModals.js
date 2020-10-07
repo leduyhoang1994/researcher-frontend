@@ -51,7 +51,7 @@ class UploadModals extends React.Component {
                     <form onSubmit={this.onFormSubmit}>
                         <h1>File Upload</h1><br />
                         <input type="file" id='i_file' name='i_file' accept=".mp4,.mov,.mp4,.flv,.avi,.jpg,.jpeg,.png,.gif" onChange={this.onChange} multiple />
-                        {/* <button type="submit">Upload</button> */}
+                        <button type="submit" onClick={this.props.toggle} className="float-right">Ok</button>
                     </form>
                 </ModalBody>
             </Modal>
