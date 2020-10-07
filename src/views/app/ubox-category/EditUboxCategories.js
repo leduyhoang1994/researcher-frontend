@@ -13,8 +13,9 @@ import { NotificationManager } from '../../../components/common/react-notificati
 class EditUboxCategories extends Component {
     constructor(props) {
         super(props);
+        console.log(this.props?.match)
         this.state = {
-            setId: this.props.match.params.id || null,
+            setId: this.props.type === 'modal' ? null : (this.props?.match?.params?.id || null),
             category: [],
             optionsLv1: [],
             optionsLv2: [],
@@ -290,7 +291,11 @@ class EditUboxCategories extends Component {
                 <Fragment>
                     <Row>
                         <Colxx xxs="12">
-                            <Breadcrumb heading="menu.category" match={this.props.match} />
+                            {this.props.type !== 'modal' ?
+                                (<Breadcrumb heading="menu.category" match={this.props.match} />)
+                                : (<>
+                                    Thêm mới ngành hàng
+                            </>)}
                             <Separator className="mb-5" />
                         </Colxx>
                     </Row>
@@ -372,17 +377,21 @@ class EditUboxCategories extends Component {
                         </Colxx>
                     </Row>
 
-                    <div className="text-right card-title">
-                        <Button
-                            className="mr-2"
-                            color="primary"
-                            onClick={() => {
-                                this.editCategory();
-                            }}
-                        >
-                            {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
-                        </Button>
-                    </div>
+                    {
+                        this.props.type !== 'modal' ? (
+                            <div className="text-right card-title">
+                                <Button
+                                    className="mr-2"
+                                    color="primary"
+                                    onClick={() => {
+                                        this.editCategory();
+                                    }}
+                                >
+                                    {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
+                                </Button>
+                            </div>
+                        ) : (<></>)
+                    }
                 </Fragment>
             </div>
         );

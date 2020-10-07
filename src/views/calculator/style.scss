@@ -49,8 +49,12 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
   height: 100px;
   min-height: 50px;
+  
   border: 1px solid #eee;
   max-width: 100%;
+  * {
+    font-weight: bold;
+  }
   &:focus-within {
     background-color: white;
     border: 1px solid red !important;
@@ -84,4 +88,16 @@ article p,i,h3,article {
 .constant i {
   width: 18px;
   text-align: center;
+}
+.formula-color {
+  color: #d64f5d;
+}
+.constant-color {
+  color: #4acc3d;
+}
+.field-color {
+  color: #a112cc;
+}
+.function-color {
+  color: #5e99e6;
 }

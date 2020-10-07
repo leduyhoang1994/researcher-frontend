@@ -51,6 +51,12 @@ const multiMenu = [
         to: "/calculator"
       }
     ]
+  },
+  {
+    id: "store",
+    icon: "iconsminds-qr-code",
+    label: "Cửa hàng Ubox",
+    to: "/store",
   }
 ];
 

@@ -160,14 +160,7 @@ class Calculator extends Component {
         optionFunctions.reverse();
         const key = Object.keys(detailFields).toString() || "";
 
-        if (key) {
-            const fields = detailFields[key];
-            let arrFields = [];
-            fields.forEach(item => {
-                arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
-            })
-            constant = [...constant, ...arrFields];
-        }
+        
 
         let element = document.getElementById('editor_calculator');
         let inputText = element.innerText;
@@ -175,30 +168,49 @@ class Calculator extends Component {
         let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
         if (isFunction) {
-            middleResult = `<a contenteditable="false">${data}</a>()`.concat("&nbsp;");
+            middleResult = `<a style="color: #5e99e6" contenteditable="false">${data}</a>()`.concat("&nbsp;");
         } else {
-            middleResult = `<a contenteditable="false">${data}</a>`.concat("&nbsp;");
+            if(data.includes("()")) {
+                middleResult = `<a style="color: #d64f5d" contenteditable="false">${data}</a>`.concat("&nbsp;");
+            } else if(data.includes(".")) {
+                middleResult = `<a style="color: #a112cc" contenteditable="false">${data}</a>`.concat("&nbsp;");
+            } else {
+                middleResult = `<a style="color: #4acc3d" contenteditable="false">${data}</a>`.concat("&nbsp;");
+            }
         }
 
         constant.forEach(item => {
             const regex = new RegExp(`${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
+            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d" contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d" contenteditable="false">${item.label}</a>`);
         })
+
+        if (key) {
+            let arrFields = [];
+            const fields = detailFields[key];
+            fields.forEach(item => {
+                arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
+            })
+            arrFields.forEach(item => {
+                const regex = new RegExp(`${item.label}\\b`, 'g');
+                leftResult = leftResult.replace(regex, `<a style="color: #a112cc" contenteditable="false">${item.label}</a>`);
+                rightResult = rightResult.replace(regex, `<a style="color: #a112cc" contenteditable="false">${item.label}</a>`);
+            })
+        }
 
         optionFunctions.forEach(item => {
             const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a contenteditable="false">${item.label}</a>`);
+            leftResult = leftResult.replace(regex, `<a style="color: #5e99e6" contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a style="color: #5e99e6" contenteditable="false">${item.label}</a>`);
         })
 
         formulas.forEach(item => {
             const label = `${item.label}()`;
             if (leftResult.indexOf(label) !== -1) {
-                leftResult = leftResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
+                leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d" contenteditable="false">${label}</a>`);
             }
             if (rightResult.indexOf(label) !== -1) {
-                rightResult = rightResult.replaceAll(label, `<a contenteditable="false">${label}</a>`);
+                rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d" contenteditable="false">${label}</a>`);
             }
         })
 
@@ -346,7 +358,7 @@ class Calculator extends Component {
                                             <span key={item + index}
                                                 id={`${key}.${item}`}
                                                 onClick={this.onClick}
-                                                className="constants height-40 align-middle"
+                                                className="constants height-40 align-middle field-color"
                                             >
                                                 {item}
                                             </span>
@@ -369,7 +381,8 @@ class Calculator extends Component {
                                                 id={`${item.label}`}
                                                 onClick={this.onClick}
                                                 // onDragStart={this.onDrag}
-                                                className="constants height-40 align-middle"
+                                                className="constants height-40 align-middle constant-color
+                                                "
                                             >
                                                 {item.label}
                                             </span>
@@ -391,7 +404,7 @@ class Calculator extends Component {
                                                 onClick={this.onClick}
                                                 id={`${item.label}()`}
                                                 // onDragStart={this.onDrag}
-                                                className="constants height-40 align-middle"
+                                                className="constants height-40 align-middle formula-color"
                                             >
                                                 {item.label}
                                             </span>
