@@ -10,7 +10,7 @@ import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { NotificationManager } from "../../../components/common/react-notifications";
-import { currencyFormat, numberWithCommas } from "../../../helpers/Utils";
+import { currencyFormatVND } from "../../../helpers/Utils";
 import Property from "./Property";
 import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
@@ -211,7 +211,7 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                <p className="product-price">{product?.price ? currencyFormat(parseFloat(product.price).toFixed(0)) + "đ": null}{}</p>
+                                <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)) + "đ": null}{}</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property
@@ -304,11 +304,11 @@ class ProductDetail extends Component {
                                     <p className="mt-3 ml-3">SLA dịch vụ {product.serviceSla}</p>
                                 </div>
                             </Colxx>
-                            <Colxx xxs="4" >
+                            {/* <Colxx xxs="4" >
                                 <div>
                                     <p className="mt-3 ml-3">Phí dịch vụ dự kiến {product.serviceCost}</p>
                                 </div>
-                            </Colxx>
+                            </Colxx> */}
                         </Row>
                     </Card>
                 </Row>

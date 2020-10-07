@@ -121,7 +121,9 @@ class ResearchSetModal extends Component {
                 setId: selectedCate.value,
                 itemId: cateIds
             }, data => {
-                NotificationManager.success("Thành công", "Thành công");
+                NotificationManager.success("Xem chi tiết tại đây", "Thành công", 1500, () => {
+                    window.open(`/app/source-category-sets/${selectedCate.value}`);
+                });
             });
         } else {
             //Create new cateSet
@@ -130,7 +132,10 @@ class ResearchSetModal extends Component {
                 setName: cateSetName,
                 ids: cateIds
             }, data => {
-                NotificationManager.success("Thành công", "Thành công");
+                console.log(data);
+                NotificationManager.success("Xem chi tiết tại đây", "Thành công", 1500, () => {
+                    window.open(`/app/source-category-sets/${data.id}`);
+                });
             });
         }
     }

@@ -64,11 +64,15 @@ export const arrayColumn = (array, columnName) => {
 }
 
 export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-export const currencyFormat = (num) => {
-  return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
+export const currencyFormatNDT = (number) => {
+  return new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'NDT' }).format(number);
+}
+
+export const currencyFormatVND = (number) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
 }
 
 

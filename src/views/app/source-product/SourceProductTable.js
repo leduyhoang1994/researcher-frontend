@@ -3,14 +3,9 @@ import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
-import { Input, Button } from 'reactstrap';
 import { isFunction } from 'formik';
-import Select from 'react-select';
 import "./style.scss";
-import { SOURCE_PRODUCTS } from '../../../constants/api';
-import ApiController from '../../../helpers/Api';
-import { Link } from 'react-router-dom';
-import { numberWithCommas } from '../../../helpers/Utils';
+import { currencyFormatNDT, currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
 import withFixedColumns from "react-table-hoc-fixed-columns";
 
 import "react-table/react-table.css";
@@ -99,7 +94,7 @@ class SourceProductTable extends Component {
       fixed: "left",
       accessor: "productTitleVi",
       Cell: props => <div className="text-left">
-        <a target="_blank" href={props.original.productLink}>{props.value}</a>
+        <a target="_blank" rel="noopener noreferrer" href={props.original.productLink}>{props.value}</a>
       </div>
     },
     {
@@ -144,28 +139,40 @@ class SourceProductTable extends Component {
       Header: __(this.messages, "| Giá min"),
       accessor: "minPrice",
       Cell: props => <p className="text-muted">
-        {numberWithCommas(Number.parseFloat(props.value))} {props.original.site === "Shopee" ? "₫" : "¥"}
+        {props.value ? props.original.site === "Shopee" ?
+          currencyFormatVND(Number.parseFloat(props?.value)) :
+          currencyFormatNDT(Number.parseFloat(props?.value))
+          : null
+        }
       </p>
     },
     {
       Header: __(this.messages, "| Giá max"),
       accessor: "maxPrice",
       Cell: props => <p className="text-muted">
-        {numberWithCommas(Number.parseFloat(props.value))} {props.original.site === "Shopee" ? "₫" : "¥"}
+        {props.value ? props.original.site === "Shopee" ?
+          currencyFormatVND(Number.parseFloat(props?.value)) :
+          currencyFormatNDT(Number.parseFloat(props?.value))
+          : null
+        }
       </p>
     },
     {
       Header: __(this.messages, "| Phí phát hành nội địa"),
       accessor: "logisticFee",
       Cell: props => <p className="text-muted">
-        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+        {props.value ? props.original.site === "Shopee" ?
+          currencyFormatVND(Number.parseFloat(props?.value)) :
+          currencyFormatNDT(Number.parseFloat(props?.value))
+          : null
+        }
       </p>
     },
     {
       Header: __(this.messages, "| Số lượng bán tối thiểu"),
       accessor: "minSale",
       Cell: props => <p className="text-muted">
-        {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+        {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
       </p>
     },
     {
@@ -184,7 +191,9 @@ class SourceProductTable extends Component {
       Header: __(this.messages, "| Tên shop bán"),
       sortable: false,
       accessor: "shopName",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <div className="text-muted">
+        <a target="_blank" rel="noopener noreferrer" href={props.original.shopLink}>{props.value}</a>
+      </div>
     },
     {
       Header: __(this.messages, "| Uy tín shop bán"),

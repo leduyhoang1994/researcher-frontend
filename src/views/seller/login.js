@@ -55,7 +55,7 @@ class Login extends Component {
             <div className="position-relative image-side ">
               <p className="text-white h2">Seller</p>
               <p className="white mb-0">
-                Vui lòng sử dụng tài khoản lamita để đăng nhập
+                Vui lòng sử dụng tài khoản khách hàng để đăng nhập
               </p>
             </div>
             <div className="form-side">

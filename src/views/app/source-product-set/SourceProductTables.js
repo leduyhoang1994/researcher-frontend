@@ -7,7 +7,7 @@ import { Button } from 'reactstrap';
 import { isFunction } from 'formik';
 import Select from 'react-select';
 import "./style.scss";
-import { numberWithCommas } from '../../../helpers/Utils';
+import { currencyFormatNDT, currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
 import withFixedColumns from "react-table-hoc-fixed-columns";
 
 import "react-table/react-table.css";
@@ -83,7 +83,7 @@ class SourceProductTable extends Component {
             fixed: "left",
             accessor: "productTitleVi",
             Cell: props => <div className="text-left">
-                <a target="_blank" href={props.original.productLink}>{props.value}</a>
+                <a target="_blank" rel="noopener noreferrer" href={props.original.productLink}>{props.value}</a>
             </div>
         },
         {
@@ -102,28 +102,40 @@ class SourceProductTable extends Component {
             Header: __(this.messages, "| Doanh số bán ra"),
             accessor: "monthlySale",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+                {props.value ? (numberWithCommas(Number.parseFloat(props.value))) : null}
             </p>
         },
         {
             Header: __(this.messages, "| Giá min"),
             accessor: "minPrice",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+                {props.value ? props.original.site === "Shopee" ?
+                    currencyFormatVND(Number.parseFloat(props?.value)) :
+                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    : null
+                }
             </p>
         },
         {
             Header: __(this.messages, "| Giá max"),
             accessor: "maxPrice",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+                {props.value ? props.original.site === "Shopee" ?
+                    currencyFormatVND(Number.parseFloat(props?.value)) :
+                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    : null
+                }
             </p>
         },
         {
             Header: __(this.messages, "| Phí phát hành nội địa"),
             accessor: "productPrice",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberWithCommas(Number.parseFloat(props.value)) + `${props.original.site === "Shopee" ? "₫" : "¥"}`) : null}
+                {props.value ? props.original.site === "Shopee" ?
+                    currencyFormatVND(Number.parseFloat(props?.value)) :
+                    currencyFormatNDT(Number.parseFloat(props?.value))
+                    : null
+                }
             </p>
         },
         {
@@ -184,7 +196,7 @@ class SourceProductTable extends Component {
     componentDidMount() {
         const { data } = this.props;
         const { pagination } = this.state;
-        pagination.pages = Math.ceil(data.length / pagination.defaultPageSize);
+        pagination.pages = Math.ceil(data?.length / pagination?.defaultPageSize);
         pagination.canNext = pagination.pages > 1 ? true : false;
         this.setState({
             pagination: pagination
@@ -212,7 +224,7 @@ class SourceProductTable extends Component {
     onPageSizeChange = (size) => {
         const { pagination } = this.state;
         pagination.size = size;
-        pagination.pages = Math.ceil(this.props.data.length / size)
+        pagination.pages = Math.ceil(this.props.data?.length / size)
         if (pagination.page >= pagination.pages) {
             pagination.page = 0;
         }

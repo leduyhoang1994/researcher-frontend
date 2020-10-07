@@ -238,7 +238,7 @@ class EditUboxProducts extends Component {
 
 
     handleChangeNumber(event) {
-        let value = parseInt(event.target.value);
+        let value = parseFloat(event.target.value);
         let product = this.state.product;
         product[event.target.name] = value
         this.setState({
@@ -611,18 +611,6 @@ class EditUboxProducts extends Component {
                                                     />
                                                     <span>
                                                         {__(this.messages, "SLA dịch vụ *")}
-                                                    </span>
-                                                </Label>
-                                                <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="number"
-                                                        min={0}
-                                                        name="serviceCost"
-                                                        value={product.serviceCost}
-                                                        onChange={this.handleChangeNumber}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Phí dịch vụ dự kiến *")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">

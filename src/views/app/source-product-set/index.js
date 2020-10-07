@@ -7,12 +7,13 @@ import { __ } from '../../../helpers/IntlMessages';
 import SourceProductSetTables from './SourceProductSetTables';
 import { PRODUCT_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class SourceProductSet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sourceProductSetList : []
+      sourceProductSetList: []
     };
     this.messages = this.props.intl.messages;
   }
@@ -26,7 +27,26 @@ class SourceProductSet extends Component {
       this.setState({ sourceProductSetList: data });
     });
   }
-  
+
+  removeFromProductSet = (original) => {
+    const ids = [original.id];
+    ApiController.callAsync('delete', PRODUCT_SETS.all, { ids: ids })
+      .then(data => {
+        NotificationManager.success("Xóa bộ sản phẩm thành công", "Thành công", 1500);
+        this.loadProductSets();
+      }).catch(error => {
+        NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+        if (error.response.status === 401) {
+          setTimeout(function () {
+            NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+            setTimeout(function () {
+              window.open("/user/login", "_self")
+            }, 1500);
+          }, 1500);
+        }
+      });
+  }
+
   render() {
     return (
       <Fragment>
@@ -48,6 +68,7 @@ class SourceProductSet extends Component {
                     <SourceProductSetTables
                       data={this.state.sourceProductSetList}
                       component={this}
+                      removeFromProductSet={this.removeFromProductSet}
                     />
                   </Colxx>
                 </Row>

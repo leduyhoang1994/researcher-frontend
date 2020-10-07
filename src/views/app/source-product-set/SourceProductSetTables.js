@@ -4,10 +4,12 @@ import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
 
 const SourceProductSetTables = ({
   data,
   component,
+  removeFromProductSet,
   existInSelectedProducts,
   addToSelectedProducts,
   removeFromSelectedProducts
@@ -21,6 +23,26 @@ const SourceProductSetTables = ({
       Cell: props => <p className="text-muted">
           <Link to={`/app/source-product-sets/${props.original.id}`}>{props.value}</Link>
         </p>
+    },
+    {
+      Header: __(component.messages, "Xóa"),
+      sortable: false,
+      accessor: null,
+      Cell: props => {
+        return (
+          <div>
+            <Button
+              color="danger"
+              size="xs"
+              onClick={() => {
+                removeFromProductSet(props.original)
+              }}
+            >
+              X
+            </Button>
+          </div>
+        )
+      }
     },
   ];
 

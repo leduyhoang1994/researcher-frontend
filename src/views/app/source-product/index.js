@@ -181,7 +181,7 @@ class CreateTrainingClass extends Component {
   onPageSizeChange = (size) => {
     const { pagination } = this.state;
     pagination.size = size;
-    pagination.pages = Math.ceil(this.props.data.length / size)
+    pagination.pages = Math.ceil(this.props.data?.length / size)
     this.setState({
       pagination: pagination
     })
