@@ -49,7 +49,7 @@ class SourceCategories extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Tổng sale"),
+      Header: props => __(this.messages, `Tổng sale (${props.data && props.data[0]?.site === "1688" ? "NDT" : "VNĐ"})`),
       accessor: "monthlySale",
       Cell: props => <p className="text-muted">
         {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
