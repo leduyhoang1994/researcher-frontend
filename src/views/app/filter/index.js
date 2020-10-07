@@ -28,7 +28,7 @@ class CreateTrainingClass extends Component {
             <Card>
               <CardBody>
                 <CardTitle>
-                  {__(this.messages, 'Thông tin buổi tập')}
+                  {__(this.messages, 'Thông tin')}
                 </CardTitle>
                 <Row>
                   <Colxx xxs="12">

@@ -121,7 +121,7 @@ class ResearchSetModal extends Component {
                 setId: selectedCate.value,
                 itemId: cateIds
             }, data => {
-                NotificationManager.success("Xem chi tiết tại đây", "Thành công", 1500, () => {
+                NotificationManager.success("Xem chi tiết tại đây", "Thành công", 3000, () => {
                     window.open(`/app/source-category-sets/${selectedCate.value}`);
                 });
             });
@@ -203,7 +203,6 @@ class ResearchSetModal extends Component {
             </div>
         )
     }
-
 }
 
 export default ResearchSetModal;
