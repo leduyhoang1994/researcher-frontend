@@ -254,7 +254,7 @@ class SourceProductTable extends Component {
     }
 
     render() {
-        const { data, removeFromSelectedProducts } = this.props;
+        const { data } = this.props;
         const { pagination } = this.state;
 
         return (
@@ -274,20 +274,20 @@ class SourceProductTable extends Component {
                     PaginationComponent={DataTablePagination}
                     onPageChange={this.onPageChange}
                     onPageSizeChange={this.onPageSizeChange}
-                    getTrProps={(state, rowInfo) => {
-                        if (rowInfo && rowInfo.row) {
-                            return {
-                                onClick: (e) => {
-                                    removeFromSelectedProducts(rowInfo.original);
-                                },
-                                style: {
-                                    cursor: "pointer"
-                                }
-                            }
-                        } else {
-                            return {}
-                        }
-                    }}
+                    // getTrProps={(state, rowInfo) => {
+                    //     if (rowInfo && rowInfo.row) {
+                    //         return {
+                    //             // onClick: (e) => {
+                    //             //     removeFromSelectedProducts(rowInfo.original);
+                    //             // },
+                    //             style: {
+                    //                 cursor: "pointer"
+                    //             }
+                    //         }
+                    //     } else {
+                    //         return {}
+                    //     }
+                    // }}
                 />
             </div>
         );
