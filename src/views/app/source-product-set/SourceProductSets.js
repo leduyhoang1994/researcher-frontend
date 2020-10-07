@@ -137,6 +137,7 @@ class SourceProductSets extends Component {
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
+                        disabled={true}
                         value={this.state.productSet.setName}
                         onChange={e => {
                           let { productSet } = this.state;

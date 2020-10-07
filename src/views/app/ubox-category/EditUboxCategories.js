@@ -254,7 +254,7 @@ class EditUboxCategories extends Component {
                         }, 1000)
                     }
                 } else {
-                    NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                    NotificationManager.warning(data.message, "Thất bại", 2000);
                 }
             }
         } else {

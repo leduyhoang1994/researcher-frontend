@@ -115,8 +115,8 @@ class SourceProductTable extends Component {
       Cell: props => <p className="text-muted">
         {
           props.value ? props.original.site === "Shopee" ?
-            currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-            currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+            currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+            currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
             : null
         }
       </p>
@@ -135,8 +135,8 @@ class SourceProductTable extends Component {
       accessor: "minPrice",
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
-          currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
           : null
         }
       </p>
@@ -147,8 +147,8 @@ class SourceProductTable extends Component {
       accessor: "minPrice",
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
-          currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
           : null
         }
       </p>
@@ -159,8 +159,8 @@ class SourceProductTable extends Component {
       accessor: "maxPrice",
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
-          currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
           : null
         }
       </p>
@@ -171,8 +171,8 @@ class SourceProductTable extends Component {
       accessor: "logisticFee",
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
-          currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
           : null
         }
       </p>

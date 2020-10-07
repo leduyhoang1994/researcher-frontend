@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
 import DataTablePagination from '../../../components/DatatablePagination';
 import './style.scss';
-import { numberWithCommas } from '../../../helpers/Utils';
+import { currencyFormatNDT, currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
 
 class SourceCategories extends Component {
   constructor(props) {
@@ -49,10 +49,15 @@ class SourceCategories extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: props => __(this.messages, `Tổng sale (${props.data && props.data[0]?.site === "1688" ? "NDT" : "VNĐ"})`),
+      Header: props => __(this.messages, `Tổng doanh số bán`),
       accessor: "monthlySale",
-      Cell: props => <p className="text-muted">
-        {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
+      Cell: props => <p className="text-muted text-right w-50">
+        {
+          props.value ? props.original.site === "Shopee" ?
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
+          : null
+        }
       </p>
     },
     {

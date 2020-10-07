@@ -139,6 +139,7 @@ class SourceCategorySets extends Component {
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
+                        disabled={true}
                         value={sourceCategorySet.setName}
                         onChange={e => {
                           sourceCategorySet.setName = e.target.value;
@@ -151,7 +152,7 @@ class SourceCategorySets extends Component {
                         }}
                       />
                       <span>
-                        {__(this.messages, "Tên danh sách ngành hàng")}
+                        {__(this.messages, "Tên bộ ngành hàng")}
                       </span>
                     </Label>
                   </Colxx>

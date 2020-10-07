@@ -31,7 +31,7 @@ class SourceProductTable extends Component {
         this.messages = this.props.component.props.intl.messages;
     }
 
-    columns = (selectable = true, filterCate) => [
+    columns = () => [
         {
             Header: __(this.messages, ""),
             accessor: 'id',
@@ -42,7 +42,6 @@ class SourceProductTable extends Component {
             Cell: props => (
                 <div className="text-left">
                     {
-                        selectable &&
                         <>
                             <Button
                                 className="mr-2"
@@ -70,15 +69,13 @@ class SourceProductTable extends Component {
             Cell: props => (
                 <div className="text-left">
                     {
-                        selectable &&
                         <>
                             <Button
                                 className="btn-position btn-icon"
                                 size="xs"
                                 color="success"
-                                href={`/app/ubox-products/edit?product-id=${props.value}`}
+                                href={`/app/ubox-products/edit?product-id=${props.original.id}`}
                             >
-
                                 {
                                     props.original?.uboxProduct ?
                                         <i className="simple-icon-pencil mr-1"></i>
@@ -129,8 +126,8 @@ class SourceProductTable extends Component {
             Cell: props => <p className="text-muted">
                 {
                     props.value ? props.original.site === "Shopee" ?
-                        currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-                        currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+                        currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+                        currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
                         : null
                 }
             </p>
@@ -149,8 +146,8 @@ class SourceProductTable extends Component {
             accessor: "minPrice",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+                    currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
                     : null
                 }
             </p>
@@ -161,8 +158,8 @@ class SourceProductTable extends Component {
             accessor: "maxPrice",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+                    currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
                     : null
                 }
             </p>
@@ -173,8 +170,8 @@ class SourceProductTable extends Component {
             accessor: "logisticFee",
             Cell: props => <p className="text-muted">
                 {props.value ? props.original.site === "Shopee" ?
-                    currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-                    currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+                    currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+                    currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
                     : null
                 }
             </p>
