@@ -211,7 +211,7 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)) + "đ": null}{}</p>
+                                            <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)): null}{}</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property

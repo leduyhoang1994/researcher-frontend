@@ -168,21 +168,21 @@ class Calculator extends Component {
         let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
         if (isFunction) {
-            middleResult = `<a style="color: #5e99e6" contenteditable="false">${data}</a>()`.concat("&nbsp;");
+            middleResult = `<a style="color: #5e99e6;" contenteditable="false">${data}</a>()`.concat("&nbsp;");
         } else {
             if(data.includes("()")) {
-                middleResult = `<a style="color: #d64f5d" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                middleResult = `<a style="color: #d64f5d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
             } else if(data.includes(".")) {
-                middleResult = `<a style="color: #a112cc" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                middleResult = `<a style="color: #a112cc;" contenteditable="false">${data}</a>`.concat("&nbsp;");
             } else {
-                middleResult = `<a style="color: #4acc3d" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                middleResult = `<a style="color: #4acc3d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
             }
         }
 
         constant.forEach(item => {
             const regex = new RegExp(`${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d" contenteditable="false">${item.label}</a>`);
+            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
         })
 
         if (key) {
@@ -193,24 +193,24 @@ class Calculator extends Component {
             })
             arrFields.forEach(item => {
                 const regex = new RegExp(`${item.label}\\b`, 'g');
-                leftResult = leftResult.replace(regex, `<a style="color: #a112cc" contenteditable="false">${item.label}</a>`);
-                rightResult = rightResult.replace(regex, `<a style="color: #a112cc" contenteditable="false">${item.label}</a>`);
+                leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
+                rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
             })
         }
 
         optionFunctions.forEach(item => {
             const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #5e99e6" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #5e99e6" contenteditable="false">${item.label}</a>`);
+            leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+            rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
         })
 
         formulas.forEach(item => {
             const label = `${item.label}()`;
             if (leftResult.indexOf(label) !== -1) {
-                leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d" contenteditable="false">${label}</a>`);
+                leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
             }
             if (rightResult.indexOf(label) !== -1) {
-                rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d" contenteditable="false">${label}</a>`);
+                rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
             }
         })
 
@@ -323,12 +323,12 @@ class Calculator extends Component {
                 </div>
                 <Card>
                     <CardTitle className="mb-0">
-                        <h1 className="pl-3 mt-4 mb-0 pb-0 ml-4 xxs-10">FORMULA</h1>
+                        <h1 className="pl-3 mt-4 mb-0 pb-0 ml-4 xxs-10">Công thức</h1>
                     </CardTitle>
                     <CardBody className="pl-5 pr-5 pt-4 pb-4">
                         <Row className="mt-4">
                             <Colxx xxs="2" >
-                                <span className="vertical-align-middle">FORMULA NAME *</span>
+                                <span className="vertical-align-middle">Tên công thức *</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Input
@@ -342,7 +342,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">FIELD</span>
+                                <span className="vertical-align-middle">Trường giá trị</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <Select
@@ -370,7 +370,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Constants:</span>
+                                <span className="vertical-align-middle">Tham số mặc định:</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 {
@@ -393,7 +393,7 @@ class Calculator extends Component {
                         </Row>
                         <Row className="mt-4">
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Formulas:</span>
+                                <span className="vertical-align-middle">Công thức:</span>
                             </Colxx>
                             <Colxx xxs="10" id="constant-list">
                                 {
@@ -415,7 +415,7 @@ class Calculator extends Component {
                         </Row>
                         <Row>
                             <Colxx xxs="2" className="">
-                                <span className="vertical-align-middle">Functions:</span>
+                                <span className="vertical-align-middle">Hàm toán học:</span>
                             </Colxx>
                             <Colxx xxs="10">
                                 <div className="w-15">

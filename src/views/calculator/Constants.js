@@ -117,7 +117,7 @@ class Constants extends Component {
             <>
                 <Card>
                     <CardTitle className="mb-0">
-                        <h1 className="p-3 ml-4 xxs-10">Variable</h1>
+                        <h1 className="p-3 ml-4 xxs-10">Tham số mặc định</h1>
                     </CardTitle>
                     <CardBody className="constant">
                         <Row >
@@ -240,7 +240,7 @@ class Constants extends Component {
                 <hr />
                 <Card>
                     <CardTitle className="mb-0">
-                        <h1 className="p-3 ml-4 xxs-10">Formula</h1>
+                        <h1 className="p-3 ml-4 xxs-10">Công thức</h1>
                     </CardTitle>
                     <CardBody className="constant">
                         <Row >

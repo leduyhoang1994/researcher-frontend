@@ -13,9 +13,8 @@ import { NotificationManager } from '../../../components/common/react-notificati
 class EditUboxCategories extends Component {
     constructor(props) {
         super(props);
-        console.log(this.props?.match)
         this.state = {
-            setId: this.props.type === 'modal' ? null : (this.props?.match?.params?.id || null),
+            setId: this.props?.type === 'modal' ? null : (this.props?.match?.params?.id || null),
             category: [],
             optionsLv1: [],
             optionsLv2: [],
@@ -225,7 +224,7 @@ class EditUboxCategories extends Component {
                     description: valueText,
                     attributeIds: attributeIds
                 }).then(data => {
-                    NotificationManager.success("Thành công", "Thành công", 700);
+                    NotificationManager.success("Cập nhật thành công", "Thành công", 700);
                     setTimeout(() => {
                         window.open(`/app/ubox-categories/edit/${id}`, "_self")
                     }, 1000)
@@ -245,10 +244,15 @@ class EditUboxCategories extends Component {
                     return error.response.data;
                 });
                 if (data.success) {
-                    NotificationManager.success("Thành công", "Thành công", 700);
-                    setTimeout(() => {
-                        window.open(`/app/ubox-categories/edit/${data.result.id}`, "_self")
-                    }, 1000)
+                    NotificationManager.success("Thêm mới thành công", "Thành công", 700);
+                    if(this.props?.type === 'modal') {
+                        this.props.getUboxCategories();
+                        this.props.toggleOpenCategoryModal();
+                    } else {
+                        setTimeout(() => {
+                            window.open(`/app/ubox-categories/edit/${data.result.id}`, "_self")
+                        }, 1000)
+                    }
                 } else {
                     NotificationManager.warning("Thêm mới thất bại", "Thất bại");
                 }
@@ -285,13 +289,17 @@ class EditUboxCategories extends Component {
     render() {
         const { optionsLv1, optionsLv2, optionsLv3, optionsProperties, optionsOwnProperties } = this.state;
         const { categoryLv1, categoryLv2, categoryLv3 } = this.state;
+        let isDisabled = true;
+        if(categoryLv1 && categoryLv2 && categoryLv3) {
+            isDisabled = false;
+        }
 
         return (
             <div>
                 <Fragment>
                     <Row>
                         <Colxx xxs="12">
-                            {this.props.type !== 'modal' ?
+                            {this.props?.type !== 'modal' ?
                                 (<Breadcrumb heading="menu.category" match={this.props.match} />)
                                 : (<>
                                     Thêm mới ngành hàng
@@ -377,23 +385,32 @@ class EditUboxCategories extends Component {
                         </Colxx>
                     </Row>
 
-                    {
-                        this.props.type !== 'modal' ? (
-                            <div className="text-right card-title">
+                    <div className="text-right card-title">
+                        {
+                            this.props?.type === 'modal' ? (
                                 <Button
                                     className="mr-2"
                                     color="primary"
                                     onClick={() => {
-                                        this.editCategory();
+                                        this.props.toggleOpenCategoryModal();
                                     }}
-                                >
-                                    {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
-                                </Button>
-                            </div>
-                        ) : (<></>)
-                    }
+                                >Đóng</Button>
+                            ) : (<></>)
+                        }
+                        <Button
+                            className="mr-2"
+                            color="primary"
+                            disabled={isDisabled}
+                            onClick={() => {
+                                this.editCategory();
+                            }}
+                        >
+                            {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
+                        </Button>
+                    </div>
+
                 </Fragment>
-            </div>
+            </div >
         );
     }
 }

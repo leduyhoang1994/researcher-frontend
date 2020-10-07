@@ -33,11 +33,11 @@ class SourceProductTable extends Component {
 
     columns = (selectable = true, filterCate) => [
         {
-            Header: __(this.messages, "Hành động"),
+            Header: __(this.messages, ""),
             accessor: 'id',
             sortable: false,
             fixed: "left",
-            width: 150,
+            width: 80,
             filterable: false,
             Cell: props => (
                 <div className="text-left">
@@ -55,12 +55,37 @@ class SourceProductTable extends Component {
                             >
                                 {__(this.messages, "Xóa")}
                             </Button>
+                        </>
+                    }
+                </div>
+            )
+        },
+        {
+            Header: __(this.messages, "Biên tập"),
+            accessor: 'uboxProduct',
+            sortable: true,
+            fixed: "left",
+            width: 100,
+            filterable: false,
+            Cell: props => (
+                <div className="text-left">
+                    {
+                        selectable &&
+                        <>
                             <Button
+                                className="btn-position btn-icon"
                                 size="xs"
                                 color="success"
                                 href={`/app/ubox-products/edit?product-id=${props.value}`}
                             >
-                                {__(this.messages, "Biên tập")}
+
+                                {
+                                    props.original?.uboxProduct ?
+                                        <i className="simple-icon-pencil mr-1"></i>
+                                        :
+                                        <i className="simple-icon-plus mr-1"></i>
+                                }
+                                {__(this.messages, " Biên tập")}
                             </Button>
                         </>
                     }
@@ -257,8 +282,16 @@ class SourceProductTable extends Component {
         const { data } = this.props;
         const { pagination } = this.state;
 
+        let count = 0;
+        data.forEach(item => {
+            if (item.uboxProduct !== null) {
+                count++;
+            }
+        })
+
         return (
             <div>
+                <p>Tổng số sản phẩm đã biên tập: {count}</p>
                 <ReactTableFixedColumns
                     data={data}
                     className="-striped -highlight"
@@ -274,20 +307,20 @@ class SourceProductTable extends Component {
                     PaginationComponent={DataTablePagination}
                     onPageChange={this.onPageChange}
                     onPageSizeChange={this.onPageSizeChange}
-                    // getTrProps={(state, rowInfo) => {
-                    //     if (rowInfo && rowInfo.row) {
-                    //         return {
-                    //             // onClick: (e) => {
-                    //             //     removeFromSelectedProducts(rowInfo.original);
-                    //             // },
-                    //             style: {
-                    //                 cursor: "pointer"
-                    //             }
-                    //         }
-                    //     } else {
-                    //         return {}
-                    //     }
-                    // }}
+                // getTrProps={(state, rowInfo) => {
+                //     if (rowInfo && rowInfo.row) {
+                //         return {
+                //             // onClick: (e) => {
+                //             //     removeFromSelectedProducts(rowInfo.original);
+                //             // },
+                //             style: {
+                //                 cursor: "pointer"
+                //             }
+                //         }
+                //     } else {
+                //         return {}
+                //     }
+                // }}
                 />
             </div>
         );

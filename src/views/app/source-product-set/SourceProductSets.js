@@ -5,8 +5,10 @@ import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import SourceProductTable from './SourceProductTables';
-import { SOURCE_PRODUCTS, PRODUCT_SETS } from '../../../constants/api';
+import { PRODUCT_SETS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
+import { failed, success, notify_update_success } from "../../../constants/constantTexts";
 
 class SourceProductSets extends Component {
   constructor(props) {
@@ -15,11 +17,6 @@ class SourceProductSets extends Component {
       setId: this.props.match.params.id,
       filter: {
         categoriesFilter: [],
-      },
-      pagination: {
-        // page: 0,
-        // pages: 1,
-        // size: 25,
       },
       productSet: {
         setName: "",
@@ -77,7 +74,47 @@ class SourceProductSets extends Component {
     });
   };
 
-  
+  publishUboxProduct = (status) => {
+    const { productSet } = this.state;
+    let isPublish = false, ids = [];
+    productSet.products.forEach(item => {
+      if (item.uboxProduct === null) {
+        isPublish = true;
+      } else {
+        ids.push(item.uboxProduct.id);
+      }
+    })
+    if (status) {
+      if (!isPublish) {
+        ApiController.callAsync('put', UBOX_PRODUCTS.publish, {
+          ids: ids,
+          status: status
+        })
+          .then(data => {
+            if (data.data.statusCode === 200) {
+              NotificationManager.success(notify_update_success, success, 2000);
+            }
+          }).catch(error => {
+            NotificationManager.warning(error.response.data.message, failed, 2000);
+          });
+      } else {
+        NotificationManager.warning("Còn sản phẩm chưa được biên tập. Yêu cầu biên tập trước", failed, 2000);
+      }
+    } else {
+      ApiController.callAsync('put', UBOX_PRODUCTS.publish, {
+        ids: ids,
+        status: status
+      })
+        .then(data => {
+          if (data.data.statusCode === 200) {
+            NotificationManager.success(notify_update_success, success, 2000);
+          }
+        }).catch(error => {
+          NotificationManager.warning(error.response.data.message, failed, 2000);
+        });
+    }
+  }
+
 
   render() {
     return (
@@ -138,7 +175,6 @@ class SourceProductSets extends Component {
                     <SourceProductTable
                       key={this.state.keyState}
                       data={this.state.productSet.products}
-                      // pagination={this.state.pagination}
                       component={this}
                       // onPageChange={this.onPageChange}
                       // onPageSizeChange={this.onPageSizeChange}
@@ -146,6 +182,25 @@ class SourceProductSets extends Component {
                     />
                   </Colxx>
                 </Row>
+                <div className="text-right ">
+                  <Button
+                    color="success"
+                    className="mr-2"
+                    onClick={() => {
+                      this.publishUboxProduct(true);
+                    }}
+                  >
+                    {__(this.messages, "Xuất bản tất cả")}
+                  </Button>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      this.publishUboxProduct(false);
+                    }}
+                  >
+                    {__(this.messages, "Ngừng xuất bản tất cả")}
+                  </Button>
+                </div>
               </CardBody>
             </Card>
           </Colxx>

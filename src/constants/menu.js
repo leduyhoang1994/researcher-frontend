@@ -52,12 +52,6 @@ const multiMenu = [
       }
     ]
   },
-  {
-    id: "store",
-    icon: "iconsminds-qr-code",
-    label: "Cửa hàng Ubox",
-    to: "/store",
-  }
 ];
 
 let data = [];

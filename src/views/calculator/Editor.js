@@ -35,7 +35,7 @@ class Editor extends React.Component {
                     />
                         {/* {content} */}
                     {/* </ContentEditable> */}
-                    <span>Formula *</span>
+                    <span>Nội dung công thức *</span>
                 </Label>
 
                 {/* <CKEditor

@@ -506,7 +506,7 @@ class EditUboxProducts extends Component {
                                                         this.toggleOpenCategoryModal()
                                                     }}
                                                 >
-                                                    <i className="iconsminds-gear-2 align-middle" />
+                                                    <i className="iconsminds-add align-middle" />
                                                 </Button>
                                             </span>
                                         </div>
@@ -755,6 +755,7 @@ class EditUboxProducts extends Component {
                     key={this.state.isOpenCategoryModal}
                     isOpenModal={this.state.isOpenCategoryModal}
                     toggleOpenCategoryModal={this.toggleOpenCategoryModal}
+                    getUboxCategories={this.getUboxCategories}
                 />
             </Fragment>
         );

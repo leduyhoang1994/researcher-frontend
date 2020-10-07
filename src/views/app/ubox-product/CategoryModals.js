@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import IntlMessages from '../../../helpers/IntlMessages';
-import EditUboxProducts from "../ubox-category/EditUboxCategories"
+import { Button, Modal, ModalBody } from 'reactstrap';
+import EditUboxProducts from "../ubox-category/EditUboxCategories";
 
 class CategoryModals extends React.Component {
 
@@ -20,29 +19,15 @@ class CategoryModals extends React.Component {
                     {/* <ModalHeader>
                         <IntlMessages id="forms.title" />
                     </ModalHeader> */}
-                    <ModalBody>
+                    <ModalBody className="modal-category" >
                         <EditUboxProducts
                             type='modal'
+                            toggleOpenCategoryModal={this.props.toggleOpenCategoryModal}
+                            getUboxCategories={this.props.getUboxCategories}
                         >
 
                         </EditUboxProducts>
                     </ModalBody>
-                    <ModalFooter>
-                        <Button variant="secondary"
-                            onClick={() => {
-                                this.props.toggleOpenCategoryModal();
-                            }}
-                        >
-                            Close
-                        </Button>
-                        <Button variant="primary"
-                            disabled={isDisabled}
-                            onClick={() => {
-                                // this.createCategoriesSet()
-                                this.props.toggleOpenCategoryModal();
-                            }}
-                        >Save</Button>
-                    </ModalFooter>
                 </Modal>
             </div>
         )
