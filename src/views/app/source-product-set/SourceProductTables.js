@@ -102,7 +102,12 @@ class SourceProductTable extends Component {
             width: this.getColumnWidth("monthlySale", "| Doanh số bán ra"),
             accessor: "monthlySale",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberWithCommas(Number.parseFloat(props.value))) : null}
+                {
+                    props.value ? props.original.site === "Shopee" ?
+                        currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
+                        currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+                        : null
+                }
             </p>
         },
         {
@@ -274,20 +279,20 @@ class SourceProductTable extends Component {
                     PaginationComponent={DataTablePagination}
                     onPageChange={this.onPageChange}
                     onPageSizeChange={this.onPageSizeChange}
-                    // getTrProps={(state, rowInfo) => {
-                    //     if (rowInfo && rowInfo.row) {
-                    //         return {
-                    //             // onClick: (e) => {
-                    //             //     removeFromSelectedProducts(rowInfo.original);
-                    //             // },
-                    //             style: {
-                    //                 cursor: "pointer"
-                    //             }
-                    //         }
-                    //     } else {
-                    //         return {}
-                    //     }
-                    // }}
+                // getTrProps={(state, rowInfo) => {
+                //     if (rowInfo && rowInfo.row) {
+                //         return {
+                //             // onClick: (e) => {
+                //             //     removeFromSelectedProducts(rowInfo.original);
+                //             // },
+                //             style: {
+                //                 cursor: "pointer"
+                //             }
+                //         }
+                //     } else {
+                //         return {}
+                //     }
+                // }}
                 />
             </div>
         );

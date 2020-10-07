@@ -113,7 +113,12 @@ class SourceProductTable extends Component {
       width: this.getColumnWidth("monthlySale", "| Doanh số bán ra"),
       accessor: "monthlySale",
       Cell: props => <p className="text-muted">
-        {props.value ? numberWithCommas(Number.parseFloat(props.value)) : null}
+        {
+          props.value ? props.original.site === "Shopee" ?
+            currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
+            currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
+            : null
+        }
       </p>
     },
     {
@@ -131,7 +136,7 @@ class SourceProductTable extends Component {
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
           currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥" 
+          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
           : null
         }
       </p>
@@ -143,7 +148,7 @@ class SourceProductTable extends Component {
       Cell: props => <p className="text-muted">
         {props.value ? props.original.site === "Shopee" ?
           currencyFormatVND(Number.parseFloat(props?.value)) + "đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥" 
+          currencyFormatNDT(Number.parseFloat(props?.value)) + "¥"
           : null
         }
       </p>

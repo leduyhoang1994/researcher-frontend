@@ -533,7 +533,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá Ubox *")}
+                                                        {__(this.messages, "Giá Ubox (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -546,7 +546,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá nội bộ *")}
+                                                        {__(this.messages, "Giá nội bộ (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -561,7 +561,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá bán tối thiểu *")}
+                                                        {__(this.messages, "Giá bán tối thiểu (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -574,7 +574,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá bán đề xuất *")}
+                                                        {__(this.messages, "Giá bán đề xuất (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -680,7 +680,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Thời gian phát hàng của cửa hàng *")}
+                                                        {__(this.messages, "Thời gian phát hàng của cửa hàng (Ngày)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -692,7 +692,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Thời gian giao hàng Ubox *")}
+                                                        {__(this.messages, "Thời gian giao hàng Ubox (Ngày)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
