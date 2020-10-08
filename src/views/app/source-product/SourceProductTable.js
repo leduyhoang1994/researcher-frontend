@@ -142,18 +142,6 @@ class SourceProductTable extends Component {
       </p>
     },
     {
-      Header: __(this.messages, "| Giá min"),
-      width: this.getColumnWidth("minPrice", "| Giá min"),
-      accessor: "minPrice",
-      Cell: props => <p className="text-muted">
-        {props.value ? props.original.site === "Shopee" ?
-          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
-          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
-          : null
-        }
-      </p>
-    },
-    {
       Header: __(this.messages, "| Giá max"),
       width: this.getColumnWidth("maxPrice", "| Giá max"),
       accessor: "maxPrice",
