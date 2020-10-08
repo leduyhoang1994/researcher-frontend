@@ -27,7 +27,7 @@ const SourceCategorySetTables = ({
       accessor: null,
       Cell: props => {
         return (
-          <div className="text-right">
+          <div >
             <Button
               color="danger"
               size="xs"
