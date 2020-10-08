@@ -8,7 +8,7 @@ import { CONSTANTS } from "../../constants/api";
 import { NotificationManager } from '../../components/common/react-notifications';
 import { failed, notify_add_success, success, notify_syntax_error, required_field, notify_update_success } from "../../constants/constantTexts";
 import "./style.scss";
-import { getIndexTagOnKeyDown } from "../../helpers/Utils";
+import { getRangeSelection, getIndexTagOnKeyDown, insertToEditor } from "../../helpers/Utils";
 import ConstantModals from "./ConstantModals";
 import { isFunction } from "formik";
 const math = require('mathjs')
@@ -30,6 +30,7 @@ class Calculator extends Component {
             content: "",
             index: 0,
             isConstantModalOpen: false,
+            rangeSelection: null
         }
         this.handleChangeText = this.handleChangeText.bind(this);
         // this.messages = this.props.intl.messages;
@@ -147,14 +148,15 @@ class Calculator extends Component {
 
     onBlurEditor = () => {
         let element = document.getElementById("editor_calculator");
-        let index = getIndexTagOnKeyDown(element);
+        // let index = getIndexTagOnKeyDown(element);
         this.setState({
-            index
+            // index,
+            rangeSelection: getRangeSelection(element)
         })
     }
 
     formatContentEditor = (data, isFunction) => {
-        const { index, detailFields, optionFunctions, formulas } = this.state;
+        const { index, rangeSelection, detailFields, optionFunctions, formulas } = this.state;
         let constant = [...this.state.constants];
         constant.reverse();
         optionFunctions.reverse();
@@ -163,58 +165,92 @@ class Calculator extends Component {
         
 
         let element = document.getElementById('editor_calculator');
-        let inputText = element.innerText;
-        let leftResult = inputText.slice(0, index);
-        let rightResult = inputText.slice(index, inputText.length);
+        let inputText = element.innerHTML;
+        console.log(inputText);
+        // let leftResult = inputText.slice(0, index);
+        // let rightResult = inputText.slice(index, inputText.length);
         let middleResult = "";
+        let  color = null;
         if (isFunction) {
-            middleResult = `<a style="color: #5e99e6;" contenteditable="false">${data}</a>()`.concat("&nbsp;");
+            color = "#5e99e6";
         } else {
             if(data.includes("()")) {
-                middleResult = `<a style="color: #d64f5d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                color = "#d64f5d";
             } else if(data.includes(".")) {
-                middleResult = `<a style="color: #a112cc;" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                color = "#a112cc";
             } else {
-                middleResult = `<a style="color: #4acc3d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
+                color = "#4acc3d";
             }
         }
-
-        constant.forEach(item => {
-            const regex = new RegExp(`${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
-        })
-
-        if (key) {
-            let arrFields = [];
-            const fields = detailFields[key];
-            fields.forEach(item => {
-                arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
-            })
-            arrFields.forEach(item => {
-                const regex = new RegExp(`${item.label}\\b`, 'g');
-                leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
-                rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
-            })
+        // console.log(leftResult);
+        const newElem = document.createElement("a");
+        newElem.innerText = data;
+        newElem.setAttribute("contenteditable", false);
+        newElem.style.color = color;
+        console.log(rangeSelection);
+        // console.log(leftResult);
+        if (!rangeSelection) {
+            element.append(newElem);
         }
+        else if (rangeSelection.startContainer === element) {
+            element.insertBefore(newElem, element.children[rangeSelection.startOffset]);
+        } else {
+            console.log(Array.from(element.child));
+            console.log(rangeSelection.startContainer.toString());
+            // const textPosition = element.findIndex(element.children, rangeSelection.startContainer);
+            var wholeText = rangeSelection.startContainer.wholeText;
+            var position = rangeSelection.startOffset;
+            var output = [wholeText.slice(0, position), newElem.outerHTML, wholeText.slice(position)].join('');
+            rangeSelection.startContainer.innerHTML = output;
+            // console.log(textPosition);
+            // element.replaceChild(rangeSelection.startContainer, element.children[textPosition]);
 
-        optionFunctions.forEach(item => {
-            const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-        })
+        }
+        return element.innerHTML;
+        // console.log(rightResult);
 
-        formulas.forEach(item => {
-            const label = `${item.label}()`;
-            if (leftResult.indexOf(label) !== -1) {
-                leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
-            }
-            if (rightResult.indexOf(label) !== -1) {
-                rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
-            }
-        })
+        // constant.forEach(item => {
+        //     const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+        //     console.log(regex);
+        //     leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
+        //     rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
+        //     console.log(leftResult);
+        //     console.log(rightResult);
+        // })
 
-        return (leftResult + middleResult + rightResult);
+        // if (key) {
+        //     let arrFields = [];
+        //     const fields = detailFields[key];
+        //     fields.forEach(item => {
+        //         arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
+        //     })
+        //     arrFields.forEach(item => {
+        //         const regex = new RegExp(`${item.label}\\b`, 'g');
+        //         leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
+        //         rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
+        //     })
+        // }
+
+        // optionFunctions.forEach(item => {
+        //     const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+        //     leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+        //     rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+        // })
+
+        // formulas.forEach(item => {
+        //     const label = `${item.label}()`;
+        //     if (leftResult.indexOf(label) !== -1) {
+        //         leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
+        //     }
+        //     if (rightResult.indexOf(label) !== -1) {
+        //         rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
+        //     }
+        // })
+        // console.log(leftResult);
+        // console.log(middleResult);
+        // console.log(rightResult);
+
+        // return (leftResult + middleResult + rightResult);
     }
 
     handleChangeFunc = (value) => {

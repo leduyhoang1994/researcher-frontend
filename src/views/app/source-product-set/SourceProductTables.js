@@ -11,6 +11,7 @@ import withFixedColumns from "react-table-hoc-fixed-columns";
 
 import "react-table/react-table.css";
 import 'react-table-hoc-fixed-columns/lib/styles.css'
+import ConfirmButton from '../../../components/common/ConfirmButton';
 
 const ReactTableFixedColumns = withFixedColumns(ReactTable);
 
@@ -37,25 +38,39 @@ class SourceProductTable extends Component {
             accessor: 'id',
             sortable: false,
             fixed: "left",
-            width: 80,
+            width: 50,
             filterable: false,
             Cell: props => (
-                <div className="text-left">
-                    {
-                        <>
-                            <Button
-                                className="mr-2"
-                                size="xs"
-                                onClick={() => {
-                                    if (isFunction(this.props.removeFromSelectedProducts)) {
-                                        this.props.removeFromSelectedProducts(props.original);
-                                    }
-                                }}
-                            >
-                                {__(this.messages, "Xóa")}
-                            </Button>
-                        </>
-                    }
+                <div className="text-left d-block">
+                    <ConfirmButton
+                        btnConfig={{
+                            size: "xs"
+                        }}
+                        content={{
+                            close: "Đóng",
+                            confirm: "Xác nhận"
+                        }}
+                        onConfirm={() => {
+                            if (isFunction(this.props.removeFromSelectedProducts)) {
+                                this.props.removeFromSelectedProducts(props.original);
+                            }
+                        }}
+                        buttonContent={() => {
+                            return (
+                                <b>X</b>
+                            );
+                        }}
+                        confirmHeader={() => {
+                            return (
+                                <>Thông báo</>
+                            );
+                        }}
+                        confirmContent={() => {
+                            return (
+                                <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
+                            );
+                        }}
+                    />
                 </div>
             )
         },
