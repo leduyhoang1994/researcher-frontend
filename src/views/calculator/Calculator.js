@@ -179,10 +179,31 @@ class Calculator extends Component {
             }
         }
 
+        // const matchLeft = leftResult?.match(/\"(.*?)\"/g)
+        // const matchRight = rightResult?.match(/\"(.*?)\"/g)
+        
+        const match = [...leftResult.match(/\"(.*?)\"/g) || [], ...rightResult.match(/\"(.*?)\"/g) || []]
+        const regexMathArray = new RegExp(match?.join('|'))
+        
+        const notMach = [...leftResult.split(regexMathArray) || [], ...rightResult.split(regexMathArray) || []]
+
+        optionFunctions.forEach(item => {
+            for (let  i = 0; i < notMach.length; i++) {
+                let data = notMach[i]?.trim()
+                if (data?.indexOf(item.label) > -1) {
+                    const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+                    leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+                    rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+                    break
+                }
+            }
+        })
+
         constant.forEach(item => {
-            const regex = new RegExp(`${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
+            let label = `"${item.label}"`
+            const regex = new RegExp(`${label}`, 'g');
+            leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${label}</a>`);
+            rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${label}</a>`);
         })
 
         if (key) {
@@ -192,20 +213,15 @@ class Calculator extends Component {
                 arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
             })
             arrFields.forEach(item => {
-                const regex = new RegExp(`${item.label}\\b`, 'g');
-                leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
-                rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
+                let label = `"${item.label}"`
+                const regex = new RegExp(`${label}`, 'g');
+                leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${label}</a>`);
+                rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${label}</a>`);
             })
         }
 
-        optionFunctions.forEach(item => {
-            const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-            leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-            rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-        })
-
         formulas.forEach(item => {
-            const label = `${item.label}()`;
+            let label = `"${item.label}()"`;
             if (leftResult.indexOf(label) !== -1) {
                 leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
             }
@@ -229,7 +245,7 @@ class Calculator extends Component {
     onClick = (ev) => {
         let data = ev.target.id;
         const element = document.getElementById('editor_calculator');
-        let result = this.formatContentEditor(data, false);
+        let result = this.formatContentEditor(`"${data}"`, false);
         this.setState({
             content: result
         })
@@ -263,6 +279,7 @@ class Calculator extends Component {
                 }
             }
         })
+        value = value.replace(/\"/g, '')
         let data = { label: formula, value: value, viewValue: content, type: "CUSTOM_FORMULA" };
         if (flag) {
             if (data.value && data.label) {
