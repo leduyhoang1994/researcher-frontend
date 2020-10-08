@@ -21,15 +21,17 @@ class Calculator extends Component {
             id: this.props.match.params.id || null,
             optionFunctions: [],
             optionFields: [],
+            allFields: [],
             constants: [],
             formulas: [],
             fields: {},
             detailFields: {},
             formula: "",
             field: "",
-            content: "",
+            content: " ",
             index: 0,
             isConstantModalOpen: false,
+            isFuncFirst: false
         }
         this.handleChangeText = this.handleChangeText.bind(this);
         // this.messages = this.props.intl.messages;
@@ -60,14 +62,17 @@ class Calculator extends Component {
     }
 
     getConstantsByType = () => {
-        let optionFields = [];
+        let optionFields = [], allFields = [];
         ApiController.call('get', `${CONSTANTS.type}/field`, {}, data => {
             for (let index in data) {
+                let obj = { [index]: data[index] };
+                allFields.push(obj);
                 optionFields.push({ label: index, value: index })
             }
             this.setState({
                 fields: data,
-                optionFields
+                optionFields,
+                allFields
             })
         });
     }
@@ -154,13 +159,10 @@ class Calculator extends Component {
     }
 
     formatContentEditor = (data, isFunction) => {
-        const { index, detailFields, optionFunctions, formulas } = this.state;
+        const { index, optionFunctions, formulas, allFields, isFuncFirst } = this.state;
         let constant = [...this.state.constants];
         constant.reverse();
         optionFunctions.reverse();
-        const key = Object.keys(detailFields).toString() || "";
-
-        
 
         let element = document.getElementById('editor_calculator');
         let inputText = element.innerText;
@@ -169,35 +171,50 @@ class Calculator extends Component {
         let middleResult = "";
         if (isFunction) {
             middleResult = `<a style="color: #5e99e6;" contenteditable="false">${data}</a>()`.concat("&nbsp;");
+            if (inputText?.trim() === "") {
+                this.setState({
+                    isFuncFirst: true
+                })
+            }
         } else {
-            if(data.includes("()")) {
+            if (data.includes("()")) {
                 middleResult = `<a style="color: #d64f5d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
-            } else if(data.includes(".")) {
+            } else if (data.includes(".")) {
                 middleResult = `<a style="color: #a112cc;" contenteditable="false">${data}</a>`.concat("&nbsp;");
             } else {
                 middleResult = `<a style="color: #4acc3d;" contenteditable="false">${data}</a>`.concat("&nbsp;");
             }
+            this.setState({
+                isFuncFirst: false
+            })
         }
 
         // const matchLeft = leftResult?.match(/\"(.*?)\"/g)
         // const matchRight = rightResult?.match(/\"(.*?)\"/g)
-        
-        const match = [...leftResult.match(/\"(.*?)\"/g) || [], ...rightResult.match(/\"(.*?)\"/g) || []]
-        const regexMathArray = new RegExp(match?.join('|'))
-        
-        const notMach = [...leftResult.split(regexMathArray) || [], ...rightResult.split(regexMathArray) || []]
 
-        optionFunctions.forEach(item => {
-            for (let  i = 0; i < notMach.length; i++) {
-                let data = notMach[i]?.trim()
-                if (data?.indexOf(item.label) > -1) {
-                    const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-                    leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-                    rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-                    break
+        if (!isFuncFirst) {
+            const match = [...leftResult.match(/\"(.*?)\"/g) || [], ...rightResult.match(/\"(.*?)\"/g) || []]
+            const regexMathArray = new RegExp(match?.join('|'))
+            const notMach = [...leftResult.split(regexMathArray) || [], ...rightResult.split(regexMathArray) || []]
+
+            optionFunctions.forEach(item => {
+                for (let i = 0; i < notMach.length; i++) {
+                    let data = notMach[i]?.trim()
+                    if (data?.indexOf(item.label) > -1) {
+                        const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+                        leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+                        rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+                        break
+                    }
                 }
-            }
-        })
+            })
+        } else {
+            optionFunctions.forEach(item => {
+                const regex = new RegExp(`\\b${item.label}\\b`, 'g');
+                leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+                rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
+            })
+        }
 
         constant.forEach(item => {
             let label = `"${item.label}"`
@@ -206,12 +223,17 @@ class Calculator extends Component {
             rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${label}</a>`);
         })
 
-        if (key) {
-            let arrFields = [];
-            const fields = detailFields[key];
-            fields.forEach(item => {
-                arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
-            })
+
+        let arrFields = [];
+        if (allFields.length > 0) {
+            for (let i = 0; i < allFields.length; i++) {
+                let detailFields = allFields[i];
+                let key = Object.keys(detailFields).toString() || "";
+                let fields = detailFields[key];
+                fields.forEach(item => {
+                    arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
+                })
+            }
             arrFields.forEach(item => {
                 let label = `"${item.label}"`
                 const regex = new RegExp(`${label}`, 'g');
