@@ -267,19 +267,23 @@ class EditUboxCategories extends Component {
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {
 
-            let attributeIds = [];
+            let propertiesSelected = [], attributeIds = [];
             const optionsOwnProperties = this.state.optionsOwnProperties;
             optionsOwnProperties.forEach(item => {
-                attributeIds.push(item.label)
+                propertiesSelected.push(item.label)
             })
 
             ApiController.get(ATTRIBUTES.all, {}, data => {
                 data.forEach(item => {
-                    if (attributeIds.includes(item.label)) {
-                        this.setState({ attributeIds: [...this.state.attributeIds, item.id] });
+                    if (propertiesSelected.includes(item.label)) {
+                        attributeIds.push(item.id);
                     }
                 });
-                this.callApi();
+                this.setState({
+                    attributeIds
+                }, () => {
+                    this.callApi();
+                })
             })
         } else {
             return;
