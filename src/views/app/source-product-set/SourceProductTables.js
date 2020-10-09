@@ -270,11 +270,8 @@ class SourceProductTable extends Component {
 
     onPageSizeChange = (size) => {
         const { pagination } = this.state;
+        pagination.page = 0;
         pagination.size = size;
-        pagination.pages = Math.ceil(this.props.data?.length / size)
-        if (pagination.page >= pagination.pages) {
-            pagination.page = 0;
-        }
         this.setState({
             pagination: pagination
         })

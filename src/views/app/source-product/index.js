@@ -46,7 +46,6 @@ class CreateTrainingClass extends Component {
   componentDidMount() {
     this.loadSites();
     this.loadCategories();
-    this.prepareQuery();
   }
 
   loadSites = () => {
@@ -89,6 +88,7 @@ class CreateTrainingClass extends Component {
     this.setState({
       filter
     });
+    
   }
 
   toggleCollapse = () => {
@@ -179,8 +179,8 @@ class CreateTrainingClass extends Component {
 
   onPageSizeChange = (size) => {
     const { pagination } = this.state;
+    pagination.page = 0;
     pagination.size = size;
-    pagination.pages = Math.ceil(this.props.data?.length / size)
     this.setState({
       pagination: pagination
     })
@@ -196,6 +196,7 @@ class CreateTrainingClass extends Component {
           if (localStorage.getItem('selectedItems')) {
             const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
             this.onChangeCategory(categoriesFilter);
+            this.prepareQuery();
           }
         });
       }).catch(error => {

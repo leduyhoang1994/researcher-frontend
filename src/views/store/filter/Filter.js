@@ -86,7 +86,7 @@ class Filter extends React.Component {
     onPageSizeChange = (size) => {
         const { dataTable, products } = this.state;
         dataTable.size = size;
-        dataTable.pages = Math.ceil(products.length / size)
+        dataTable.pages = Math.ceil(products?.length / size)
         console.log(dataTable, size);
         this.setState({
             dataTable: dataTable
