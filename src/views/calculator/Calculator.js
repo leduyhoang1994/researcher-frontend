@@ -156,27 +156,19 @@ class Calculator extends Component {
     }
 
     formatContentEditor = (data, isFunction) => {
-        const { index, rangeSelection, detailFields, optionFunctions, formulas } = this.state;
+        const { rangeSelection, optionFunctions } = this.state;
         let constant = [...this.state.constants];
         constant.reverse();
         optionFunctions.reverse();
-        const key = Object.keys(detailFields).toString() || "";
-
-        
 
         let element = document.getElementById('editor_calculator');
-        let inputText = element.innerHTML;
-        console.log(inputText);
-        // let leftResult = inputText.slice(0, index);
-        // let rightResult = inputText.slice(index, inputText.length);
-        let middleResult = "";
-        let  color = null;
+        let color = null;
         if (isFunction) {
             color = "#5e99e6";
         } else {
-            if(data.includes("()")) {
+            if (data.includes("()")) {
                 color = "#d64f5d";
-            } else if(data.includes(".")) {
+            } else if (data.includes(".")) {
                 color = "#a112cc";
             } else {
                 color = "#4acc3d";
@@ -187,89 +179,68 @@ class Calculator extends Component {
         newElem.innerText = data;
         newElem.setAttribute("contenteditable", false);
         newElem.style.color = color;
-        console.log(rangeSelection);
+        let nodeIndex = 0;
         // console.log(leftResult);
         if (!rangeSelection) {
             element.append(newElem);
+            nodeIndex = element.childNodes.length - 1;
         }
-        else if (rangeSelection.startContainer === element) {
+        else if (rangeSelection.startContainer === element || rangeSelection.startContainer.data?.trim() === "") {
             element.insertBefore(newElem, element.children[rangeSelection.startOffset]);
+            nodeIndex = rangeSelection.startOffset;
         } else {
-            console.log(Array.from(element.child));
-            console.log(rangeSelection.startContainer.toString());
-            // const textPosition = element.findIndex(element.children, rangeSelection.startContainer);
-            var wholeText = rangeSelection.startContainer.wholeText;
-            var position = rangeSelection.startOffset;
-            var output = [wholeText.slice(0, position), newElem.outerHTML, wholeText.slice(position)].join('');
-            rangeSelection.startContainer.innerHTML = output;
-            // console.log(textPosition);
-            // element.replaceChild(rangeSelection.startContainer, element.children[textPosition]);
-
+            let innerText = rangeSelection.commonAncestorContainer.parentElement.innerHTML;
+            innerText.replaceAll("&nbsp;", " ");
+            const startContainer = rangeSelection.startContainer;
+            element.childNodes.forEach((node, index) => {
+                if (node === startContainer) {
+                    console.log(rangeSelection.insertNode(newElem));;
+                }
+            })
         }
-        return element.innerHTML;
-        // console.log(rightResult);
-
-        // constant.forEach(item => {
-        //     const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-        //     console.log(regex);
-        //     leftResult = leftResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
-        //     rightResult = rightResult.replace(regex, `<a style="color: #4acc3d;" contenteditable="false">${item.label}</a>`);
-        //     console.log(leftResult);
-        //     console.log(rightResult);
-        // })
-
-        // if (key) {
-        //     let arrFields = [];
-        //     const fields = detailFields[key];
-        //     fields.forEach(item => {
-        //         arrFields.push({ label: `${key}.${item}`, code: `${key}.${item}` })
-        //     })
-        //     arrFields.forEach(item => {
-        //         const regex = new RegExp(`${item.label}\\b`, 'g');
-        //         leftResult = leftResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
-        //         rightResult = rightResult.replace(regex, `<a style="color: #a112cc;" contenteditable="false">${item.label}</a>`);
-        //     })
-        // }
-
-        // optionFunctions.forEach(item => {
-        //     const regex = new RegExp(`\\b${item.label}\\b`, 'g');
-        //     leftResult = leftResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-        //     rightResult = rightResult.replace(regex, `<a style="color: #5e99e6;" contenteditable="false">${item.label}</a>`);
-        // })
-
-        // formulas.forEach(item => {
-        //     const label = `${item.label}()`;
-        //     if (leftResult.indexOf(label) !== -1) {
-        //         leftResult = leftResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
-        //     }
-        //     if (rightResult.indexOf(label) !== -1) {
-        //         rightResult = rightResult.replaceAll(label, `<a style="color: #d64f5d;" contenteditable="false">${label}</a>`);
-        //     }
-        // })
-        // console.log(leftResult);
-        // console.log(middleResult);
-        // console.log(rightResult);
-
-        // return (leftResult + middleResult + rightResult);
+        return {
+            content: element.innerHTML,
+            newElem: newElem,
+            nodeIndex: nodeIndex
+        };
     }
 
     handleChangeFunc = (value) => {
+        const { rangeSelection } = this.state;
         const element = document.getElementById('editor_calculator');
-        let result = this.formatContentEditor(value.value, true);
+        const fce = this.formatContentEditor(value.value, true);
+        let result = fce.content;
         this.setState({
             content: result
-        })
-        element.focus();
+        }, () => {
+            var range = document.createRange()
+            range.setStart(fce.newElem, 0);
+            range.collapse(true)
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            element.focus();
+        });
     }
 
     onClick = (ev) => {
+        const { rangeSelection } = this.state;
         let data = ev.target.id;
         const element = document.getElementById('editor_calculator');
-        let result = this.formatContentEditor(data, false);
+        const fce = this.formatContentEditor(data, false);
+        let result = fce.content;
         this.setState({
             content: result
-        })
-        element.focus();
+        }, () => {
+            var range = document.createRange();
+            console.log(fce.nodeIndex);
+            range.setStart(element.childNodes[fce.nodeIndex], 1);
+            range.collapse(true)
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            element.focus();
+        });
     }
 
     createFormula = () => {

@@ -31,7 +31,7 @@ class Editor extends React.Component {
                         html={content}
                         onChange={this.props.onChangeEditor}
                         onBlur={this.props.onBlurEditor}
-                        onClick={this.props.onClickEditor}
+                        onClick={this.props.onBlurEditor}
                     />
                         {/* {content} */}
                     {/* </ContentEditable> */}
