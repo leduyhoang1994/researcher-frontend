@@ -1,22 +1,13 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import {
-    Row, Card, CardBody,
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-    CarouselCaption
-} from 'reactstrap';
+import { Row, Card, CardBody } from 'reactstrap';
 import { Fragment } from 'react';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import ProductList from '../product/ProductList';
 import Category from '../category/Category';
-import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { slides, advert } from "../../../data/slideShow"
-import { NavLink } from "react-router-dom";
 import HomePageCarousel from './HomePageCarousel';
 import { defaultImg } from '../../../constants/defaultValues';
 
@@ -119,6 +110,8 @@ class Homepage extends React.Component {
                                                     <img src={item.img} alt=""></img>
                                                 </div>
                                             )
+                                        } else {
+                                            return (<></>)
                                         }
 
                                     }

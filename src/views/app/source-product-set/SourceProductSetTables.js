@@ -4,8 +4,8 @@ import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
 import "./style.scss";
+import ConfirmButton from '../../../components/common/ConfirmButton';
 
 const SourceProductSetTables = ({
   data,
@@ -28,16 +28,35 @@ const SourceProductSetTables = ({
       accessor: null,
       Cell: props => {
         return (
-          <div className="">
-            <Button
-              color="danger"
-              size="xs"
-              onClick={() => {
-                removeFromProductSet(props.original)
+          <div className="text-right d-block">
+            <ConfirmButton
+              btnConfig={{
+                color: "danger",
+                size: "xs"
               }}
-            >
-              X
-            </Button>
+              content={{
+                close: "Đóng",
+                confirm: "Xác nhận"
+              }}
+              onConfirm={() => {
+                removeFromProductSet(props.original);
+              }}
+              buttonContent={() => {
+                return (
+                  <b>X</b>
+                );
+              }}
+              confirmHeader={() => {
+                return (
+                  <>Thông báo</>
+                );
+              }}
+              confirmContent={() => {
+                return (
+                  <p>Bạn có chắc chắn muốn xóa bộ sản phẩm này không?</p>
+                );
+              }}
+            />
           </div>
         )
       }

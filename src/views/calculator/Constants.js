@@ -9,6 +9,7 @@ import { CONSTANTS } from '../../constants/api';
 import ConstantModals from './ConstantModals'
 import { NotificationManager } from "../../components/common/react-notifications";
 import ContentEditable from "react-contenteditable";
+import ConfirmButton from "../../components/common/ConfirmButton";
 
 class Constants extends Component {
     constructor(props) {
@@ -81,16 +82,14 @@ class Constants extends Component {
     }
 
     handleRemove = (item) => {
-        if (window.confirm(`Bạn thực sự muốn xóa tham số ${item.label} chứ?`)) {
-            ApiController.callAsync('delete', `${CONSTANTS.all}/${item?.id}`, {})
-                .then(data => {
-                    NotificationManager.success("Xóa tham số thành công!", "Thành công");
-                    if (item.type === "CUSTOM_FORMULA" || item.type === "SYSTEM_FORMULA") this.getFormula()
-                    else this.getVariable()
-                }).catch(error => {
-                    NotificationManager.warning("Xóa tham số thất bại!", "Thất bại", 1000);
-                });
-        }
+        ApiController.callAsync('delete', `${CONSTANTS.all}/${item?.id}`, {})
+            .then(data => {
+                NotificationManager.success("Xóa tham số thành công!", "Thành công");
+                if (item.type === "CUSTOM_FORMULA" || item.type === "SYSTEM_FORMULA") this.getFormula()
+                else this.getVariable()
+            }).catch(error => {
+                NotificationManager.warning("Xóa tham số thất bại!", "Thất bại", 1000);
+            });
     }
 
     renderLoading = () => {
@@ -199,16 +198,35 @@ class Constants extends Component {
                                                                     {
                                                                         item.type === "CUSTOM_VARIABLE" ?
                                                                             (
-                                                                                <Button
-                                                                                    outline
-                                                                                    className="button"
-                                                                                    color="primary"
-                                                                                    onClick={() => {
-                                                                                        this.handleRemove(item)
+                                                                                <ConfirmButton
+                                                                                    btnConfig={{
+                                                                                        outline: true,
+                                                                                        color: "primary",
+                                                                                        className: "button",
                                                                                     }}
-                                                                                >
-                                                                                    <i className="simple-icon-close align-middle" />
-                                                                                </Button>
+                                                                                    content={{
+                                                                                        close: "Đóng",
+                                                                                        confirm: "Xác nhận"
+                                                                                    }}
+                                                                                    onConfirm={() => {
+                                                                                        this.handleRemove(item);
+                                                                                    }}
+                                                                                    buttonContent={() => {
+                                                                                        return (
+                                                                                            <i className="simple-icon-close align-middle" />
+                                                                                        );
+                                                                                    }}
+                                                                                    confirmHeader={() => {
+                                                                                        return (
+                                                                                            <>Thông báo</>
+                                                                                        );
+                                                                                    }}
+                                                                                    confirmContent={() => {
+                                                                                        return (
+                                                                                            <p>{`Bạn thực sự muốn xóa tham số ${item.label} chứ?`}</p>
+                                                                                        );
+                                                                                    }}
+                                                                                />
                                                                             )
                                                                             : <></>
                                                                     }

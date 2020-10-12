@@ -9,6 +9,8 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import { Redirect } from 'react-router-dom';
 import ApiController from '../../../helpers/Api';
 import { CATEGORY_SETS } from '../../../constants/api';
+import ConfirmButton from '../../../components/common/ConfirmButton';
+import { NotificationManager } from '../../../components/common/react-notifications';
 
 class SourceCategorySets extends Component {
   constructor(props) {
@@ -42,7 +44,12 @@ class SourceCategorySets extends Component {
 
   removeFromProductSet = (cate) => {
     ApiController.delete(`${CATEGORY_SETS.delete}`, {
-      ids: [cate?.categoryId]}, data => {
+      ids: [cate?.categoryId]
+    }, data => {
+      console.log(data);
+      if(data?.affected === 1) {
+        NotificationManager.success("Xóa ngành hàng thành công", "Thành công", 1500);
+      }
       this.loadCurrentSourceCategorySet();
     }, {});
   };
@@ -77,16 +84,35 @@ class SourceCategorySets extends Component {
       width: 150,
       Cell: props => {
         return (
-          <div>
-            <Button
-              color="danger"
-              size="xs"
-              onClick={() => {
-                this.removeFromProductSet(props.original)
+          <div className="text-right d-block">
+            <ConfirmButton
+              btnConfig={{
+                color: "danger",
+                size: "xs"
               }}
-            >
-              X
-            </Button>
+              content={{
+                close: "Đóng",
+                confirm: "Xác nhận"
+              }}
+              onConfirm={() => {
+                this.removeFromProductSet(props.original);
+              }}
+              buttonContent={() => {
+                return (
+                  <b>X</b>
+                );
+              }}
+              confirmHeader={() => {
+                return (
+                  <>Thông báo</>
+                );
+              }}
+              confirmContent={() => {
+                return (
+                  <p>Bạn có chắc chắn muốn xóa ngành hàng này không?</p>
+                );
+              }}
+            />
           </div>
         )
       }

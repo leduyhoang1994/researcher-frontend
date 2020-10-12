@@ -6,10 +6,13 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import "./style.scss";
+import ConfirmButton from '../../../components/common/ConfirmButton';
 
 const SourceCategorySetTables = ({
   data,
   component,
+  toggleOpenModal,
+  confirmAction,
   removeFromCategorySet,
 }) => {
   const columns = () => [
@@ -27,16 +30,35 @@ const SourceCategorySetTables = ({
       accessor: null,
       Cell: props => {
         return (
-          <div >
-            <Button
-              color="danger"
-              size="xs"
-              onClick={() => {
-                removeFromCategorySet(props.original)
+          <div className="text-right d-block">
+            <ConfirmButton
+              btnConfig={{
+                color: "danger",
+                size: "xs"
               }}
-            >
-              X
-            </Button>
+              content={{
+                close: "Đóng",
+                confirm: "Xác nhận"
+              }}
+              onConfirm={() => {
+                removeFromCategorySet(props.original);
+              }}
+              buttonContent={() => {
+                return (
+                  <b>X</b>
+                );
+              }}
+              confirmHeader={() => {
+                return (
+                  <>Thông báo</>
+                );
+              }}
+              confirmContent={() => {
+                return (
+                  <p>Bạn có chắc chắn muốn xóa bộ ngành hàng này không?</p>
+                );
+              }}
+            />
           </div>
         )
       }
