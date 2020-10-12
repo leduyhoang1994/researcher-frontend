@@ -87,7 +87,7 @@ export const currencyFormatNDT = (number) => {
 }
 
 export const currencyFormatVND = (number) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+  return new Intl.NumberFormat('vi-VN').format(number);
 }
 
 
