@@ -94,7 +94,7 @@ class Homepage extends React.Component {
                                 <Category />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
-                                <div className="p-0 w-70 float-left">
+                                <div className="p-0 w-100 float-left">
                                     {
                                         slides &&
                                         <HomePageCarousel
@@ -102,7 +102,7 @@ class Homepage extends React.Component {
                                         />
                                     }
                                 </div>
-                                <div className="p-0 w-30 float-left">
+                                {/* <div className="p-0 w-30 float-left">
                                     {advert.map((item, index) => {
                                         if (index < 3) {
                                             return (
@@ -125,7 +125,7 @@ class Homepage extends React.Component {
                                         //     </span>
                                         // </NavLink>
                                     )}
-                                </div>
+                                </div> */}
                             </Colxx>
                         </Row>
                     </CardBody>

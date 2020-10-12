@@ -121,8 +121,6 @@ export const CATEGORY_SETS = {
   add: `${apiPath}/${sets}/${source_categories}/list-add`,
   delete: `${apiPath}/${sets}/${source_categories}/list-delete`,
 }
-<<<<<<< HEAD
-=======
 
 /** CONSTANTS */
 export const constants = 'constants';
@@ -130,4 +128,3 @@ export const CONSTANTS = {
   all: `${apiPath}/${constants}`,
   type: `${apiPath}/${constants}/type`,
 }
->>>>>>> 9274debadb580d2f96c05aad762155720737af8a
