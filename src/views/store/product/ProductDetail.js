@@ -104,14 +104,14 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, internalPrice, price, } = this.state.product;
+        const { id, name, featureImage, transportation, weight, offerPrice, workshopIn } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
         })
-        const product = { id, name, featureImage, internalPrice, price, quantity, optionIds, property };
+        const product = { id, name, featureImage, transportation, weight, offerPrice, workshopIn, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];
