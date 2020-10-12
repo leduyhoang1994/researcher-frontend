@@ -13,7 +13,7 @@ class SourceCategorySets extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cateSetList : []
+      cateSetList: [],
     };
     this.messages = this.props.intl.messages;
   }
@@ -30,25 +30,23 @@ class SourceCategorySets extends Component {
 
   removeFromCategorySet = (original) => {
     const ids = { ids: [original.id] };
-    if (window.confirm('Bạn có chắc chắn muốn xóa bộ ngành hàng này không?')) {
-      ApiController.callAsync('delete', CATEGORY_SETS.all, ids)
-        .then(data => {
-          NotificationManager.success("Xóa bộ ngành hàng thành công", "Thành công", 1500);
-          this.loadCateSets();
-        }).catch(error => {
-          NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-          if (error.response.status === 401) {
+    ApiController.callAsync('delete', CATEGORY_SETS.all, ids)
+      .then(data => {
+        NotificationManager.success("Xóa bộ ngành hàng thành công", "Thành công", 1500);
+        this.loadCateSets();
+      }).catch(error => {
+        NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+        if (error.response.status === 401) {
+          setTimeout(function () {
+            NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
             setTimeout(function () {
-              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
-              setTimeout(function () {
-                window.open("/user/login", "_self")
-              }, 1500);
+              window.open("/user/login", "_self")
             }, 1500);
-          }
-        });
-    }
+          }, 1500);
+        }
+      });
   }
-  
+
   render() {
     return (
       <Fragment>
@@ -68,8 +66,11 @@ class SourceCategorySets extends Component {
                 <Row>
                   <Colxx xxs="12">
                     <SourceCategorySetTables
+                      key={this.state.confirmAction}
                       data={this.state.cateSetList}
                       component={this}
+                      confirmAction={this.state.confirmAction}
+                      toggleOpenModal={this.toggleOpenModal}
                       removeFromCategorySet={this.removeFromCategorySet}
                     />
                   </Colxx>

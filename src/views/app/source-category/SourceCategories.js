@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
 import DataTablePagination from '../../../components/DatatablePagination';
 import './style.scss';
-import { currencyFormatNDT, currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
+import { currencyFormatNDT, currencyFormatVND } from '../../../helpers/Utils';
 
 class SourceCategories extends Component {
   constructor(props) {
