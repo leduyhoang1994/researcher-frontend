@@ -84,14 +84,14 @@ const dataTableColumns = [
         Header: "Thời gian phát hàng của xưởng",
         accessor: "workshopIn",
         Cell: props => <p className="text-muted">
-            {props.value ? numberFormat(Number.parseFloat(props.value), 2).toLocaleString() + " ngày" : null}
+            {props.value ? numberFormat(Number.parseFloat(props.value), 1).toLocaleString() + " ngày" : null}
         </p>
     },
     {
         Header: "Thời gian giao hàng Ubox",
         accessor: "uboxIn",
         Cell: props => <p className="text-muted">
-            {props.value ? numberFormat(Number.parseFloat(props.value), 2).toLocaleString() + " ngày" : null}
+            {props.value ? numberFormat(Number.parseFloat(props.value), 1).toLocaleString() + " ngày" : null}
         </p>
     },
     {

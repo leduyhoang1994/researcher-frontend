@@ -3,7 +3,7 @@ import { Row, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { SOURCE_CATEGORIES, ATTRIBUTES, UBOX_CATEGORIES, CATEGORY_SETS } from '../../../constants/api';
+import { ATTRIBUTES, UBOX_CATEGORIES, CATEGORY_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Creatable } from 'react-select';
