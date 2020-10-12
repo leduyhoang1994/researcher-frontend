@@ -12,9 +12,13 @@ class ConfirmButton extends React.Component {
     }
 
     toggle = () => {
+        if (isFunction(this.props.onClose) && this.state.isModalOpen) {
+            this.props.onClose();
+        }
         this.setState({
             isModalOpen: !this.state.isModalOpen
         })
+
     }
 
     render() {
@@ -43,9 +47,6 @@ class ConfirmButton extends React.Component {
                             outline
                             onClick={() => {
                                 this.toggle();
-                                if (isFunction(this.props.onClose)) {
-                                    this.props.onClose();
-                                }
                             }}
                         >
                             {this.props?.content?.close}
