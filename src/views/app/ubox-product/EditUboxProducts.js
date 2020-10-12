@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
+import { Row, Card, CardBody, Input, Label, Button, CardTitle } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Select from 'react-select';
@@ -17,6 +17,7 @@ import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
 import CategoryModals from './CategoryModals';
+import SourceProductInfoModal from './SourceProductInfoModal';
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -80,6 +81,8 @@ class EditUboxProducts extends Component {
                 videos: []
             },
             isOpenCategoryModal: false,
+            isSourceProductInfoModalOpen: false,
+            sourceProductUrl: ''
         };
         this.messages = this.props.intl.messages;
         this.handleChangeText = this.handleChangeText.bind(this);
@@ -97,6 +100,18 @@ class EditUboxProducts extends Component {
         this.setState({
             isOpenCategoryModal: !this.state.isOpenCategoryModal
         })
+    }
+
+    toggleSourceProductInfoModal = () => {
+        this.setState({
+            isSourceProductInfoModalOpen: !this.state.isSourceProductInfoModalOpen
+        })
+    }
+
+    setSourceProductUrl = (sourceProductUrl) => {
+        this.setState({
+            sourceProductUrl: sourceProductUrl
+        });
     }
 
     handleFiles = async (fileList) => {
@@ -633,6 +648,20 @@ class EditUboxProducts extends Component {
                                                     <span>
                                                         {__(this.messages, "Nguồn sản phẩm *")}
                                                     </span>
+                                                    <a href="javascript:void(0);" className="text-small" onClick={this.toggleSourceProductInfoModal} style={{ fontStyle: "italic" }}>
+                                                        Xem thông tin sản phẩm nguồn
+                                                    </a>
+                                                    <SourceProductInfoModal
+                                                        sourceProductId={
+                                                            this.state.sourceProductSelected?.value ||
+                                                            (
+                                                                product.sourceProduct ? product.sourceProductId : null
+                                                            )
+                                                        }
+                                                        isOpen={this.state.isSourceProductInfoModalOpen}
+                                                        toggle={this.toggleSourceProductInfoModal}
+                                                        setSourceProductUrl={this.setSourceProductUrl}
+                                                    />
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
@@ -751,13 +780,29 @@ class EditUboxProducts extends Component {
                         </Card>
                     </Colxx>
                 </Row>
+                <Row className="mt-4">
+                    <Colxx xxs="12">
+                        <Card>
+                            <CardBody>
+                                <CardTitle>
+                                    Sản phẩm gốc
+                                </CardTitle>
+                                <iframe
+                                    width="100%"
+                                    height="768"
+                                    src={this.state.sourceProductUrl}
+                                />
+                            </CardBody>
+                        </Card>
+                    </Colxx>
+                </Row>
                 <CategoryModals
                     key={this.state.isOpenCategoryModal}
                     isOpenModal={this.state.isOpenCategoryModal}
                     toggleOpenCategoryModal={this.toggleOpenCategoryModal}
                     getUboxCategories={this.getUboxCategories}
                 />
-            </Fragment>
+            </Fragment >
         );
     }
 }
