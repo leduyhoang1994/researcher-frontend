@@ -70,7 +70,7 @@ class Login extends Component {
             <div className="position-relative image-side ">
               <p className="text-white h2">Researcher</p>
               <p className="white mb-0">
-                Vui lòng sử dụng "số điện thoại@lamita.vn" để đăng nhập
+                Vui lòng sử dụng tài khoản "researcher" để đăng nhập
               </p>
             </div>
             <div className="form-side">

@@ -191,7 +191,6 @@ class Research extends Component {
             .then(data => {
                 this.setState({ cateSetList: data.data.result });
             }).catch(error => {
-                console.log(error);
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
                 if (error.response.status === 401) {
                     setTimeout(function () {
@@ -214,35 +213,6 @@ class Research extends Component {
             this.loadCateSets();
         }
         this.setState({ isOpenRadio: !isOpen });
-    }
-
-    createCategoriesSet = (cateSet = null) => {
-        const { selectedCats } = this.state;
-
-        const cateSetName = this.state.cateSetName;
-
-        if (cateSetName == null || cateSetName === []) {
-            return;
-        }
-        const cateIds = arrayColumn(selectedCats, "id");
-
-        if (cateSet) {
-            //Add to existed cateSet
-            ApiController.post(CATEGORY_SETS.add, {
-                setId: cateSet.value,
-                itemId: cateIds
-            }, data => {
-                NotificationManager.success("Thành công", "Thành công");
-            });
-        } else {
-            //Create new cateSet
-            ApiController.post(CATEGORY_SETS.all, {
-                setName: cateSetName,
-                ids: cateIds
-            }, data => {
-                NotificationManager.success("Thành công", "Thành công");
-            });
-        }
     }
 
     render() {
@@ -327,11 +297,12 @@ class Research extends Component {
                 </Row>
 
                 <ResearchSetModal
+                    key={this.state.isOpenRadio}
                     isOpenRadio={this.state.isOpenRadio}
                     toggleResearchSetModal={this.toggleResearchSetModal}
                     handleChange={this.handleChange}
-                    createCateSet={this.createCategoriesSet}
                     cateSetName={this.cateSetName}
+                    selectedCats={this.state.selectedCats}
                 />
             </Fragment>
         );

@@ -49,7 +49,7 @@ function* loginWithEmailPassword({ payload }) {
 
         if (loginUser.success) {
             localStorage.setItem('user_token', loginUser.result.accessToken);
-            const userDetails = yield call(getUserDetails, loginUser.result.accessToken);
+            const userDetails = yield call (getUserDetails, loginUser.result.accessToken);
             localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(loginUserSuccess(loginUser.result, userDetails));
             window.open('/', '_self');
@@ -85,9 +85,9 @@ function* loginSellerWithEmailPassword({ payload }) {
 
         if (loginSeller.success) {
             localStorage.setItem('user_token', loginSeller.result.accessToken);
-            const userDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
-            localStorage.setItem('user_details', JSON.stringify(userDetails));
-            yield put(loginSellerSuccess(loginSeller.result, userDetails));
+            const sellerDetails = yield call(getSellerDetails, loginSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(sellerDetails));
+            yield put(loginSellerSuccess(loginSeller.result, sellerDetails));
             window.open('/store', '_self');
         } else {
             yield put(loginSellerError(loginSeller.message));
@@ -109,27 +109,21 @@ const loginSellerWithEmailPasswordAsync = async (userName, password) =>
     });
 
 
-const getUserDetails = async (token) =>
-    await Api.callAsync('get', USER.details, {
-        token: token
-    }, {
-        headers: {
-            Authorization: 'Bearer ' + token //the token is a variable which holds the token
-        }
+const getUserDetails = async () => {
+    return await Api.callAsync('get', USER.details, {}, {
+        
     }).then(data => {
         return data.data;
     }).catch(error => error);
+}
 
-const getSellerDetails = async (token) =>
-    await Api.callAsync('get', SELLER.details, {
-        token: token
-    }, {
-        headers: {
-            Authorization: 'Bearer ' + token //the token is a variable which holds the token
-        }
+const getSellerDetails = async () => {
+    return await Api.callAsync('get', SELLER.details, {}, {
+
     }).then(data => {
         return data.data;
     }).catch(error => error);
+}
 
 
 export function* watchRegisterUser() {
@@ -152,9 +146,11 @@ function* registerWithEmailPassword({ payload }) {
     try {
         const registerUser = yield call(registerWithEmailPasswordAsync, firstName, lastName, email, password, confirmPassword);
         if (registerUser.success) {
-            // localStorage.setItem('user_details', JSON.stringify(registerUser.result));
+            localStorage.setItem('user_token', registerUser.result.accessToken);
+            const userDetails = yield call(getUserDetails, registerUser.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(registerUserSuccess(registerUser));
-            window.open('/user/login', '_self');
+            window.open('/app', '_self');
         } else {
             yield put(registerUserError(registerUser));
         }
@@ -174,9 +170,11 @@ function* registerSellerWithEmailPassword({ payload }) {
     try {
         const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
-            // localStorage.setItem('user_details', JSON.stringify(registerSeller.result));
+            localStorage.setItem('user_token', registerSeller.result.accessToken);
+            const sellerDetails = yield call(getSellerDetails, registerSeller.result.accessToken);
+            localStorage.setItem('user_details', JSON.stringify(sellerDetails));
             yield put(registerSellerSuccess(registerSeller));
-            window.open('/seller/login', '_self');
+            window.open('/store', '_self');
         } else {
             yield put(registerSellerError(registerSeller));
         }

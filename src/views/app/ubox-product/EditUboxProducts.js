@@ -7,7 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import { jsonToFormData, parse } from '../../../helpers/Utils'
+import { jsonToFormData, numberWithCommas, parse } from '../../../helpers/Utils'
 import Properties from './Properties';
 import Api from '../../../helpers/Api';
 import { copySamplePropertiesObj } from '../../../helpers/Utils'
@@ -16,7 +16,7 @@ import Medias from './Medias';
 import { AsyncPaginate } from 'react-select-async-paginate';
 import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
-import { validateName, validateNumber } from '../../../helpers/Validate';
+import CategoryModals from './CategoryModals';
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -29,12 +29,8 @@ class EditUboxProducts extends Component {
                 sourceProduct: {},
                 description: "",
                 featureImage: "",
-                futurePriceMax: "",
-                futurePriceMin: "",
                 isPublished: true,
                 name: "",
-                priceMax: "",
-                priceMin: "",
                 serviceCost: "",
                 serviceSla: "",
                 sourceProductId: "",
@@ -44,15 +40,15 @@ class EditUboxProducts extends Component {
                 uboxProductOptions: [],
                 weight: "",
                 workshopIn: "",
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             keyProperty: '',
             keyMedia: '',
             uboxProduct: {
                 name: '',
-                priceMax: 0,
-                priceMin: 0,
-                futurePriceMax: 0,
-                futurePriceMin: 0,
                 weight: 0,
                 serviceSla: '',
                 serviceCost: 0,
@@ -64,7 +60,11 @@ class EditUboxProducts extends Component {
                 uboxCategoryId: 0,
                 sourceProductId: 0,
                 optionIds: [],
-                isPublished: false
+                isPublished: false,
+                price: 0,
+                internalPrice: 0,
+                minPrice: 0,
+                offerPrice: 0,
             },
             selectedCategory: "",
             optionUboxCategories: [],
@@ -79,15 +79,23 @@ class EditUboxProducts extends Component {
                 images: [],
                 videos: []
             },
+            isOpenCategoryModal: false,
         };
         this.messages = this.props.intl.messages;
         this.handleChangeText = this.handleChangeText.bind(this);
         this.handleChangeNumber = this.handleChangeNumber.bind(this);
+        this.toggleOpenCategoryModal = this.toggleOpenCategoryModal.bind(this);
     }
 
     setRedirect = (url) => {
         this.setState({
             redirect: url
+        })
+    }
+
+    toggleOpenCategoryModal() {
+        this.setState({
+            isOpenCategoryModal: !this.state.isOpenCategoryModal
         })
     }
 
@@ -120,36 +128,38 @@ class EditUboxProducts extends Component {
     async componentDidMount() {
         this.setState({ loading: true });
         await this.getUboxCategories();
-        const sourceProductId = new URLSearchParams(this.props.location.search).get("product-id");
-        const productAddId = new URLSearchParams(this.props.location.search).get("sourceProductId");
-        if (sourceProductId) {
-            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
+        const productId = new URLSearchParams(this.props.location.search).get("product-id");
+        const sourceProductId = new URLSearchParams(this.props.location.search).get("sourceProductId");
+        if (productId) {
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${productId}`, {});
             const product = data.data.result;
-            console.log(product);
 
-            // if (product?.id) {
-            //     this.setRedirect(`/app/ubox-products/edit/${product.id}`);
-            //     this.renderRedirect();
-            // } else {
-            //     this.setRedirect(`/app/ubox-products/add?sourceProductId=${sourceProductId}`);
-            //     this.renderRedirect();
-            // }
             if (product?.id) {
                 window.open(`/app/ubox-products/edit/${product.id}`, "_self");
             } else {
-                window.open(`/app/ubox-products/add?sourceProductId=${sourceProductId}`, "_self");
+                window.open(`/app/ubox-products/add?sourceProductId=${productId}`, "_self");
             }
         }
-        else if (productAddId) {
-            ApiController.get(`${SOURCE_PRODUCTS.all}/${productAddId}`, {}, data => {
+        else if (sourceProductId) {
+            //check if exist in ubox product
+            const data = await ApiController.callAsync('get', `${UBOX_PRODUCTS.source}/${sourceProductId}`, {});
+            const product = data?.data?.result;
+
+            if (product?.id) {
+                window.open(`/app/ubox-products/edit/${product?.id}`, "_self");
+            }
+
+            ApiController.get(`${SOURCE_PRODUCTS.all}/${sourceProductId}`, {}, data => {
                 this.setState({
                     product: {
                         ...this.state.product,
                         sourceProduct: {
                             productTitleVi: data.productTitleVi
                         },
-                        sourceProductId: productAddId
+                        sourceProductId: sourceProductId,
                     }
+                }, () => {
+                    this.getSourceInfo(sourceProductId);
                 })
             })
 
@@ -195,15 +205,11 @@ class EditUboxProducts extends Component {
     }
 
     getSourceProducts = async (search, loadedOptions, { page }) => {
-        const filter = {
-            productTitleVi: {
-                "$cont": `%${search}%`
-            }
-        };
         const data = await ApiController.getAsync(SOURCE_PRODUCTS.all, {
-            s: JSON.stringify(filter),
+            sourceProductName: search,
             page: page,
-            size: 20
+            size: 20,
+            type: "non-relation"
         });
 
         const hasMore = data.data.result.page < data.data.result.pageCount;
@@ -241,7 +247,7 @@ class EditUboxProducts extends Component {
 
 
     handleChangeNumber(event) {
-        let value = parseInt(event.target.value);
+        let value = parseFloat(event.target.value);
         let product = this.state.product;
         product[event.target.name] = value
         this.setState({
@@ -276,9 +282,15 @@ class EditUboxProducts extends Component {
     }
 
     validateFields = async () => {
-        const needToValidate = ["name", "priceMin", "priceMax", "futurePriceMin", "futurePriceMax", "serviceSla"
-            , "serviceCost", "description", "transportation", "workshopIn", "uboxIn", "uboxCategoryId", () => {
-                return [this.state.selectedSourceProduct.value, "sourceProduct"]
+        const needToValidate = [
+            { name: "Tên sản phẩm" }, { price: "Giá ubox" },
+            { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
+            { offerPrice: "Giá bán đề xuất" }, { serviceSla: "Dịch vụ SLA" },
+            { transportation: "Hình thức vận chuyển" },
+            { workshopIn: "Thời gian phát hàng của cửa hàng" },
+            { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
+            () => {
+                return [this.state.product.sourceProductId, { sourceProduct: "Nguồn sản phẩm" }]
             }];
         let success = true;
         for await (const field of needToValidate) {
@@ -286,13 +298,17 @@ class EditUboxProducts extends Component {
                 const fieldData = field();
                 if (fieldData[0] === "") {
                     success = false;
-                    NotificationManager.error(`Trường ${fieldData[0]} cần phải nhập`);
+                    NotificationManager.error(`Trường ${fieldData[1].sourceProduct} cần phải nhập`);
                 }
             } else {
-                if ((this.state.product[field] || "") === "") {
-                    console.log(this.state.product[field])
+                let fieldName = "", fieldValue = "";
+                for (let key in field) {
+                    fieldName = key;
+                    fieldValue = field[key];
+                }
+                if ((this.state.product[fieldName] || "") === "") {
                     success = false;
-                    NotificationManager.error(`Trường ${field} cần phải nhập`);
+                    NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
                 }
             }
         }
@@ -326,6 +342,18 @@ class EditUboxProducts extends Component {
             files: files,
             fileBase64: fileBase64
         })
+    }
+
+    getSourceInfo = async (id) => {
+        const uboxPrice = await ApiController.callAsync('get', `${UBOX_PRODUCTS.info}/${id}`, {});
+        if (uboxPrice && uboxPrice.data && uboxPrice.data.result) {
+            this.setState({
+                product: {
+                    ...this.state.product,
+                    ...uboxPrice.data.result
+                },
+            })
+        }
     }
 
     callApi = async () => {
@@ -362,7 +390,6 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 });
             }).catch(error => {
-                console.log(error.response)
                 NotificationManager.warning("Cập nhật thất bại", "Thất bại");
             });
         } else {
@@ -393,7 +420,7 @@ class EditUboxProducts extends Component {
                     fileBase64: []
                 })
                 setTimeout(() => {
-                    window.open(`/app/ubox-products/edit/${data.result.uboxProduct.id}`, "_self");
+                    window.open(`/app/ubox-products/edit/${data.result.id}`, "_self");
                 }, 2000);
 
             } else {
@@ -457,18 +484,32 @@ class EditUboxProducts extends Component {
                                         />
                                     </Colxx>
                                     <Colxx xxs="6">
-                                        <Label className="form-group has-float-label">
-                                            <Select
-                                                className="react-select"
-                                                classNamePrefix="react-select"
-                                                options={this.state.optionUboxCategories}
-                                                value={this.state.selectedCategory}
-                                                onChange={this.handleChangeCategory}
-                                            />
-                                            <span>
-                                                {__(this.messages, "Ngành hàng")}
+                                        <div className="d-flex flex-grow-1 min-width-zero">
+                                            <Label className="form-group has-float-label w-90">
+                                                <Select
+                                                    className="react-select"
+                                                    classNamePrefix="react-select"
+                                                    options={this.state.optionUboxCategories}
+                                                    value={this.state.selectedCategory}
+                                                    onChange={this.handleChangeCategory}
+                                                />
+                                                <span>
+                                                    {__(this.messages, "Ngành hàng *")}
+                                                </span>
+                                            </Label>
+                                            <span className="w-10">
+                                                <Button
+                                                    outline
+                                                    className="button"
+                                                    color="primary"
+                                                    onClick={() => {
+                                                        this.toggleOpenCategoryModal()
+                                                    }}
+                                                >
+                                                    <i className="iconsminds-add align-middle" />
+                                                </Button>
                                             </span>
-                                        </Label>
+                                        </div>
                                         <Label className="form-group has-float-label">
                                             <Input
                                                 type="text"
@@ -477,59 +518,63 @@ class EditUboxProducts extends Component {
                                                 onChange={this.handleChangeText}
                                             />
                                             <span>
-                                                {__(this.messages, "Tên sản phẩm")}
+                                                {__(this.messages, "Tên sản phẩm *")}
                                             </span>
                                         </Label>
                                         <Row>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMin"
+                                                        name="price"
                                                         min={0}
-                                                        value={product.priceMin}
+                                                        value={numberWithCommas(Number.parseFloat(product.price).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Min")}
+                                                        {__(this.messages, "Giá Ubox (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="priceMax"
-                                                        value={product.priceMax}
                                                         min={0}
+                                                        name="internalPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.internalPrice).toFixed(0))}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá gốc Max")}
+                                                        {__(this.messages, "Giá nội bộ (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMin"
-                                                        value={product.futurePriceMin}
+                                                        name="minPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.minPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Min")}
+                                                        {__(this.messages, "Giá bán tối thiểu (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
+                                                        disabled={true}
                                                         type="number"
-                                                        name="futurePriceMax"
-                                                        value={product.futurePriceMax}
+                                                        name="offerPrice"
+                                                        value={numberWithCommas(Number.parseFloat(product.offerPrice).toFixed(0))}
                                                         min={0}
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Giá dự kiến Max")}
+                                                        {__(this.messages, "Giá bán đề xuất (VNĐ)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -560,18 +605,19 @@ class EditUboxProducts extends Component {
                                                         getOptionLabel={(option) => option.productTitleVi}
                                                         getOptionValue={(option) => option.id}
                                                         loadOptions={this.getSourceProducts}
-                                                        onChange={data => {
+                                                        onChange={async data => {
+                                                            this.getSourceInfo(data?.id);
                                                             this.setState({
                                                                 product: {
                                                                     ...this.state.product,
-                                                                    sourceProductId: data?.id
+                                                                    sourceProductId: data?.id,
                                                                 },
                                                                 sourceProductSelected: data
                                                             })
                                                         }
                                                         }
                                                         additional={{
-                                                            page: 1
+                                                            page: 0
                                                         }}
                                                         value={
                                                             this.state.sourceProductSelected ||
@@ -585,7 +631,7 @@ class EditUboxProducts extends Component {
                                                         }
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Nguồn sản phẩm")}
+                                                        {__(this.messages, "Nguồn sản phẩm *")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -596,23 +642,12 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeText}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "SLA dịch vụ")}
+                                                        {__(this.messages, "SLA dịch vụ *")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
                                                     <Input
-                                                        type="number"
-                                                        min={0}
-                                                        name="serviceCost"
-                                                        value={product.serviceCost}
-                                                        onChange={this.handleChangeNumber}
-                                                    />
-                                                    <span>
-                                                        {__(this.messages, "Phí dịch vụ dự kiến")}
-                                                    </span>
-                                                </Label>
-                                                <Label className="form-group has-float-label">
-                                                    <Input
+                                                        // disabled={true}
                                                         type="number"
                                                         min={0}
                                                         name="weight"
@@ -620,7 +655,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Khối lượng")}
+                                                        {__(this.messages, "Khối lượng (kg)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -633,7 +668,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeText}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Hình thức vận chuyển")}
+                                                        {__(this.messages, "Hình thức vận chuyển *")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -645,7 +680,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Thời gian phát hàng của xưởng")}
+                                                        {__(this.messages, "Thời gian phát hàng của cửa hàng (Ngày)*")}
                                                     </span>
                                                 </Label>
                                                 <Label className="form-group has-float-label">
@@ -657,7 +692,7 @@ class EditUboxProducts extends Component {
                                                         onChange={this.handleChangeNumber}
                                                     />
                                                     <span>
-                                                        {__(this.messages, "Thời gian giao hàng Ubox")}
+                                                        {__(this.messages, "Thời gian giao hàng Ubox (Ngày)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
@@ -716,6 +751,12 @@ class EditUboxProducts extends Component {
                         </Card>
                     </Colxx>
                 </Row>
+                <CategoryModals
+                    key={this.state.isOpenCategoryModal}
+                    isOpenModal={this.state.isOpenCategoryModal}
+                    toggleOpenCategoryModal={this.toggleOpenCategoryModal}
+                    getUboxCategories={this.getUboxCategories}
+                />
             </Fragment>
         );
     }

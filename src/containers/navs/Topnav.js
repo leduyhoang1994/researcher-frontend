@@ -249,7 +249,7 @@ class TopNav extends Component {
             </>
           }
 
-          <div className="search ml-5" data-search-path="/store/search">
+          {/* <div className="search ml-5" data-search-path="/store/search">
             <Input
               name="searchKeyword"
               id="searchKeyword"
@@ -264,7 +264,7 @@ class TopNav extends Component {
             >
               <i className="simple-icon-magnifier" />
             </span>
-          </div>
+          </div> */}
 
           {/* <div className="d-inline-block">
             <UncontrolledDropdown className="ml-2">
@@ -314,11 +314,11 @@ class TopNav extends Component {
             <TopnavEasyAccess />
             {/* <TopnavNotifications /> */}
 
-            <Button href="/store/cart" style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
+            {/* <Button href="/store/cart" style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
               <i className="simple-icon-basket" style={{ fontSize: "13pt", marginRight: "5px" }}></i>
               <span style={{ fontSize: "12px" }}>Giỏ hàng</span>
               <Badge color="secondary" style={{ padding: "2px", marginLeft: "5px" }}>{this.props.count}</Badge>
-            </Button>
+            </Button> */}
             <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"
               type="button"

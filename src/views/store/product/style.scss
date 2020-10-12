@@ -30,9 +30,20 @@
         }
         .product-price {
             // padding: 10px 0px;
+            color: rgb(255, 52, 37);
         }
     }
 }
 .align-center {
     text-align: center;
+}
+.product-price {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgb(255, 52, 37);
+}
+.product_price {
+    font-size: 1.0rem;
+    font-weight: bold;
+    color: rgb(255, 52, 37);
 }

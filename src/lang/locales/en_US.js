@@ -17,7 +17,8 @@ module.exports = {
   "user.login-title": "Login",
   "user.register": "Register",
   "user.forgot-password": "Forgot Password",
-  "user.email": "E-mail",
+  "user.email": "E-mail *",
+  "user.email_": "E-mail",
   "user.password": "Password *",
   "user.confirmPassword": "Confirm Password *",
   "user.forgot-password-question": "Forget password?",
@@ -50,6 +51,8 @@ module.exports = {
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
   "menu.research": "Category",
+  "menu.source-category-sets": "List of category set", 
+  "menu.source-product-sets": "List of product set",
 
 
  /* 04.Error Page */

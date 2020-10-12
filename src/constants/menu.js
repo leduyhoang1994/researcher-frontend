@@ -35,17 +35,23 @@ const multiMenu = [
       {
         id: "cateList",
         icon: "iconsminds-qr-code",
-        label: "Ngành hàng",
+        label: "Danh sách ngành hàng",
         to: "/app/ubox-categories",
       },
       {
         id: "product",
         icon: "iconsminds-qr-code",
-        label: "Sản phẩm",
+        label: "Danh sách sản phẩm",
         to: "/app/ubox-products"
+      },
+      {
+        id: "calculate",
+        icon: "iconsminds-qr-code",
+        label: "Tính phí dịch vụ",
+        to: "/calculator"
       }
     ]
-  }
+  },
 ];
 
 let data = [];

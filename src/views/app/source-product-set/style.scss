@@ -1,0 +1,34 @@
+.ReactTable.table-hover {
+  .rt-tbody {
+    .rt-tr {
+      &:hover {
+        background-color: #e6e6e6;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  overflow: unset !important;
+}
+
+.ReactTable .rt-td {
+  overflow: hidden !important;
+}
+
+.rt-resizable-header:last-child > .rt-resizable-header-content {
+  text-align: right !important;
+  margin-right: 7px;
+}
+.btn-position {
+  display: inline-flex;
+  align-items: center;
+}
+// .position-absolute {
+//   position: absolute !important;
+//   top: 0;
+//   left: 0;
+//   color: black;
+//   font-weight: bold;
+// }

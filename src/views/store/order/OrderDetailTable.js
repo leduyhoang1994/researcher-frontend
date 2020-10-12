@@ -7,15 +7,15 @@ import { numberWithCommas } from "../../../helpers/Utils";
 
 const renderTable = (data) => {
     return data.map((item, index) => {
-        const { featureImage, name, priceMin, priceMax, quantity, calculatedPrice } = item
+        const { featureImage, name, internalPrice, price, quantity, calculatedPrice } = item
         return (
             <tr key={index} className="border-bottom">
                 <td className="vertical-align"><p className="mb-0"><img width="50" src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${featureImage}`} alt="avatar-img"/></p></td>
                 <td className="vertical-align"><p className="mb-0">{name}</p></td>
-                <td className="vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(priceMin))} VNĐ</p></td>
-                <td className="vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(priceMax))} VNĐ</p></td>
+                <td className="vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(internalPrice))} đ</p></td>
+                <td className="vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(price))} đ</p></td>
                 <td className="vertical-align text-center"><p className="mb-0">{numberWithCommas(parseFloat(quantity))}</p></td>
-                <td className="text-right vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(calculatedPrice))} VNĐ</p></td>
+                <td className="text-right vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(calculatedPrice))} đ</p></td>
             </tr>
         )
     })
@@ -35,8 +35,8 @@ const OrderDetailTable = (props) => {
                                 <tr>
                                     <th className="mb-2"><p>Hình ảnh</p></th>
                                     <th className="mb-2"><p>Tên sản phẩm</p></th>
-                                    <th className="mb-2"><p>Giá gốc Min</p></th>
-                                    <th className="mb-2"><p>Giá gốc Max</p></th>
+                                    <th className="mb-2"><p>Giá nội bộ</p></th>
+                                    <th className="mb-2"><p>Giá ubox</p></th>
                                     <th className="mb-2 text-center"><p>Số lượng</p></th>
                                     <th className="text-right mb-2"><p>Thành tiền</p></th>
                                 </tr>
@@ -46,7 +46,7 @@ const OrderDetailTable = (props) => {
                             </tbody>
                         </Table>
                         <div className="d-flex flex-column text-right">
-                            <p className="pr-3 font-weight-bold h6">{`Thành tiền: ${numberWithCommas(parseFloat(totalPrice))} VNĐ`}</p>
+                            <p className="pr-3 font-weight-bold h6">{`Thành tiền: ${numberWithCommas(parseFloat(totalPrice))} đ`}</p>
                         </div>
                     </CardBody>
                 </Card>

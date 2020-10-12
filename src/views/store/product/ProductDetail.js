@@ -10,7 +10,7 @@ import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { NotificationManager } from "../../../components/common/react-notifications";
-import { numberWithCommas } from "../../../helpers/Utils";
+import { currencyFormatVND } from "../../../helpers/Utils";
 import Property from "./Property";
 import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
@@ -104,14 +104,14 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, priceMin, priceMax, } = this.state.product;
+        const { id, name, featureImage, internalPrice, price, } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
         })
-        const product = { id, name, featureImage, priceMin, priceMax, quantity, optionIds, property };
+        const product = { id, name, featureImage, internalPrice, price, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];
@@ -129,7 +129,7 @@ class ProductDetail extends Component {
         if (!flag) cart.push(product);
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 500);
+        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
     };
 
     setAttribute = (data) => {
@@ -211,8 +211,7 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                            <p className="product-price">{numberWithCommas(parseFloat(product.priceMin))} VNĐ</p>
-                                            <p className="product-price">{numberWithCommas(parseFloat(product.futurePriceMin))} VNĐ</p>
+                                            <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)): null}{}</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property
@@ -305,11 +304,11 @@ class ProductDetail extends Component {
                                     <p className="mt-3 ml-3">SLA dịch vụ {product.serviceSla}</p>
                                 </div>
                             </Colxx>
-                            <Colxx xxs="4" >
+                            {/* <Colxx xxs="4" >
                                 <div>
                                     <p className="mt-3 ml-3">Phí dịch vụ dự kiến {product.serviceCost}</p>
                                 </div>
-                            </Colxx>
+                            </Colxx> */}
                         </Row>
                     </Card>
                 </Row>

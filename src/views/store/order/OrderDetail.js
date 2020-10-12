@@ -53,8 +53,8 @@ class OrderDetail extends Component {
                 value.featureImage = defaultImg
             }
             value.name = product.uboxProduct.name;
-            value.priceMax = product.uboxProduct.priceMax;
-            value.priceMin = product.uboxProduct.priceMin;
+            value.price = product.uboxProduct.price;
+            value.internalPrice = product.uboxProduct.internalPrice;
 
             data.push(value);
         })

@@ -17,7 +17,8 @@ module.exports = {
   "user.login-title": "Đăng nhập",
   "user.register": "Đăng ký",
   "user.forgot-password": "Quên mật khẩu",
-  "user.email": "Email",
+  "user.email": "E-mail *",
+  "user.email_": "E-mail",
   "user.password": "Mật khẩu *",
   "user.confirmPassword": "Xác nhận mật khẩu *",
   "user.forgot-password-question": "Forget password?",
@@ -66,6 +67,8 @@ module.exports = {
   "menu.student.checkin-history": "Lịch sử Check In",
   "menu.checkin-history": "Lịch sử Check In",
   "menu.research": "Ngành hàng",
+  "menu.source-category-sets": "Danh sách ngành hàng",
+  "menu.source-product-sets": "Danh sách bộ sản phẩm",
 
  /* 04.Error Page */
  "pages.error-title": "Có gì đó không đúng!",

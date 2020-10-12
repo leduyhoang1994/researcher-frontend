@@ -11,7 +11,9 @@ class ResourceTable extends Component {
     this.state = {
       data: [],
       pagination: {
-        per_page: this.props.defaultPageSize || 25
+        // per_page: this.props.defaultPageSize || 25,
+        page: 0,
+        size: this.props.defaultPageSize || 25,
       },
       isLoading: true,
       filtered: [],
@@ -42,34 +44,37 @@ class ResourceTable extends Component {
       newQuery.sort = `${orderBy},${orderDirection}`;
     }
 
-    newQuery.s = {};
-    if (filtered) {
-      filtered.forEach(filter => {
-        if (filter.value) {
-          newQuery.s[filter.id] = {
-            "$cont": `%${filter.value}%`
-          };
-        }
-      });
-    }
+    // newQuery.s = {};
+    // if (filtered) {
+    //   filtered.forEach(filter => {
+    //     if (filter.value) {
+    //       newQuery.s[filter.id] = {
+    //         "$cont": `%${filter.value}%`
+    //       };
+    //     }
+    //   });
+    // }
 
-    newQuery.s = {
-      ...newQuery.s || {},
-      ...query.s
-    };
+    // newQuery.s = {
+    //   ...newQuery.s || {},
+    //   ...query.s
+    // };
 
-    if (newQuery.s) {
-      newQuery.s = JSON.stringify(newQuery.s);
-    } else {
-      delete newQuery.s;
-    }
+    // if (newQuery.s) {
+    //   newQuery.s = JSON.stringify(newQuery.s);
+    // } else {
+    //   delete newQuery.s;
+    // }
 
     this.setState({ isLoading: true });
 
+    // const input = [...pagination];
+
     ApiController.call("GET", url, newQuery, response => {
-      pagination.pages = Math.floor(response.total / response.count);
-      pagination.current_page = response.page;
-      pagination.defaultPageSize = response.count;
+      pagination.pages = Number(response.pageCount);
+      pagination.current_page = Number(response.page);
+      pagination.page = Number(response.page);
+      pagination.defaultPageSize = Number(response.count);
       this.setState({
         data: response.data,
         pagination: pagination,
@@ -79,13 +84,8 @@ class ResourceTable extends Component {
   }
 
   render() {
-    const {
-      columns
-    } = this.props;
-    const {
-      data,
-      pagination
-    } = this.state;
+    const { columns } = this.props;
+    const { data, pagination } = this.state;
 
     return (
       <>
@@ -121,13 +121,14 @@ class ResourceTable extends Component {
             this.setState({
               pagination: {
                 ...this.state.pagination,
-                per_page: size
+                size: size
               }
             }, () => {
               this.loadData();
             });
           }}
           onPageChange={page => {
+            page = page - 1;
             this.loadData({
               page: page
             });
@@ -135,7 +136,7 @@ class ResourceTable extends Component {
           {...pagination}
           page={0}
           {...this.props}
-          defaultPageSize={this.state.pagination.per_page || this.props.defaultPageSize}
+          defaultPageSize={this.state.pagination.size || this.props.defaultPageSize}
         />
       </>
     );

@@ -5,7 +5,6 @@ import { isFunction } from "formik";
 Axios.interceptors.request.use(function (config) {
   const token = localStorage.getItem('user_token');
   config.headers.Authorization = 'Bearer ' + token;
-
   return config;
 });
 const ApiController = {
@@ -17,6 +16,8 @@ const ApiController = {
         return await ApiController.postAsync(url, data, options);
       case 'put': case 'PUT':
         return await ApiController.putAsync(url, data, options);
+      case 'delete': case 'DELETE':
+        return await ApiController.deleteAsync(url, data, options);
       default:
         break;
     }
@@ -55,6 +56,11 @@ const ApiController = {
 
   putAsync: async (url, data, options) => {
     return await Axios.put(url, data, options);
+  },
+
+  deleteAsync: async (url, data, options) => {
+    const optionCustom = { data: data }
+    return await Axios.delete(url, optionCustom);
   },
 
   call: (method, url, data, callback, options = {}) => {

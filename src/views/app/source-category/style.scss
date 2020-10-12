@@ -7,3 +7,9 @@
 .country-cat-header {
   background-color: var(--theme-color-2-10);
 }
+.margin-right-5 {
+  margin-right: 7px;
+}
+.rt-resizable-header:last-child > .rt-resizer {
+  width: 0px !important;
+}

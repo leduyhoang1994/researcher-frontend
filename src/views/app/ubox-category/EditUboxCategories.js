@@ -3,7 +3,7 @@ import { Row, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import { SOURCE_CATEGORIES, ATTRIBUTES, UBOX_CATEGORIES, CATEGORY_SETS } from '../../../constants/api';
+import { ATTRIBUTES, UBOX_CATEGORIES, CATEGORY_SETS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { Creatable } from 'react-select';
@@ -14,7 +14,7 @@ class EditUboxCategories extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            setId: this.props.match.params.id || null,
+            setId: this.props?.type === 'modal' ? null : (this.props?.match?.params?.id || null),
             category: [],
             optionsLv1: [],
             optionsLv2: [],
@@ -96,20 +96,19 @@ class EditUboxCategories extends Component {
 
     getAllCategories = () => {
         ApiController.callAsync('get', CATEGORY_SETS.all, {})
-        .then(data => {
-            this.setState({ cateSetList: data.data.result });
-        }).catch(error => {
-            console.log(error);
-            NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-            if(error.response.status === 401) {
-                setTimeout(function(){ 
-                    NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
-                    setTimeout(function(){ 
-                        window.open("/user/login", "_self")
+            .then(data => {
+                this.setState({ cateSetList: data.data.result });
+            }).catch(error => {
+                NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+                if (error.response.status === 401) {
+                    setTimeout(function () {
+                        NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
+                        setTimeout(function () {
+                            window.open("/user/login", "_self")
+                        }, 1500);
                     }, 1500);
-                }, 1500);
-            }
-        });
+                }
+            });
         ApiController.get(UBOX_CATEGORIES.all, {}, data => {
             let options1 = [];
             let options2 = [];
@@ -168,10 +167,6 @@ class EditUboxCategories extends Component {
         }
     };
 
-    handleChangeInput = (value) => {
-        this.setState({ valueText: value });
-    }
-
     handleCreate1 = (newValue) => {
         let option = {};
         option.label = newValue;
@@ -217,56 +212,78 @@ class EditUboxCategories extends Component {
     };
 
     callApi = async () => {
-        const id = this.state.setId;
-        if (id) {
-            await Api.callAsync('put', UBOX_CATEGORIES.all, {
-                id: parseInt(id),
-                nameLv1: this.state.categoryLv1.value,
-                nameLv2: this.state.categoryLv2.value,
-                nameLv3: this.state.categoryLv3.value,
-                description: this.state.valueText,
-                attributeIds: this.state.attributeIds
-            }).then(data => {
-                window.open(`/app/ubox-categories/edit/${id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
-            }).catch(error => {
-                NotificationManager.warning("Cập nhật thất bại", "Thất bại");
-            });
-        } else {
-            const data = await Api.callAsync('post', UBOX_CATEGORIES.all, {
-                nameLv1: this.state.categoryLv1.value,
-                nameLv2: this.state.categoryLv2.value,
-                nameLv3: this.state.categoryLv3.value,
-                description: this.state.valueText,
-                attributeIds: this.state.attributeIds
-            }).then(data => {
-                return data.data;
-            }).catch(error => {
-                return error.response.data;
-            });
-            if (data.success) {
-                window.open(`/app/ubox-categories/edit/${data.result.uboxCategory.id}`, "_self")
-                NotificationManager.success("Thành công", "Thành công");
+        const { categoryLv1, categoryLv2, categoryLv3, valueText, attributeIds } = this.state;
+        if (categoryLv1 && categoryLv2 && categoryLv3) {
+            const id = this.state.setId;
+            if (id) {
+                await Api.callAsync('put', UBOX_CATEGORIES.all, {
+                    id: parseInt(id),
+                    nameLv1: categoryLv1.value,
+                    nameLv2: categoryLv2.value,
+                    nameLv3: categoryLv3.value,
+                    description: valueText,
+                    attributeIds: attributeIds
+                }).then(data => {
+                    NotificationManager.success("Cập nhật thành công", "Thành công", 700);
+                    setTimeout(() => {
+                        window.open(`/app/ubox-categories/edit/${id}`, "_self")
+                    }, 1000)
+                }).catch(error => {
+                    NotificationManager.warning("Cập nhật thất bại", "Thất bại");
+                });
             } else {
-                NotificationManager.warning("Thêm mới thất bại", "Thất bại");
+                const data = await Api.callAsync('post', UBOX_CATEGORIES.all, {
+                    nameLv1: this.state.categoryLv1.value,
+                    nameLv2: this.state.categoryLv2.value,
+                    nameLv3: this.state.categoryLv3.value,
+                    description: this.state.valueText,
+                    attributeIds: this.state.attributeIds
+                }).then(data => {
+                    return data.data;
+                }).catch(error => {
+                    return error.response.data;
+                });
+                if (data.success) {
+                    NotificationManager.success("Thêm mới thành công", "Thành công", 700);
+                    if(this.props?.type === 'modal') {
+                        this.props.getUboxCategories();
+                        this.props.toggleOpenCategoryModal();
+                    } else {
+                        setTimeout(() => {
+                            window.open(`/app/ubox-categories/edit/${data.result.id}`, "_self")
+                        }, 1000)
+                    }
+                } else {
+                    NotificationManager.warning(data.message, "Thất bại", 2000);
+                }
             }
+        } else {
+            NotificationManager.warning("Nhập thiếu trường thông tin", "Thất bại");
         }
     }
+
     editCategory = async () => {
         if (this.state.categoryLv1.value !== ""
             && this.state.categoryLv2.value !== ""
             && this.state.categoryLv3.value !== "") {
 
-            const propertiesFilter = this.state.propertiesFilter;
-            this.setState({ attributeIds: [] });
+            let propertiesSelected = [], attributeIds = [];
+            const optionsOwnProperties = this.state.optionsOwnProperties;
+            optionsOwnProperties.forEach(item => {
+                propertiesSelected.push(item.label)
+            })
 
             ApiController.get(ATTRIBUTES.all, {}, data => {
                 data.forEach(item => {
-                    if (propertiesFilter.includes(item.label)) {
-                        this.setState({ attributeIds: [...this.state.attributeIds, item.id] });
+                    if (propertiesSelected.includes(item.label)) {
+                        attributeIds.push(item.id);
                     }
                 });
-                this.callApi();
+                this.setState({
+                    attributeIds
+                }, () => {
+                    this.callApi();
+                })
             })
         } else {
             return;
@@ -276,16 +293,21 @@ class EditUboxCategories extends Component {
     render() {
         const { optionsLv1, optionsLv2, optionsLv3, optionsProperties, optionsOwnProperties } = this.state;
         const { categoryLv1, categoryLv2, categoryLv3 } = this.state;
+        let isDisabled = true;
+        if(categoryLv1 && categoryLv2 && categoryLv3) {
+            isDisabled = false;
+        }
 
-        let getValueInput = (event) => {
-            this.handleChangeInput(event.target.value)
-        };
         return (
             <div>
                 <Fragment>
                     <Row>
                         <Colxx xxs="12">
-                            <Breadcrumb heading="menu.category" match={this.props.match} />
+                            {this.props?.type !== 'modal' ?
+                                (<Breadcrumb heading="menu.category" match={this.props.match} />)
+                                : (<>
+                                    Thêm mới ngành hàng
+                            </>)}
                             <Separator className="mb-5" />
                         </Colxx>
                     </Row>
@@ -351,7 +373,14 @@ class EditUboxCategories extends Component {
                                 </span>
                             </Label>
                             <Label className="form-group has-float-label">
-                                <Input type="textarea" defaultValue={this.state.valueText} rows="3" onChange={getValueInput} />
+                                <Input type="textarea"
+                                    defaultValue={this.state.valueText}
+                                    rows="3"
+                                    onChange={e => {
+                                        this.setState({
+                                            valueText: e.target.value
+                                        })
+                                    }} />
                                 <span>
                                     {__(this.messages, "Mô tả")}
                                 </span>
@@ -361,9 +390,21 @@ class EditUboxCategories extends Component {
                     </Row>
 
                     <div className="text-right card-title">
+                        {
+                            this.props?.type === 'modal' ? (
+                                <Button
+                                    className="mr-2"
+                                    color="primary"
+                                    onClick={() => {
+                                        this.props.toggleOpenCategoryModal();
+                                    }}
+                                >Đóng</Button>
+                            ) : (<></>)
+                        }
                         <Button
                             className="mr-2"
                             color="primary"
+                            disabled={isDisabled}
                             onClick={() => {
                                 this.editCategory();
                             }}
@@ -371,8 +412,9 @@ class EditUboxCategories extends Component {
                             {__(this.messages, this.state.setId ? "Cập nhật" : "Thêm mới")}
                         </Button>
                     </div>
+
                 </Fragment>
-            </div>
+            </div >
         );
     }
 }

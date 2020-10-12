@@ -7,6 +7,7 @@ import { __ } from '../../../helpers/IntlMessages';
 import { SITE_LIST } from '../../../constants/data';
 import DataTablePagination from '../../../components/DatatablePagination';
 import './style.scss';
+import { currencyFormatNDT, currencyFormatVND } from '../../../helpers/Utils';
 
 class SourceCategories extends Component {
   constructor(props) {
@@ -48,14 +49,21 @@ class SourceCategories extends Component {
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(this.messages, "Tổng sale"),
+      Header: props => __(this.messages, `Tổng doanh số bán`),
       accessor: "monthlySale",
-      Cell: props => <p className="text-muted">{props.value}</p>
+      Cell: props => <p className="text-muted text-right w-50">
+        {
+          props.value ? props.original.site === "Shopee" ?
+          currencyFormatVND(Number.parseFloat(props?.value)) + " đ" :
+          currencyFormatNDT(Number.parseFloat(props?.value)) + " ¥"
+          : null
+        }
+      </p>
     },
     {
       Header: (e) => {
         return (
-          <div className="text-center">
+          <div className="text-right margin-right-5">
             <input id={siteCode} type="checkbox" onChange={this.handleCheckAll} checked={this.props.isSiteCodeCheckAll[siteCode] ? true : false} />
           </div>
         );
@@ -64,7 +72,7 @@ class SourceCategories extends Component {
       sortable: false,
       maxWidth: 100,
       Cell: props => (
-        <div className="text-center">
+        <div className="text-right">
           <Input
             type="checkbox"
             name={siteCode}

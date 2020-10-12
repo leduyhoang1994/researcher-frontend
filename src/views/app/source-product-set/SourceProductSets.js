@@ -4,16 +4,22 @@ import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
-import SourceProductTable from '../source-product/SourceProductTable';
-import { SOURCE_PRODUCTS, PRODUCT_SETS } from '../../../constants/api';
+import SourceProductTable from './SourceProductTables';
+import { PRODUCT_SETS, UBOX_PRODUCTS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
+import { NotificationManager } from '../../../components/common/react-notifications';
+import { failed, success, notify_update_success } from "../../../constants/constantTexts";
 
 class SourceProductSets extends Component {
   constructor(props) {
     super(props);
     this.state = {
       setId: this.props.match.params.id,
+      filter: {
+        categoriesFilter: [],
+      },
       productSet: {
+        setName: "",
         products: [],
         keyState: "key"
       }
@@ -27,7 +33,7 @@ class SourceProductSets extends Component {
 
   loadCurrentProductSet = () => {
     const { setId } = this.state;
-    // this.getProductSet(setId);
+    this.getProductSet(setId);
   }
 
   exportData = async () => {
@@ -43,34 +49,74 @@ class SourceProductSets extends Component {
 
   getProductSet = (id) => {
     ApiController.get(`${PRODUCT_SETS.all}/${id}`, {}, data => {
-      data.productSets = data.productSets.map(d => {
-        return {
-          ...d.product,
-          id: d.id
-        };
+      let products = [];
+      data.sourceProductSets.forEach(item => {
+        item.sourceProduct.setId = item.id;
+        products.push(item.sourceProduct)
       })
+
       this.setState({
-        productSet: data,
+        productSet: {
+          setName: data.setName,
+          products: products
+        },
         keyState: Math.random()
       });
     })
   }
 
   removeFromProductSet = (product) => {
-    const setItem = product.productSets.find(s => {
-      return s.setId == this.state.setId
-    })
-    ApiController.delete(`${SOURCE_PRODUCTS.removeFromSet}`, {
-      ids: [setItem?.id]
-    }, data => {
+    const ids = [product.setId];
+    ApiController.delete(`${PRODUCT_SETS.delete}`, {
+      ids: ids
+    }, () => {
       this.loadCurrentProductSet();
-    }, {
-
     });
   };
 
+  publishUboxProduct = (status) => {
+    const { productSet } = this.state;
+    let isPublish = false, ids = [];
+    productSet.products.forEach(item => {
+      if (item.uboxProduct === null) {
+        isPublish = true;
+      } else {
+        ids.push(item.uboxProduct.id);
+      }
+    })
+    if (status) {
+      if (!isPublish) {
+        ApiController.callAsync('put', UBOX_PRODUCTS.publish, {
+          ids: ids,
+          status: status
+        })
+          .then(data => {
+            if (data.data.statusCode === 200) {
+              NotificationManager.success(notify_update_success, success, 2000);
+            }
+          }).catch(error => {
+            NotificationManager.warning(error.response.data.message, failed, 2000);
+          });
+      } else {
+        NotificationManager.warning("Còn sản phẩm chưa được biên tập. Yêu cầu biên tập trước", failed, 2000);
+      }
+    } else {
+      ApiController.callAsync('put', UBOX_PRODUCTS.publish, {
+        ids: ids,
+        status: status
+      })
+        .then(data => {
+          if (data.data.statusCode === 200) {
+            NotificationManager.success(notify_update_success, success, 2000);
+          }
+        }).catch(error => {
+          NotificationManager.warning(error.response.data.message, failed, 2000);
+        });
+    }
+  }
+
+
   render() {
-    const { setId } = this.state;
     return (
       <Fragment>
         <Row>
@@ -84,13 +130,14 @@ class SourceProductSets extends Component {
             <Card>
               <CardBody>
                 <CardTitle>
-                  {__(this.messages, 'Bộ sản phẩm')} <b>{this.state.productSet.setName}</b>
+                  {__(this.messages, 'Bộ sản phẩm')}
                 </CardTitle>
                 <Row>
                   <Colxx xxs="11">
                     <Label className="form-group has-float-label">
                       <Input
                         type="text"
+                        disabled={true}
                         value={this.state.productSet.setName}
                         onChange={e => {
                           let { productSet } = this.state;
@@ -128,20 +175,33 @@ class SourceProductSets extends Component {
                   <Colxx xxs="12">
                     <SourceProductTable
                       key={this.state.keyState}
+                      data={this.state.productSet.products}
                       component={this}
-                      selectable={false}
+                      // onPageChange={this.onPageChange}
+                      // onPageSizeChange={this.onPageSizeChange}
                       removeFromSelectedProducts={this.removeFromProductSet}
-                      filter={{
-                        join: 'sourceProductSets||id,setId,sourceProductId',
-                        s: {
-                          'sourceProductSets.setId': {
-                            "$eq": this.state.setId
-                          }
-                        }
-                      }}
                     />
                   </Colxx>
                 </Row>
+                <div className="text-right ">
+                  <Button
+                    color="success"
+                    className="mr-2"
+                    onClick={() => {
+                      this.publishUboxProduct(true);
+                    }}
+                  >
+                    {__(this.messages, "Xuất bản tất cả")}
+                  </Button>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      this.publishUboxProduct(false);
+                    }}
+                  >
+                    {__(this.messages, "Ngừng xuất bản tất cả")}
+                  </Button>
+                </div>
               </CardBody>
             </Card>
           </Colxx>

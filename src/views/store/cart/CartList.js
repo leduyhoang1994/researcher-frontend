@@ -28,7 +28,9 @@ class CartList extends Component {
     getCart = () => {
         let cart = localStorage.getItem("cart");
 
-        if (cart === null || cart.trim() === "") cart = [];
+        if (cart === null || cart.trim() === "") {
+            cart = [];
+        }
         else cart = JSON.parse(cart);
 
         this.setState({
@@ -114,7 +116,9 @@ class CartList extends Component {
     addTotals = () => {
         let total = 0;
         this.state.cart.forEach(item => {
-            total += (item.priceMin + item.priceMax) / 2 * item.quantity
+            if(item.price) {
+                total += item?.price * item?.quantity;
+            }
         });
         this.setState({
             total: total
@@ -174,7 +178,7 @@ class CartList extends Component {
                         })
                         }
                         <Colxx xxs="12" className="text-right">
-                            <h3>Tổng cộng: {numberWithCommas(this.state.total)} VNĐ</h3>
+                            <h3>Tổng cộng: {numberWithCommas(this.state.total.toFixed(0))} đ</h3>
                         </Colxx>
                     </div>
 

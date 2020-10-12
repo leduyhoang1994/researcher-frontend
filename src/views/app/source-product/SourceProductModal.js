@@ -75,15 +75,20 @@ class SourceProductModal extends Component {
         setId: setId,
         itemId: productIds
       }, data => {
-        NotificationManager.success("Thành công", "Thành công");
+        NotificationManager.success("Xem chi tiết tại đây", "Thành công", 5000, () => {
+          window.open(`/app/source-product-sets/${setId}`)
+        });
       });
+
     } else {
       //Create new cateSet
       ApiController.post(PRODUCT_SETS.all, {
         setName: sourceProductSetName,
         ids: productIds
       }, data => {
-        NotificationManager.success("Thành công", "Thành công");
+        NotificationManager.success("Xem chi tiết tại đây", "Thành công", 5000, () => {
+          window.open(`/app/source-product-sets/${data.id}`)
+        });
       });
     }
   }
@@ -137,6 +142,12 @@ class SourceProductModal extends Component {
   render() {
     const { isOpen, toggleModal } = this.props;
     const { handleChange, createSourceProductSet } = this;
+    const { radioValue, selected, sourceProductSetName } = this.state;
+
+    const update = "update-source-product-set";
+    const isDisabled = radioValue === update ? 
+    !(radioValue === update && selected) : 
+    !(radioValue !== update && sourceProductSetName);
 
     return (
       <div>
@@ -175,8 +186,9 @@ class SourceProductModal extends Component {
               }}
             >
               Close
-                    </Button>
+            </Button>
             <Button variant="primary"
+              disabled={isDisabled}
               onClick={() => {
                 toggleModal();
                 createSourceProductSet();

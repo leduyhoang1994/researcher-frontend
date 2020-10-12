@@ -13,9 +13,9 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: "Tony",
-      lastName: "Stark",
-      email: "demo@gmail.com",
+      firstName: "",
+      lastName: "",
+      email: "",
       password: "",
       confirmPassword: ""
     };
@@ -32,7 +32,11 @@ class Register extends Component {
   onUserRegister = (values) => {
     if (values.firstName !== "" && values.lastName !== ""
       && values.email !== "" && values.password !== "" && values.confirmPassword !== "") {
+      if (values.password === values.confirmPassword) {
         this.props.registerUser(values, this.props.history);
+      } else {
+        NotificationManager.warning("Nhập lại mật khẩu không trùng mật khẩu", "Cảnh báo")
+      }
     }
   }
 
@@ -59,7 +63,7 @@ class Register extends Component {
   componentDidUpdate() {
     if (this.props.error) {
       NotificationManager.warning(
-        "Email is existed, please try another!",
+        this.props.error,
         "Register Error",
         3000,
         null,
@@ -100,17 +104,40 @@ class Register extends Component {
                 onSubmit={this.onUserRegister}>
                 {({ errors, touched }) => (
                   <Form>
-                    <Label className="form-group has-float-label mb-4">
-                      <Input type="name" defaultValue={this.state.firstName} />
-                      <IntlMessages id="user.firstName" />
-                    </Label>
-                    <Label className="form-group has-float-label mb-4">
-                      <Input type="name" defaultValue={this.state.lastName} />
-                      <IntlMessages id="user.lastName" />
-                    </Label>
+                    <FormGroup className="form-group has-float-label">
+                      <Label>
+                        <IntlMessages id="user.firstName" />
+                      </Label>
+                      <Field
+                        className="form-control"
+                        name="firstName"
+                        validate={this.validateName}
+                      />
+                      {errors.firstName && touched.firstName && (
+                        <div className="invalid-feedback d-block">
+                          {errors.firstName}
+                        </div>
+                      )}
+                    </FormGroup>
 
                     <FormGroup className="form-group has-float-label">
-                      <Label className="form-group has-float-label mb-4">
+                      <Label >
+                        <IntlMessages id="user.lastName" />
+                      </Label>
+                      <Field
+                        className="form-control"
+                        name="lastName"
+                        validate={this.validateName}
+                      />
+                      {errors.lastName && touched.lastName && (
+                        <div className="invalid-feedback d-block">
+                          {errors.lastName}
+                        </div>
+                      )}
+                    </FormGroup>
+
+                    <FormGroup className="form-group has-float-label">
+                      <Label >
                         <IntlMessages id="user.email" />
                       </Label>
                       <Field
@@ -161,6 +188,7 @@ class Register extends Component {
 
                     <div className="d-flex justify-content-end align-items-center">
                       <Button
+                        type="submit"
                         color="primary"
                         className="btn-shadow"
                         size="lg"
