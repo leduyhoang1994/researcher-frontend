@@ -49,7 +49,7 @@ module.exports = {
   "menu.chat": "Chat",
   "menu.survey": "Survey",
   "menu.todo": "Todo",
-  "menu.search" :"Search",
+  "menu.search": "Search",
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
   "menu.training-class": "Buổi tập",
@@ -70,32 +70,35 @@ module.exports = {
   "menu.source-category-sets": "Danh sách ngành hàng",
   "menu.source-product-sets": "Danh sách bộ sản phẩm",
 
- /* 04.Error Page */
- "pages.error-title": "Có gì đó không đúng!",
- "pages.error-code": "Mã lỗi",
- "pages.go-back-home": "Quay lại Researcher",
+  /* 04.Error Page */
+  "pages.error-title": "Có gì đó không đúng!",
+  "pages.error-code": "Mã lỗi",
+  "pages.go-back-home": "Quay lại Researcher",
 
- /** 05. Student */
+  /** 05. Student */
 
- /* 06.Forms */
- "forms.title": "Bổ sung vào danh sách có sẵn hay thêm mới?",
- "forms.radios": "Radios",
- "forms.first-radio": "Bổ sung",
- "forms.second-radio": "Thêm mới",
+  /* 06.Forms */
+  "forms.title": "Bổ sung vào danh sách có sẵn hay thêm mới?",
+  "forms.radios": "Radios",
+  "forms.first-radio": "Bổ sung",
+  "forms.second-radio": "Thêm mới",
 
- //  0.7.Table
-"table.react-advanced": "Danh sách ngành hàng",
+  //  0.7.Table
+  "table.react-advanced": "Danh sách ngành hàng",
 
-// 0.8.Menu
-"menu.category": "Ngành hàng",
-"menu.ubox-categories": "Danh sách ngành hàng",
-"menu.products": "Sản phẩm",
-"menu.source-products": "Sản phẩm",
-"menu.store": "Danh sách sản phẩm",
-"menu.ubox-products": "Danh sách sản phẩm",
-"menu.detail": "Chi tiết",
-"menu.add": "Thêm mới",
-"menu.orders": "Đơn hàng",
-"menu.order-detail": "Chi tiết đơn hàng",
+  // 0.8.Menu
+  "menu.category": "Ngành hàng",
+  "menu.ubox-categories": "Danh sách ngành hàng",
+  "menu.products": "Sản phẩm",
+  "menu.source-products": "Sản phẩm",
+  "menu.store": "Danh sách sản phẩm",
+  "menu.ubox-products": "Danh sách sản phẩm",
+  "menu.detail": "Chi tiết",
+  "menu.add": "Thêm mới",
+  "menu.orders": "Đơn hàng",
+  "menu.order-detail": "Chi tiết đơn hàng",
 
+  /* 07.Admin */
+  "admin.name": "Categories",
+  "admin.category": "Category",
 };

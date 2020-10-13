@@ -47,42 +47,46 @@ module.exports = {
   "menu.chat": "Chat",
   "menu.survey": "Survey",
   "menu.todo": "Todo",
-  "menu.search" :"Search",
+  "menu.search": "Search",
   "menu.docs": "Docs",
   "menu.blank-page": "Blank Page",
   "menu.research": "Category",
-  "menu.source-category-sets": "List of category set", 
+  "menu.source-category-sets": "List of category set",
   "menu.source-product-sets": "List of product set",
 
 
- /* 04.Error Page */
- "pages.error-title": "Ooops... looks like an error occurred!",
- "pages.error-code": "Error code",
- "pages.go-back-home": "GO BACK HOME",
+  /* 04.Error Page */
+  "pages.error-title": "Ooops... looks like an error occurred!",
+  "pages.error-code": "Error code",
+  "pages.go-back-home": "GO BACK HOME",
 
- /* 05.Forms */
- "forms.title": "Updating to an existing list or creating a new one?",
- "forms.radios": "Radios",
- "forms.first-radio": "Update",
- "forms.second-radio": "Add New",
+  /* 05.Forms */
+  "forms.title": "Updating to an existing list or creating a new one?",
+  "forms.radios": "Radios",
+  "forms.first-radio": "Update",
+  "forms.second-radio": "Add New",
 
-//  0.6.Table
-"table.react-advanced": "List of categories",
+  //  0.6.Table
+  "table.react-advanced": "List of categories",
 
-// 0.6.Menu
-"menu.category": "Category",
-"menu.ubox-categories": "List of categories",
-"menu.products": "Product",
-"menu.source-products": "Product",
-"menu.ubox-products": "List of products",
-"menu.store": "List of products",
-"menu.detail": "Detail",
-"menu.add": "Add New",
-"menu.orders": "Order",
-"menu.order-detail": "Order detail",
+  // 0.6.Menu
+  "menu.category": "Category",
+  "menu.ubox-categories": "List of categories",
+  "menu.products": "Product",
+  "menu.source-products": "Product",
+  "menu.ubox-products": "List of products",
+  "menu.store": "List of products",
+  "menu.detail": "Detail",
+  "menu.add": "Add New",
+  "menu.orders": "Order",
+  "menu.order-detail": "Order detail",
 
 
-/* 07.Dashboards */
-"dashboards.categories": "Categories",
-"dashboards.category": "Category",
+  /* 07.Dashboards */
+  "dashboards.categories": "Categories",
+  "dashboards.category": "Category",
+
+  /* 07.Admin */
+  "admin.name": "Categories",
+  "admin.category": "Category",
 };

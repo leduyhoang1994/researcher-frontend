@@ -18,6 +18,16 @@ import {
 
 import menuItems from '../../constants/menu';
 
+
+// var menuItems = [];
+// menuItems = multiMenu;
+// menuItems.map((item, index) => {
+//   if(item.id === "admin-page") {
+//     menuItems = menuItems.splice(menuItems[index], 1);
+//   }
+// })
+
+// console.log(menuItems);
 class Sidebar extends Component {
   constructor(props) {
     super(props);

@@ -2,7 +2,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from '../../helpers/Firebase';
 import Api from '../../helpers/Api';
-import { USER, SELLER } from '../../constants/api';
+import { USER, SELLER, USERS } from '../../constants/api';
 import {
     LOGIN_USER,
     REGISTER_USER,
@@ -63,7 +63,7 @@ function* loginWithEmailPassword({ payload }) {
 }
 
 const loginWithEmailPasswordAsync = async (email, password) =>
-    await Api.callAsync('post', USER.login, {
+    await Api.callAsync('post', USERS.login, {
         email: email,
         password: password
     }).then(data => {
@@ -130,7 +130,7 @@ export function* watchRegisterUser() {
     yield takeEvery(REGISTER_USER, registerWithEmailPassword);
 }
 const registerWithEmailPasswordAsync = async (firstName, lastName, email, password, confirmPassword) =>
-    await Api.callAsync('post', USER.register, {
+    await Api.callAsync('post', USERS.register, {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -206,7 +206,7 @@ export function* watchLogoutUser() {
 
 const logoutAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
-    await ApiController.callAsync("POST", USER.logout, null);
+    await ApiController.callAsync("POST", USERS.logout, null);
     history.push('/')
 }
 

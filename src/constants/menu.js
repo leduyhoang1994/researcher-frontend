@@ -52,21 +52,41 @@ const multiMenu = [
       }
     ]
   },
+  {
+    id: "admin-page",
+    icon: "iconsminds-qr-code",
+    label: "Quản lý",
+    to: "/ad",
+    subs: [
+      {
+        id: "admin-detail",
+        icon: "iconsminds-qr-code",
+        label: "Thông tin tài khoản",
+        to: "/admin"
+      },
+      {
+        id: "admin-users",
+        icon: "iconsminds-qr-code",
+        label: "Quản lý tài khoản",
+        to: "/admin/users",
+      },
+    ]
+  },
 ];
 
 let data = [];
 let userDetails = localStorage.getItem("user_details");
 userDetails = userDetails ? JSON.parse(userDetails) : null;
-if (userDetails && userDetails.roles) {
-  userDetails.roles.forEach(role => {
-    if (role.name === "student" || role.name === "super admin") {
+if (userDetails && userDetails.authUser.role) {
+  const roles = userDetails.authUser.role || [];
 
-    }
-    if (role.name === "instructor" || role.name === "collaborator" || role.name === "super admin") {
-      // data = data.concat(classManagersMenu);
-    }
-  });
+  if(roles.includes("admin")) {
+    data = data.concat(multiMenu);
+  } else if(roles.includes("user")) {
+    let menu = multiMenu.slice(0, multiMenu.length - 1);
+    data = data.concat(menu);
+  }
+  
 }
-data = data.concat(multiMenu);
 
 export default data;

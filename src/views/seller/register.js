@@ -9,13 +9,15 @@ import IntlMessages from "../../helpers/IntlMessages";
 import { Colxx } from "../../components/common/CustomBootstrap";
 import { Formik, Form, Field } from "formik";
 import Select from 'react-select';
-import address from '../../data/address.json';
 import { validateName, validatePassword, validateEmailNoRequired, validatePhone } from '../../helpers/Validate';
+import ApiController from "../../helpers/Api";
+import { ADDRESS } from "../../constants/api";
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      address: {},
       seller: {
         firstName: "",
         lastName: "",
@@ -32,14 +34,27 @@ class Register extends Component {
     };
   }
 
-  componentWillMount() {
-    this.getCities();
+  componentDidMount() {
+    this.getAddress();
+  }
+
+  getAddress = () => {
+    ApiController.get(ADDRESS.all, {}, data => {
+      let address = data;
+      delete address["city"];
+      this.setState({
+        address
+      })
+      this.getCities();
+    });
   }
 
   getCities = () => {
     let options = [];
+    const { address } = this.state;
+    let cities = Object.keys(address);
     for (var i = 0; i < 63; i++) {
-      let city = Object.keys(address)[i];
+      let city = cities[i];
       options.push({ label: city, value: i });
     }
     this.setState({
@@ -65,7 +80,7 @@ class Register extends Component {
     });
 
     const index = selectedCity.value;
-    let district = Object.values(address)[index];
+    let district = Object.values(this.state.address)[index];
 
     for (var i = 0; i < 100; i++) {
       let temp = Object.keys(district)[i];
@@ -94,7 +109,7 @@ class Register extends Component {
 
     const index = seller.selectedCity.value;
 
-    let district = Object.values(address)[index];
+    let district = Object.values(this.state.address)[index];
     let temp = district[selectedDistrict.label];
 
     temp.map((value, index) => {

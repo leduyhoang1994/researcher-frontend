@@ -120,16 +120,18 @@ class ProductDetail extends Component {
         for (let i = 0; i < cart.length; i++) {
             if (cart[i].id === product.id) {
                 if (JSON.stringify(cart[i].optionIds) === JSON.stringify(product.optionIds)) {
-                    cart[i].quantity += quantity;
+                    NotificationManager.info("Sản phẩm đã được thêm vào giỏ", "Thông báo", 1000);
                     flag = true;
                     break;
                 }
             }
         }
-        if (!flag) cart.push(product);
-
+        if (!flag) {
+            cart.push(product);
+            NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
+        }
         localStorage.setItem("cart", JSON.stringify(cart));
-        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
+        
     };
 
     setAttribute = (data) => {

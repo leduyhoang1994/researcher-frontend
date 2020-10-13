@@ -3,20 +3,35 @@ export const baseDomain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const apiVersion = 'v1';
 export const apiPath = `${domain}/${apiVersion}`;
 
+/** Address*/
+export const address = 'address';
+export const ADDRESS = {
+  all: `${apiPath}/${address}`,
+}
+
+/** Roles*/
+export const roles = 'roles';
+export const ROLES = {
+  all: `${apiPath}/${roles}`,
+}
+
 /** User */
-export const user = 'auth-users';
+export const users = 'users';
+export const auth_users = 'auth-users';
 export const USERS = {
-  all: `${apiPath}/${user}`,
-  one: `${apiPath}/${user}`,
-  classManagers: `${apiPath}/class-manager`
+  all: `${apiPath}/${auth_users}`,
+  one: `${apiPath}/${auth_users}`,
+  classManagers: `${apiPath}/class-manager`,
+  logout: `${apiPath}/${auth_users}/logout`,
+  login: `${apiPath}/${auth_users}/login`,
+  register: `${apiPath}/${auth_users}/register`,
 }
 
 /** Auth User*/
 export const USER = {
-  logout: `${apiPath}/${user}/logout`,
-  login: `${apiPath}/auth-users/login`,
-  register: `${apiPath}/${user}/register`,
-  details: `${apiPath}/users/info`,
+  all: `${apiPath}/${users}`,
+  roles: `${apiPath}/${users}/roles`,
+  details: `${apiPath}/${users}/info`,
 }
 
 /** Auth Seller*/
