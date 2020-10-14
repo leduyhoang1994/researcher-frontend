@@ -83,7 +83,7 @@ const multiMenu = [
 let data = [];
 let userDetails = localStorage.getItem("user_details");
 userDetails = userDetails ? JSON.parse(userDetails) : null;
-if (userDetails && userDetails.authUser.role) {
+if (userDetails && userDetails?.authUser?.role) {
   const roles = userDetails.authUser.role || [];
 
   if(roles.includes("admin")) {

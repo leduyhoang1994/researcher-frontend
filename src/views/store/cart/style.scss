@@ -1,6 +1,30 @@
 .row-product {
     padding: 0 15px !important;
 }
+.header-collapse {
+    padding: 15px 0;
+    background-color: #eee;
+    span {
+        padding-left: 15px;
+    }
+    &:hover {
+        background-color: #999;
+    }
+}
+.list-product-cart {
+    border-right: 1px solid #eee;
+}
+.collapse .rt-table {
+    .rt-thead .rt-tr .rt-th:first-child{
+        display: none;
+    }
+    .rt-tbody .rt-tr-group .rt-tr .rt-td:first-child{
+        display: none;
+    }
+    .rt-tbody .rt-tr-group .rt-tr .rt-td {
+        padding: 5px;
+    }
+}
 // .cart-table .rt-td {
 //     padding: 10px 5px !important;
 //     margin: 10px 5px 10px 0px !important;

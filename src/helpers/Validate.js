@@ -1,6 +1,5 @@
 
 export const validateName = (value) => {
-    console.log(value);
     let error;
     if (value === "" || value == null || typeof value === "undefined") {
         error = `Please enter this field`;

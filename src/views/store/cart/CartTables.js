@@ -17,30 +17,15 @@ const CartTables = ({
   allProductSelected,
   existInSelectedCart = false,
   addToSelectedCart,
-  removeFromSelectedCart
+  removeFromSelectedCart,
 }) => {
-  // const handleCheckAlls = (checked, data) => {
-  //   handleCheckAll(checked, data)
-  // }
-  // const allProductSelecteds = (data) => {
-  //   allProductSelected(data)
-  // }
-  // const existInSelected = (original) => {
-  //   existInSelectedCart(original)
-  // }
-  // const addToSelected = (original) => {
-  //   addToSelectedCart(original)
-  // }
-  // const removeFromSelected = (original) => {
-  //   removeFromSelectedCart(original)
-  // }
   const columns = () => [
     {
       Header: (e) => {
         return (
           <input type="checkbox" onChange={(event) => {
             if (isFunction(handleCheckAll))
-            handleCheckAll(event.target.checked, e?.data)
+              handleCheckAll(event.target.checked, e?.data)
           }} checked={isFunction(allProductSelected) ? allProductSelected(e?.data.map(item => item._original)) : false} />
         )
       },
@@ -51,12 +36,12 @@ const CartTables = ({
         <div className="text-right">
           <Input
             type="checkbox"
-            checked={existInSelectedCart(props.original)}
+            checked={isFunction(existInSelectedCart) ? existInSelectedCart(props.original) : false}
             onChange={e => {
               if (e.target.checked) {
-                addToSelectedCart(props.original);
+                if (isFunction(addToSelectedCart)) addToSelectedCart(props.original);
               } else {
-                removeFromSelectedCart(props.original);
+                if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(props.original);
               }
             }}
           />
@@ -129,10 +114,10 @@ const CartTables = ({
           if (rowInfo && rowInfo.row) {
             return {
               onClick: (e) => {
-                if (existInSelectedCart(rowInfo.original)) {
-                  removeFromSelectedCart(rowInfo.original);
+                if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
+                  if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
                 } else {
-                  addToSelectedCart(rowInfo.original);
+                  if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
                 }
               },
               style: {

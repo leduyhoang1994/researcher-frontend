@@ -195,10 +195,8 @@ class TopNav extends Component {
 
   handleLogout = () => {
     if (this.props.home === "/store") {
-      console.log("topnav logout seller");
       this.props.logoutSeller(this.props.history);
     } else {
-      console.log("topnav logout user");
       this.props.logoutUser(this.props.history);
     }
     localStorage.removeItem('cart');

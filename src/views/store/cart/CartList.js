@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Button, Collapse, Row } from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import Products from './Products';
 import { connect } from "react-redux";
@@ -13,6 +13,7 @@ import { defaultImg } from '../../../constants/defaultValues';
 import CartTables from './CartTables';
 
 import "./style.scss";
+import OrderModals from './OrderModals';
 
 class CartList extends Component {
     constructor(props) {
@@ -20,10 +21,11 @@ class CartList extends Component {
         this.state = {
             cart: [],
             products: [],
-            total: 0,
             selectedProducts: [],
-            orders: [1, 2, 3],
-            collapse: false
+            orders: [],
+            collapses: [],
+            total: 0,
+            isOpenOrderModals: false
         };
         this.messages = this.props.intl.messages;
     }
@@ -31,6 +33,22 @@ class CartList extends Component {
     componentDidMount() {
         this.getCart();
     }
+
+    toggleOpenOrderModals = () => {
+        this.setState({
+            isOpenOrderModals: !this.state.isOpenOrderModals
+        });
+    }
+
+    toggleCollapse = (index) => {
+        let { collapses } = this.state;
+        let collapse = collapses[index];
+        collapse = !collapse;
+        collapses.splice(index, 1, collapse);
+        this.setState({
+            collapses
+        });
+    };
 
     getCart = () => {
         let cart = localStorage.getItem("cart");
@@ -130,6 +148,74 @@ class CartList extends Component {
         this.setState({
             total: total
         })
+    }
+
+    openOrderModals = () => {
+        if (this.state.selectedProducts.length > 0) {
+            this.toggleOpenOrderModals();
+        } else {
+            NotificationManager.info("Vui lòng chọn sản phẩm trong giỏ", "Thông báo", 1500);
+        }
+    }
+
+    addToOrder = (key, name) => {
+        let { orders, selectedProducts } = this.state;
+        if (key === "update") {
+            let order = {}, idx = 0;
+            orders.forEach((item, index) => {
+                if (Object.keys(item)[0] === name) {
+                    order = orders[index];
+                    idx = index;
+                }
+            })
+            const products = order[name];
+
+            let newProducts = products;
+            selectedProducts.forEach(item => {
+                if (!products.includes(item)) {
+                    newProducts.push(item)
+                }
+            })
+            order[name] = newProducts;
+            order = this.updateInfoOrder(order);
+            orders = orders.splice(idx, 1, order);
+
+            NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
+
+        } else if (key === "add") {
+            let order = this.updateInfoOrder({ [name]: selectedProducts });
+            orders.push(order);
+            let {collapses} = this.state;
+            collapses.push(true);
+            this.setState({collapses})
+            NotificationManager.success("Thêm đơn hàng thành công", "Thông báo", 1500);
+        }
+
+        this.setState({
+            orders
+        })
+    }
+
+    updateInfoOrder = (order) => {
+        let totalPrice = 0, serviceCost = 0, weight = 0, timeToCome = 0;
+        const products = Object.values(order)[0];
+        console.log(products);
+        if (products?.length > 0) {
+            products.forEach(item => {
+                totalPrice += item.offerPrice;
+                // serviceCost += item.offerPrice;
+                weight += item.weight;
+                if(item.workshopIn > timeToCome) {
+                    timeToCome = item.workshopIn;
+                }
+            })
+            order.totalPrice = totalPrice;
+            order.serviceCost = serviceCost;
+            order.weight = weight;
+            order.timeToCome = timeToCome;
+        }
+
+        return order;
     }
 
     orderProduct = () => {
@@ -234,88 +320,139 @@ class CartList extends Component {
     }
 
     render() {
-        const { orders, collapse } = this.state;
-        const products = this.state.products;
+        const optionOrders = [];
+        const { orders, collapses, products } = this.state;
+        if (orders.length > 0) {
+            const keys = orders.map(item => {
+                return Object.keys(item)[0];
+            })
+            keys.forEach(item => {
+                optionOrders.push({ label: item, value: item })
+            })
+        }
+
         if (products.length > 0) {
             return (
                 <Fragment>
-                    <Row>
-                        {/* cart list here */}
-                        <Colxx xxs="7">
-                            <div className="store">
-                                <div className="products">
-                                    <CartTables
-                                        data={products}
-                                        component={this}
-                                        handleCheckAll={this.handleCheckAll}
-                                        allProductSelected={this.allProductSelected}
-                                        addToSelectedCart={this.addToSelectedCart}
-                                        existInSelectedCart={this.existInSelectedCart}
-                                        removeFromSelectedCart={this.removeFromSelectedCart}
-                                    />
-                                    {/* {products.map((product, index) => {
-                                        if (!product.featureImage) product.featureImage = defaultImg;
+                    <Card >
+                        <CardBody >
+                            <Row>
+                                {/* cart list here */}
+                                <Colxx xxs="7" className="list-product-cart">
+                                    <h2>Danh sách sản phẩm</h2>
+                                    <div className="products mt-4">
+                                        <CartTables
+                                            data={products}
+                                            component={this}
+                                            handleCheckAll={this.handleCheckAll}
+                                            allProductSelected={this.allProductSelected}
+                                            addToSelectedCart={this.addToSelectedCart}
+                                            existInSelectedCart={this.existInSelectedCart}
+                                            removeFromSelectedCart={this.removeFromSelectedCart}
+                                        />
+                                    </div>
+                                    <div className="text-right  mt-5">
+                                        <Button
+                                            className="mr-2"
+                                            color="primary"
+                                            onClick={() => {
+                                                this.openOrderModals();
+                                            }}
+                                        >
+                                            Thêm vào đơn hàng
+                                </Button>
+                                    </div>
+                                </Colxx>
+
+                                {/* order here */}
+                                <Colxx xxs="5">
+                                    {orders.length > 0 ? (
+                                        <h2>Danh sách đơn hàng</h2>
+                                    ) : (
+                                            <h2>Chọn sản phẩm để tạo đơn hàng</h2>
+                                        )}
+                                    {orders.map((item, index) => {
                                         return (
-                                            <Products
-                                                key={index}
-                                                item={product}
-                                                decrement={this.decrement}
-                                                increment={this.increment}
-                                                remove={this.remove}
-                                            />
-                                        );
-                                    })} */}
-                                    {/* <Colxx xxs="12" className="text-right">
-                                        <h3>Tổng cộng: {numberWithCommas(this.state.total.toFixed(0))} đ</h3>
-                                    </Colxx> */}
-                                </div>
+                                            <div key={Object.values(item)[0] + index} className="mb-3">
+                                                <div className="text-left header-collapse"
+                                                    onClick={() => {
+                                                        this.toggleCollapse(index)
+                                                    }}
+                                                >
+                                                    <span className="text-left">{Object.keys(item)[0]}</span>
+                                                    {/* <span>{!collapses[index] ? "Mở rộng" : "Thu nhỏ"}</span> */}
+                                                </div>
+                                                <Collapse
+                                                    isOpen={collapses[index]}
+                                                >
+                                                    <CartTables
+                                                        isOrderProducts={false}
+                                                        data={Object.values(item)[0]}
+                                                        component={this}
+                                                        removeFromSelectedCart={this.removeFromSelectedCart}
+                                                    />
+                                                    <Row>
+                                                        <Colxx xxs="6">
+                                                            <div>Tổng giá trị nhập hàng: {item.totalPrice} VNĐ</div>
+                                                        </Colxx>
+                                                        <Colxx xxs="6">
+                                                            <div>Tổng phí dịch vụ: {item.serviceCost} VNĐ</div>
+                                                        </Colxx>
+                                                        <Colxx xxs="6">
+                                                            <div>Thời gian dự kiến hàng về: {item.timeToCome} ngày</div>
+                                                        </Colxx>
+                                                        <Colxx xxs="6">
+                                                            <div>Tổng khối lượng: {item.weight} kg</div>
+                                                        </Colxx>
+                                                        <Colxx xxs="6">
+                                                            <div>Hình thức vận chuyển: {}</div>
+                                                        </Colxx>
+                                                        <Colxx xxs="6">
+                                                            <div>Địa chỉ giao hàng: {}</div>
+                                                        </Colxx>
+                                                    </Row>
+                                                </Collapse>
+                                            </div>
+                                        )
+                                    })}
 
-
-
-                            </div>
-                        </Colxx>
-
-                        {/* order here */}
-                        <Colxx xxs="5">
-                            {orders.map((item, index) => {
-                                return (
-                                    <Collapse key={index} isOpen={collapse}>
-                                        aa
-                                    </Collapse>
-                                )
-                            })}
-                            
-                        </Colxx>
-                    </Row>
-                    <Row>
-                        <Colxx xxs="12">
-                            <div className="text-right card-title mt-5">
-                                <Button
-                                    className="mr-2"
-                                    color="primary"
-                                    onClick={() => {
-                                        this.orderProduct();
-                                    }}
-                                >
-                                    Mua ngay
-                                {/* {__(this.messages, "Thêm vào giỏ" )} */}
-                                </Button>
-                                <Button
-                                    className="mr-2"
-                                    color="primary"
-                                    onClick={() => {
-                                        localStorage.setItem("cart", JSON.stringify([]));
-                                        this.setState({ cart: [] });
-                                        window.open("/store", "_self")
-                                    }}
-                                >
-                                    Xóa giỏ hàng
-                                {/* {__(this.messages, "Thêm vào giỏ" )} */}
-                                </Button>
-                            </div>
-                        </Colxx>
-                    </Row>
-
+                                </Colxx>
+                            </Row>
+                            <Row>
+                                <Colxx xxs="12">
+                                    <div className="text-right mt-5">
+                                        <Button
+                                            className="mr-2"
+                                            color="primary"
+                                            onClick={() => {
+                                                this.orderProduct();
+                                            }}
+                                        >
+                                            Xác nhận đặt hàng
+                                        </Button>
+                                        {/* <Button
+                                            className="mr-2"
+                                            color="primary"
+                                            onClick={() => {
+                                                localStorage.setItem("cart", JSON.stringify([]));
+                                                this.setState({ cart: [] });
+                                                window.open("/store", "_self")
+                                            }}
+                                        >
+                                            Xóa giỏ hàng
+                                        </Button> */}
+                                    </div>
+                                </Colxx>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                    <OrderModals
+                        key={this.state.isOpenOrderModals}
+                        isOpen={this.state.isOpenOrderModals}
+                        toggleModal={this.toggleOpenOrderModals}
+                        addToOrder={this.addToOrder}
+                        optionOrders={optionOrders}
+                    />
                 </Fragment>
             );
         } else {
