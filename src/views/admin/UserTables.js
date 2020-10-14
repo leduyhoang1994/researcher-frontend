@@ -1,22 +1,19 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import IntlMessages, { __ } from '../../helpers/IntlMessages';
+import { __ } from '../../helpers/IntlMessages';
 import ReactTable from "react-table";
-import DataTablePagination from '../../components/DatatablePagination';
-import { Link } from 'react-router-dom';
 import { Button, Input, Label, Row } from 'reactstrap';
 import Select from 'react-select';
 import ConfirmButton from "../../components/common/ConfirmButton";
 import "./style.scss"
 import { Colxx } from '../../components/common/CustomBootstrap';
-import Admin from "./Admin";
 
 const UserTables = ({
   data,
   component,
   options,
-  handleChangeRole,
-  submitChangeRole
+  submitChangeRole,
+  softDeleteUser
 }) => {
   const columns = () => [
     {
@@ -34,7 +31,7 @@ const UserTables = ({
     {
       Header: __(component.messages, "Số điện thoại"),
       sortable: false,
-      accessor: "numberPhone",
+      accessor: "phoneNumber",
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
@@ -59,7 +56,7 @@ const UserTables = ({
       Header: __(component.messages, "Hành động"),
       sortable: false,
       accessor: null,
-      width: 200,
+      width: 270,
       Cell: props => {
         let value = []
         props.original && props.original.userRoles.forEach(item => {
@@ -115,7 +112,6 @@ const UserTables = ({
                             options={options}
                             defaultValue={value}
                             onChange={(e) => {
-                              console.log(e);
                               selectedValue = e;
                             }}
                           />
@@ -131,10 +127,23 @@ const UserTables = ({
               color="primary"
               size="xs"
               onClick={() => {
-                window.open(`/admin/${props.original.id}`)
+                window.open(`/info/${props.original.id}`)
               }}
             >
               Cập nhật
+              {/* <i className="iconsminds-gear-2"></i> */}
+            </Button>
+            <Button
+              className="button ml-2"
+              color="primary"
+              size="xs"
+              onClick={() => {
+                softDeleteUser(props.original.id);
+              }}
+            >
+              {
+                props.original.isActive ? "Vô hiệu hóa" : "Tái sử dụng"
+              }
               {/* <i className="iconsminds-gear-2"></i> */}
             </Button>
           </div>

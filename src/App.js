@@ -91,7 +91,6 @@ class App extends Component {
   }
 
   componentWillMount() {
-    console.log("start get user_details");
     let roles = undefined;
     let userDetails = localStorage.getItem("user_details");
     userDetails = userDetails ? JSON.parse(userDetails) : null;
@@ -101,7 +100,6 @@ class App extends Component {
     this.setState({
       roles
     })
-    console.log(roles);
   }
 
   renderRoleAdmin = () => {
@@ -125,7 +123,7 @@ class App extends Component {
                     component={ViewApp}
                   />
                   <Route
-                    path="/admin"
+                    path="/info"
                     render={props => <ViewAdmin {...props} />}
                   />
                   <Route
@@ -188,6 +186,10 @@ class App extends Component {
                   <Route
                     path="/user"
                     render={props => <ViewUser {...props} />}
+                  />
+                  <Route
+                    path="/info"
+                    render={props => <ViewAdmin {...props} />}
                   />
                   <Route
                     path="/seller"
@@ -259,7 +261,6 @@ class App extends Component {
   render() {
     const { roles } = this.state;
     if (typeof roles === "undefined") {
-      console.log("roles undefined");
       return this.renderRoleUser();
     } else if (roles.length > 0) {
       return (

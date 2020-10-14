@@ -223,7 +223,7 @@ class Sidebar extends Component {
       } else if (this.state.selectedParentMenu === '') {
         this.setState(
           {
-            selectedParentMenu: menuItems[0].id
+            selectedParentMenu: menuItems[0]?.id
           },
           callback
         );

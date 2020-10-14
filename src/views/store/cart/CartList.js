@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Button, Row } from 'reactstrap';
+import { Button, Collapse, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import Products from './Products';
 import { connect } from "react-redux";
@@ -22,6 +22,8 @@ class CartList extends Component {
             products: [],
             total: 0,
             selectedProducts: [],
+            orders: [1, 2, 3],
+            collapse: false
         };
         this.messages = this.props.intl.messages;
     }
@@ -232,6 +234,7 @@ class CartList extends Component {
     }
 
     render() {
+        const { orders, collapse } = this.state;
         const products = this.state.products;
         if (products.length > 0) {
             return (
@@ -274,6 +277,14 @@ class CartList extends Component {
 
                         {/* order here */}
                         <Colxx xxs="5">
+                            {orders.map((item, index) => {
+                                return (
+                                    <Collapse key={index} isOpen={collapse}>
+                                        aa
+                                    </Collapse>
+                                )
+                            })}
+                            
                         </Colxx>
                     </Row>
                     <Row>

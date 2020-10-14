@@ -53,24 +53,30 @@ const multiMenu = [
     ]
   },
   {
+    id: "info-page",
+    icon: "iconsminds-qr-code",
+    label: "Thông tin tài khoản",
+    to: "/info",
+  },
+  {
     id: "admin-page",
     icon: "iconsminds-qr-code",
-    label: "Quản lý",
-    to: "/ad",
-    subs: [
-      {
-        id: "admin-detail",
-        icon: "iconsminds-qr-code",
-        label: "Thông tin tài khoản",
-        to: "/admin"
-      },
-      {
-        id: "admin-users",
-        icon: "iconsminds-qr-code",
-        label: "Quản lý tài khoản",
-        to: "/admin/users",
-      },
-    ]
+    label: "Quản lý tài khoản",
+    to: "/info/users",
+    // subs: [
+    //   {
+    //     id: "admin-detail",
+    //     icon: "iconsminds-qr-code",
+    //     label: "Thông tin tài khoản",
+    //     to: "/admin"
+    //   },
+    //   {
+    //     id: "admin-users",
+    //     icon: "iconsminds-qr-code",
+    //     label: "Quản lý tài khoản",
+    //     to: "/admin/users",
+    //   },
+    // ]
   },
 ];
 
