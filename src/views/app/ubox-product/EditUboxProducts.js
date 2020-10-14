@@ -283,9 +283,11 @@ class EditUboxProducts extends Component {
 
     validateFields = async () => {
         const needToValidate = [
-            { name: "Tên sản phẩm" }, { price: "Giá ubox" },
-            { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
-            { offerPrice: "Giá bán đề xuất" }, { serviceSla: "Dịch vụ SLA" },
+            { name: "Tên sản phẩm" }, 
+            // { price: "Giá ubox" },
+            // { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
+            // { offerPrice: "Giá bán đề xuất" }, 
+            { serviceSla: "Dịch vụ SLA" },
             { transportation: "Hình thức vận chuyển" },
             { workshopIn: "Thời gian phát hàng của cửa hàng" },
             { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },

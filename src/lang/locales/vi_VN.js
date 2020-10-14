@@ -35,6 +35,7 @@ module.exports = {
   "user.district": "Quận / Huyện",
   "user.commune": "Phường / Xã",
   "user.address": "Địa chỉ",
+  "user.company": "Công ty",
 
   /* 03.Menu */
   "menu.app": "Home",

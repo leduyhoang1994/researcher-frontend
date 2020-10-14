@@ -13,7 +13,8 @@ const UserTables = ({
   component,
   options,
   submitChangeRole,
-  softDeleteUser
+  softDeleteUser,
+  toggleOpenUserModal
 }) => {
   const columns = () => [
     {
@@ -127,11 +128,10 @@ const UserTables = ({
               color="primary"
               size="xs"
               onClick={() => {
-                window.open(`/info/${props.original.id}`)
+                toggleOpenUserModal(props.original.id)
               }}
             >
               Cập nhật
-              {/* <i className="iconsminds-gear-2"></i> */}
             </Button>
             <Button
               className="button ml-2"
@@ -144,7 +144,6 @@ const UserTables = ({
               {
                 props.original.isActive ? "Vô hiệu hóa" : "Tái sử dụng"
               }
-              {/* <i className="iconsminds-gear-2"></i> */}
             </Button>
           </div>
         )

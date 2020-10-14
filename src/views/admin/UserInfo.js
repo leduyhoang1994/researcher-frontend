@@ -12,8 +12,9 @@ import { injectIntl } from "react-intl";
 import Select from "react-select";
 import "./style.scss"
 import ConfirmButton from "../../components/common/ConfirmButton";
-import { Field, Formik } from "formik";
+import { Field, Formik, isFunction } from "formik";
 import { validateEmail, validateName, validatePhone } from "../../helpers/Validate";
+import UserModals from "./UserModals";
 
 class UserInfo extends Component {
     constructor(props) {
@@ -40,19 +41,38 @@ class UserInfo extends Component {
             optionsCity: [],
             optionsDistrict: [],
             optionsCommune: [],
-            type: "password"
+            typeInput: "password",
+            isOpenUserModal: false,
         };
-        this.messages = this.props.isPopup ? null : this.props.intl.messages;
+        this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
+        this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
         this.formRef = React.createRef();
+
     }
 
     componentDidMount() {
         this.getAddress();
-        if (this.state.id) {
-            this.loadUsers(this.state.id);
-        } else {
-            this.loadUsers();
+        let { id } = this.state;
+        if (this.props?.userId !== undefined && this.props?.userId !== null) {
+            id = this.props.userId;
+            this.setState({ id })
         }
+
+        if (this.props?.type !== "modal") {
+            if (id) {
+                this.loadUsers(id);
+            } else {
+                this.loadUsers();
+            }
+        } else if (id) {
+            this.loadUsers(id);
+        }
+    }
+
+    toggleOpenUserModal() {
+        this.setState({
+            isOpenUserModal: !this.state.isOpenUserModal
+        })
     }
 
     loadUsers = (id) => {
@@ -63,7 +83,10 @@ class UserInfo extends Component {
             });
         } else {
             ApiController.get(`${USER.details}`, {}, data => {
-                this.setState({ user: data });
+                this.setState({
+                    user: data,
+                    id: data?.id
+                });
                 this.defaultCity()
             });
         }
@@ -125,16 +148,6 @@ class UserInfo extends Component {
         this.setState({
             optionsCity: options
         })
-    }
-
-    getUserIdInLocalStorage = () => {
-        let userDetails = localStorage.getItem("user_details");
-        userDetails = userDetails ? JSON.parse(userDetails) : null;
-        console.log(userDetails);
-        if (userDetails) {
-            return userDetails.id;
-        }
-        return null;
     }
 
     handleChangeCity = city => {
@@ -241,10 +254,8 @@ class UserInfo extends Component {
 
     submitChangePassword = () => {
         let id = null;
-        if(this.state.id) {
+        if (this.state.id) {
             id = this.state.id;
-        } else {
-            id = this.getUserIdInLocalStorage();
         }
         const { passwordCheck, password, confirmPassword } = this.state.user;
         const data = { id, passwordCheck, password, confirmPassword };
@@ -257,28 +268,40 @@ class UserInfo extends Component {
             });
     }
 
-    createUser = () => {
-        let flag = true, id = null;
-        if (this.state.id) {
-            id = this.state.id;
-        } else {
-            id = this.getUserIdInLocalStorage();
+    validateField = async () => {
+        const needToValidate = [{ firstName: "Họ" }, { lastName: "Tên" },
+        { phoneNumber: "Số điện thoại" }, { email: "E-mail" },
+        { password: "Mật khẩu" }, { confirmPassword: "Xác nhận mật khẩu" }]
+        let success = true;
+        for await (const field of needToValidate) {
+            let fieldName = "", fieldValue = "";
+            for (let key in field) {
+                fieldName = key;
+                fieldValue = field[key];
+            }
+            if ((this.state.user[fieldName] || "") === "") {
+                if((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
+                } else {
+                    success = false;
+                    NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
+                }
+            }
         }
+        return success;
+    }
+
+    createUser = async () => {
+        if (await this.validateField()) {
+            this.callApi();
+        } else {
+            return;
+        }
+    }
+
+    callApi = () => {
+        let flag = true, id = this.state.id || null;
         const { selectedCity, selectedDistrict, selectedCommune } = this.state;
         let { user } = this.state;
-        if (user.firstName === "" || user.firstName === null) {
-            NotificationManager.error(`Trường Họ cần phải nhập`);
-            flag = false;
-        }
-        if (user.lastName === "" || user.lastName === null) {
-            NotificationManager.error(`Trường Tên cần phải nhập`);
-            flag = false;
-        }
-        if (user.phoneNumber === "" || user.phoneNumber === null) {
-            NotificationManager.error(`Trường Số điện thoại cần phải nhập`);
-            flag = false;
-        }
-
         if (flag) {
             if (selectedCity) {
                 user.city = selectedCity.label;
@@ -305,8 +328,11 @@ class UserInfo extends Component {
     }
 
     render() {
-        const { user, optionsCity, optionsDistrict, optionsCommune, type, selectedCity, selectedDistrict, selectedCommune } = this.state;
+        const { user, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
         const { firstName, lastName, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = user;
+
+        const isDisabled = (password && confirmPassword) ? ((password === confirmPassword) ? false : true) : true;
+        const showChangePassword = (this.props?.type === "modal" && !this.state.id) ? false : true;
 
         return (
             <Fragment>
@@ -369,7 +395,7 @@ class UserInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        disabled
+                                        disabled={this.props?.type !== "modal" ? true : false}
                                         type="text"
                                         value={email || ""}
                                         name="email"
@@ -435,6 +461,41 @@ class UserInfo extends Component {
                                     </span>
                                 </Label>
                             </Colxx>
+                            {
+                                !this.state.id ? (
+                                    <>
+                                        <Colxx xxs="6">
+                                            <Label className="has-float-label ">
+                                                <Input
+                                                    type={typeInput}
+                                                    value={password || ""}
+                                                    name="password"
+                                                    onChange={(e) => {
+                                                        this.handleChangeInput(e)
+                                                    }}
+                                                />
+                                                <span >
+                                                    <IntlMessages id="Mật khẩu mới *" />
+                                                </span>
+                                            </Label>
+                                        </Colxx>
+                                        <Colxx xxs="6">
+                                            <Label className="has-float-label ">
+                                                <Input
+                                                    type={typeInput}
+                                                    value={confirmPassword || ""}
+                                                    name="confirmPassword"
+                                                    onChange={(e) => {
+                                                        this.handleChangeInput(e)
+                                                    }}
+                                                />
+                                                <span >
+                                                    <IntlMessages id="user.confirmPassword" />
+                                                </span>
+                                            </Label>
+                                        </Colxx></>
+                                ) : (<></>)
+                            }
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
@@ -451,143 +512,124 @@ class UserInfo extends Component {
                                     </span>
                                 </Label>
                             </Colxx>
-                            {/* <Colxx xxs="6">
-                                <Label className="has-float-label ">
-                                    <Input
-                                        type="password"
-                                        value={passwordCheck || ""}
-                                        name="passwordCheck"
-                                        onLoad={(e) => {
-                                            this.handleChangeInput(e)
+                        </Row>
+                        <div className="text-right mt-3">
+                            {
+                                showChangePassword ? (
+                                    <ConfirmButton
+                                        isDisabled={isDisabled}
+                                        btnConfig={{ color: "warning", className: "mr-2" }}
+                                        content={{
+                                            close: "Đóng",
+                                            confirm: "Xác nhận"
                                         }}
-                                        onChange={(e) => {
-                                            this.handleChangeInput(e)
+                                        onConfirm={() => {
+                                            this.submitChangePassword();
+                                        }}
+                                        buttonContent={() => {
+                                            return (
+                                                <>Đổi mật khẩu</>
+                                            );
+                                        }}
+                                        confirmHeader={() => {
+                                            return (
+                                                <>Thay đổi mật khẩu</>
+                                            );
+                                        }}
+                                        closeOnConfirm={true}
+                                        confirmContent={() => {
+                                            return (
+                                                <div>
+                                                    <Row id="popup-change-password">
+                                                        <Colxx xxs="12">
+                                                            <Label className="has-float-label ">
+                                                                <Input
+                                                                    type={typeInput}
+                                                                    value={passwordCheck || ""}
+                                                                    name="passwordCheck"
+                                                                    onChange={(e) => {
+                                                                        this.handleChangeInput(e)
+                                                                    }}
+                                                                />
+                                                                <span>
+                                                                    <IntlMessages id="Mật khẩu hiện tại *" />
+                                                                </span>
+                                                            </Label>
+                                                        </Colxx>
+                                                        <Colxx xxs="12">
+                                                            <Label className="has-float-label ">
+                                                                <Input
+                                                                    type={typeInput}
+                                                                    value={password || ""}
+                                                                    name="password"
+                                                                    onChange={(e) => {
+                                                                        this.handleChangeInput(e)
+                                                                    }}
+                                                                />
+                                                                <span >
+                                                                    <IntlMessages id="Mật khẩu mới *" />
+                                                                </span>
+                                                            </Label>
+                                                        </Colxx>
+                                                        <Colxx xxs="12">
+                                                            <Label className="has-float-label ">
+                                                                <Input
+                                                                    type={typeInput}
+                                                                    value={confirmPassword || ""}
+                                                                    name="confirmPassword"
+                                                                    onChange={(e) => {
+                                                                        this.handleChangeInput(e)
+                                                                    }}
+                                                                />
+                                                                <span >
+                                                                    <IntlMessages id="user.confirmPassword" />
+                                                                </span>
+                                                            </Label>
+                                                        </Colxx>
+                                                        <Colxx xxs="12">
+                                                            <Button
+                                                                size="xs"
+                                                                className="button"
+                                                                color="primary"
+                                                                onClick={() => {
+                                                                    typeInput === "password" ? (
+                                                                        this.setState({
+                                                                            typeInput: "text"
+                                                                        })
+                                                                    ) : (
+                                                                            this.setState({
+                                                                                typeInput: "password"
+                                                                            })
+                                                                        )
+                                                                }}
+                                                            >
+                                                                {typeInput === "password" ? "Hiển thị" : "Ẩn"}
+                                                            </Button>
+                                                        </Colxx>
+                                                    </Row>
+                                                </div>
+                                            );
                                         }}
                                     />
-                                    <span >
-                                        <IntlMessages id="Mật khẩu *" />
-                                    </span>
-                                </Label>
-                            </Colxx> */}
-                        </Row>
-                        {
-                            !this.props.isPopup ?
-                                (
-                                    <div className="text-right mt-3">
-                                        <ConfirmButton
-                                            isDisabled={(password && confirmPassword) ? ((password === confirmPassword) ? false : true) : true}
-                                            btnConfig={{ color: "warning", className: "mr-2" }}
-                                            content={{
-                                                close: "Đóng",
-                                                confirm: "Xác nhận"
-                                            }}
-                                            onConfirm={() => {
-                                                this.submitChangePassword();
-                                            }}
-                                            buttonContent={() => {
-                                                return (
-                                                    <>Đổi mật khẩu</>
-                                                );
-                                            }}
-                                            confirmHeader={() => {
-                                                return (
-                                                    <>Thay đổi mật khẩu</>
-                                                );
-                                            }}
-                                            closeOnConfirm={true}
-                                            confirmContent={() => {
-                                                return (
-                                                    <div>
-                                                        <Row id="popup-change-password">
-                                                            {
-                                                                !this.state.id ? (
-                                                                    <Colxx xxs="12">
-                                                                        <Label className="has-float-label ">
-                                                                            <Input
-                                                                                type={type}
-                                                                                value={passwordCheck || ""}
-                                                                                name="passwordCheck"
-                                                                                onChange={(e) => {
-                                                                                    this.handleChangeInput(e)
-                                                                                }}
-                                                                            />
-                                                                            <span >
-                                                                                <IntlMessages id="Mật khẩu hiện tại *" />
-                                                                            </span>
-                                                                        </Label>
-                                                                    </Colxx>
-                                                                ) : (<></>)
-                                                            }
-                                                            <Colxx xxs="12">
-                                                                <Label className="has-float-label ">
-                                                                    <Input
-                                                                        type={type}
-                                                                        value={password || ""}
-                                                                        name="password"
-                                                                        onChange={(e) => {
-                                                                            this.handleChangeInput(e)
-                                                                        }}
-                                                                    />
-                                                                    <span >
-                                                                        <IntlMessages id="Mật khẩu mới *" />
-                                                                    </span>
-                                                                </Label>
-                                                            </Colxx>
-                                                            <Colxx xxs="12">
-                                                                <Label className="has-float-label ">
-                                                                    <Input
-                                                                        type={type}
-                                                                        value={confirmPassword || ""}
-                                                                        name="confirmPassword"
-                                                                        onChange={(e) => {
-                                                                            this.handleChangeInput(e)
-                                                                        }}
-                                                                    />
-                                                                    <span >
-                                                                        <IntlMessages id="user.confirmPassword" />
-                                                                    </span>
-                                                                </Label>
-                                                            </Colxx>
-                                                            <Colxx xxs="12">
-                                                                <Button
-                                                                    size="xs"
-                                                                    className="button"
-                                                                    color="primary"
-                                                                    onClick={() => {
-                                                                        type === "password" ? (
-                                                                            this.setState({
-                                                                                type: "text"
-                                                                            })
-                                                                        ) : (
-                                                                                this.setState({
-                                                                                    type: "password"
-                                                                                })
-                                                                            )
-                                                                    }}
-                                                                >
-                                                                    {type === "password" ? "Hiển thị" : "Ẩn"}
-                                                                </Button>
-                                                            </Colxx>
-                                                        </Row>
-                                                    </div>
-                                                );
-                                            }}
-                                        />
-                                        <Button
-                                            className="button"
-                                            color="primary"
-                                            onClick={() => {
-                                                this.createUser();
-                                            }}
-                                        >
-                                            Cập nhật
-                                        </Button>
-                                    </div>
-                                )
-                                : (<></>)
-                        }
+                                ) : (<></>)
+                            }
+                            <Button
+                                className="button"
+                                color="primary"
+                                onClick={() => {
+                                    this.createUser();
+                                }}
+                            >
+                                {this.state.id ? "Cập nhật" : "Thêm mới"}
+                            </Button>
+                        </div>
                     </CardBody>
                 </Card >
+                <UserModals
+                    key={this.state.isOpenUserModal}
+                    isOpenModal={this.state.isOpenUserModal}
+                    toggleOpenUserModal={this.toggleOpenUserModal}
+                />
             </Fragment >
         );
     }

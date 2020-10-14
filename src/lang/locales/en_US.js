@@ -34,6 +34,7 @@ module.exports = {
   "user.district": "District",
   "user.commune": "Commune",
   "user.address": "Street",
+  "user.company": "Company",
 
   /* 03.Menu */
   "menu.app": "Home",

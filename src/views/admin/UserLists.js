@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Input, CardBody } from "reactstrap";
+import { Row, Card, Label, Input, CardBody, Button } from "reactstrap";
 
 import { NotificationManager } from "../../components/common/react-notifications";
 
@@ -10,11 +10,13 @@ import UserTables from "./UserTables";
 import { injectIntl } from "react-intl";
 import ConfirmButton from "../../components/common/ConfirmButton";
 import Admin from "./UserInfo";
+import UserModals from "./UserModals";
 
 class UserLists extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: null,
             fullName: "",
             phoneNumber: "",
             email: "",
@@ -25,12 +27,10 @@ class UserLists extends Component {
             roleName: "",
             users: [],
             roles: [],
+            isOpenUserModal: false,
         };
-        this.messages = this.props.isPopup ? null : this.props.intl.messages;
-    }
-
-    componentWillMount() {
-        
+        this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
+        this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
     }
 
     componentDidMount() {
@@ -42,9 +42,9 @@ class UserLists extends Component {
         ApiController.get(USER.all, {}, data => {
             let value = [];
             const user = JSON.parse(localStorage.getItem('user_details') || "") || null;
-            if(user && data) {
+            if (user && data) {
                 data.forEach(item => {
-                    if(item.id !== user.id) {
+                    if (item.id !== user.id) {
                         value.push(item);
                     }
                 })
@@ -92,6 +92,13 @@ class UserLists extends Component {
             });
     }
 
+    toggleOpenUserModal(id) {
+        this.setState({
+            id,
+            isOpenUserModal: !this.state.isOpenUserModal,
+        })
+    }
+
     createUser = () => {
         console.log(this.state);
     }
@@ -120,11 +127,38 @@ class UserLists extends Component {
                                     component={this}
                                     submitChangeRole={this.submitChangeRole}
                                     softDeleteUser={this.softDeleteUser}
+                                    toggleOpenUserModal={this.toggleOpenUserModal}
                                 />
                             </Colxx>
                         </Row>
+                        <div className="text-right mt-3">
+                                <Button
+                                    className="mr-3"
+                                    color="primary"
+                                    onClick={() => {
+                                        this.toggleOpenUserModal()
+                                    }}
+                                >
+                                    Thêm mới
+                                </Button>
+                                {/* <Button
+                                    className="button"
+                                    color="primary"
+                                    onClick={() => {
+                                        this.createUser();
+                                    }}
+                                >
+                                    Cập nhật
+                                </Button> */}
+                            </div>
                     </CardBody>
                 </Card >
+                <UserModals
+                    userId={this.state.id}
+                    key={this.state.isOpenUserModal}
+                    isOpenModal={this.state.isOpenUserModal}
+                    toggleOpenUserModal={this.toggleOpenUserModal}
+                />
             </Fragment >
         );
     }
