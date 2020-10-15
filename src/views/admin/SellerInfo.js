@@ -1,27 +1,23 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, Input, CardBody, Form, FormGroup } from "reactstrap";
-import { connect } from "react-redux";
+import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
 
 import ApiController from '../../helpers/Api';
-import { USER, ADDRESS, USERS } from '../../constants/api';
-import { loginUser } from "../../redux/actions";
+import { SELLER, ADDRESS } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
 import "./style.scss"
 import ConfirmButton from "../../components/common/ConfirmButton";
-import { Field, Formik, isFunction } from "formik";
-import { validateEmail, validateName, validatePhone } from "../../helpers/Validate";
 import UserModals from "./UserModals";
 
-class UserInfo extends Component {
+class SellerInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
             id: this.props?.match?.params.id || null,
-            user: {
+            seller: {
                 firstName: "",
                 lastName: "",
                 phoneNumber: "",
@@ -29,7 +25,6 @@ class UserInfo extends Component {
                 address: "",
                 company: "",
                 password: "",
-                passwordCheck: "",
                 confirmPassword: "",
                 city: "",
                 district: "",
@@ -53,8 +48,8 @@ class UserInfo extends Component {
     componentDidMount() {
         this.getAddress();
         let { id } = this.state;
-        if (this.props?.userId !== undefined && this.props?.userId !== null) {
-            id = this.props.userId;
+        if (this.props?.sellerId !== undefined && this.props?.sellerId !== null) {
+            id = this.props.sellerId;
             this.setState({ id })
         }
 
@@ -77,14 +72,14 @@ class UserInfo extends Component {
 
     loadUsers = (id) => {
         if (id) {
-            ApiController.get(`${USER.details}/${id}`, {}, data => {
-                this.setState({ user: data });
+            ApiController.get(`${SELLER.details}/${id}`, {}, data => {
+                this.setState({ seller: data });
                 this.defaultCity()
             });
         } else {
-            ApiController.get(`${USER.details}`, {}, data => {
+            ApiController.get(`${SELLER.details}`, {}, data => {
                 this.setState({
-                    user: data,
+                    seller: data,
                     id: data?.id
                 });
                 this.defaultCity()
@@ -93,35 +88,35 @@ class UserInfo extends Component {
     }
 
     defaultCity = () => {
-        const { user, optionsCity } = this.state;
-        if (user.city) {
+        const { seller, optionsCity } = this.state;
+        if (seller.city) {
             optionsCity.forEach(item => {
-                if (item.label === user.city) {
+                if (item.label === seller.city) {
                     this.handleChangeCity(item);
                 }
             })
-            if (user.district) {
+            if (seller.district) {
                 this.defaultDistrict()
             }
         }
     }
 
     defaultDistrict = () => {
-        const { user, optionsDistrict } = this.state;
+        const { seller, optionsDistrict } = this.state;
         optionsDistrict.forEach(item => {
-            if (item.label === user.district) {
+            if (item.label === seller.district) {
                 this.handleChangeDistrict(item);
             }
         })
-        if (user.town) {
+        if (seller.town) {
             this.defaultCommune()
         }
     }
 
     defaultCommune = () => {
-        const { user, optionsCommune } = this.state;
+        const { seller, optionsCommune } = this.state;
         optionsCommune.forEach(item => {
-            if (item.label === user.town) {
+            if (item.label === seller.town) {
                 this.handleChangeCommune(item);
             }
         })
@@ -212,10 +207,10 @@ class UserInfo extends Component {
     };
 
     handleChangeInput = (e) => {
-        const { user } = this.state;
-        user[e.target.name] = e.target.value;
+        const { seller } = this.state;
+        seller[e.target.name] = e.target.value;
         this.setState({
-            user
+            seller
         })
     }
 
@@ -252,16 +247,12 @@ class UserInfo extends Component {
         }
     }
 
-    submitChangePassword = () => {
-        let id = null;
-        if (this.state.id) {
-            id = this.state.id;
-        }
-        const { passwordCheck, password, confirmPassword } = this.state.user;
-        const data = { id, passwordCheck, password, confirmPassword };
-        console.log(data);
-        ApiController.callAsync('put', USER.all, data)
+    submitChangeType = () => {
+        const { id, accountTypeId } = this.state;
+        const data = { sellerId: id, accountTypeId: 1 }
+        ApiController.callAsync('put', SELLER.type, data)
             .then(data => {
+                console.log(data);
                 NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
             }).catch(error => {
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
@@ -279,7 +270,7 @@ class UserInfo extends Component {
                 fieldName = key;
                 fieldValue = field[key];
             }
-            if ((this.state.user[fieldName] || "") === "") {
+            if ((this.state.seller[fieldName] || "") === "") {
                 if ((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
                 } else {
                     success = false;
@@ -301,53 +292,39 @@ class UserInfo extends Component {
     callApi = () => {
         let flag = true, id = this.state.id || null;
         const { selectedCity, selectedDistrict, selectedCommune } = this.state;
-        let { user } = this.state;
+        let { seller } = this.state;
         if (flag) {
             if (selectedCity) {
-                user.city = selectedCity.label;
+                seller.city = selectedCity.label;
             }
             if (selectedDistrict) {
-                user.district = selectedDistrict.label;
+                seller.district = selectedDistrict.label;
             }
             if (selectedCommune) {
-                user.town = selectedCommune.label;
+                seller.town = selectedCommune.label;
             }
-            const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = user;
+            const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
+            if(password !== "" && password === confirmPassword) {
+                const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword };
 
-
-            if (id) {
-                const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
-                ApiController.callAsync('put', USER.all, data)
+                ApiController.callAsync('put', SELLER.admin, data)
                     .then(data => {
                         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-                        if (this.props?.type !== "modal") {
-                            setTimeout(() => {
-                                window.open(`/info/${data.data.result.id}`, "_self")
-                            }, 2000)
-                        }
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                     });
-            } else {
-                const data = { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword };
-                ApiController.callAsync('post', USERS.register, data)
-                    .then(data => {
-                        NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
-                        this.props.toggleOpenUserModal()
-                    }).catch(error => {
-                        NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-                    });
+            } else if(password !== "" && password !== confirmPassword){
+                NotificationManager.warning("Xác nhận mật khẩu không trùng mật khẩu", "Thông báo", 1500);
             }
-
+            
         }
     }
 
     render() {
-        const { user, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
-        const { firstName, lastName, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = user;
+        const { seller, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
+        const { firstName, lastName, username, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = seller;
 
-        const isDisabled = (password && confirmPassword) ? ((password === confirmPassword) ? false : true) : true;
-        const showChangePassword = (this.props?.type === "modal" && !this.state.id) ? false : true;
+        const isDisabled = false;
 
         return (
             <Fragment>
@@ -362,7 +339,6 @@ class UserInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        className=""
                                         type="text"
                                         value={firstName || ""}
                                         name="firstName"
@@ -378,7 +354,6 @@ class UserInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        className=""
                                         type="text"
                                         value={lastName || ""}
                                         name="lastName"
@@ -394,7 +369,22 @@ class UserInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        className=""
+                                        disabled
+                                        type="text"
+                                        value={username || ""}
+                                        name="username"
+                                        onChange={(e) => {
+                                            this.handleChangeInput(e)
+                                        }}
+                                    />
+                                    <span >
+                                        <IntlMessages id="user.userName" />
+                                    </span>
+                                </Label>
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <Label className="has-float-label ">
+                                    <Input
                                         type="text"
                                         value={phoneNumber || ""}
                                         name="phoneNumber"
@@ -410,7 +400,6 @@ class UserInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        disabled={this.props?.type !== "modal" ? true : false}
                                         type="text"
                                         value={email || ""}
                                         name="email"
@@ -435,7 +424,6 @@ class UserInfo extends Component {
                                     <IntlMessages id="user.city" />
                                 </Label>
                             </Colxx>
-
                             <Colxx xxs="6">
                                 <Label className="form-group has-float-label mb-4">
                                     <Select
@@ -476,41 +464,6 @@ class UserInfo extends Component {
                                     </span>
                                 </Label>
                             </Colxx>
-                            {
-                                !this.state.id ? (
-                                    <>
-                                        <Colxx xxs="6">
-                                            <Label className="has-float-label ">
-                                                <Input
-                                                    type={typeInput}
-                                                    value={password || ""}
-                                                    name="password"
-                                                    onChange={(e) => {
-                                                        this.handleChangeInput(e)
-                                                    }}
-                                                />
-                                                <span >
-                                                    <IntlMessages id="Mật khẩu mới *" />
-                                                </span>
-                                            </Label>
-                                        </Colxx>
-                                        <Colxx xxs="6">
-                                            <Label className="has-float-label ">
-                                                <Input
-                                                    type={typeInput}
-                                                    value={confirmPassword || ""}
-                                                    name="confirmPassword"
-                                                    onChange={(e) => {
-                                                        this.handleChangeInput(e)
-                                                    }}
-                                                />
-                                                <span >
-                                                    <IntlMessages id="user.confirmPassword" />
-                                                </span>
-                                            </Label>
-                                        </Colxx></>
-                                ) : (<></>)
-                            }
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
@@ -527,107 +480,80 @@ class UserInfo extends Component {
                                     </span>
                                 </Label>
                             </Colxx>
-                        </Row>
-                        <div className="text-right mt-3">
-                            {
-                                showChangePassword ? (
-                                    <ConfirmButton
-                                        isDisabled={isDisabled}
-                                        btnConfig={{ color: "warning", className: "mr-2" }}
-                                        content={{
-                                            close: "Đóng",
-                                            confirm: "Xác nhận"
-                                        }}
-                                        onConfirm={() => {
-                                            this.submitChangePassword();
-                                        }}
-                                        buttonContent={() => {
-                                            return (
-                                                <>Đổi mật khẩu</>
-                                            );
-                                        }}
-                                        confirmHeader={() => {
-                                            return (
-                                                <>Thay đổi mật khẩu</>
-                                            );
-                                        }}
-                                        closeOnConfirm={true}
-                                        confirmContent={() => {
-                                            return (
-                                                <div>
-                                                    <Row id="popup-change-password">
-                                                        <Colxx xxs="12">
-                                                            <Label className="has-float-label ">
-                                                                <Input
-                                                                    type={typeInput}
-                                                                    value={passwordCheck || ""}
-                                                                    name="passwordCheck"
-                                                                    onChange={(e) => {
-                                                                        this.handleChangeInput(e)
-                                                                    }}
-                                                                />
-                                                                <span>
-                                                                    <IntlMessages id="Mật khẩu hiện tại *" />
-                                                                </span>
-                                                            </Label>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <Label className="has-float-label ">
-                                                                <Input
-                                                                    type={typeInput}
-                                                                    value={password || ""}
-                                                                    name="password"
-                                                                    onChange={(e) => {
-                                                                        this.handleChangeInput(e)
-                                                                    }}
-                                                                />
-                                                                <span >
-                                                                    <IntlMessages id="Mật khẩu mới *" />
-                                                                </span>
-                                                            </Label>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <Label className="has-float-label ">
-                                                                <Input
-                                                                    type={typeInput}
-                                                                    value={confirmPassword || ""}
-                                                                    name="confirmPassword"
-                                                                    onChange={(e) => {
-                                                                        this.handleChangeInput(e)
-                                                                    }}
-                                                                />
-                                                                <span >
-                                                                    <IntlMessages id="user.confirmPassword" />
-                                                                </span>
-                                                            </Label>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <Button
-                                                                size="xs"
-                                                                className="button"
-                                                                color="primary"
-                                                                onClick={() => {
-                                                                    typeInput === "password" ? (
-                                                                        this.setState({
-                                                                            typeInput: "text"
-                                                                        })
-                                                                    ) : (
-                                                                            this.setState({
-                                                                                typeInput: "password"
-                                                                            })
-                                                                        )
-                                                                }}
-                                                            >
-                                                                {typeInput === "password" ? "Hiển thị" : "Ẩn"}
-                                                            </Button>
-                                                        </Colxx>
-                                                    </Row>
-                                                </div>
-                                            );
+                            <Colxx xxs="6">
+                                <Label className="has-float-label ">
+                                    <Input
+                                        type={typeInput}
+                                        value={password || ""}
+                                        name="password"
+                                        onChange={(e) => {
+                                            this.handleChangeInput(e)
                                         }}
                                     />
-                                ) : (<></>)
-                            }
+                                    <span >
+                                        <IntlMessages id="Mật khẩu mới" />
+                                    </span>
+                                </Label>
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <Label className="has-float-label ">
+                                    <Input
+                                        type={typeInput}
+                                        value={confirmPassword || ""}
+                                        name="confirmPassword"
+                                        onChange={(e) => {
+                                            this.handleChangeInput(e)
+                                        }}
+                                    />
+                                    <span >
+                                        <IntlMessages id="Xác nhận mật khẩu" />
+                                    </span>
+                                </Label>
+                            </Colxx>
+                        </Row>
+                        <div className="text-right mt-3">
+                            <ConfirmButton
+                                isDisabled={isDisabled}
+                                btnConfig={{ color: "warning", className: "mr-2" }}
+                                content={{
+                                    close: "Đóng",
+                                    confirm: "Xác nhận"
+                                }}
+                                onConfirm={() => {
+                                    this.submitChangeType();
+                                }}
+                                buttonContent={() => {
+                                    return (
+                                        <>Đổi loại tài khoản</>
+                                    );
+                                }}
+                                confirmHeader={() => {
+                                    return (
+                                        <>Thay đổi loại tài khoản</>
+                                    );
+                                }}
+                                closeOnConfirm={true}
+                                confirmContent={() => {
+                                    return (
+                                        <div>
+                                            <Row>
+                                                <Colxx xxs="12">
+                                                    <Label className="form-group has-float-label mb-4">
+                                                        <Select
+                                                            className="react-select"
+                                                            classNamePrefix="react-select"
+                                                            value={selectedCity}
+                                                            onChange={this.handleChangeCity}
+                                                            options={optionsCity}
+                                                        />
+                                                        <IntlMessages id="Loại tài khoản" />
+                                                    </Label>
+                                                </Colxx>
+                                            </Row>
+                                        </div>
+                                    );
+                                }}
+                            />
                             <Button
                                 className="button"
                                 color="primary"
@@ -650,4 +576,4 @@ class UserInfo extends Component {
     }
 }
 
-export default injectIntl(UserInfo);
+export default injectIntl(SellerInfo);

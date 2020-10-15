@@ -2,11 +2,14 @@ import React, { Component, Fragment } from "react";
 import { Row, Card, CardBody, Button } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
 import ApiController from '../../helpers/Api';
+import { __ } from '../../helpers/IntlMessages';
 import { USER, ROLES, SELLER } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import UserTables from "./UserTables";
 import { injectIntl } from "react-intl";
 import UserModals from "./UserModals";
+import ReactTable from "react-table";
+
 
 class SellerLists extends Component {
     constructor(props) {
@@ -90,6 +93,53 @@ class SellerLists extends Component {
         console.log(this.state);
     }
 
+    columns = () => [
+        {
+            Header: __(this.messages, "Họ"),
+            sortable: false,
+            accessor: "firstName",
+            Cell: props => <p className="text-muted">{props.value}</p>
+        },
+        {
+            Header: __(this.messages, "Tên"),
+            sortable: false,
+            accessor: "lastName",
+            Cell: props => <p className="text-muted">{props.value}</p>
+        },
+        {
+            Header: __(this.messages, "Số điện thoại"),
+            sortable: false,
+            accessor: "phoneNumber",
+            Cell: props => <p className="text-muted">{props.value}</p>
+        },
+        {
+            Header: __(this.messages, "E-mail"),
+            sortable: false,
+            accessor: "email",
+            Cell: props => <p className="text-muted">{props.value}</p>
+        },
+        {
+            Header: __(this.messages, "Hành động"),
+            sortable: false,
+            accessor: null,
+            width: 280,
+            Cell: props => {
+                return (
+                    <div className="text-left d-block">
+                        <Button
+                            className="button"
+                            color="primary"
+                            size="xs"
+                            onClick={() => {
+                            }}
+                        >
+                            Chi tiết
+                  </Button>
+                    </div>
+                )
+            }
+        },
+    ]
     render() {
         const { sellers, roles } = this.state;
         let optionRoles = [];
@@ -108,27 +158,40 @@ class SellerLists extends Component {
                                 <h2>Danh sách tài khoản</h2>
                             </Colxx>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto">
-                                <UserTables
+                                <ReactTable
+                                    className="-striped -highlight"
                                     data={sellers}
-                                    options={optionRoles}
-                                    component={this}
-                                    submitChangeRole={this.submitChangeRole}
-                                    softDeleteUser={this.softDeleteUser}
-                                    toggleOpenUserModal={this.toggleOpenUserModal}
+                                    columns={this.columns()}
+                                    defaultPageSize={10}
+                                    showPagination={false}
+                                    getTrProps={(state, rowInfo) => {
+                                        if (rowInfo && rowInfo.row) {
+                                            return {
+                                                onClick: (e) => {
+                                                    window.open(`/info/sellers/${rowInfo.original.id}`)
+                                                },
+                                                style: {
+                                                    cursor: "pointer"
+                                                }
+                                            }
+                                        } else {
+                                            return {}
+                                        }
+                                    }}
                                 />
                             </Colxx>
                         </Row>
                         <div className="text-right mt-3">
-                                <Button
-                                    className="mr-3"
-                                    color="primary"
-                                    onClick={() => {
-                                        this.toggleOpenUserModal()
-                                    }}
-                                >
-                                    Thêm mới
+                            <Button
+                                className="mr-3"
+                                color="primary"
+                                onClick={() => {
+                                    this.toggleOpenUserModal()
+                                }}
+                            >
+                                Thêm mới
                                 </Button>
-                                {/* <Button
+                            {/* <Button
                                     className="button"
                                     color="primary"
                                     onClick={() => {
@@ -137,7 +200,7 @@ class SellerLists extends Component {
                                 >
                                     Cập nhật
                                 </Button> */}
-                            </div>
+                        </div>
                     </CardBody>
                 </Card >
                 <UserModals

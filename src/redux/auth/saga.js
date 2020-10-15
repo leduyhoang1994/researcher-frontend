@@ -2,7 +2,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from '../../helpers/Firebase';
 import Api from '../../helpers/Api';
-import { USER, SELLERS, USERS } from '../../constants/api';
+import { USER, SELLERS, SELLER, USERS } from '../../constants/api';
 import {
     LOGIN_USER,
     REGISTER_USER,
@@ -118,7 +118,7 @@ const getUserDetails = async () => {
 }
 
 const getSellerDetails = async () => {
-    return await Api.callAsync('get', SELLERS.details, {}, {
+    return await Api.callAsync('get', SELLER.details, {}, {
 
     }).then(data => {
         return data.data;

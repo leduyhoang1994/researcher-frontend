@@ -46,13 +46,15 @@ export const SELLERS = {
   logout: `${apiPath}/${sellers}/logout`,
   login: `${apiPath}/${sellers}/login`,
   register: `${apiPath}/${sellers}/register`,
-  details: `${apiPath}/seller/info`,
 }
 
 /** Auth Seller*/
 export const seller = 'seller';
 export const SELLER = {
   all: `${apiPath}/${seller}`,
+  details: `${apiPath}/${seller}/info`,
+  admin: `${apiPath}/${seller}/admin`,
+  type: `${apiPath}/${seller}/admin/account-type`,
 }
 
 /** Source Category */

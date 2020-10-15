@@ -11,6 +11,9 @@ const UserLists = React.lazy(() =>
 const SellerLists = React.lazy(() =>
   import(/* webpackChunkName: "list-user" */ './SellerLists')
 );
+const SellerInfo = React.lazy(() =>
+  import(/* webpackChunkName: "seller-info" */ './SellerInfo')
+);
 
 const User = ({ match }) => {
   return (
@@ -21,6 +24,10 @@ const User = ({ match }) => {
           <Route
             path={`${match.url}/users`}
             render={props => <UserLists {...props} />}
+          />
+          <Route
+            path={`${match.url}/sellers/:id`}
+            render={props => <SellerInfo {...props} />}
           />
           <Route
             path={`${match.url}/sellers`}
