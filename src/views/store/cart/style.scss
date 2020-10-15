@@ -14,13 +14,7 @@
 .list-product-cart {
     border-right: 1px solid #eee;
 }
-.collapse .rt-table {
-    .rt-thead .rt-tr .rt-th:first-child{
-        display: none;
-    }
-    .rt-tbody .rt-tr-group .rt-tr .rt-td:first-child{
-        display: none;
-    }
+.rt-table {
     .rt-tbody .rt-tr-group .rt-tr .rt-td {
         padding: 5px;
     }

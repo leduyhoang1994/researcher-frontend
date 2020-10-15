@@ -318,9 +318,11 @@ class UserInfo extends Component {
             ApiController.callAsync('put', USER.all, data)
                 .then(data => {
                     NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-                    setTimeout(() => {
-                        window.open(`/info/${data.data.result.id}`, "_self")
-                    }, 2000)
+                    if(this.props?.type !== "modal") {
+                        setTimeout(() => {
+                            window.open(`/info/${data.data.result.id}`, "_self")
+                        }, 2000)
+                    }
                 }).catch(error => {
                     NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                 });
@@ -634,14 +636,5 @@ class UserInfo extends Component {
         );
     }
 }
-const mapStateToProps = ({ authUser }) => {
-    const { user, loading, error } = authUser;
-    return { user, loading, error };
-};
 
-export default injectIntl(connect(
-    mapStateToProps,
-    {
-        loginUser
-    }
-)(UserInfo));
+export default injectIntl(UserInfo);

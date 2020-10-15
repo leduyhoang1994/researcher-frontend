@@ -324,7 +324,7 @@ class TopNavStore extends Component {
               <span>Giỏ hàng</span>
               <Badge color="secondary" id="badge">{this.props.count}</Badge>
             </Button>
-            <TopnavStoreEasyAccess />
+            {/* <TopnavStoreEasyAccess /> */}
             {/* <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"
               type="button"
@@ -364,9 +364,18 @@ class TopNavStore extends Component {
                 {/* <DropdownItem divider /> */}
                 {
                   isLogin ? (
-                    <DropdownItem onClick={() => this.handleLogout()}>
-                      Sign out
+                    <>
+                      <DropdownItem
+                        onClick={() => {
+                          window.open("/store/info", "_self")
+                        }}
+                      >
+                        Cá nhân
+                      </DropdownItem>
+                      <DropdownItem onClick={() => this.handleLogout()}>
+                        Sign out
                     </DropdownItem>
+                    </>
                   ) : (
                       <DropdownItem onClick={() => this.handleLogin()}>
                         Login

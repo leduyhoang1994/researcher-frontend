@@ -9,6 +9,12 @@ export const ADDRESS = {
   all: `${apiPath}/${address}`,
 }
 
+/** Address Order*/
+export const address_orders = 'address-orders';
+export const ADDRESS_ORDER = {
+  all: `${apiPath}/${address_orders}`,
+}
+
 /** Roles*/
 export const roles = 'roles';
 export const ROLES = {
@@ -35,12 +41,18 @@ export const USER = {
 }
 
 /** Auth Seller*/
-export const seller = 'auth-sellers';
-export const SELLER = {
-  logout: `${apiPath}/${seller}/logout`,
-  login: `${apiPath}/${seller}/login`,
-  register: `${apiPath}/${seller}/register`,
+export const sellers = 'auth-sellers';
+export const SELLERS = {
+  logout: `${apiPath}/${sellers}/logout`,
+  login: `${apiPath}/${sellers}/login`,
+  register: `${apiPath}/${sellers}/register`,
   details: `${apiPath}/seller/info`,
+}
+
+/** Auth Seller*/
+export const seller = 'seller';
+export const SELLER = {
+  all: `${apiPath}/${seller}`,
 }
 
 /** Source Category */
@@ -142,4 +154,16 @@ export const constants = 'constants';
 export const CONSTANTS = {
   all: `${apiPath}/${constants}`,
   type: `${apiPath}/${constants}/type`,
+}
+
+/** TRANSPORTATION */
+export const transportation = 'transportations';
+export const TRANSPORTATION = {
+  all: `${apiPath}/${transportation}`,
+}
+
+/** Group Order */
+export const group_orders = 'group-orders';
+export const GROUP_ORDERS = {
+  all: `${apiPath}/${group_orders}`,
 }

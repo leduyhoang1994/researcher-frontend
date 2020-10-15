@@ -16,3 +16,19 @@
 .ReactTable .rt-td {
   overflow: hidden !important;
 }
+
+.modal-dialog {
+  margin-left: 20%;
+  margin-right: 20%;
+  display: block; 
+  width: 60% !important; 
+  padding-left: 0px;
+  .modal-content {
+      width: 100% !important; 
+  }
+}
+@media (min-width: 576px) {
+  .modal-dialog {
+      max-width: 60%;
+  }
+}

@@ -57,10 +57,10 @@ const UserTables = ({
       Header: __(component.messages, "Hành động"),
       sortable: false,
       accessor: null,
-      width: 270,
+      width: 280,
       Cell: props => {
         let value = []
-        props.original && props.original.userRoles.forEach(item => {
+        props.original?.userRoles && props.original.userRoles.forEach(item => {
           value.push({ label: item.roleId.description, value: item.roleId.name, id: item.roleId.id })
         })
         let selectedValue = [];

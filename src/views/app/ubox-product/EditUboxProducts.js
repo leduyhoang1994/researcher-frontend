@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
+import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS, TRANSPORTATION } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { jsonToFormData, numberWithCommas, parse } from '../../../helpers/Utils'
 import Properties from './Properties';
@@ -34,7 +34,8 @@ class EditUboxProducts extends Component {
                 serviceCost: "",
                 serviceSla: "",
                 sourceProductId: "",
-                transportation: "",
+                transportationIds: [],
+                uboxProductTransportations: [],
                 uboxCategoryId: "",
                 uboxIn: "",
                 uboxProductOptions: [],
@@ -53,7 +54,7 @@ class EditUboxProducts extends Component {
                 serviceSla: '',
                 serviceCost: 0,
                 description: '',
-                transportation: '',
+                transportationIds: [],
                 featureImage: '',
                 workshopIn: 0,
                 uboxIn: 0,
@@ -67,10 +68,12 @@ class EditUboxProducts extends Component {
                 offerPrice: 0,
             },
             selectedCategory: "",
+            selectedTransportation: "",
             optionUboxCategories: [],
             selectedSourceProduct: "",
             optionSourceProducts: [],
             sourceProductSelected: null,
+            optionTrans: [],
             redirect: false,
             loading: false,
             files: [],
@@ -168,7 +171,20 @@ class EditUboxProducts extends Component {
             // window.open(`/app/research`, "_self")
             this.loadCurrentProduct();
         }
+        this.getTransportation();
         this.setState({ loading: false });
+    }
+
+    getTransportation = () => {
+        ApiController.get(TRANSPORTATION.all, {}, data => {
+            let optionTrans = []
+            data.forEach(item => {
+                optionTrans.push({label: item.name, value: item.id})
+            })
+            this.setState({
+                optionTrans
+            })
+        });
     }
 
     loadCurrentProduct = () => {
@@ -179,6 +195,13 @@ class EditUboxProducts extends Component {
 
     getProduct = (id) => {
         ApiController.get(`${UBOX_PRODUCTS.all}/${id}`, {}, data => {
+            console.log(data);
+            let transportation = [];
+            data.uboxProductTransportations.forEach(item => {
+                transportation.push({label: item.transportation.name, value: item.transportation.id})
+            })
+            this.handleChangeTransportation(transportation);
+            
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
@@ -245,6 +268,20 @@ class EditUboxProducts extends Component {
         })
     };
 
+    handleChangeTransportation = (data) => {
+        let product = this.state.product;
+        let transportationIds = []
+        if(data.length > 0) {
+            data.forEach(item => {
+                transportationIds.push(item.value)
+            })
+        }
+        product.transportationIds = transportationIds;
+        this.setState({
+            selectedTransportation: data,
+            product: product
+        })
+    };
 
     handleChangeNumber(event) {
         let value = parseFloat(event.target.value);
@@ -283,12 +320,12 @@ class EditUboxProducts extends Component {
 
     validateFields = async () => {
         const needToValidate = [
-            { name: "Tên sản phẩm" }, 
+            { name: "Tên sản phẩm" },
             // { price: "Giá ubox" },
             // { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
             // { offerPrice: "Giá bán đề xuất" }, 
             { serviceSla: "Dịch vụ SLA" },
-            { transportation: "Hình thức vận chuyển" },
+            { transportationIds: "Hình thức vận chuyển" },
             { workshopIn: "Thời gian phát hàng của cửa hàng" },
             { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
             () => {
@@ -663,11 +700,13 @@ class EditUboxProducts extends Component {
                                             </Colxx>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="text"
-                                                        name="transportation"
-                                                        value={product.transportation}
-                                                        onChange={this.handleChangeText}
+                                                    <Select
+                                                        isMulti
+                                                        className="react-select"
+                                                        classNamePrefix="react-select"
+                                                        options={this.state.optionTrans}
+                                                        value={this.state.selectedTransportation}
+                                                        onChange={this.handleChangeTransportation}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Hình thức vận chuyển *")}

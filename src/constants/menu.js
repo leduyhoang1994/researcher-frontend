@@ -62,21 +62,21 @@ const multiMenu = [
     id: "admin-page",
     icon: "iconsminds-qr-code",
     label: "Quản lý tài khoản",
-    to: "/info/users",
-    // subs: [
-    //   {
-    //     id: "admin-detail",
-    //     icon: "iconsminds-qr-code",
-    //     label: "Thông tin tài khoản",
-    //     to: "/admin"
-    //   },
-    //   {
-    //     id: "admin-users",
-    //     icon: "iconsminds-qr-code",
-    //     label: "Quản lý tài khoản",
-    //     to: "/admin/users",
-    //   },
-    // ]
+    to: "/app",
+    subs: [
+      {
+        id: "user-detail",
+        icon: "iconsminds-qr-code",
+        label: "Nhân viên",
+        to: "/info/users"
+      },
+      {
+        id: "seller-detail",
+        icon: "iconsminds-qr-code",
+        label: "Khách hàng",
+        to: "/info/sellers"
+      },
+    ]
   },
 ];
 

@@ -2,7 +2,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from '../../helpers/Firebase';
 import Api from '../../helpers/Api';
-import { USER, SELLER, USERS } from '../../constants/api';
+import { USER, SELLERS, USERS } from '../../constants/api';
 import {
     LOGIN_USER,
     REGISTER_USER,
@@ -99,7 +99,7 @@ function* loginSellerWithEmailPassword({ payload }) {
 }
 
 const loginSellerWithEmailPasswordAsync = async (userName, password) =>
-    await Api.callAsync('post', SELLER.login, {
+    await Api.callAsync('post', SELLERS.login, {
         username: userName,
         password: password
     }).then(data => {
@@ -118,7 +118,7 @@ const getUserDetails = async () => {
 }
 
 const getSellerDetails = async () => {
-    return await Api.callAsync('get', SELLER.details, {}, {
+    return await Api.callAsync('get', SELLERS.details, {}, {
 
     }).then(data => {
         return data.data;
@@ -184,7 +184,7 @@ function* registerSellerWithEmailPassword({ payload }) {
 }
 
 const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address) =>
-    await Api.callAsync('post', SELLER.register, {
+    await Api.callAsync('post', SELLERS.register, {
         firstName: firstName,
         lastName: lastName,
         username: userName,
@@ -226,7 +226,7 @@ export function* watchLogoutSeller() {
 
 const logoutSellerAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
-    await ApiController.callAsync("POST", SELLER.logout, null);
+    await ApiController.callAsync("POST", SELLERS.logout, null);
     history.push('/store')
 }
 

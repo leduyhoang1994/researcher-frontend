@@ -1,42 +1,70 @@
 import React, { Component, Fragment } from 'react';
-import { Button, Card, CardBody, Collapse, Row } from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Label, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
 import Products from './Products';
 import { connect } from "react-redux";
 import { changeCount } from "../../../redux/actions";
 import { Colxx } from "../../../components/common/CustomBootstrap";
-import { ORDERS } from '../../../constants/api';
+import { ADDRESS_ORDER, ORDERS, TRANSPORTATION } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { numberWithCommas } from "../../../helpers/Utils";
+import { numberFormat, numberWithCommas } from "../../../helpers/Utils";
 import { defaultImg } from '../../../constants/defaultValues';
 import CartTables from './CartTables';
 
 import "./style.scss";
 import OrderModals from './OrderModals';
+import ApiController from '../../../helpers/Api';
+import OrderTables from './OrderTables';
+import Select from 'react-select';
+import IntlMessages from '../../../helpers/IntlMessages';
+import ConfirmButton from '../../../components/common/ConfirmButton';
+import CreateAddressModals from './CreateAddressModals';
+import GroupOrderModals from './GroupOrderModals';
 
 class CartList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            total: 0,
             cart: [],
             products: [],
             selectedProducts: [],
             orders: [],
             collapses: [],
-            total: 0,
-            isOpenOrderModals: false
+            groupOrderId: null,
+            isOpenOrderModals: false,
+            isOpenCreateAddress: false,
+            isOpenGroupOrderModals: false,
+            optionTrans: [],
+            optionAddress: [],
+            selectedAddress: [],
+
         };
         this.messages = this.props.intl.messages;
     }
 
     componentDidMount() {
         this.getCart();
+        this.getTransportation();
+        this.getSellerAddress();
     }
 
     toggleOpenOrderModals = () => {
         this.setState({
             isOpenOrderModals: !this.state.isOpenOrderModals
+        });
+    }
+
+    toggleOpenGroupOrderModals = () => {
+        this.setState({
+            isOpenGroupOrderModals: !this.state.isOpenGroupOrderModals
+        });
+    }
+
+    toggleModalCreateAddress = () => {
+        this.setState({
+            isOpenCreateAddress: !this.state.isOpenCreateAddress
         });
     }
 
@@ -50,14 +78,44 @@ class CartList extends Component {
         });
     };
 
+    setGroupOrderId = id => {
+        this.setState({
+            groupOrderId: id
+        })
+        this.toggleOpenOrderModals();
+    }
+
+    getSellerAddress = () => {
+        let optionAddress = [];
+        ApiController.get(ADDRESS_ORDER.all, {}, data => {
+            data.forEach(item => {
+                let valueAddress = item.city + " " + item.district + " " + item.town + " " + item.address;
+                optionAddress.push({ label: valueAddress, value: item.id })
+            })
+            this.setState({
+                optionAddress
+            })
+        });
+    }
+
+    getTransportation = () => {
+        ApiController.get(TRANSPORTATION.all, {}, data => {
+            let optionTrans = []
+            data.forEach(item => {
+                optionTrans.push({ label: item.name, value: item.id })
+            })
+            this.setState({
+                optionTrans
+            })
+        });
+    }
+
     getCart = () => {
         let cart = localStorage.getItem("cart");
-
         if (cart === null || cart.trim() === "") {
             cart = [];
         }
         else cart = JSON.parse(cart);
-
         this.setState({
             cart: cart
         }, () => {
@@ -150,15 +208,32 @@ class CartList extends Component {
         })
     }
 
+    createUUID = () => {
+        const pattern = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+        return pattern.replace(/[xy]/g, (c) => {
+            const r = (Math.random() * 16) | 0;
+            const v = c === 'x' ? r : ((r & 0x3) | 0x8);
+            return v.toString(16).toUpperCase();
+        });
+    };
+
     openOrderModals = () => {
         if (this.state.selectedProducts.length > 0) {
-            this.toggleOpenOrderModals();
+            if (!this.state.groupOrderId) {
+                this.toggleOpenGroupOrderModals();
+            } else {
+                this.toggleOpenOrderModals();
+            }
+            // const groupOrder = localStorage.getItem("groupOrder") || [];
+            // if(groupOrder) {
+            //     localStorage.setItem("groupOrder", JSON.stringify(groupOrder));
+            // }
         } else {
             NotificationManager.info("Vui lòng chọn sản phẩm trong giỏ", "Thông báo", 1500);
         }
     }
 
-    addToOrder = (key, name) => {
+    addToOrder = (key, name, transportation) => {
         let { orders, selectedProducts } = this.state;
         if (key === "update") {
             let order = {}, idx = 0;
@@ -177,18 +252,23 @@ class CartList extends Component {
                 }
             })
             order[name] = newProducts;
-            order = this.updateInfoOrder(order);
-            orders = orders.splice(idx, 1, order);
-
-            NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
-
+            order = this.updateInfoOrder(order, name);
+            
+            if(order !== null) {
+                orders = orders.splice(idx, 1, order);
+                NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
+            }
         } else if (key === "add") {
-            let order = this.updateInfoOrder({ [name]: selectedProducts });
-            orders.push(order);
-            let {collapses} = this.state;
+            let order = this.updateInfoOrder({ [name]: selectedProducts }, name, transportation);
+            console.log(order);
+            if(order !== null) {
+                orders.push(order);
+                NotificationManager.success("Thêm đơn hàng thành công", "Thông báo", 1500);
+            }
+            // let code = this.createUUID();
+            let { collapses } = this.state;
             collapses.push(true);
-            this.setState({collapses})
-            NotificationManager.success("Thêm đơn hàng thành công", "Thông báo", 1500);
+            this.setState({ collapses })
         }
 
         this.setState({
@@ -196,16 +276,33 @@ class CartList extends Component {
         })
     }
 
-    updateInfoOrder = (order) => {
+    updateInfoOrder = (order, name, transportation) => {
         let totalPrice = 0, serviceCost = 0, weight = 0, timeToCome = 0;
-        const products = Object.values(order)[0];
-        console.log(products);
+        let products = Object.values(order)[0];
+        transportation = transportation ? transportation : order?.transportation;
+
+
         if (products?.length > 0) {
+            let removeProducts = [], addProducts = [];
             products.forEach(item => {
+                let arrTransportation = item.transportation.map(transport => {
+                    return transport.label;
+                })
+                if (!arrTransportation.includes(transportation)) {
+                    removeProducts.push(item);
+                } else {
+                    addProducts.push(item);
+                }
+            })
+            if (removeProducts.length > 0) {
+                NotificationManager.warning(`Có ${removeProducts.length} sản phẩm không hỗ trợ hình thức vận chuyển này. Vui lòng chọn lại sản phẩm hoặc thay đổi hình thức vận chuyển.`, "Thông báo", 5000);
+                return null;
+            }
+            addProducts.forEach(item => {
                 totalPrice += item.offerPrice;
                 // serviceCost += item.offerPrice;
                 weight += item.weight;
-                if(item.workshopIn > timeToCome) {
+                if (item.workshopIn > timeToCome) {
                     timeToCome = item.workshopIn;
                 }
             })
@@ -213,42 +310,68 @@ class CartList extends Component {
             order.serviceCost = serviceCost;
             order.weight = weight;
             order.timeToCome = timeToCome;
+            order.transportation = transportation;
+            order[name] = addProducts;
         }
-
         return order;
     }
 
-    orderProduct = () => {
-        const { products } = this.state;
-        let order = [];
-        products.forEach(product => {
-            order.push({ uboxProductId: product.id, optionIds: product.optionIds, quantity: product.quantity, description: "description" })
+    updateAddressOrder = (index) => {
+        let { orders } = this.state;
+        let order = orders[index];
+        order.addressOrderId = this.state.selectedAddress.value;
+        orders.splice(index, 1, order);
+        this.setState({
+            orders
         })
-        Api.callAsync('post', ORDERS.all, {
-            description: "string",
-            createOrderDetail: order
-        }).then(data => {
-            console.log(data);
-            if (data.data.statusCode === 200) {
-                NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
-                localStorage.setItem("cart", JSON.stringify([]));
-                setTimeout(function () {
-                    window.open("/store", "_self")
-                }, 1000);
-            }
+    }
 
-        }).catch(error => {
-            NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
-            if (error.response.status === 401) {
-                setTimeout(function () {
-                    NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
+    orderProduct = () => {
+        const { orders, groupOrderId } = this.state;
+        let arr = [], flag = true;
+        orders.forEach(order => {
+            if ((order?.addressOrderId || "") === "") {
+                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
+                flag = false;
+            }
+            const products = Object.values(order)[0];
+            console.log(products);
+            let detail = [];
+            products.forEach(product => {
+                detail.push({ uboxProductId: product.id, optionIds: product.optionIds, quantity: product.quantity, description: "description" })
+            })
+            let newOrder = {
+                description: "string",
+                createOrderDetail: detail,
+                addressOrderId: order.addressOrderId,
+                groupOrderId: groupOrderId
+            }
+            arr.push(newOrder);
+        })
+        console.log(arr);
+        if (flag) {
+            Api.callAsync('post', ORDERS.all, arr).then(data => {
+                console.log(data);
+                if (data.data.statusCode === 200) {
+                    NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
+                    localStorage.setItem("cart", JSON.stringify([]));
                     setTimeout(function () {
-                        window.open("/seller/login", "_self")
-                    }, 1500);
-                }, 1500);
-            }
+                        window.open("/store", "_self")
+                    }, 1000);
+                }
 
-        });
+            }).catch(error => {
+                NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
+                if (error.response.status === 401) {
+                    setTimeout(function () {
+                        NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
+                        setTimeout(function () {
+                            window.open("/seller/login", "_self")
+                        }, 1500);
+                    }, 1500);
+                }
+            });
+        }
     }
 
     handleCheckAll = (checked, data) => {
@@ -385,7 +508,7 @@ class CartList extends Component {
                                                 <Collapse
                                                     isOpen={collapses[index]}
                                                 >
-                                                    <CartTables
+                                                    <OrderTables
                                                         isOrderProducts={false}
                                                         data={Object.values(item)[0]}
                                                         component={this}
@@ -402,14 +525,76 @@ class CartList extends Component {
                                                             <div>Thời gian dự kiến hàng về: {item.timeToCome} ngày</div>
                                                         </Colxx>
                                                         <Colxx xxs="6">
-                                                            <div>Tổng khối lượng: {item.weight} kg</div>
+                                                            <div>Tổng khối lượng: {numberFormat(Number.parseFloat(item.weight), 3)} kg</div>
                                                         </Colxx>
-                                                        <Colxx xxs="6">
-                                                            <div>Hình thức vận chuyển: {}</div>
+                                                        <Colxx xxs="12">
+                                                            <div>Hình thức vận chuyển: {item.transportation}</div>
                                                         </Colxx>
-                                                        <Colxx xxs="6">
-                                                            <div>Địa chỉ giao hàng: {}</div>
+                                                        <Colxx xxs="12">
+                                                            <span className="w-80 d-inline-block">Địa chỉ giao hàng: {} </span>
+                                                            <span className="w-20 d-inline-block text-right">
+                                                                <ConfirmButton
+                                                                    btnConfig={{
+                                                                        color: "primary",
+                                                                        size: "xs",
+                                                                    }}
+                                                                    content={{
+                                                                        close: "Đóng",
+                                                                        confirm: "Xác nhận"
+                                                                    }}
+                                                                    onConfirm={() => {
+                                                                        this.updateAddressOrder(index);
+                                                                    }}
+                                                                    closeOnConfirm={true}
+                                                                    buttonContent={() => {
+                                                                        return (
+                                                                            <b>Thay đổi</b>
+                                                                        );
+                                                                    }}
+                                                                    confirmHeader={() => {
+                                                                        return (
+                                                                            <>Chọn địa chỉ giao hàng</>
+                                                                        );
+                                                                    }}
+                                                                    confirmContent={() => {
+                                                                        return (
+                                                                            <Row>
+                                                                                <Colxx xxs="12">
+                                                                                    <Label className="form-group has-float-label mb-4">
+                                                                                        <Select
+                                                                                            className="react-select"
+                                                                                            classNamePrefix="react-select"
+                                                                                            options={this.state.optionAddress}
+                                                                                            value={this.state.selectedAddress}
+                                                                                            onChange={(e) => {
+                                                                                                this.setState({
+                                                                                                    selectedAddress: e
+                                                                                                })
+                                                                                            }}
+                                                                                        />
+                                                                                        <IntlMessages id="Chọn địa chỉ giao hàng" />
+                                                                                    </Label>
+                                                                                </Colxx>
+                                                                                <Colxx xxs="12">
+                                                                                    <div className="text-right">
+                                                                                        <Button
+                                                                                            color="primary"
+                                                                                            onClick={() => {
+                                                                                                this.toggleModalCreateAddress();
+                                                                                                this.getSellerAddress();
+                                                                                            }}
+                                                                                        >
+                                                                                            Tạo mới
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </Colxx>
+                                                                            </Row>
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            </span>
                                                         </Colxx>
+
                                                     </Row>
                                                 </Collapse>
                                             </div>
@@ -446,12 +631,24 @@ class CartList extends Component {
                             </Row>
                         </CardBody>
                     </Card>
+                    <GroupOrderModals
+                        key={this.state.isOpenGroupOrderModals + "group"}
+                        isOpen={this.state.isOpenGroupOrderModals}
+                        toggleModal={this.toggleOpenGroupOrderModals}
+                        setGroupOrderId={this.setGroupOrderId}
+                    />
                     <OrderModals
-                        key={this.state.isOpenOrderModals}
+                        key={this.state.isOpenOrderModals + "order"}
                         isOpen={this.state.isOpenOrderModals}
                         toggleModal={this.toggleOpenOrderModals}
                         addToOrder={this.addToOrder}
                         optionOrders={optionOrders}
+                        optionTrans={this.state.optionTrans}
+                    />
+                    <CreateAddressModals
+                        key={this.state.isOpenCreateAddress + "address"}
+                        isOpen={this.state.isOpenCreateAddress}
+                        toggleModalCreateAddress={this.toggleModalCreateAddress}
                     />
                 </Fragment>
             );

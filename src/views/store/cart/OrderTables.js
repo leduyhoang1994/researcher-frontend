@@ -5,83 +5,22 @@ import ReactTable from "react-table";
 
 import { isFunction } from 'formik';
 import { currencyFormatVND, numberFormat } from '../../../helpers/Utils';
-import { defaultImg } from '../../../constants/defaultValues';
 
-// import "./style.scss";
-import { Input } from 'reactstrap';
+import "./style.scss";
 
-const CartTables = ({
+const OrderTables = ({
   data,
   component,
-  handleCheckAll,
-  allProductSelected,
   existInSelectedCart = false,
   addToSelectedCart,
   removeFromSelectedCart,
 }) => {
   const columns = () => [
     {
-      Header: (e) => {
-        return (
-          <input type="checkbox" onChange={(event) => {
-            if (isFunction(handleCheckAll))
-              handleCheckAll(event.target.checked, e?.data)
-          }} checked={isFunction(allProductSelected) ? allProductSelected(e?.data.map(item => item._original)) : false} />
-        )
-      },
-      accessor: null,
-      sortable: false,
-      width: 30,
-      Cell: props => (
-        <div className="text-right">
-          <Input
-            type="checkbox"
-            checked={isFunction(existInSelectedCart) ? existInSelectedCart(props.original) : false}
-            onChange={e => {
-              if (e.target.checked) {
-                if (isFunction(addToSelectedCart)) addToSelectedCart(props.original);
-              } else {
-                if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(props.original);
-              }
-            }}
-          />
-        </div>
-      )
-    },
-    {
-      Header: __(component.messages, "Hình ảnh"),
-      sortable: false,
-      width: 70,
-      accessor: "featureImage",
-      Cell: props => <img width="60" src={props.value ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${props.value}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}${defaultImg}`} alt="" />
-    },
-    {
       Header: __(component.messages, "Tên sản phẩm"),
       sortable: false,
       accessor: "name",
       Cell: props => <a target="_blank" rel="noopener noreferrer" href={`/store/products/detail/${props.original.id}`}>{props.value}</a>
-    },
-    {
-      Header: __(component.messages, "Hình thức vận chuyển"),
-      sortable: false,
-      accessor: "transportation",
-      Cell: props => (
-        <span key={props.original.optionIds}>
-          {
-            props?.value.length > 0 && props?.value.map((item, index) => {
-              return (
-                <span key={props.original.optionIds + item.label + index} className="text-muted">{`${item.label}`}, </span>
-              )
-            })
-          }
-        </span>
-      )
-
-      // props?.value ? props?.value.map(item => {
-      //   return (
-      //     <p className="text-muted">{item}</p>
-      //   )
-      // }) : null
     },
     {
       Header: __(component.messages, "Khối lượng"),
@@ -138,12 +77,9 @@ const CartTables = ({
             return {}
           }
         }}
-      // style={{
-      //   height: "450px"
-      // }}
       />
     </div>
   );
 };
 
-export default injectIntl(CartTables);
+export default injectIntl(OrderTables);

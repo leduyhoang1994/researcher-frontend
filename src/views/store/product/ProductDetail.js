@@ -104,13 +104,22 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, transportation, weight, offerPrice, workshopIn } = this.state.product;
+        const { id, name, featureImage, weight, offerPrice, workshopIn, uboxProductTransportations } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
         })
+        let transportation = [];
+        console.log(uboxProductTransportations);
+        uboxProductTransportations.forEach(item => {
+            let trans = item?.transportation;
+            if(trans) {
+                transportation.push({label: trans.name, value: trans.id})
+            }
+        })
+        console.log(transportation);
         const product = { id, name, featureImage, transportation, weight, offerPrice, workshopIn, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
@@ -226,7 +235,7 @@ class ProductDetail extends Component {
                                             <p >Sản lượng bán tại site gốc 1244</p>
                                         </Colxx>
                                     </Row>
-                                    <Row>
+                                    {/* <Row>
                                         <div className="mt-5">
                                             <p className="float-left mt-3 ml-3">Số lượng</p>
                                             <Label className="form-group has-float-label float-left ml-5">
@@ -244,8 +253,8 @@ class ProductDetail extends Component {
                                                 />
                                             </Label>
                                         </div>
-                                    </Row>
-                                    <Row className="mt-3">
+                                    </Row> */}
+                                    <Row className="mt-5">
                                         <Colxx xxs="12">
                                             <div className="text-left card-title float-left">
                                                 <Button

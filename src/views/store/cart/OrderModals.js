@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row } from 'reactstrap';
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
-import ApiController from '../../../helpers/Api';
-import { PRODUCT_SETS } from '../../../constants/api';
-import { arrayColumn } from '../../../helpers/Utils';
-import { NotificationManager } from '../../../components/common/react-notifications';
 
 class OrderModals extends Component {
   constructor(props) {
@@ -15,7 +11,8 @@ class OrderModals extends Component {
       radioValue: "update-order",
       listOrders: [],
       orderName: "",
-      selected: ""
+      selected: "",
+      selectedTransportation: {}
     };
   }
 
@@ -44,11 +41,17 @@ class OrderModals extends Component {
     })
   };
 
+  handleChangeTransportation = (data) => {
+    this.setState({
+      selectedTransportation: data
+    })
+  };
+
   createOrder = () => {
-    if(this.state.radioValue === "update-order") {
+    if (this.state.radioValue === "update-order") {
       this.props.addToOrder("update", this.state.selected.label);
     } else {
-      this.props.addToOrder("add", this.state.orderName);
+      this.props.addToOrder("add", this.state.orderName, this.state.selectedTransportation?.label);
     }
   }
 
@@ -56,25 +59,31 @@ class OrderModals extends Component {
     if (this.state.radioValue === "update-order") {
       return (
         <div>
-          <Label>Chọn đơn hàng</Label>
-          <Select
-            options={this.props.optionOrders}
-            value={this.state.selected}
-            onChange={this.handleChangeOrder}
-          />
+          <Label className="form-group has-float-label mb-4">
+            <Select
+              className="react-select"
+              classNamePrefix="react-select"
+              options={this.props.optionOrders}
+              value={this.state.selected}
+              onChange={this.handleChangeOrder}
+            />
+            <IntlMessages id="Chọn đơn hàng" />
+          </Label>
         </div>
       )
     } else {
       return (
         <div>
-          <Label>Nhập tên đơn hàng</Label>
-          <Input
-            type="text"
-            className="form-control"
-            name="name"
-            value={this.state.orderName}
-            onChange={this.setOrderName}
-          />
+          <Label className="form-group has-float-label mb-4">
+            <Input
+              type="text"
+              className="form-control"
+              name="name"
+              value={this.state.orderName}
+              onChange={this.setOrderName}
+            />
+            <IntlMessages id="Nhập tên đơn hàng" />
+          </Label>
         </div>
       )
     }
@@ -85,9 +94,9 @@ class OrderModals extends Component {
     const { radioValue, selected, orderName } = this.state;
 
     const update = "update-order";
-    const isDisabled = radioValue === update ? 
-    !(radioValue === update && selected) : 
-    !(radioValue !== update && orderName);
+    const isDisabled = radioValue === update ?
+      !(radioValue === update && selected) :
+      !(radioValue !== update && orderName);
 
     return (
       <div>
@@ -118,6 +127,20 @@ class OrderModals extends Component {
             {
               this.ShowInputArea()
             }
+            <Row className="mt-3">
+              <Colxx xxs="12">
+                <Label className="form-group has-float-label mb-4">
+                  <Select
+                    className="react-select"
+                    classNamePrefix="react-select"
+                    value={this.state.selectedTransportation}
+                    onChange={this.handleChangeTransportation}
+                    options={this.props.optionTrans}
+                  />
+                  <IntlMessages id="Hình thức vận chuyển" />
+                </Label>
+              </Colxx>
+            </Row>
           </ModalBody>
           <ModalFooter>
             <Button variant="secondary"

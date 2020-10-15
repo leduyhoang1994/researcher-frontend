@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { NotificationManager } from "../../../components/common/react-notifications";
 
 import ApiController from '../../../helpers/Api';
-import { USER, ADDRESS } from '../../../constants/api';
+import { SELLER, ADDRESS } from '../../../constants/api';
 import { loginUser } from "../../../redux/actions";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
@@ -14,12 +14,13 @@ import "./style.scss";
 import ConfirmButton from "../../../components/common/ConfirmButton";
 // import UserModals from "./UserModals";
 
-class InforAccount extends Component {
+class AccountInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
             id: this.props?.match?.params.id || null,
-            user: {
+            address: [],
+            seller: {
                 firstName: "",
                 lastName: "",
                 phoneNumber: "",
@@ -44,26 +45,25 @@ class InforAccount extends Component {
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
         this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
-        this.formRef = React.createRef();
 
     }
 
     componentDidMount() {
         this.getAddress();
         let { id } = this.state;
-        if (this.props?.userId !== undefined && this.props?.userId !== null) {
-            id = this.props.userId;
+        if (this.props?.sellerId !== undefined && this.props?.sellerId !== null) {
+            id = this.props.sellerId;
             this.setState({ id })
         }
 
         if (this.props?.type !== "modal") {
             if (id) {
-                this.loadUsers(id);
+                this.loadSellers(id);
             } else {
-                this.loadUsers();
+                this.loadSellers();
             }
         } else if (id) {
-            this.loadUsers(id);
+            this.loadSellers(id);
         }
     }
 
@@ -73,16 +73,16 @@ class InforAccount extends Component {
         })
     }
 
-    loadUsers = (id) => {
+    loadSellers = (id) => {
         if (id) {
-            ApiController.get(`${USER.details}/${id}`, {}, data => {
-                this.setState({ user: data });
+            ApiController.get(`${SELLER.details}/${id}`, {}, data => {
+                this.setState({ seller: data });
                 this.defaultCity()
             });
         } else {
-            ApiController.get(`${USER.details}`, {}, data => {
+            ApiController.get(`${SELLER.details}`, {}, data => {
                 this.setState({
-                    user: data,
+                    seller: data,
                     id: data?.id
                 });
                 this.defaultCity()
@@ -91,35 +91,35 @@ class InforAccount extends Component {
     }
 
     defaultCity = () => {
-        const { user, optionsCity } = this.state;
-        if (user.city) {
+        const { seller, optionsCity } = this.state;
+        if (seller.city) {
             optionsCity.forEach(item => {
-                if (item.label === user.city) {
+                if (item.label === seller.city) {
                     this.handleChangeCity(item);
                 }
             })
-            if (user.district) {
+            if (seller.district) {
                 this.defaultDistrict()
             }
         }
     }
 
     defaultDistrict = () => {
-        const { user, optionsDistrict } = this.state;
+        const { seller, optionsDistrict } = this.state;
         optionsDistrict.forEach(item => {
-            if (item.label === user.district) {
+            if (item.label === seller.district) {
                 this.handleChangeDistrict(item);
             }
         })
-        if (user.town) {
+        if (seller.town) {
             this.defaultCommune()
         }
     }
 
     defaultCommune = () => {
-        const { user, optionsCommune } = this.state;
+        const { seller, optionsCommune } = this.state;
         optionsCommune.forEach(item => {
-            if (item.label === user.town) {
+            if (item.label === seller.town) {
                 this.handleChangeCommune(item);
             }
         })
@@ -139,7 +139,7 @@ class InforAccount extends Component {
     getCities = () => {
         let options = [];
         const { address } = this.state;
-        address.map((item, index) => {
+        address.forEach((item, index) => {
             let value = Object.keys(item)[0];
             options.push({ label: value, value: index });
         })
@@ -162,7 +162,7 @@ class InforAccount extends Component {
         const selectedCity = this.state.address[index];
         const district = Object.values(selectedCity)[0];
 
-        district.map((item, index) => {
+        district.forEach((item, index) => {
             let value = Object.keys(item)[0];
             options.push({ label: value, value: index });
         })
@@ -188,13 +188,13 @@ class InforAccount extends Component {
         const selectedCity = this.state.address[index];
         const selectedDistrict = Object.values(selectedCity)[0];
         let temp = [];
-        selectedDistrict.map(item => {
+        selectedDistrict.forEach(item => {
             if (Object.keys(item)[0] === district.label) {
                 temp = Object.values(item)[0];
             }
         })
 
-        temp.map((value, index) => {
+        temp.forEach((value, index) => {
             options.push({ label: value, value: index });
         })
 
@@ -210,44 +210,11 @@ class InforAccount extends Component {
     };
 
     handleChangeInput = (e) => {
-        const { user } = this.state;
-        user[e.target.name] = e.target.value;
+        const { seller } = this.state;
+        seller[e.target.name] = e.target.value;
         this.setState({
-            user
+            seller
         })
-    }
-
-    validateEmail = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your email address";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            error = "Invalid email address";
-        }
-        return error;
-    }
-
-    validatePassword = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your password";
-        } else if (value.length < 4) {
-            error = "Value must be longer than 3 characters";
-        }
-        return error;
-    }
-
-    componentDidUpdate() {
-        if (this.props.error) {
-            NotificationManager.warning(
-                "Email or password is incorrect!",
-                "Login Error",
-                3000,
-                null,
-                null,
-                ''
-            );
-        }
     }
 
     submitChangePassword = () => {
@@ -255,15 +222,15 @@ class InforAccount extends Component {
         if (this.state.id) {
             id = this.state.id;
         }
-        const { passwordCheck, password, confirmPassword } = this.state.user;
+        const { passwordCheck, password, confirmPassword } = this.state.seller;
         const data = { id, passwordCheck, password, confirmPassword };
         console.log(data);
-        ApiController.callAsync('put', USER.all, data)
-            .then(data => {
-                NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-            }).catch(error => {
-                NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-            });
+        // ApiController.callAsync('put', SELLER.all, data)
+        //     .then(data => {
+        //         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+        //     }).catch(error => {
+        //         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+        //     });
     }
 
     validateField = async () => {
@@ -277,8 +244,8 @@ class InforAccount extends Component {
                 fieldName = key;
                 fieldValue = field[key];
             }
-            if ((this.state.user[fieldName] || "") === "") {
-                if((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
+            if ((this.state.seller[fieldName] || "") === "") {
+                if ((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
                 } else {
                     success = false;
                     NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
@@ -288,7 +255,7 @@ class InforAccount extends Component {
         return success;
     }
 
-    createUser = async () => {
+    updateSeller = async () => {
         if (await this.validateField()) {
             this.callApi();
         } else {
@@ -297,37 +264,36 @@ class InforAccount extends Component {
     }
 
     callApi = () => {
-        let flag = true, id = this.state.id || null;
+        let id = this.state.id || null;
         const { selectedCity, selectedDistrict, selectedCommune } = this.state;
-        let { user } = this.state;
-        if (flag) {
-            if (selectedCity) {
-                user.city = selectedCity.label;
-            }
-            if (selectedDistrict) {
-                user.district = selectedDistrict.label;
-            }
-            if (selectedCommune) {
-                user.town = selectedCommune.label;
-            }
-            const { firstName, lastName, phoneNumber, email, city, district, town, address, company } = user;
-            const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
-
-            ApiController.callAsync('put', USER.all, data)
-                .then(data => {
-                    NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-                    setTimeout(() => {
-                        window.open(`/info/${data.data.result.id}`, "_self")
-                    }, 2000)
-                }).catch(error => {
-                    NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-                });
+        let { seller } = this.state;
+        if (selectedCity) {
+            seller.city = selectedCity.label;
         }
+        if (selectedDistrict) {
+            seller.district = selectedDistrict.label;
+        }
+        if (selectedCommune) {
+            seller.town = selectedCommune.label;
+        }
+        const { firstName, lastName, phoneNumber, email, city, district, town, address, company } = seller;
+        const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
+
+        console.log(data);
+        // ApiController.callAsync('put', SELLER.all, data)
+        //     .then(data => {
+        //         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+        //         setTimeout(() => {
+        //             window.open(`/info/${data.data.result.id}`, "_self")
+        //         }, 2000)
+        //     }).catch(error => {
+        //         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+        //     });
     }
 
     render() {
-        const { user, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
-        const { firstName, lastName, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = user;
+        const { seller, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
+        const { firstName, lastName, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = seller;
 
         const isDisabled = (password && confirmPassword) ? ((password === confirmPassword) ? false : true) : true;
         const showChangePassword = (this.props?.type === "modal" && !this.state.id) ? false : true;
@@ -579,10 +545,10 @@ class InforAccount extends Component {
                                 className="button"
                                 color="primary"
                                 onClick={() => {
-                                    this.createUser();
+                                    this.updateSeller();
                                 }}
                             >
-                                {this.state.id ? "Cập nhật" : "Thêm mới"}
+                                Cập nhật
                             </Button>
                         </div>
                     </CardBody>
@@ -597,8 +563,8 @@ class InforAccount extends Component {
     }
 }
 const mapStateToProps = ({ authUser }) => {
-    const { user, loading, error } = authUser;
-    return { user, loading, error };
+    const { seller, loading, error } = authUser;
+    return { seller, loading, error };
 };
 
 export default injectIntl(connect(
@@ -606,4 +572,4 @@ export default injectIntl(connect(
     {
         loginUser
     }
-)(InforAccount));
+)(AccountInfo));
