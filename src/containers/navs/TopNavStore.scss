@@ -19,3 +19,21 @@
         }
     }
 }
+.btn-store-cart {
+    vertical-align: initial;
+    padding: 5px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    i {
+        font-size: 13pt;
+        margin-right: 5px;
+    }
+    span {
+        font-size: 12px;
+    }
+    #badge {
+        margin-left: 5px;
+        padding: 2px;
+    }
+}

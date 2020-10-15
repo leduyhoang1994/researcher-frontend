@@ -18,6 +18,10 @@ const CartList = React.lazy(() =>
   import(/* webpackChunkName: "source-product-set-123" */ '../store/cart/CartList')
 );
 
+const InforAccount = React.lazy(() =>
+  import(/* webpackChunkName: "source-product-set-123" */ '../store/infor/InforAccount')
+);
+
 const OrderDetail = React.lazy(() =>
   import(/* webpackChunkName: "source-product-set-123" */ '../store/order/OrderDetail')
 );
@@ -58,6 +62,11 @@ const User = ({ match }) => {
             exact
             path={`${match.url}/cart`}
             render={props => <CartList {...props} />}
+          />
+          <Route
+            exact
+            path={`${match.url}/info`}
+            render={props => <InforAccount {...props} />}
           />
           <Route
             path={`${match.url}/:cate`}

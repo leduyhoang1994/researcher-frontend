@@ -20,7 +20,7 @@ class UserModals extends React.Component {
                     {/* <ModalHeader>
                         <IntlMessages id="forms.title" />
                     </ModalHeader> */}
-                    <ModalBody className="modal-User" >
+                    <ModalBody className="modal-user" >
                         <UserInfo
                             type='modal'
                             userId={this.props?.userId}
