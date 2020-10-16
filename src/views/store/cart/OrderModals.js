@@ -85,15 +85,15 @@ class OrderModals extends Component {
             <IntlMessages id="Nhập tên đơn hàng" />
           </Label>
           <Label className="form-group has-float-label mb-4 mt-3">
-                  <Select
-                    className="react-select"
-                    classNamePrefix="react-select"
-                    value={this.state.selectedTransportation}
-                    onChange={this.handleChangeTransportation}
-                    options={this.props.optionTrans}
-                  />
-                  <IntlMessages id="Hình thức vận chuyển" />
-                </Label>
+            <Select
+              className="react-select"
+              classNamePrefix="react-select"
+              value={this.state.selectedTransportation}
+              onChange={this.handleChangeTransportation}
+              options={this.props.optionTrans}
+            />
+            <IntlMessages id="Hình thức vận chuyển" />
+          </Label>
         </div>
       )
     }
