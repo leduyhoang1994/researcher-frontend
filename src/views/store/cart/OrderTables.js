@@ -2,18 +2,17 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
-
-import { isFunction } from 'formik';
 import { currencyFormatVND, numberFormat } from '../../../helpers/Utils';
 
 import "./style.scss";
+import { Button } from 'reactstrap';
 
 const OrderTables = ({
   data,
   component,
-  existInSelectedCart = false,
-  addToSelectedCart,
-  removeFromSelectedCart,
+  decrement,
+  increment,
+  remove
 }) => {
   const columns = () => [
     {
@@ -48,6 +47,49 @@ const OrderTables = ({
         {props.value ? (numberFormat(Number.parseFloat(props.value), 1) + " ngày") : null}
       </p>
     },
+    {
+      Header: __(component.messages, "Số lượng"),
+      sortable: false,
+      accessor: "quantity",
+      Cell: props =>
+        <div>
+          <Button
+            size="xs"
+            className="w-5 w-xs-100"
+            color="primary"
+            disabled={parseInt(props.value) <= 1 ? true : false}
+            onClick={() => {
+              decrement(props.original)
+            }}
+          >-</Button>
+          <span className="ml-2">{parseInt(props.value)}</span>
+          <Button
+            size="xs"
+            className="w-5 w-xs-100 ml-2"
+            color="primary"
+            onClick={() => {
+              increment(props.original)
+            }}
+          >+</Button>
+        </div>
+    },
+    {
+      Header: __(component.messages, "Xóa"),
+      sortable: false,
+      width: 50,
+      accessor: "quantity",
+      Cell: props =>
+        <div>
+          <Button
+            size="xs"
+            className="w-5 w-xs-100"
+            color="primary"
+            onClick={() => {
+              remove(props.original)
+            }}
+          >X</Button>
+        </div>
+    },
   ];
 
   return (
@@ -58,25 +100,7 @@ const OrderTables = ({
         defaultPageSize={data.length}
         className="cart-table mb-4 -striped -highlight"
         showPagination={false}
-        // PaginationComponent={DataTablePagination}
-        getTrProps={(state, rowInfo) => {
-          if (rowInfo && rowInfo.row) {
-            return {
-              onClick: (e) => {
-                if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
-                  if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
-                } else {
-                  if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
-                }
-              },
-              style: {
-                cursor: "pointer"
-              }
-            }
-          } else {
-            return {}
-          }
-        }}
+      // PaginationComponent={DataTablePagination}
       />
     </div>
   );

@@ -77,19 +77,21 @@ class OrderDetail extends Component {
                     </Row>
                     <Row>
                         <Colxx xxs="6">
-                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(order?.totalPrice))} VNĐ</p>
-                        </Colxx>
-                        <Colxx xxs="6">
-                            <p>Trạng thái đơn hàng: {order?.statusPayment} ngày</p>
+                            <p>Hình thức vận chuyển: {order?.transportation?.name}</p>
                         </Colxx>
                         <Colxx xxs="6">
                             <p>Tổng khối lượng: {numberFormat(Number.parseFloat(order?.totalWeight), 3)} kg</p>
                         </Colxx>
                         <Colxx xxs="6">
-                            <p>Hình thức vận chuyển: {order?.transportation?.name}</p>
+                            <p>Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(order?.lastMiles))} VNĐ</p>
+                        </Colxx>
+                        <Colxx xxs="6">
+                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(order?.totalPrice + order?.lastMiles))} VNĐ</p>
+                        </Colxx>
+                        <Colxx xxs="6">
+                            <p>Trạng thái đơn hàng: {order?.statusPayment}</p>
                         </Colxx>
                     </Row>
-
                 </Fragment>
             </div>
         );

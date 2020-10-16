@@ -136,6 +136,7 @@ export const ORDERS = {
   all: `${apiPath}/${order}`,
   getBySeller: `${apiPath}/${order}/view-list`,
   details: `${apiPath}/${order}/view-detail`,
+  calculator: `${apiPath}/${order}/calculator/lastmile`,
 }
 
 /** SET */

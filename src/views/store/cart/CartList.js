@@ -8,7 +8,7 @@ import { Colxx } from "../../../components/common/CustomBootstrap";
 import { ADDRESS_ORDER, ORDERS, TRANSPORTATION } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { numberFormat, numberWithCommas } from "../../../helpers/Utils";
+import { currencyFormatVND, numberFormat, numberWithCommas } from "../../../helpers/Utils";
 import { defaultImg } from '../../../constants/defaultValues';
 import CartTables from './CartTables';
 
@@ -39,6 +39,7 @@ class CartList extends Component {
             optionTrans: [],
             optionAddress: [],
             selectedAddress: [],
+            lastMiles: 0,
 
         };
         this.messages = this.props.intl.messages;
@@ -89,7 +90,11 @@ class CartList extends Component {
         let optionAddress = [];
         ApiController.get(ADDRESS_ORDER.all, {}, data => {
             data.forEach(item => {
-                let valueAddress = item.city + " " + item.district + " " + item.town + " " + item.address;
+                let valueAddress = "";
+                if (item.city) valueAddress = valueAddress.concat(item.city).concat(", ");
+                if (item.district) valueAddress = valueAddress.concat(item.district).concat(", ");
+                if (item.town) valueAddress = valueAddress.concat(item.town).concat(", ");
+                if (item.address) valueAddress = valueAddress.concat(item.address);
                 optionAddress.push({ label: valueAddress, value: item.id })
             })
             this.setState({
@@ -140,60 +145,71 @@ class CartList extends Component {
         return product;
     }
 
-    increment = obj => {
-        let tempCart = this.state.cart;
-        const index = tempCart.indexOf(this.getItem(obj));
-        let product = tempCart[index];
-
-        product.quantity = parseInt(product.quantity) + 1;
-        tempCart.splice(index, 1, product)
-        localStorage.setItem("cart", JSON.stringify([...tempCart]));
-        this.setState(() => {
-            return {
-                cart: [...tempCart]
-            };
-        })
-        this.addTotals();
-        this.props.changeCount();
-    }
-
-    decrement = obj => {
-        let tempCart = this.state.cart;
-        const index = tempCart.indexOf(this.getItem(obj));
-        let product = tempCart[index];
-
-        if (product.quantity === 1) return;
-        product.quantity -= 1;
-        tempCart.splice(index, 1, product);
-        localStorage.setItem("cart", JSON.stringify([...tempCart]));
-        this.setState(() => {
-            return {
-                cart: [...tempCart]
-            };
-        })
-        this.addTotals();
-        this.props.changeCount();
-    }
-
-    remove = obj => {
-        let tempProducts = this.state.products;
-        let tempCart = this.state.cart;
-        const index = tempCart.indexOf(this.getItem(obj));
-        if (index > -1) {
-            tempProducts.splice(index, 1);
-            tempCart.splice(index, 1);
+    increment = (obj, index) => {
+        let { orders } = this.state;
+        let order = orders[index];
+        let products = Object.values(order)[0];
+        console.log(products);
+        if (products?.length > 0) {
+            products.forEach((item, index) => {
+                if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
+                    item.quantity = item.quantity + 1;
+                    products.splice(index, 1, item);
+                }
+            })
+            const key = Object.keys(order)[0];
+            order[key] = products;
+            order = this.updateInfoOrder(order, key);
+            orders.splice(index, 1, order);
+            this.setState({
+                orders
+            })
         }
+    }
 
-        localStorage.setItem("cart", JSON.stringify([...tempCart]));
-        this.setState(() => {
-            return {
-                cart: [...tempCart],
-                products: [...tempProducts]
-            };
-        }, () => {
-            this.addTotals();
-            this.props.changeCount();
-        })
+    decrement = (obj, index) => {
+        let { orders } = this.state;
+        let order = orders[index];
+        let products = Object.values(order)[0];
+        console.log(products);
+        if (products?.length > 0) {
+            products.forEach((item, index) => {
+                if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
+                    if (item.quantity > 1) {
+                        item.quantity = item.quantity - 1;
+                        products.splice(index, 1, item);
+                    }
+                }
+            })
+            const key = Object.keys(orders)[0];
+            order[key] = products;
+            order = this.updateInfoOrder(order, key);
+            orders.splice(index, 1, order);
+            this.setState({
+                orders
+            })
+        }
+    }
+
+    remove = (obj, index) => {
+        let { orders } = this.state;
+        let order = orders[index];
+        let products = Object.values(order)[0];
+        console.log(products);
+        if (products?.length > 0) {
+            products.forEach((item, index) => {
+                if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
+                    products.splice(index, 1);
+                }
+            })
+            const key = Object.keys(orders)[0];
+            order[key] = products;
+            order = this.updateInfoOrder(order, key);
+            orders.splice(index, 1, order);
+            this.setState({
+                orders
+            })
+        }
     }
 
     addTotals = () => {
@@ -253,15 +269,14 @@ class CartList extends Component {
             })
             order[name] = newProducts;
             order = this.updateInfoOrder(order, name);
-            
-            if(order !== null) {
+
+            if (order !== null) {
                 orders = orders.splice(idx, 1, order);
                 NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
             }
         } else if (key === "add") {
             let order = this.updateInfoOrder({ [name]: selectedProducts }, name, transportation);
-            console.log(order);
-            if(order !== null) {
+            if (order !== null) {
                 orders.push(order);
                 NotificationManager.success("Thêm đơn hàng thành công", "Thông báo", 1500);
             }
@@ -277,10 +292,10 @@ class CartList extends Component {
     }
 
     updateInfoOrder = (order, name, transportation) => {
-        let totalPrice = 0, serviceCost = 0, weight = 0, timeToCome = 0;
+        console.log(order, name, transportation);
+        let totalPrice = 0, weight = 0, timeToCome = 0;
         let products = Object.values(order)[0];
         transportation = transportation ? transportation : order?.transportation;
-
 
         if (products?.length > 0) {
             let removeProducts = [], addProducts = [];
@@ -299,15 +314,13 @@ class CartList extends Component {
                 return null;
             }
             addProducts.forEach(item => {
-                totalPrice += item.offerPrice;
-                // serviceCost += item.offerPrice;
-                weight += item.weight;
+                totalPrice += (item.offerPrice * item.quantity);
+                weight += (item.weight * item.quantity);
                 if (item.workshopIn > timeToCome) {
                     timeToCome = item.workshopIn;
                 }
             })
             order.totalPrice = totalPrice;
-            order.serviceCost = serviceCost;
             order.weight = weight;
             order.timeToCome = timeToCome;
             order.transportation = transportation;
@@ -321,7 +334,28 @@ class CartList extends Component {
         let order = orders[index];
         order.addressOrderId = this.state.selectedAddress.value;
         order.address = this.state.selectedAddress.label;
-        orders.splice(index, 1, order);
+        this.calculateLastMiles(order, index)
+    }
+
+    calculateLastMiles = async (order, index) => {
+        let { orders } = this.state;
+        const { selectedAddress } = this.state;
+        const city = selectedAddress.label.split(", ")[0]
+        const district = selectedAddress.label.split(", ")[1]
+        const data = { weight: order.weight, city, district };
+        console.log(data);
+        ApiController.post(ORDERS.calculator, data, value => {
+            order.lastMiles = value;
+            orders.splice(index, 1, order);
+            this.setState({
+                orders
+            })
+        });
+    }
+
+    removeOrder = (index) => {
+        let { orders } = this.state;
+        orders.splice(index, 1);
         this.setState({
             orders
         })
@@ -331,12 +365,13 @@ class CartList extends Component {
         const { orders, groupOrderId } = this.state;
         let arr = [], flag = true;
         orders.forEach(order => {
-            if ((order?.addressOrderId || "") === "") {
-                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
-                flag = false;
+            if (order?.transportation === "DropShip" || order?.transportation === "Sỉ kho khách hàng") {
+                if ((order?.addressOrderId || "") === "") {
+                    NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
+                    flag = false;
+                }
             }
             const products = Object.values(order)[0];
-            console.log(products);
             let detail = [];
             products.forEach(product => {
                 detail.push({ uboxProductId: product.id, optionIds: product.optionIds, quantity: product.quantity, description: "description" })
@@ -349,10 +384,8 @@ class CartList extends Component {
             }
             arr.push(newOrder);
         })
-        console.log(arr);
         if (flag) {
             Api.callAsync('post', ORDERS.all, arr).then(data => {
-                console.log(data);
                 if (data.data.statusCode === 200) {
                     NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
                     localStorage.setItem("cart", JSON.stringify([]));
@@ -443,6 +476,94 @@ class CartList extends Component {
         });
     }
 
+    renderAddress = (item, index) => {
+        if (item?.transportation === "DropShip" || item?.transportation === "Sỉ kho khách hàng") {
+            return (
+                <Row>
+                    <Colxx xxs="12">
+                        <span className="w-75 d-inline-block">Địa chỉ giao hàng: {item?.address} </span>
+                        <span className="w-25 d-inline-block text-right">
+                            <ConfirmButton
+                                btnConfig={{
+                                    color: "primary",
+                                    size: "xs",
+                                }}
+                                content={{
+                                    close: "Đóng",
+                                    confirm: "Xác nhận"
+                                }}
+                                onConfirm={() => {
+                                    this.updateAddressOrder(index);
+                                }}
+                                closeOnConfirm={true}
+                                buttonContent={() => {
+                                    return (
+                                        <b>Thay đổi</b>
+                                    );
+                                }}
+                                confirmHeader={() => {
+                                    return (
+                                        <>Chọn địa chỉ giao hàng</>
+                                    );
+                                }}
+                                confirmContent={() => {
+                                    return (
+                                        <Row>
+                                            <Colxx xxs="12">
+                                                <Label className="form-group has-float-label mb-4">
+                                                    <Select
+                                                        className="react-select"
+                                                        classNamePrefix="react-select"
+                                                        options={this.state.optionAddress}
+                                                        value={this.state.selectedAddress}
+                                                        onChange={(e) => {
+                                                            this.setState({
+                                                                selectedAddress: e
+                                                            })
+                                                        }}
+                                                    />
+                                                    <IntlMessages id="Chọn địa chỉ giao hàng" />
+                                                </Label>
+                                            </Colxx>
+                                            <Colxx xxs="12">
+                                                <div className="text-right">
+                                                    <Button
+                                                        color="primary"
+                                                        onClick={() => {
+                                                            this.toggleModalCreateAddress();
+                                                            this.getSellerAddress();
+                                                        }}
+                                                    >
+                                                        Tạo mới
+                                                    </Button>
+                                                </div>
+                                            </Colxx>
+                                        </Row>
+                                    );
+                                }}
+                            />
+                        </span>
+                    </Colxx>
+                    <Colxx xxs="12 mt-2">
+                        <span className="w-80 d-inline-block">Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(item?.lastMiles || 0))} VNĐ</span>
+                        <span className="w-20 d-inline-block text-right">
+                            <Button
+                                disabled={this.state.selectedAddress?.label ? false : true}
+                                size="xs"
+                                color="primary"
+                                onClick={() => {
+                                    this.calculateLastMiles(item, index)
+                                }}
+                            >Cập nhật</Button>
+                        </span>
+                    </Colxx>
+                </Row>
+            )
+        } else {
+            return (<></>)
+        }
+    }
+
     render() {
         const optionOrders = [];
         const { orders, collapses, products } = this.state;
@@ -498,13 +619,45 @@ class CartList extends Component {
                                     {orders.map((item, index) => {
                                         return (
                                             <div key={Object.values(item)[0] + index} className="mb-3">
-                                                <div className="text-left header-collapse"
-                                                    onClick={() => {
-                                                        this.toggleCollapse(index)
-                                                    }}
-                                                >
-                                                    <span className="text-left">{Object.keys(item)[0]}</span>
-                                                    {/* <span>{!collapses[index] ? "Mở rộng" : "Thu nhỏ"}</span> */}
+                                                <div className="text-left header-collapse">
+                                                    <span
+                                                        onClick={() => {
+                                                            this.toggleCollapse(index)
+                                                        }}
+                                                        className="text-left w-85 d-inline-block"
+                                                    >{Object.keys(item)[0]}
+                                                    </span>
+                                                    <span className="text-left d-contents w-15">
+                                                        <ConfirmButton
+                                                            btnConfig={{
+                                                                color: "primary",
+                                                                size: "xs",
+                                                            }}
+                                                            content={{
+                                                                close: "Đóng",
+                                                                confirm: "Xác nhận"
+                                                            }}
+                                                            onConfirm={() => {
+                                                                this.removeOrder(index);
+                                                            }}
+                                                            closeOnConfirm={true}
+                                                            buttonContent={() => {
+                                                                return (
+                                                                    <b>Xóa</b>
+                                                                );
+                                                            }}
+                                                            confirmHeader={() => {
+                                                                return (
+                                                                    <>Xác nhận loại bỏ đơn hàng</>
+                                                                );
+                                                            }}
+                                                            confirmContent={() => {
+                                                                return (
+                                                                    <p>Chắc chắn muốn xóa đơn hàng này?</p>
+                                                                );
+                                                            }}
+                                                        />
+                                                    </span>
                                                 </div>
                                                 <Collapse
                                                     isOpen={collapses[index]}
@@ -513,89 +666,32 @@ class CartList extends Component {
                                                         isOrderProducts={false}
                                                         data={Object.values(item)[0]}
                                                         component={this}
-                                                        removeFromSelectedCart={this.removeFromSelectedCart}
+                                                        increment={value => {
+                                                            this.increment(value, index)
+                                                        }}
+                                                        decrement={value => {
+                                                            this.decrement(value, index)
+                                                        }}
+                                                        remove={value => {
+                                                            this.remove(value, index)
+                                                        }}
                                                     />
                                                     <Row>
                                                         <Colxx xxs="6">
-                                                            <div>Tổng giá trị nhập hàng: {item.totalPrice} VNĐ</div>
+                                                            <p>Hình thức vận chuyển: {item?.transportation}</p>
                                                         </Colxx>
                                                         <Colxx xxs="6">
-                                                            <div>Tổng phí dịch vụ: {item.serviceCost} VNĐ</div>
+                                                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(item?.weight), 3)} kg</p>
                                                         </Colxx>
+                                                    </Row>
+                                                    {
+                                                        this.renderAddress(item, index)
+                                                    }
+                                                    <Row className="mt-2">
                                                         <Colxx xxs="6">
-                                                            <div>Thời gian dự kiến hàng về: {item.timeToCome} ngày</div>
+                                                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)))} VNĐ</p>
+                                                            
                                                         </Colxx>
-                                                        <Colxx xxs="6">
-                                                            <div>Tổng khối lượng: {numberFormat(Number.parseFloat(item.weight), 3)} kg</div>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <div>Hình thức vận chuyển: {item.transportation}</div>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <span className="w-80 d-inline-block">Địa chỉ giao hàng: {item.address} </span>
-                                                            <span className="w-20 d-inline-block text-right">
-                                                                <ConfirmButton
-                                                                    btnConfig={{
-                                                                        color: "primary",
-                                                                        size: "xs",
-                                                                    }}
-                                                                    content={{
-                                                                        close: "Đóng",
-                                                                        confirm: "Xác nhận"
-                                                                    }}
-                                                                    onConfirm={() => {
-                                                                        this.updateAddressOrder(index);
-                                                                    }}
-                                                                    closeOnConfirm={true}
-                                                                    buttonContent={() => {
-                                                                        return (
-                                                                            <b>Thay đổi</b>
-                                                                        );
-                                                                    }}
-                                                                    confirmHeader={() => {
-                                                                        return (
-                                                                            <>Chọn địa chỉ giao hàng</>
-                                                                        );
-                                                                    }}
-                                                                    confirmContent={() => {
-                                                                        return (
-                                                                            <Row>
-                                                                                <Colxx xxs="12">
-                                                                                    <Label className="form-group has-float-label mb-4">
-                                                                                        <Select
-                                                                                            className="react-select"
-                                                                                            classNamePrefix="react-select"
-                                                                                            options={this.state.optionAddress}
-                                                                                            value={this.state.selectedAddress}
-                                                                                            onChange={(e) => {
-                                                                                                this.setState({
-                                                                                                    selectedAddress: e
-                                                                                                })
-                                                                                            }}
-                                                                                        />
-                                                                                        <IntlMessages id="Chọn địa chỉ giao hàng" />
-                                                                                    </Label>
-                                                                                </Colxx>
-                                                                                <Colxx xxs="12">
-                                                                                    <div className="text-right">
-                                                                                        <Button
-                                                                                            color="primary"
-                                                                                            onClick={() => {
-                                                                                                this.toggleModalCreateAddress();
-                                                                                                this.getSellerAddress();
-                                                                                            }}
-                                                                                        >
-                                                                                            Tạo mới
-                                                                                        </Button>
-                                                                                    </div>
-                                                                                </Colxx>
-                                                                            </Row>
-                                                                        );
-                                                                    }}
-                                                                />
-                                                            </span>
-                                                        </Colxx>
-
                                                     </Row>
                                                 </Collapse>
                                             </div>
