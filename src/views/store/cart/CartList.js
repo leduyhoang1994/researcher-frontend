@@ -271,7 +271,6 @@ class CartList extends Component {
             order = this.updateInfoOrder(order, name);
 
             if (order !== null) {
-                orders = orders.splice(idx, 1, order);
                 NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
             }
         } else if (key === "add") {
@@ -292,7 +291,6 @@ class CartList extends Component {
     }
 
     updateInfoOrder = (order, name, transportation) => {
-        console.log(order, name, transportation);
         let totalPrice = 0, weight = 0, timeToCome = 0;
         let products = Object.values(order)[0];
         transportation = transportation ? transportation : order?.transportation;
@@ -365,11 +363,9 @@ class CartList extends Component {
         const { orders, groupOrderId } = this.state;
         let arr = [], flag = true;
         orders.forEach(order => {
-            if (order?.transportation === "DropShip" || order?.transportation === "Sỉ kho khách hàng") {
-                if ((order?.addressOrderId || "") === "") {
-                    NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
-                    flag = false;
-                }
+            if ((order?.addressOrderId || "") === "") {
+                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
+                flag = false;
             }
             const products = Object.values(order)[0];
             let detail = [];
@@ -474,94 +470,6 @@ class CartList extends Component {
         this.setState({
             selectedProducts: selectedProducts
         });
-    }
-
-    renderAddress = (item, index) => {
-        if (item?.transportation === "DropShip" || item?.transportation === "Sỉ kho khách hàng") {
-            return (
-                <Row>
-                    <Colxx xxs="12">
-                        <span className="w-75 d-inline-block">Địa chỉ giao hàng: {item?.address} </span>
-                        <span className="w-25 d-inline-block text-right">
-                            <ConfirmButton
-                                btnConfig={{
-                                    color: "primary",
-                                    size: "xs",
-                                }}
-                                content={{
-                                    close: "Đóng",
-                                    confirm: "Xác nhận"
-                                }}
-                                onConfirm={() => {
-                                    this.updateAddressOrder(index);
-                                }}
-                                closeOnConfirm={true}
-                                buttonContent={() => {
-                                    return (
-                                        <b>Thay đổi</b>
-                                    );
-                                }}
-                                confirmHeader={() => {
-                                    return (
-                                        <>Chọn địa chỉ giao hàng</>
-                                    );
-                                }}
-                                confirmContent={() => {
-                                    return (
-                                        <Row>
-                                            <Colxx xxs="12">
-                                                <Label className="form-group has-float-label mb-4">
-                                                    <Select
-                                                        className="react-select"
-                                                        classNamePrefix="react-select"
-                                                        options={this.state.optionAddress}
-                                                        value={this.state.selectedAddress}
-                                                        onChange={(e) => {
-                                                            this.setState({
-                                                                selectedAddress: e
-                                                            })
-                                                        }}
-                                                    />
-                                                    <IntlMessages id="Chọn địa chỉ giao hàng" />
-                                                </Label>
-                                            </Colxx>
-                                            <Colxx xxs="12">
-                                                <div className="text-right">
-                                                    <Button
-                                                        color="primary"
-                                                        onClick={() => {
-                                                            this.toggleModalCreateAddress();
-                                                            this.getSellerAddress();
-                                                        }}
-                                                    >
-                                                        Tạo mới
-                                                    </Button>
-                                                </div>
-                                            </Colxx>
-                                        </Row>
-                                    );
-                                }}
-                            />
-                        </span>
-                    </Colxx>
-                    <Colxx xxs="12 mt-2">
-                        <span className="w-80 d-inline-block">Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(item?.lastMiles || 0))} VNĐ</span>
-                        <span className="w-20 d-inline-block text-right">
-                            <Button
-                                disabled={this.state.selectedAddress?.label ? false : true}
-                                size="xs"
-                                color="primary"
-                                onClick={() => {
-                                    this.calculateLastMiles(item, index)
-                                }}
-                            >Cập nhật</Button>
-                        </span>
-                    </Colxx>
-                </Row>
-            )
-        } else {
-            return (<></>)
-        }
     }
 
     render() {
@@ -684,13 +592,89 @@ class CartList extends Component {
                                                             <p>Tổng khối lượng: {numberFormat(Number.parseFloat(item?.weight), 3)} kg</p>
                                                         </Colxx>
                                                     </Row>
-                                                    {
-                                                        this.renderAddress(item, index)
-                                                    }
+                                                    <Row>
+                                                        <Colxx xxs="12">
+                                                            <span className="w-75 d-inline-block">Địa chỉ giao hàng: {item?.address} </span>
+                                                            <span className="w-25 d-inline-block text-right">
+                                                                <ConfirmButton
+                                                                    btnConfig={{
+                                                                        color: "primary",
+                                                                        size: "xs",
+                                                                    }}
+                                                                    content={{
+                                                                        close: "Đóng",
+                                                                        confirm: "Xác nhận"
+                                                                    }}
+                                                                    onConfirm={() => {
+                                                                        this.updateAddressOrder(index);
+                                                                    }}
+                                                                    closeOnConfirm={true}
+                                                                    buttonContent={() => {
+                                                                        return (
+                                                                            <b>Thay đổi</b>
+                                                                        );
+                                                                    }}
+                                                                    confirmHeader={() => {
+                                                                        return (
+                                                                            <>Chọn địa chỉ giao hàng</>
+                                                                        );
+                                                                    }}
+                                                                    confirmContent={() => {
+                                                                        return (
+                                                                            <Row>
+                                                                                <Colxx xxs="12">
+                                                                                    <Label className="form-group has-float-label mb-4">
+                                                                                        <Select
+                                                                                            className="react-select"
+                                                                                            classNamePrefix="react-select"
+                                                                                            options={this.state.optionAddress}
+                                                                                            value={this.state.selectedAddress}
+                                                                                            onChange={(e) => {
+                                                                                                this.setState({
+                                                                                                    selectedAddress: e
+                                                                                                })
+                                                                                            }}
+                                                                                        />
+                                                                                        <IntlMessages id="Chọn địa chỉ giao hàng" />
+                                                                                    </Label>
+                                                                                </Colxx>
+                                                                                <Colxx xxs="12">
+                                                                                    <div className="text-right">
+                                                                                        <Button
+                                                                                            color="primary"
+                                                                                            onClick={() => {
+                                                                                                this.toggleModalCreateAddress();
+                                                                                                this.getSellerAddress();
+                                                                                            }}
+                                                                                        >
+                                                                                            Tạo mới
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </Colxx>
+                                                                            </Row>
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            </span>
+                                                        </Colxx>
+                                                        <Colxx xxs="12 mt-2">
+                                                            <span className="w-80 d-inline-block">Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(item?.lastMiles || 0))} VNĐ</span>
+                                                            <span className="w-20 d-inline-block text-right">
+                                                                <Button
+                                                                    disabled={this.state.selectedAddress?.label ? false : true}
+                                                                    size="xs"
+                                                                    color="primary"
+                                                                    onClick={() => {
+                                                                        this.calculateLastMiles(item, index)
+                                                                    }}
+                                                                >Cập nhật</Button>
+                                                            </span>
+                                                        </Colxx>
+                                                    </Row>
                                                     <Row className="mt-2">
                                                         <Colxx xxs="6">
                                                             <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)))} VNĐ</p>
-                                                            
+
                                                         </Colxx>
                                                     </Row>
                                                 </Collapse>

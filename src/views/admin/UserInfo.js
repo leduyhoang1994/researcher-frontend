@@ -324,6 +324,8 @@ class UserInfo extends Component {
                             setTimeout(() => {
                                 window.open(`/info/${data.data.result.id}`, "_self")
                             }, 2000)
+                        } else {
+                            this.props.reloadUsers();
                         }
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);

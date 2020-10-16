@@ -26,10 +26,8 @@ class SellerLists extends Component {
             roleName: "",
             sellers: [],
             roles: [],
-            isOpenUserModal: false,
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
-        this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
     }
 
     componentDidMount() {
@@ -80,13 +78,6 @@ class SellerLists extends Component {
             }).catch(error => {
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
             });
-    }
-
-    toggleOpenUserModal(id) {
-        this.setState({
-            id,
-            isOpenUserModal: !this.state.isOpenUserModal,
-        })
     }
 
     createUser = () => {
@@ -168,7 +159,7 @@ class SellerLists extends Component {
                                         if (rowInfo && rowInfo.row) {
                                             return {
                                                 onClick: (e) => {
-                                                    window.open(`/info/sellers/${rowInfo.original.id}`)
+                                                    window.open(`/info/sellers/detail/${rowInfo.original.id}`)
                                                 },
                                                 style: {
                                                     cursor: "pointer"
@@ -186,7 +177,7 @@ class SellerLists extends Component {
                                 className="mr-3"
                                 color="primary"
                                 onClick={() => {
-                                    this.toggleOpenUserModal()
+                                    window.open("/info/sellers/detail")
                                 }}
                             >
                                 Thêm mới
@@ -203,12 +194,6 @@ class SellerLists extends Component {
                         </div>
                     </CardBody>
                 </Card >
-                <UserModals
-                    userId={this.state.id}
-                    key={this.state.isOpenUserModal}
-                    isOpenModal={this.state.isOpenUserModal}
-                    toggleOpenUserModal={this.toggleOpenUserModal}
-                />
             </Fragment >
         );
     }
