@@ -22,6 +22,7 @@ class OrderList extends Component {
 
     getProducts = () => {
         ApiController.get(`${ORDERS.getBySeller}`, {}, data => {
+            console.log(data);
             this.setState({
                 orders: data
             })
@@ -29,7 +30,7 @@ class OrderList extends Component {
     }
 
     handleClickRow = (row) => {
-        window.open(`/store/orders/detail/${row.id}`, "_self")
+        window.open(`/store/orders/detail/${row.id}`)
     }
 
     render() {

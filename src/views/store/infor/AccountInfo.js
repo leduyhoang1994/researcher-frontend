@@ -3,13 +3,14 @@ import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
 
 import ApiController from '../../../helpers/Api';
-import { SELLER, ADDRESS } from '../../../constants/api';
+import { SELLER, ADDRESS, ADDRESS_ORDER } from '../../../constants/api';
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
 import ConfirmButton from "../../../components/common/ConfirmButton";
 import "./style.scss";
+import CreateAddressModals from "../cart/CreateAddressModals";
 
 class AccountInfo extends Component {
     constructor(props) {
@@ -39,6 +40,9 @@ class AccountInfo extends Component {
             optionsCommune: [],
             typeInput: "password",
             isOpenUserModal: false,
+            isOpenCreateAddress: false,
+            optionAddress: [],
+            selectedAddress: [],
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
         this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
@@ -62,6 +66,13 @@ class AccountInfo extends Component {
         } else if (id) {
             this.loadSellers(id);
         }
+        this.getSellerAddress();
+    }
+
+    toggleModalCreateAddress = () => {
+        this.setState({
+            isOpenCreateAddress: !this.state.isOpenCreateAddress
+        });
     }
 
     toggleOpenUserModal() {
@@ -85,6 +96,19 @@ class AccountInfo extends Component {
                 this.defaultCity()
             });
         }
+    }
+
+    getSellerAddress = () => {
+        let optionAddress = [];
+        ApiController.get(ADDRESS_ORDER.all, {}, data => {
+            data.forEach(item => {
+                let valueAddress = item.city + " " + item.district + " " + item.town + " " + item.address;
+                optionAddress.push({ label: valueAddress, value: item.id })
+            })
+            this.setState({
+                optionAddress
+            })
+        });
     }
 
     defaultCity = () => {
@@ -124,10 +148,8 @@ class AccountInfo extends Component {
 
     getAddress = () => {
         ApiController.get(ADDRESS.all, {}, data => {
-            let address = data;
-            delete address["city"];
             this.setState({
-                address
+                address: data
             })
             this.getCities();
         });
@@ -232,7 +254,7 @@ class AccountInfo extends Component {
 
     validateField = async () => {
         const needToValidate = [{ firstName: "Họ" }, { lastName: "Tên" },
-        { phoneNumber: "Số điện thoại" }, { email: "E-mail" },
+        { phoneNumber: "Số điện thoại" }, { email: "E-mail" }, { passwordCheck: "Mật khẩu hiện tại" },
         { password: "Mật khẩu" }, { confirmPassword: "Xác nhận mật khẩu" }]
         let success = true;
         for await (const field of needToValidate) {
@@ -273,19 +295,22 @@ class AccountInfo extends Component {
         if (selectedCommune) {
             seller.town = selectedCommune.label;
         }
-        const { firstName, lastName, phoneNumber, email, city, district, town, address, company } = seller;
-        const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
+        const { firstName, lastName, phoneNumber, email, city, district, town, address, passwordCheck, company } = seller;
+        const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, passwordCheck, company };
 
         console.log(data);
-        // ApiController.callAsync('put', SELLER.all, data)
-        //     .then(data => {
-        //         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-        //         setTimeout(() => {
-        //             window.open(`/info/${data.data.result.id}`, "_self")
-        //         }, 2000)
-        //     }).catch(error => {
-        //         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-        //     });
+        ApiController.callAsync('put', SELLER.all, data)
+            .then(data => {
+                NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+            }).catch(error => {
+                if (error.response.status === 401) {
+                    NotificationManager.warning("Mật khẩu không chính xác", "Thất bại", 1500);
+                } else {
+                    NotificationManager.warning(error.response?.data?.message, "Thất bại", 1500);
+                }
+
+
+            });
     }
 
     render() {
@@ -424,6 +449,21 @@ class AccountInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
+                                        type={typeInput}
+                                        value={passwordCheck || ""}
+                                        name="passwordCheck"
+                                        onChange={(e) => {
+                                            this.handleChangeInput(e)
+                                        }}
+                                    />
+                                    <span>
+                                        <IntlMessages id="Mật khẩu hiện tại *" />
+                                    </span>
+                                </Label>
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <Label className="has-float-label ">
+                                    <Input
                                         className=""
                                         type="text"
                                         value={company || ""}
@@ -436,6 +476,33 @@ class AccountInfo extends Component {
                                         <IntlMessages id="Công ty" />
                                     </span>
                                 </Label>
+                            </Colxx>
+                            <Colxx xxs="6">
+                                <Label className="form-group has-float-label mb-4 w-80  d-inline-block">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        options={this.state.optionAddress}
+                                        value={this.state.selectedAddress}
+                                        onChange={(e) => {
+                                            this.setState({
+                                                selectedAddress: e
+                                            })
+                                        }}
+                                    />
+                                    <IntlMessages id="Danh sách địa chỉ giao hàng" />
+                                </Label>
+                                <span className="w-20 d-inline-block text-right">
+                                    <Button
+                                        className="button"
+                                        color="primary"
+                                        onClick={() => {
+                                            this.toggleModalCreateAddress();
+                                        }}
+                                    >
+                                        Tạo mới
+                                    </Button>
+                                </span>
                             </Colxx>
                         </Row>
                         <div className="text-right mt-3">
@@ -550,6 +617,11 @@ class AccountInfo extends Component {
                         </div>
                     </CardBody>
                 </Card >
+                <CreateAddressModals
+                    key={this.state.isOpenCreateAddress + "address"}
+                    isOpen={this.state.isOpenCreateAddress}
+                    toggleModalCreateAddress={this.toggleModalCreateAddress}
+                />
             </Fragment >
         );
     }

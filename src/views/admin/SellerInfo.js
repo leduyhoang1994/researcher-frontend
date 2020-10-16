@@ -3,7 +3,7 @@ import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
 
 import ApiController from '../../helpers/Api';
-import { SELLER, ADDRESS } from '../../constants/api';
+import { SELLER, ADDRESS, ACCOUNTS } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
@@ -38,6 +38,8 @@ class SellerInfo extends Component {
             optionsCommune: [],
             typeInput: "password",
             isOpenUserModal: false,
+            accounts: [],
+            selectedType: [],
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
         this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
@@ -47,6 +49,7 @@ class SellerInfo extends Component {
 
     componentDidMount() {
         this.getAddress();
+        this.loadAccountType();
         let { id } = this.state;
         if (this.props?.sellerId !== undefined && this.props?.sellerId !== null) {
             id = this.props.sellerId;
@@ -74,7 +77,8 @@ class SellerInfo extends Component {
         if (id) {
             ApiController.get(`${SELLER.details}/${id}`, {}, data => {
                 this.setState({ seller: data });
-                this.defaultCity()
+                this.defaultCity();
+                this.defaultAccountType()
             });
         } else {
             ApiController.get(`${SELLER.details}`, {}, data => {
@@ -83,7 +87,31 @@ class SellerInfo extends Component {
                     id: data?.id
                 });
                 this.defaultCity()
+                this.defaultAccountType()
             });
+        }
+    }
+
+    loadAccountType = () => {
+        ApiController.get(ACCOUNTS.all, {}, data => {
+            let accounts = [];
+            data.forEach(item => {
+                accounts.push({ label: item.label, value: item.id })
+            })
+            this.setState({ accounts });
+        });
+    }
+
+    defaultAccountType = () => {
+        const { seller, accounts } = this.state;
+        if (seller?.accountTypeId) {
+            accounts.forEach(item => {
+                if (item.value === seller.accountTypeId) {
+                    this.setState({
+                        selectedType: item
+                    })
+                }
+            })
         }
     }
 
@@ -248,8 +276,9 @@ class SellerInfo extends Component {
     }
 
     submitChangeType = () => {
-        const { id, accountTypeId } = this.state;
-        const data = { sellerId: id, accountTypeId: 1 }
+        const { id, selectedType } = this.state;
+        const data = { sellerId: id, accountTypeId: selectedType.value }
+        console.log(data);
         ApiController.callAsync('put', SELLER.type, data)
             .then(data => {
                 console.log(data);
@@ -304,7 +333,7 @@ class SellerInfo extends Component {
                 seller.town = selectedCommune.label;
             }
             const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
-            if(password !== "" && password === confirmPassword) {
+            if (password !== "" && password === confirmPassword) {
                 const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword };
 
                 ApiController.callAsync('put', SELLER.admin, data)
@@ -313,15 +342,15 @@ class SellerInfo extends Component {
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                     });
-            } else if(password !== "" && password !== confirmPassword){
+            } else if (password !== "" && password !== confirmPassword) {
                 NotificationManager.warning("Xác nhận mật khẩu không trùng mật khẩu", "Thông báo", 1500);
             }
-            
+
         }
     }
 
     render() {
-        const { seller, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
+        const { seller, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune, selectedType, accounts } = this.state;
         const { firstName, lastName, username, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = seller;
 
         const isDisabled = false;
@@ -510,50 +539,36 @@ class SellerInfo extends Component {
                                     </span>
                                 </Label>
                             </Colxx>
+                            <Colxx xxs="6">
+                                <Label className="form-group has-float-label mb-4 w-80 d-inline-block">
+                                    <Select
+                                        className="react-select"
+                                        classNamePrefix="react-select"
+                                        value={selectedType}
+                                        options={accounts}
+                                        onChange={e => {
+                                            this.setState({
+                                                selectedType: e
+                                            })
+                                        }}
+                                    />
+                                    <IntlMessages id="Loại tài khoản" />
+                                </Label>
+                                <span className="w-20 d-inline-block text-right">
+                                    <Button
+                                        className="button"
+                                        color="primary"
+                                        onClick={() => {
+                                            this.submitChangeType();
+                                        }}
+                                    >
+                                        Thay đổi
+                                    </Button>
+                                </span>
+                            </Colxx>
                         </Row>
+
                         <div className="text-right mt-3">
-                            <ConfirmButton
-                                isDisabled={isDisabled}
-                                btnConfig={{ color: "warning", className: "mr-2" }}
-                                content={{
-                                    close: "Đóng",
-                                    confirm: "Xác nhận"
-                                }}
-                                onConfirm={() => {
-                                    this.submitChangeType();
-                                }}
-                                buttonContent={() => {
-                                    return (
-                                        <>Đổi loại tài khoản</>
-                                    );
-                                }}
-                                confirmHeader={() => {
-                                    return (
-                                        <>Thay đổi loại tài khoản</>
-                                    );
-                                }}
-                                closeOnConfirm={true}
-                                confirmContent={() => {
-                                    return (
-                                        <div>
-                                            <Row>
-                                                <Colxx xxs="12">
-                                                    <Label className="form-group has-float-label mb-4">
-                                                        <Select
-                                                            className="react-select"
-                                                            classNamePrefix="react-select"
-                                                            value={selectedCity}
-                                                            onChange={this.handleChangeCity}
-                                                            options={optionsCity}
-                                                        />
-                                                        <IntlMessages id="Loại tài khoản" />
-                                                    </Label>
-                                                </Colxx>
-                                            </Row>
-                                        </div>
-                                    );
-                                }}
-                            />
                             <Button
                                 className="button"
                                 color="primary"

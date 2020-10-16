@@ -167,7 +167,7 @@ class CreateAddressModals extends Component {
                     }}
                   />
                   <span >
-                    <IntlMessages id="Tên người nhận" />
+                    <IntlMessages id="Tên người nhận *" />
                   </span>
                 </Label>
               </Colxx>
@@ -182,7 +182,7 @@ class CreateAddressModals extends Component {
                     }}
                   />
                   <span >
-                    <IntlMessages id="Số điện thoại" />
+                    <IntlMessages id="Số điện thoại *" />
                   </span>
                 </Label>
               </Colxx>
@@ -195,7 +195,7 @@ class CreateAddressModals extends Component {
                     onChange={this.handleChangeCity}
                     options={optionsCity}
                   />
-                  <IntlMessages id="user.city" />
+                  <IntlMessages id="Tỉnh / Thành phố *" />
                 </Label>
               </Colxx>
 
@@ -208,7 +208,7 @@ class CreateAddressModals extends Component {
                     onChange={this.handleChangeDistrict}
                     options={optionsDistrict}
                   />
-                  <IntlMessages id="user.district" />
+                  <IntlMessages id="Quận / Huyện *" />
                 </Label>
               </Colxx>
               <Colxx xxs="6">
@@ -220,7 +220,7 @@ class CreateAddressModals extends Component {
                     onChange={this.handleChangeCommune}
                     options={optionsCommune}
                   />
-                  <IntlMessages id="user.commune" />
+                  <IntlMessages id="Phường / Xã" />
                 </Label>
               </Colxx>
               <Colxx xxs="6">
@@ -234,7 +234,7 @@ class CreateAddressModals extends Component {
                     }}
                   />
                   <span >
-                    <IntlMessages id="user.address" />
+                    <IntlMessages id="Địa chỉ *" />
                   </span>
                 </Label>
               </Colxx>

@@ -320,6 +320,7 @@ class CartList extends Component {
         let { orders } = this.state;
         let order = orders[index];
         order.addressOrderId = this.state.selectedAddress.value;
+        order.address = this.state.selectedAddress.label;
         orders.splice(index, 1, order);
         this.setState({
             orders
@@ -477,7 +478,7 @@ class CartList extends Component {
                                     <div className="text-right  mt-5">
                                         <Button
                                             className="mr-2"
-                                            color="primary"
+                                            color="success"
                                             onClick={() => {
                                                 this.openOrderModals();
                                             }}
@@ -531,7 +532,7 @@ class CartList extends Component {
                                                             <div>Hình thức vận chuyển: {item.transportation}</div>
                                                         </Colxx>
                                                         <Colxx xxs="12">
-                                                            <span className="w-80 d-inline-block">Địa chỉ giao hàng: {} </span>
+                                                            <span className="w-80 d-inline-block">Địa chỉ giao hàng: {item.address} </span>
                                                             <span className="w-20 d-inline-block text-right">
                                                                 <ConfirmButton
                                                                     btnConfig={{

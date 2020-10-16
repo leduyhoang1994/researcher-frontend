@@ -169,3 +169,9 @@ export const group_orders = 'group-orders';
 export const GROUP_ORDERS = {
   all: `${apiPath}/${group_orders}`,
 }
+
+/** Group Order */
+export const account = 'account-type';
+export const ACCOUNTS = {
+  all: `${apiPath}/${account}`,
+}

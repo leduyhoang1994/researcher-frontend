@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { Row} from 'reactstrap';
+import { Row } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import { ORDERS } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import OrderDetailTable from './OrderDetailTable';
+import OrderDetailTables from './OrderDetailTables';
 import { defaultImg } from '../../../constants/defaultValues';
+import { currencyFormatVND, numberFormat } from '../../../helpers/Utils';
 
 class OrderDetail extends Component {
     constructor(props) {
@@ -46,15 +47,14 @@ class OrderDetail extends Component {
         products.forEach(product => {
             let value = {};
             value.quantity = product.quantity;
-            value.calculatedPrice = product.calculatedPrice;
-            if (product.uboxProduct.featureImage) {
+            value.price = product.calculatedPrice;
+            if (product.uboxProduct?.featureImage) {
                 value.featureImage = product.uboxProduct.featureImage;
             } else {
                 value.featureImage = defaultImg
             }
             value.name = product.uboxProduct.name;
-            value.price = product.uboxProduct.price;
-            value.internalPrice = product.uboxProduct.internalPrice;
+            value.weight = product.calculatedWeight;
 
             data.push(value);
         })
@@ -69,11 +69,24 @@ class OrderDetail extends Component {
                     </Row>
                     <Row>
                         <Colxx xxs="12">
-                            <OrderDetailTable
+                            <OrderDetailTables
                                 data={data}
                                 totalPrice={totalPrice}
-                                handleClickRow={this.handleClickRow}
                             />
+                        </Colxx>
+                    </Row>
+                    <Row>
+                        <Colxx xxs="6">
+                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(order?.totalPrice))} VNĐ</p>
+                        </Colxx>
+                        <Colxx xxs="6">
+                            <p>Trạng thái đơn hàng: {order?.statusPayment} ngày</p>
+                        </Colxx>
+                        <Colxx xxs="6">
+                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(order?.totalWeight), 3)} kg</p>
+                        </Colxx>
+                        <Colxx xxs="6">
+                            <p>Hình thức vận chuyển: {order?.transportation?.name}</p>
                         </Colxx>
                     </Row>
 

@@ -372,6 +372,13 @@ class TopNavStore extends Component {
                       >
                         Cá nhân
                       </DropdownItem>
+                      <DropdownItem
+                        onClick={() => {
+                          window.open("/store/orders", "_self")
+                        }}
+                      >
+                        Lịch sử mua hàng
+                      </DropdownItem>
                       <DropdownItem onClick={() => this.handleLogout()}>
                         Sign out
                     </DropdownItem>
