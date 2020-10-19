@@ -29,10 +29,8 @@ class UserModals extends React.Component {
                         </div> */}
                         <UserInfo
                             type='modal'
-                            userId={this.props?.userId}
-                            reloadUsers={() => {
-                                this.props.reloadUsers()
-                            }}
+                            userId={this.props.userId}
+                            reloadUsers={this.props.reloadUsers}
                             toggleOpenUserModal={this.props.toggleOpenUserModal}
                         />
 

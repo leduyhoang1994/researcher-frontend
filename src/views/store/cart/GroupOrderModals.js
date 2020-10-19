@@ -11,7 +11,7 @@ class GroupOrderModals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      radioValue: "update-group-order",
+      radioValue: "add-group-order",
       groupOrderName: "",
       selected: "",
       descriptions: "",
@@ -34,6 +34,7 @@ class GroupOrderModals extends Component {
       })
     });
   }
+
   handleChange = (data) => {
     if (data === "add-group-order") {
       this.setState({
@@ -71,7 +72,16 @@ class GroupOrderModals extends Component {
             this.props.setGroupOrderId(data.data.result.id);
           }
         }).catch(error => {
-          NotificationManager.warning("Thêm lô hàng thất bại", "Thất bại", 1000);
+          if (error.response.status === 401) {
+            setTimeout(function () {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
+              setTimeout(function () {
+                window.open("/seller/login", "_self")
+              }, 1500);
+            }, 1500);
+          } else {
+            NotificationManager.warning("Thêm lô hàng thất bại", "Thất bại", 1000);
+          }
         });
     }
   }
@@ -137,10 +147,10 @@ class GroupOrderModals extends Component {
       <div>
         <Modal isOpen={isOpen} toggle={toggleModal}>
           <ModalHeader>
-            <IntlMessages id="Bổ sung vào lô hàng có sẵn hay thêm mới?" />
+            <IntlMessages id="Tạo mới lô hàng" />
           </ModalHeader>
           <ModalBody>
-            <FormGroup row>
+            {/* <FormGroup row>
               <Label sm={2} className="pt-0">
                 <IntlMessages id="Chọn" />
               </Label>
@@ -158,7 +168,7 @@ class GroupOrderModals extends Component {
                   </Label>
                 </FormGroup>
               </Colxx>
-            </FormGroup>
+            </FormGroup> */}
             {
               this.ShowInputArea()
             }

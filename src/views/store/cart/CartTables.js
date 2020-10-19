@@ -8,7 +8,7 @@ import { currencyFormatVND, numberFormat } from '../../../helpers/Utils';
 import { defaultImg } from '../../../constants/defaultValues';
 
 // import "./style.scss";
-import { Input } from 'reactstrap';
+import { Button, Input } from 'reactstrap';
 
 const CartTables = ({
   data,
@@ -57,13 +57,13 @@ const CartTables = ({
     },
     {
       Header: __(component.messages, "Tên sản phẩm"),
-      sortable: false,
+      sortable: true,
       accessor: "name",
       Cell: props => <a target="_blank" rel="noopener noreferrer" href={`/store/products/detail/${props.original.id}`}>{props.value}</a>
     },
     {
       Header: __(component.messages, "Hình thức vận chuyển"),
-      sortable: false,
+      sortable: true,
       accessor: "transportation",
       Cell: props => (
         <span key={props.original.optionIds}>
@@ -85,7 +85,7 @@ const CartTables = ({
     },
     {
       Header: __(component.messages, "Khối lượng"),
-      sortable: false,
+      sortable: true,
       width: 75,
       accessor: "weight",
       Cell: props => <p className="text-muted">
@@ -94,7 +94,7 @@ const CartTables = ({
     },
     {
       Header: __(component.messages, "Giá nhập hàng"),
-      sortable: false,
+      sortable: true,
       width: 100,
       accessor: "offerPrice",
       Cell: props => <p className="text-muted">
@@ -102,12 +102,47 @@ const CartTables = ({
       </p>
     },
     {
+      Header: __(component.messages, "Thuộc tính"),
+      sortable: true,
+      width: 100,
+      accessor: "property",
+      Cell: props => {
+        let property = "";
+        props.original.property.forEach(item => {
+          property = property.concat(item).concat(", ");
+        })
+        if (property.length > 2) {
+          property = property.substr(0, property.length - 2)
+        }
+        return (
+          <p className="text-muted">{property}</p>
+        )
+      }
+    },
+    {
       Header: __(component.messages, "Thời gian giao hàng"),
-      sortable: false,
+      sortable: true,
       accessor: "workshopIn",
       Cell: props => <p className="text-muted">
         {props.value ? (numberFormat(Number.parseFloat(props.value), 1) + " ngày") : null}
       </p>
+    },
+    {
+      Header: __(component.messages, "Xóa"),
+      sortable: false,
+      width: 50,
+      accessor: "quantity",
+      Cell: props =>
+        <div>
+          <Button
+            size="xs"
+            className="w-5 w-xs-100"
+            color="primary"
+            onClick={() => {
+              removeFromSelectedCart(props.original)
+            }}
+          >X</Button>
+        </div>
     },
   ];
 
@@ -120,24 +155,24 @@ const CartTables = ({
         className="cart-table mb-4 -striped -highlight"
         showPagination={false}
         // PaginationComponent={DataTablePagination}
-        getTrProps={(state, rowInfo) => {
-          if (rowInfo && rowInfo.row) {
-            return {
-              onClick: (e) => {
-                if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
-                  if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
-                } else {
-                  if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
-                }
-              },
-              style: {
-                cursor: "pointer"
-              }
-            }
-          } else {
-            return {}
-          }
-        }}
+        // getTrProps={(state, rowInfo) => {
+        //   if (rowInfo && rowInfo.row) {
+        //     return {
+        //       onClick: (e) => {
+        //         if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
+        //           if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
+        //         } else {
+        //           if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
+        //         }
+        //       },
+        //       style: {
+        //         cursor: "pointer"
+        //       }
+        //     }
+        //   } else {
+        //     return {}
+        //   }
+        // }}
       // style={{
       //   height: "450px"
       // }}

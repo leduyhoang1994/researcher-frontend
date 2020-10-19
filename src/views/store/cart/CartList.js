@@ -21,6 +21,7 @@ import IntlMessages from '../../../helpers/IntlMessages';
 import ConfirmButton from '../../../components/common/ConfirmButton';
 import CreateAddressModals from './CreateAddressModals';
 import GroupOrderModals from './GroupOrderModals';
+import { database } from 'firebase';
 
 class CartList extends Component {
     constructor(props) {
@@ -122,20 +123,7 @@ class CartList extends Component {
         }
         else cart = JSON.parse(cart);
         this.setState({
-            cart: cart
-        }, () => {
-            this.getProduct()
-        })
-    }
-
-    getProduct = () => {
-        const cart = this.state.cart;
-        let products = [];
-        cart.forEach(product => {
-            products.push(product);
-        })
-        this.setState({
-            products: products
+            products: cart
         })
         this.addTotals();
     }
@@ -195,7 +183,6 @@ class CartList extends Component {
         let { orders } = this.state;
         let order = orders[index];
         let products = Object.values(order)[0];
-        console.log(products);
         if (products?.length > 0) {
             products.forEach((item, index) => {
                 if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
@@ -364,7 +351,7 @@ class CartList extends Component {
         let arr = [], flag = true;
         orders.forEach(order => {
             if ((order?.addressOrderId || "") === "") {
-                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
+                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 1000);
                 flag = false;
             }
             const products = Object.values(order)[0];
@@ -384,12 +371,11 @@ class CartList extends Component {
             Api.callAsync('post', ORDERS.all, arr).then(data => {
                 if (data.data.statusCode === 200) {
                     NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
-                    localStorage.setItem("cart", JSON.stringify([]));
+                    // localStorage.setItem("cart", JSON.stringify([]));
                     setTimeout(function () {
                         window.open("/store", "_self")
                     }, 1000);
                 }
-
             }).catch(error => {
                 NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
                 if (error.response.status === 401) {
@@ -453,22 +439,17 @@ class CartList extends Component {
         return true
     }
 
-    removeFromSelectedCart = (products) => {
-        let { selectedProducts } = this.state;
-
-        let newProducts = []
-
-        if (Array.isArray(products)) newProducts = [...products]
-        else newProducts.push(products)
-
-        for (const product of newProducts) {
-            selectedProducts = selectedProducts.filter(selectedProduct => {
-                return JSON.stringify(selectedProduct) !== JSON.stringify(product);
-            });
-        }
-
+    removeFromSelectedCart = (data) => {
+        let { products } = this.state;
+        products.forEach((item, index) => {
+            if (item.id === data.id && JSON.stringify(item.optionIds) === JSON.stringify(data.optionIds)) {
+                products.splice(index, 1);
+            }
+        })
+        localStorage.setItem("cart", JSON.stringify(products));
+        this.props.changeCount()
         this.setState({
-            selectedProducts: selectedProducts
+            products
         });
     }
 
@@ -567,9 +548,7 @@ class CartList extends Component {
                                                         />
                                                     </span>
                                                 </div>
-                                                <Collapse
-                                                    isOpen={collapses[index]}
-                                                >
+                                                <Collapse isOpen={collapses[index]}>
                                                     <OrderTables
                                                         isOrderProducts={false}
                                                         data={Object.values(item)[0]}
@@ -611,7 +590,7 @@ class CartList extends Component {
                                                                     closeOnConfirm={true}
                                                                     buttonContent={() => {
                                                                         return (
-                                                                            <b>Thay đổi</b>
+                                                                            <span>Thay đổi</span>
                                                                         );
                                                                     }}
                                                                     confirmHeader={() => {
@@ -729,6 +708,7 @@ class CartList extends Component {
                     <CreateAddressModals
                         key={this.state.isOpenCreateAddress + "address"}
                         isOpen={this.state.isOpenCreateAddress}
+                        getSellerAddress={this.getSellerAddress}
                         toggleModalCreateAddress={this.toggleModalCreateAddress}
                     />
                 </Fragment>

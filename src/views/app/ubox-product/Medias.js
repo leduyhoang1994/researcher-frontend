@@ -100,7 +100,7 @@ class Medias extends React.Component {
         };
 
         return (
-            <div key={index || media} className="media-item">
+            <div key={`media-${index || media}`} className="media-item">
                 <div name="media-view" className="media-item-show" style={style} onClick={(e) => {
                     this.setState({
                         mediaModal: `${media}`,

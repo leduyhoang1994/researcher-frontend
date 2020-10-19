@@ -12,8 +12,21 @@ class OrderModals extends Component {
       listOrders: [],
       orderName: "",
       selected: "",
-      selectedTransportation: {}
+      selectedTransportation: ""
     };
+  }
+
+  componentDidMount() {
+    let value = this.createUUID();
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+
+    today = "-" + dd + '/' + mm + '/' + yyyy;
+    this.setState({
+      orderName: value + today
+    })
   }
 
   handleChange = (data) => {
@@ -23,16 +36,19 @@ class OrderModals extends Component {
       });
     } else {
       this.setState({
-        orderName: ""
+        selectedTransportation: null
       });
     }
     this.setState({ radioValue: data });
   }
 
-  setOrderName = (event) => {
-    this.setState({
-      orderName: event.target.value
-    })
+  createUUID = () => {
+    const pattern = 'xxxxxxxx-xxxx-4xxx-yxxx';
+    return pattern.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : ((r & 0x3) | 0x8);
+      return v.toString(16).toUpperCase();
+    });
   }
 
   handleChangeOrder = (data) => {
@@ -74,16 +90,6 @@ class OrderModals extends Component {
     } else {
       return (
         <div>
-          <Label className="form-group has-float-label mb-4">
-            <Input
-              type="text"
-              className="form-control"
-              name="name"
-              value={this.state.orderName}
-              onChange={this.setOrderName}
-            />
-            <IntlMessages id="Nhập tên đơn hàng" />
-          </Label>
           <Label className="form-group has-float-label mb-4 mt-3">
             <Select
               className="react-select"
@@ -92,7 +98,19 @@ class OrderModals extends Component {
               onChange={this.handleChangeTransportation}
               options={this.props.optionTrans}
             />
-            <IntlMessages id="Hình thức vận chuyển" />
+            <IntlMessages id="Hình thức vận chuyển *" />
+          </Label>
+          <Label className="form-group has-float-label mb-4">
+            <Input
+              disabled
+              type="text"
+              className="form-control"
+              name="name"
+              value={this.state.orderName}
+            // onLoad={this.setOrderName}
+            // onChange={this.setOrderName}
+            />
+            <IntlMessages id="Tên đơn hàng" />
           </Label>
         </div>
       )
@@ -101,12 +119,12 @@ class OrderModals extends Component {
 
   render() {
     const { isOpen, toggleModal } = this.props;
-    const { radioValue, selected, orderName } = this.state;
+    const { radioValue, selected, orderName, selectedTransportation } = this.state;
 
     const update = "update-order";
     const isDisabled = radioValue === update ?
       !(radioValue === update && selected) :
-      !(radioValue !== update && orderName);
+      !(radioValue !== update && orderName && selectedTransportation);
 
     return (
       <div>

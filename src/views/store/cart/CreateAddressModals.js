@@ -127,15 +127,23 @@ class CreateAddressModals extends Component {
     const district = selectedDistrict.label;
     const town = selectedCommune.label;
     const data = { recipient, phone, country: "Viet Nam", city, district, town, address: street, description }
-    console.log(data);
     ApiController.callAsync('post', ADDRESS_ORDER.all, data)
       .then(data => {
-        console.log(data);
         if (data.data.statusCode === 200) {
+          this.props.getSellerAddress()
           NotificationManager.success("Thêm địa chỉ thành công", "Thành công", 1000);
         }
       }).catch(error => {
-        NotificationManager.warning("Thêm địa chỉ thất bại", "Thất bại", 1000);
+        if (error.response.status === 401) {
+          setTimeout(function () {
+            NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
+            setTimeout(function () {
+              window.open("/seller/login", "_self")
+            }, 1500);
+          }, 1500);
+        } else {
+          NotificationManager.warning("Thêm địa chỉ thất bại", "Thất bại", 1000);
+        }
       });
   }
 
