@@ -104,14 +104,23 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, internalPrice, price, } = this.state.product;
+        const { id, name, featureImage, weight, price, workshopIn, uboxProductTransportations } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
                 return property.push(item.value)
             }
         })
-        const product = { id, name, featureImage, internalPrice, price, quantity, optionIds, property };
+        let transportation = [];
+        console.log(uboxProductTransportations);
+        uboxProductTransportations.forEach(item => {
+            let trans = item?.transportation;
+            if(trans) {
+                transportation.push({label: trans.name, value: trans.id})
+            }
+        })
+        console.log(transportation);
+        const product = { id, name, featureImage, transportation, weight, price, workshopIn, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];
@@ -120,16 +129,18 @@ class ProductDetail extends Component {
         for (let i = 0; i < cart.length; i++) {
             if (cart[i].id === product.id) {
                 if (JSON.stringify(cart[i].optionIds) === JSON.stringify(product.optionIds)) {
-                    cart[i].quantity += quantity;
+                    NotificationManager.info("Sản phẩm đã được thêm vào giỏ", "Thông báo", 1000);
                     flag = true;
                     break;
                 }
             }
         }
-        if (!flag) cart.push(product);
-
+        if (!flag) {
+            cart.push(product);
+            NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
+        }
         localStorage.setItem("cart", JSON.stringify(cart));
-        NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
+        
     };
 
     setAttribute = (data) => {
@@ -224,7 +235,7 @@ class ProductDetail extends Component {
                                             <p >Sản lượng bán tại site gốc 1244</p>
                                         </Colxx>
                                     </Row>
-                                    <Row>
+                                    {/* <Row>
                                         <div className="mt-5">
                                             <p className="float-left mt-3 ml-3">Số lượng</p>
                                             <Label className="form-group has-float-label float-left ml-5">
@@ -242,8 +253,8 @@ class ProductDetail extends Component {
                                                 />
                                             </Label>
                                         </div>
-                                    </Row>
-                                    <Row className="mt-3">
+                                    </Row> */}
+                                    <Row className="mt-5">
                                         <Colxx xxs="12">
                                             <div className="text-left card-title float-left">
                                                 <Button

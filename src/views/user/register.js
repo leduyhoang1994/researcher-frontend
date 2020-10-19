@@ -33,6 +33,7 @@ class Register extends Component {
     if (values.firstName !== "" && values.lastName !== ""
       && values.email !== "" && values.password !== "" && values.confirmPassword !== "") {
       if (values.password === values.confirmPassword) {
+        console.log("call register");
         this.props.registerUser(values, this.props.history);
       } else {
         NotificationManager.warning("Nhập lại mật khẩu không trùng mật khẩu", "Cảnh báo")

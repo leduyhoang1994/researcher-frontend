@@ -121,9 +121,9 @@ class Login extends Component {
                       {/* <NavLink to={`/user/forgot-password`}>
                         <IntlMessages id="user.forgot-password-question" />
                       </NavLink> */}
-                      <NavLink to={`/user/register`}>
+                      {/* <NavLink to={`/user/register`}>
                         <IntlMessages id="user.register" />
-                      </NavLink>
+                      </NavLink> */}
                       <Button
                         color="primary"
                         className={`btn-shadow btn-multiple-state ${this.props.loading ? "show-spinner" : ""}`}

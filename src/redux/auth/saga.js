@@ -2,7 +2,7 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { auth } from '../../helpers/Firebase';
 import Api from '../../helpers/Api';
-import { USER, SELLER } from '../../constants/api';
+import { USER, SELLERS, SELLER, USERS } from '../../constants/api';
 import {
     LOGIN_USER,
     REGISTER_USER,
@@ -63,7 +63,7 @@ function* loginWithEmailPassword({ payload }) {
 }
 
 const loginWithEmailPasswordAsync = async (email, password) =>
-    await Api.callAsync('post', USER.login, {
+    await Api.callAsync('post', USERS.login, {
         email: email,
         password: password
     }).then(data => {
@@ -99,7 +99,7 @@ function* loginSellerWithEmailPassword({ payload }) {
 }
 
 const loginSellerWithEmailPasswordAsync = async (userName, password) =>
-    await Api.callAsync('post', SELLER.login, {
+    await Api.callAsync('post', SELLERS.login, {
         username: userName,
         password: password
     }).then(data => {
@@ -130,7 +130,7 @@ export function* watchRegisterUser() {
     yield takeEvery(REGISTER_USER, registerWithEmailPassword);
 }
 const registerWithEmailPasswordAsync = async (firstName, lastName, email, password, confirmPassword) =>
-    await Api.callAsync('post', USER.register, {
+    await Api.callAsync('post', USERS.register, {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -147,8 +147,8 @@ function* registerWithEmailPassword({ payload }) {
         const registerUser = yield call(registerWithEmailPasswordAsync, firstName, lastName, email, password, confirmPassword);
         if (registerUser.success) {
             localStorage.setItem('user_token', registerUser.result.accessToken);
-            const userDetails = yield call(getUserDetails, registerUser.result.accessToken);
-            localStorage.setItem('user_details', JSON.stringify(userDetails));
+            // const userDetails = yield call(getUserDetails, registerUser.result.accessToken);
+            // localStorage.setItem('user_details', JSON.stringify(userDetails));
             yield put(registerUserSuccess(registerUser));
             window.open('/app', '_self');
         } else {
@@ -171,8 +171,8 @@ function* registerSellerWithEmailPassword({ payload }) {
         const registerSeller = yield call(registerSellerWithEmailPasswordAsync, firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address);
         if (registerSeller.success) {
             localStorage.setItem('user_token', registerSeller.result.accessToken);
-            const sellerDetails = yield call(getSellerDetails, registerSeller.result.accessToken);
-            localStorage.setItem('user_details', JSON.stringify(sellerDetails));
+            // const sellerDetails = yield call(getSellerDetails, registerSeller.result.accessToken);
+            // localStorage.setItem('user_details', JSON.stringify(sellerDetails));
             yield put(registerSellerSuccess(registerSeller));
             window.open('/store', '_self');
         } else {
@@ -184,7 +184,7 @@ function* registerSellerWithEmailPassword({ payload }) {
 }
 
 const registerSellerWithEmailPasswordAsync = async (firstName, lastName, userName, phoneNumber, email, password, confirmPassword, city, district, town, address) =>
-    await Api.callAsync('post', SELLER.register, {
+    await Api.callAsync('post', SELLERS.register, {
         firstName: firstName,
         lastName: lastName,
         username: userName,
@@ -206,7 +206,7 @@ export function* watchLogoutUser() {
 
 const logoutAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
-    await ApiController.callAsync("POST", USER.logout, null);
+    await ApiController.callAsync("POST", USERS.logout, null);
     history.push('/')
 }
 
@@ -226,7 +226,7 @@ export function* watchLogoutSeller() {
 
 const logoutSellerAsync = async (history) => {
     // await auth.signOut().then(authUser => authUser).catch(error => error);
-    await ApiController.callAsync("POST", SELLER.logout, null);
+    await ApiController.callAsync("POST", SELLERS.logout, null);
     history.push('/store')
 }
 

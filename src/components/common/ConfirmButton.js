@@ -52,6 +52,7 @@ class ConfirmButton extends React.Component {
                             {this.props?.content?.close}
                         </Button>
                         <Button
+                            disabled={this.props.isDisabled}
                             onClick={() => {
                                 if (isFunction(this.props.onConfirm)) {
                                     this.props.onConfirm();

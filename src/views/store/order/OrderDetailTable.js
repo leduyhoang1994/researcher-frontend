@@ -9,7 +9,7 @@ const renderTable = (data) => {
     return data.map((item, index) => {
         const { featureImage, name, internalPrice, price, quantity, calculatedPrice } = item
         return (
-            <tr key={index} className="border-bottom">
+            <tr key={index} >
                 <td className="vertical-align"><p className="mb-0"><img width="50" src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${featureImage}`} alt="avatar-img"/></p></td>
                 <td className="vertical-align"><p className="mb-0">{name}</p></td>
                 <td className="vertical-align"><p className="mb-0">{numberWithCommas(parseFloat(internalPrice))} đ</p></td>
@@ -30,7 +30,7 @@ const OrderDetailTable = (props) => {
             <Colxx xxs="12" className="mb-4">
                 <Card>
                     <CardBody className="d-flex flex-column justify-content-between">
-                        <Table borderless>
+                        <Table>
                             <thead>
                                 <tr>
                                     <th className="mb-2"><p>Hình ảnh</p></th>

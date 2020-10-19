@@ -5,7 +5,7 @@ import { injectIntl } from 'react-intl';
 import Select from 'react-select';
 import { __ } from '../../../helpers/IntlMessages';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
-import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS } from '../../../constants/api';
+import { UBOX_CATEGORIES, SOURCE_PRODUCTS, UBOX_PRODUCTS, TRANSPORTATION } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import { jsonToFormData, numberWithCommas, parse } from '../../../helpers/Utils'
 import Properties from './Properties';
@@ -35,7 +35,8 @@ class EditUboxProducts extends Component {
                 serviceCost: "",
                 serviceSla: "",
                 sourceProductId: "",
-                transportation: "",
+                transportationIds: [],
+                uboxProductTransportations: [],
                 uboxCategoryId: "",
                 uboxIn: "",
                 uboxProductOptions: [],
@@ -54,7 +55,7 @@ class EditUboxProducts extends Component {
                 serviceSla: '',
                 serviceCost: 0,
                 description: '',
-                transportation: '',
+                transportationIds: [],
                 featureImage: '',
                 workshopIn: 0,
                 uboxIn: 0,
@@ -68,10 +69,12 @@ class EditUboxProducts extends Component {
                 offerPrice: 0,
             },
             selectedCategory: "",
+            selectedTransportation: "",
             optionUboxCategories: [],
             selectedSourceProduct: "",
             optionSourceProducts: [],
             sourceProductSelected: null,
+            optionTrans: [],
             redirect: false,
             loading: false,
             files: [],
@@ -183,7 +186,20 @@ class EditUboxProducts extends Component {
             // window.open(`/app/research`, "_self")
             this.loadCurrentProduct();
         }
+        this.getTransportation();
         this.setState({ loading: false });
+    }
+
+    getTransportation = () => {
+        ApiController.get(TRANSPORTATION.all, {}, data => {
+            let optionTrans = []
+            data.forEach(item => {
+                optionTrans.push({ label: item.name, value: item.name, id: item.id })
+            })
+            this.setState({
+                optionTrans
+            })
+        });
     }
 
     loadCurrentProduct = () => {
@@ -194,12 +210,18 @@ class EditUboxProducts extends Component {
 
     getProduct = (id) => {
         ApiController.get(`${UBOX_PRODUCTS.all}/${id}`, {}, data => {
+            let transportation = [];
+            data.uboxProductTransportations.forEach(item => {
+                transportation.push({ label: item.transportation.name, value: item.transportation.name, id: item.transportation.id })
+            })
+            
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
                 product: { ...data },
                 mediaItems: copySamplePropertiesObj(data, this.state.mediaItems)
             })
+            this.handleChangeTransportation(transportation);
 
             this.state.optionUboxCategories.forEach(item => {
                 if (item.value === this.state.product.uboxCategoryId) {
@@ -260,6 +282,22 @@ class EditUboxProducts extends Component {
         })
     };
 
+    handleChangeTransportation = (data) => {
+        let product = this.state.product;
+        let transportationIds = []
+        if (data.length > 0) {
+            data.forEach(item => {
+                transportationIds.push(item.id)
+            })
+        }
+        this.setState({
+            product: {
+                ...product,
+                transportationIds: transportationIds
+            },
+            selectedTransportation: data,
+        })
+    };
 
     handleChangeNumber(event) {
         let value = parseFloat(event.target.value);
@@ -300,8 +338,8 @@ class EditUboxProducts extends Component {
         const needToValidate = [
             { name: "Tên sản phẩm" }, { price: "Giá ubox" },
             { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
-            { offerPrice: "Giá bán đề xuất" }, { serviceSla: "Dịch vụ SLA" },
-            { transportation: "Hình thức vận chuyển" },
+            { offerPrice: "Giá bán đề xuất" },  { serviceSla: "Dịch vụ SLA" },
+            { transportationIds: "Hình thức vận chuyển" },
             { workshopIn: "Thời gian phát hàng của cửa hàng" },
             { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
             () => {
@@ -327,8 +365,16 @@ class EditUboxProducts extends Component {
                 }
             }
         }
-
         return success;
+    }
+
+    publishProduct = () => {
+        const value = {ids: [this.state.id], status: this.state.product.isPublished}
+        ApiController.call('put', `${UBOX_PRODUCTS.publish}`, value, data => {
+            if(data) {
+                NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+            }
+        })
     }
 
     editProduct = async () => {
@@ -390,8 +436,6 @@ class EditUboxProducts extends Component {
 
 
             formData.append('id', parseInt(this.state.id));
-
-            // console.log()
 
             await Api.callAsync('put', UBOX_PRODUCTS.all,
                 formData
@@ -545,7 +589,9 @@ class EditUboxProducts extends Component {
                                                         name="price"
                                                         min={0}
                                                         value={numberWithCommas(Number.parseFloat(product.price).toFixed(0))}
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá Ubox (VNĐ)*")}
@@ -558,7 +604,9 @@ class EditUboxProducts extends Component {
                                                         min={0}
                                                         name="internalPrice"
                                                         value={numberWithCommas(Number.parseFloat(product.internalPrice).toFixed(0))}
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá nội bộ (VNĐ)*")}
@@ -573,7 +621,9 @@ class EditUboxProducts extends Component {
                                                         name="minPrice"
                                                         value={numberWithCommas(Number.parseFloat(product.minPrice).toFixed(0))}
                                                         min={0}
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá bán tối thiểu (VNĐ)*")}
@@ -586,7 +636,9 @@ class EditUboxProducts extends Component {
                                                         name="offerPrice"
                                                         value={numberWithCommas(Number.parseFloat(product.offerPrice).toFixed(0))}
                                                         min={0}
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Giá bán đề xuất (VNĐ)*")}
@@ -681,7 +733,9 @@ class EditUboxProducts extends Component {
                                                         min={0}
                                                         name="weight"
                                                         value={product.weight}
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Khối lượng (kg)*")}
@@ -690,11 +744,15 @@ class EditUboxProducts extends Component {
                                             </Colxx>
                                             <Colxx xxs="6">
                                                 <Label className="form-group has-float-label">
-                                                    <Input
-                                                        type="text"
-                                                        name="transportation"
-                                                        value={product.transportation}
-                                                        onChange={this.handleChangeText}
+                                                    <Select
+                                                        isMulti
+                                                        className="react-select"
+                                                        classNamePrefix="react-select"
+                                                        options={this.state.optionTrans}
+                                                        value={this.state.selectedTransportation}
+                                                        onChange={e => {
+                                                            this.handleChangeTransportation(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Hình thức vận chuyển *")}
@@ -706,7 +764,9 @@ class EditUboxProducts extends Component {
                                                         name="workshopIn"
                                                         value={product.workshopIn}
                                                         min="0"
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian phát hàng của cửa hàng (Ngày)*")}
@@ -717,16 +777,15 @@ class EditUboxProducts extends Component {
                                                         min="0"
                                                         name="uboxIn"
                                                         value={product.uboxIn}
-                                                        rows="1"
-                                                        onChange={this.handleChangeNumber}
+                                                        onChange={e => {
+                                                            this.handleChangeNumber(e)
+                                                        }}
                                                     />
                                                     <span>
                                                         {__(this.messages, "Thời gian giao hàng Ubox (Ngày)*")}
                                                     </span>
                                                 </Label>
                                             </Colxx>
-                                        </Row>
-                                        <Row>
                                         </Row>
                                     </Colxx>
 
@@ -746,24 +805,25 @@ class EditUboxProducts extends Component {
                                 </Row>
                                 <div className="text-right card-title">
                                     {
-                                        this.state.id ? (<Button
-                                            disabled={this.state.isUpdating}
-                                            className="mr-2"
-                                            color={product.isPublished ? "danger" : "success"}
-                                            onClick={() => {
-                                                let publish = this.state.product.isPublished;
-                                                this.setState({
-                                                    product: {
-                                                        ...this.state.product,
-                                                        isPublished: !publish
-                                                    }
-                                                }, () => {
-                                                    this.editProduct();
-                                                });
-                                            }}
-                                        >
-                                            {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
-                                        </Button>) : (<></>)
+                                        this.state.id ? (
+                                            <Button
+                                                disabled={this.state.isUpdating}
+                                                className="mr-2"
+                                                color={product.isPublished ? "danger" : "success"}
+                                                onClick={() => {
+                                                    let publish = this.state.product.isPublished;
+                                                    this.setState({
+                                                        product: {
+                                                            ...this.state.product,
+                                                            isPublished: !publish
+                                                        }
+                                                    }, () => {
+                                                        this.publishProduct();
+                                                    });
+                                                }}
+                                            >
+                                                {__(this.messages, product.isPublished ? "Ngừng xuất bản" : "Xuất bản")}
+                                            </Button>) : (<></>)
                                     }
                                     <Button
                                         disabled={this.state.isUpdating}
