@@ -244,12 +244,12 @@ class AccountInfo extends Component {
         const { passwordCheck, password, confirmPassword } = this.state.seller;
         const data = { id, passwordCheck, password, confirmPassword };
         console.log(data);
-        // ApiController.callAsync('put', SELLER.all, data)
-        //     .then(data => {
-        //         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-        //     }).catch(error => {
-        //         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-        //     });
+        ApiController.callAsync('put', SELLER.all, data)
+            .then(data => {
+                NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+            }).catch(error => {
+                NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+            });
     }
 
     validateField = async () => {

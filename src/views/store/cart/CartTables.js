@@ -18,6 +18,7 @@ const CartTables = ({
   existInSelectedCart = false,
   addToSelectedCart,
   removeFromSelectedCart,
+  deleteSelectedCart
 }) => {
   const columns = () => [
     {
@@ -96,7 +97,7 @@ const CartTables = ({
       Header: __(component.messages, "Giá nhập hàng"),
       sortable: true,
       width: 100,
-      accessor: "offerPrice",
+      accessor: "price",
       Cell: props => <p className="text-muted">
         {props.value ? (currencyFormatVND(Number.parseFloat(props.value)) + " đ") : null}
       </p>
@@ -139,7 +140,7 @@ const CartTables = ({
             className="w-5 w-xs-100"
             color="primary"
             onClick={() => {
-              removeFromSelectedCart(props.original)
+              deleteSelectedCart(props.original)
             }}
           >X</Button>
         </div>
@@ -155,24 +156,24 @@ const CartTables = ({
         className="cart-table mb-4 -striped -highlight"
         showPagination={false}
         // PaginationComponent={DataTablePagination}
-        // getTrProps={(state, rowInfo) => {
-        //   if (rowInfo && rowInfo.row) {
-        //     return {
-        //       onClick: (e) => {
-        //         if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
-        //           if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
-        //         } else {
-        //           if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
-        //         }
-        //       },
-        //       style: {
-        //         cursor: "pointer"
-        //       }
-        //     }
-        //   } else {
-        //     return {}
-        //   }
-        // }}
+        getTrProps={(state, rowInfo) => {
+          if (rowInfo && rowInfo.row) {
+            return {
+              onClick: (e) => {
+                if (isFunction(existInSelectedCart) ? existInSelectedCart(rowInfo.original) : false) {
+                  if (isFunction(removeFromSelectedCart)) removeFromSelectedCart(rowInfo.original);
+                } else {
+                  if (isFunction(addToSelectedCart)) addToSelectedCart(rowInfo.original);
+                }
+              },
+              style: {
+                cursor: "pointer"
+              }
+            }
+          } else {
+            return {}
+          }
+        }}
       // style={{
       //   height: "450px"
       // }}

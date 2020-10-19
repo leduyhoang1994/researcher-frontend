@@ -439,7 +439,26 @@ class CartList extends Component {
         return true
     }
 
-    removeFromSelectedCart = (data) => {
+    removeFromSelectedCart = (products) => {
+        let { selectedProducts } = this.state;
+
+        let newProducts = []
+
+        if (Array.isArray(products)) newProducts = [...products]
+        else newProducts.push(products)
+
+        for (const product of newProducts) {
+            selectedProducts = selectedProducts.filter(selectedProduct => {
+                return JSON.stringify(selectedProduct) !== JSON.stringify(product);
+            });
+        }
+
+        this.setState({
+            selectedProducts: selectedProducts
+        });
+    }
+
+    deleteSelectedCart = (data) => {
         let { products } = this.state;
         products.forEach((item, index) => {
             if (item.id === data.id && JSON.stringify(item.optionIds) === JSON.stringify(data.optionIds)) {
@@ -483,6 +502,7 @@ class CartList extends Component {
                                             addToSelectedCart={this.addToSelectedCart}
                                             existInSelectedCart={this.existInSelectedCart}
                                             removeFromSelectedCart={this.removeFromSelectedCart}
+                                            deleteSelectedCart={this.deleteSelectedCart}
                                         />
                                     </div>
                                     <div className="text-right  mt-5">
@@ -652,7 +672,7 @@ class CartList extends Component {
                                                     </Row>
                                                     <Row className="mt-2">
                                                         <Colxx xxs="6">
-                                                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)))} VNĐ</p>
+                                                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)).toFixed(0))} VNĐ</p>
 
                                                         </Colxx>
                                                     </Row>
