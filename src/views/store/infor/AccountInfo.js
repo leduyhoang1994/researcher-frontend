@@ -621,6 +621,7 @@ class AccountInfo extends Component {
                     key={this.state.isOpenCreateAddress + "address"}
                     isOpen={this.state.isOpenCreateAddress}
                     toggleModalCreateAddress={this.toggleModalCreateAddress}
+                    getSellerAddress={this.getSellerAddress}
                 />
             </Fragment >
         );

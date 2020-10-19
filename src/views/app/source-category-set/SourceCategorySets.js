@@ -199,7 +199,7 @@ class SourceCategorySets extends Component {
                 <Button
                   color="primary"
                   onClick={e => {
-                    localStorage.setItem('selectedItems', JSON.stringify(this.state.sourceCategorySet.sourceCategorySets));
+                    localStorage.setItem('selectedItems', JSON.stringify(this.state.sourceCategorySet.sourceCategorySets.map(cate => (cate.sourceCategory))));
                     this.redirectTo("/app/source-products");
                   }}
                 >
