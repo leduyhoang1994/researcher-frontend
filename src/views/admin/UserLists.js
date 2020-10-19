@@ -153,7 +153,7 @@ class UserLists extends Component {
                 <UserModals
                     userId={this.state.id}
                     key={this.state.isOpenUserModal}
-                    reloadUsers={this.loadUsers()}
+                    reloadUsers={this.loadUsers}
                     isOpenModal={this.state.isOpenUserModal}
                     toggleOpenUserModal={this.toggleOpenUserModal}
                 />
