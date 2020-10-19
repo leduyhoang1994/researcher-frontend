@@ -134,7 +134,8 @@ class CreateAddressModals extends Component {
           NotificationManager.success("Thêm địa chỉ thành công", "Thành công", 1000);
         }
       }).catch(error => {
-        if (error.response.status === 401) {
+        console.log(error);
+        if (error.response.httpStatus === 401) {
           setTimeout(function () {
             NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
             setTimeout(function () {
