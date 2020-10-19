@@ -104,7 +104,7 @@ class ProductDetail extends Component {
 
     addToCart = () => {
         const { optionIds, quantity } = this.state;
-        const { id, name, featureImage, weight, offerPrice, workshopIn, uboxProductTransportations } = this.state.product;
+        const { id, name, featureImage, weight, price, workshopIn, uboxProductTransportations } = this.state.product;
         const property = [];
         this.state.properties.forEach(item => {
             if(optionIds.includes(item.id)) {
@@ -120,7 +120,7 @@ class ProductDetail extends Component {
             }
         })
         console.log(transportation);
-        const product = { id, name, featureImage, transportation, weight, offerPrice, workshopIn, quantity, optionIds, property };
+        const product = { id, name, featureImage, transportation, weight, price, workshopIn, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
         if (cart === null) cart = [];

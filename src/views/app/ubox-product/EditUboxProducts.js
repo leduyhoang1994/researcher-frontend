@@ -199,16 +199,14 @@ class EditUboxProducts extends Component {
             data.uboxProductTransportations.forEach(item => {
                 transportation.push({ label: item.transportation.name, value: item.transportation.name, id: item.transportation.id })
             })
-            // this
-            console.log(transportation);
-            this.handleChangeTransportation(transportation);
-
+            
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
                 product: { ...data },
                 mediaItems: copySamplePropertiesObj(data, this.state.mediaItems)
             })
+            this.handleChangeTransportation(transportation);
 
             this.state.optionUboxCategories.forEach(item => {
                 if (item.value === this.state.product.uboxCategoryId) {
@@ -270,20 +268,19 @@ class EditUboxProducts extends Component {
     };
 
     handleChangeTransportation = (data) => {
-        console.log(data);
         let product = this.state.product;
         let transportationIds = []
         if (data.length > 0) {
             data.forEach(item => {
-                console.log(item);
                 transportationIds.push(item.id)
             })
         }
-        console.log(transportationIds);
-        product.transportationIds = transportationIds;
         this.setState({
+            product: {
+                ...product,
+                transportationIds: transportationIds
+            },
             selectedTransportation: data,
-            product: product
         })
     };
 
@@ -324,11 +321,9 @@ class EditUboxProducts extends Component {
 
     validateFields = async () => {
         const needToValidate = [
-            { name: "Tên sản phẩm" },
-            // { price: "Giá ubox" },
-            // { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
-            // { offerPrice: "Giá bán đề xuất" }, 
-            { serviceSla: "Dịch vụ SLA" },
+            { name: "Tên sản phẩm" }, { price: "Giá ubox" },
+            { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
+            { offerPrice: "Giá bán đề xuất" },  { serviceSla: "Dịch vụ SLA" },
             { transportationIds: "Hình thức vận chuyển" },
             { workshopIn: "Thời gian phát hàng của cửa hàng" },
             { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
@@ -355,7 +350,6 @@ class EditUboxProducts extends Component {
                 }
             }
         }
-
         return success;
     }
 
@@ -427,8 +421,6 @@ class EditUboxProducts extends Component {
 
 
             formData.append('id', parseInt(this.state.id));
-
-            // console.log()
 
             await Api.callAsync('put', UBOX_PRODUCTS.all,
                 formData

@@ -258,7 +258,10 @@ class UserInfo extends Component {
             id = this.state.id;
         }
         const { passwordCheck, password, confirmPassword } = this.state.user;
-        const data = { id, passwordCheck, password, confirmPassword };
+        let data = { id, password, confirmPassword };
+        if(this.props?.type !== "modal") {
+            data = {...data, passwordCheck}
+        }
         console.log(data);
         ApiController.callAsync('put', USER.all, data)
             .then(data => {
@@ -314,7 +317,6 @@ class UserInfo extends Component {
             }
             const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = user;
 
-
             if (id) {
                 const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
                 ApiController.callAsync('put', USER.all, data)
@@ -340,15 +342,14 @@ class UserInfo extends Component {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                     });
             }
-
         }
     }
 
     render() {
-        const { user, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
-        const { firstName, lastName, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = user;
+        const { user, optionsCity, optionsDistrict, optionsCommune,
+            typeInput, selectedCity, selectedDistrict, selectedCommune } = this.state;
 
-        const isDisabled = (password && confirmPassword) ? ((password === confirmPassword) ? false : true) : true;
+        const isDisabled = (user.password && user.confirmPassword) ? ((user.password === user.confirmPassword) ? false : true) : true;
         const showChangePassword = (this.props?.type === "modal" && !this.state.id) ? false : true;
 
         return (
@@ -366,7 +367,7 @@ class UserInfo extends Component {
                                     <Input
                                         className=""
                                         type="text"
-                                        value={firstName || ""}
+                                        value={user.firstName || ""}
                                         name="firstName"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -382,7 +383,7 @@ class UserInfo extends Component {
                                     <Input
                                         className=""
                                         type="text"
-                                        value={lastName || ""}
+                                        value={user.lastName || ""}
                                         name="lastName"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -398,7 +399,7 @@ class UserInfo extends Component {
                                     <Input
                                         className=""
                                         type="text"
-                                        value={phoneNumber || ""}
+                                        value={user.phoneNumber || ""}
                                         name="phoneNumber"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -414,7 +415,7 @@ class UserInfo extends Component {
                                     <Input
                                         disabled={this.props?.type !== "modal" ? true : false}
                                         type="text"
-                                        value={email || ""}
+                                        value={user.email || ""}
                                         name="email"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -467,7 +468,7 @@ class UserInfo extends Component {
                                     <Input
                                         className=""
                                         type="text"
-                                        value={address || ""}
+                                        value={user.address || ""}
                                         name="address"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -485,7 +486,7 @@ class UserInfo extends Component {
                                             <Label className="has-float-label ">
                                                 <Input
                                                     type={typeInput}
-                                                    value={password || ""}
+                                                    value={user.password || ""}
                                                     name="password"
                                                     onChange={(e) => {
                                                         this.handleChangeInput(e)
@@ -500,7 +501,7 @@ class UserInfo extends Component {
                                             <Label className="has-float-label ">
                                                 <Input
                                                     type={typeInput}
-                                                    value={confirmPassword || ""}
+                                                    value={user.confirmPassword || ""}
                                                     name="confirmPassword"
                                                     onChange={(e) => {
                                                         this.handleChangeInput(e)
@@ -518,7 +519,7 @@ class UserInfo extends Component {
                                     <Input
                                         className=""
                                         type="text"
-                                        value={company || ""}
+                                        value={user.company || ""}
                                         name="company"
                                         onChange={(e) => {
                                             this.handleChangeInput(e)
@@ -558,26 +559,30 @@ class UserInfo extends Component {
                                             return (
                                                 <div>
                                                     <Row id="popup-change-password">
+                                                        {
+                                                            this.props?.type !== "modal" ? (
+                                                                <Colxx xxs="12">
+                                                                    <Label className="has-float-label ">
+                                                                        <Input
+                                                                            type={typeInput}
+                                                                            value={user.passwordCheck || ""}
+                                                                            name="passwordCheck"
+                                                                            onChange={(e) => {
+                                                                                this.handleChangeInput(e)
+                                                                            }}
+                                                                        />
+                                                                        <span>
+                                                                            <IntlMessages id="Mật khẩu hiện tại *" />
+                                                                        </span>
+                                                                    </Label>
+                                                                </Colxx>
+                                                            ) : (<></>)
+                                                        }
                                                         <Colxx xxs="12">
                                                             <Label className="has-float-label ">
                                                                 <Input
                                                                     type={typeInput}
-                                                                    value={passwordCheck || ""}
-                                                                    name="passwordCheck"
-                                                                    onChange={(e) => {
-                                                                        this.handleChangeInput(e)
-                                                                    }}
-                                                                />
-                                                                <span>
-                                                                    <IntlMessages id="Mật khẩu hiện tại *" />
-                                                                </span>
-                                                            </Label>
-                                                        </Colxx>
-                                                        <Colxx xxs="12">
-                                                            <Label className="has-float-label ">
-                                                                <Input
-                                                                    type={typeInput}
-                                                                    value={password || ""}
+                                                                    value={user.password || ""}
                                                                     name="password"
                                                                     onChange={(e) => {
                                                                         this.handleChangeInput(e)
@@ -592,7 +597,7 @@ class UserInfo extends Component {
                                                             <Label className="has-float-label ">
                                                                 <Input
                                                                     type={typeInput}
-                                                                    value={confirmPassword || ""}
+                                                                    value={user.confirmPassword || ""}
                                                                     name="confirmPassword"
                                                                     onChange={(e) => {
                                                                         this.handleChangeInput(e)
