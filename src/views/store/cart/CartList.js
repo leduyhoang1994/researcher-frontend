@@ -137,7 +137,6 @@ class CartList extends Component {
         let { orders } = this.state;
         let order = orders[index];
         let products = Object.values(order)[0];
-        console.log(products);
         if (products?.length > 0) {
             products.forEach((item, index) => {
                 if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
@@ -159,7 +158,6 @@ class CartList extends Component {
         let { orders } = this.state;
         let order = orders[index];
         let products = Object.values(order)[0];
-        console.log(products);
         if (products?.length > 0) {
             products.forEach((item, index) => {
                 if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
@@ -328,7 +326,6 @@ class CartList extends Component {
         const city = selectedAddress.label.split(", ")[0]
         const district = selectedAddress.label.split(", ")[1]
         const data = { weight: order.weight, city, district };
-        console.log(data);
         ApiController.post(ORDERS.calculator, data, value => {
             order.lastMiles = value;
             orders.splice(index, 1, order);
@@ -371,7 +368,6 @@ class CartList extends Component {
             Api.callAsync('post', ORDERS.all, arr).then(data => {
                 if (data.data.statusCode === 200) {
                     NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
-                    // localStorage.setItem("cart", JSON.stringify([]));
                     setTimeout(function () {
                         window.open("/store", "_self")
                     }, 1000);
