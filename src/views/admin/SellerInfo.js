@@ -3,14 +3,12 @@ import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
 
 import ApiController from '../../helpers/Api';
-import { SELLER, ADDRESS, ACCOUNTS } from '../../constants/api';
+import { SELLER, ADDRESS, ACCOUNTS, SELLERS } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
 import "./style.scss"
-import ConfirmButton from "../../components/common/ConfirmButton";
-import UserModals from "./UserModals";
 
 class SellerInfo extends Component {
     constructor(props) {
@@ -20,6 +18,7 @@ class SellerInfo extends Component {
             seller: {
                 firstName: "",
                 lastName: "",
+                username: "",
                 phoneNumber: "",
                 email: "",
                 address: "",
@@ -37,12 +36,10 @@ class SellerInfo extends Component {
             optionsDistrict: [],
             optionsCommune: [],
             typeInput: "password",
-            isOpenUserModal: false,
             accounts: [],
             selectedType: [],
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
-        this.toggleOpenUserModal = this.toggleOpenUserModal.bind(this);
         this.formRef = React.createRef();
 
     }
@@ -65,12 +62,6 @@ class SellerInfo extends Component {
         } else if (id) {
             this.loadUsers(id);
         }
-    }
-
-    toggleOpenUserModal() {
-        this.setState({
-            isOpenUserModal: !this.state.isOpenUserModal
-        })
     }
 
     loadUsers = (id) => {
@@ -242,39 +233,6 @@ class SellerInfo extends Component {
         })
     }
 
-    validateEmail = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your email address";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            error = "Invalid email address";
-        }
-        return error;
-    }
-
-    validatePassword = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your password";
-        } else if (value.length < 4) {
-            error = "Value must be longer than 3 characters";
-        }
-        return error;
-    }
-
-    componentDidUpdate() {
-        if (this.props.error) {
-            NotificationManager.warning(
-                "Email or password is incorrect!",
-                "Login Error",
-                3000,
-                null,
-                null,
-                ''
-            );
-        }
-    }
-
     submitChangeType = () => {
         const { id, selectedType } = this.state;
         const data = { sellerId: id, accountTypeId: selectedType.value }
@@ -320,7 +278,7 @@ class SellerInfo extends Component {
 
     callApi = () => {
         let flag = true, id = this.state.id || null;
-        const { selectedCity, selectedDistrict, selectedCommune } = this.state;
+        const { selectedCity, selectedDistrict, selectedCommune, selectedType } = this.state;
         let { seller } = this.state;
         if (flag) {
             if (selectedCity) {
@@ -332,16 +290,27 @@ class SellerInfo extends Component {
             if (selectedCommune) {
                 seller.town = selectedCommune.label;
             }
-            const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
+            const { firstName, lastName, username, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
             if (password !== "" && password === confirmPassword) {
-                const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword };
-
-                ApiController.callAsync('put', SELLER.admin, data)
-                    .then(data => {
-                        NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-                    }).catch(error => {
-                        NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-                    });
+                const data = {firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword, accountTypeId: selectedType.value };
+                if(id) {
+                    const obj = {...data, id};
+                    ApiController.callAsync('put', SELLER.admin, obj)
+                        .then(data => {
+                            NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+                        }).catch(error => {
+                            NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+                        });
+                } else {
+                    const obj = {...data, username};
+                    ApiController.callAsync('post', SELLERS.register, obj)
+                        .then(data => {
+                            NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
+                        }).catch(error => {
+                            NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+                        });
+                }
+                
             } else if (password !== "" && password !== confirmPassword) {
                 NotificationManager.warning("Xác nhận mật khẩu không trùng mật khẩu", "Thông báo", 1500);
             }
@@ -398,7 +367,6 @@ class SellerInfo extends Component {
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input
-                                        disabled
                                         type="text"
                                         value={username || ""}
                                         name="username"
@@ -581,11 +549,6 @@ class SellerInfo extends Component {
                         </div>
                     </CardBody>
                 </Card >
-                <UserModals
-                    key={this.state.isOpenUserModal}
-                    isOpenModal={this.state.isOpenUserModal}
-                    toggleOpenUserModal={this.toggleOpenUserModal}
-                />
             </Fragment >
         );
     }

@@ -100,10 +100,9 @@ class Properties extends React.Component {
         return (
             <>
                 {
-                    
-                    properties.map(property => {
+                    properties.map((property, index) => {
                         return (
-                            <Row key={`attribute-${property.attributeId}`}>
+                            <Row key={`attribute-${index*10}`}>
                                 <Colxx xxs="3">
                                     {property.attribute?.label}
                                 </Colxx>

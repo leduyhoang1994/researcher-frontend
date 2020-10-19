@@ -103,9 +103,11 @@ class CreateTrainingClass extends Component {
     siteFilter.forEach(item => {
       site.push(item.value);
     })
-    categoriesFilter.forEach(item => {
-      sourceCategoryId.push(item.id)
-    })
+    if(categoriesFilter) {
+      categoriesFilter.forEach(item => {
+        sourceCategoryId.push(item.id)
+      })
+    }
     const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
     let data = {};
     for (let key in arrFilter) {
@@ -195,7 +197,12 @@ class CreateTrainingClass extends Component {
         }, () => {
           if (localStorage.getItem('selectedItems')) {
             const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
-            this.onChangeCategory(categoriesFilter);
+            console.log(categoriesFilter?.sourceCategory);
+            let categories = [];
+            categoriesFilter.forEach(item => {
+              categories.push(item?.sourceCategory)
+            })
+            this.onChangeCategory(categories);
             this.prepareQuery();
           }
         });

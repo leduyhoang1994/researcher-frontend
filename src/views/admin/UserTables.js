@@ -42,12 +42,6 @@ const UserTables = ({
       Cell: props => <p className="text-muted">{props.value}</p>
     },
     {
-      Header: __(component.messages, "Địa chỉ"),
-      sortable: false,
-      accessor: "address",
-      Cell: props => <p className="text-muted">{props.value}</p>
-    },
-    {
       Header: __(component.messages, "Công ty"),
       sortable: false,
       accessor: "company",
@@ -64,6 +58,7 @@ const UserTables = ({
           value.push({ label: item.roleId.description, value: item.roleId.name, id: item.roleId.id })
         })
         let selectedValue = [];
+        const id = props.original.id;
         return (
           <div className="text-left d-block">
             <ConfirmButton
@@ -128,7 +123,7 @@ const UserTables = ({
               color="primary"
               size="xs"
               onClick={() => {
-                toggleOpenUserModal(props.original.id)
+                toggleOpenUserModal(id)
               }}
             >
               Cập nhật
@@ -138,7 +133,7 @@ const UserTables = ({
               color="primary"
               size="xs"
               onClick={() => {
-                softDeleteUser(props.original.id);
+                softDeleteUser(id);
               }}
             >
               {

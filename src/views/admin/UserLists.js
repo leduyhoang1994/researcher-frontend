@@ -99,10 +99,6 @@ class UserLists extends Component {
         })
     }
 
-    createUser = () => {
-        console.log(this.state);
-    }
-
     render() {
         const { users, roles } = this.state;
         let optionRoles = [];
@@ -122,6 +118,7 @@ class UserLists extends Component {
                             </Colxx>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto">
                                 <UserTables
+                                    key={users.length}
                                     data={users}
                                     options={optionRoles}
                                     component={this}
@@ -132,16 +129,16 @@ class UserLists extends Component {
                             </Colxx>
                         </Row>
                         <div className="text-right mt-3">
-                                <Button
-                                    className="mr-3"
-                                    color="primary"
-                                    onClick={() => {
-                                        this.toggleOpenUserModal()
-                                    }}
-                                >
-                                    Thêm mới
-                                </Button>
-                                {/* <Button
+                            <Button
+                                className="mr-3"
+                                color="primary"
+                                onClick={() => {
+                                    this.toggleOpenUserModal()
+                                }}
+                            >
+                                Thêm mới
+                            </Button>
+                            {/* <Button
                                     className="button"
                                     color="primary"
                                     onClick={() => {
@@ -150,12 +147,13 @@ class UserLists extends Component {
                                 >
                                     Cập nhật
                                 </Button> */}
-                            </div>
+                        </div>
                     </CardBody>
                 </Card >
                 <UserModals
                     userId={this.state.id}
                     key={this.state.isOpenUserModal}
+                    reloadUsers={this.loadUsers}
                     isOpenModal={this.state.isOpenUserModal}
                     toggleOpenUserModal={this.toggleOpenUserModal}
                 />

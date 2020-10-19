@@ -26,7 +26,11 @@ const User = ({ match }) => {
             render={props => <UserLists {...props} />}
           />
           <Route
-            path={`${match.url}/sellers/:id`}
+            path={`${match.url}/sellers/detail/:id`}
+            render={props => <SellerInfo {...props} />}
+          />
+          <Route
+            path={`${match.url}/sellers/detail`}
             render={props => <SellerInfo {...props} />}
           />
           <Route

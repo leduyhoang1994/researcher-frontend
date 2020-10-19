@@ -322,8 +322,10 @@ class UserInfo extends Component {
                         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
                         if (this.props?.type !== "modal") {
                             setTimeout(() => {
-                                window.open(`/info/${data.data.result.id}`, "_self")
+                                window.open(`/info`, "_self")
                             }, 2000)
+                        } else {
+                            this.props.reloadUsers();
                         }
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);

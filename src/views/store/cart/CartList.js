@@ -21,6 +21,7 @@ import IntlMessages from '../../../helpers/IntlMessages';
 import ConfirmButton from '../../../components/common/ConfirmButton';
 import CreateAddressModals from './CreateAddressModals';
 import GroupOrderModals from './GroupOrderModals';
+import { database } from 'firebase';
 
 class CartList extends Component {
     constructor(props) {
@@ -122,20 +123,7 @@ class CartList extends Component {
         }
         else cart = JSON.parse(cart);
         this.setState({
-            cart: cart
-        }, () => {
-            this.getProduct()
-        })
-    }
-
-    getProduct = () => {
-        const cart = this.state.cart;
-        let products = [];
-        cart.forEach(product => {
-            products.push(product);
-        })
-        this.setState({
-            products: products
+            products: cart
         })
         this.addTotals();
     }
@@ -195,7 +183,6 @@ class CartList extends Component {
         let { orders } = this.state;
         let order = orders[index];
         let products = Object.values(order)[0];
-        console.log(products);
         if (products?.length > 0) {
             products.forEach((item, index) => {
                 if (item.id === obj.id && JSON.stringify(item.optionIds) === JSON.stringify(obj.optionIds)) {
@@ -271,7 +258,6 @@ class CartList extends Component {
             order = this.updateInfoOrder(order, name);
 
             if (order !== null) {
-                orders = orders.splice(idx, 1, order);
                 NotificationManager.success("Cập nhật đơn hàng thành công", "Thông báo", 1500);
             }
         } else if (key === "add") {
@@ -292,7 +278,6 @@ class CartList extends Component {
     }
 
     updateInfoOrder = (order, name, transportation) => {
-        console.log(order, name, transportation);
         let totalPrice = 0, weight = 0, timeToCome = 0;
         let products = Object.values(order)[0];
         transportation = transportation ? transportation : order?.transportation;
@@ -365,11 +350,9 @@ class CartList extends Component {
         const { orders, groupOrderId } = this.state;
         let arr = [], flag = true;
         orders.forEach(order => {
-            if (order?.transportation === "DropShip" || order?.transportation === "Sỉ kho khách hàng") {
-                if ((order?.addressOrderId || "") === "") {
-                    NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 700);
-                    flag = false;
-                }
+            if ((order?.addressOrderId || "") === "") {
+                NotificationManager.warning("Vui lòng chọn địa chỉ cho đơn hàng", "Thông báo", 1000);
+                flag = false;
             }
             const products = Object.values(order)[0];
             let detail = [];
@@ -388,12 +371,11 @@ class CartList extends Component {
             Api.callAsync('post', ORDERS.all, arr).then(data => {
                 if (data.data.statusCode === 200) {
                     NotificationManager.success("Đặt hàng thành công", "Thành công", 700);
-                    localStorage.setItem("cart", JSON.stringify([]));
+                    // localStorage.setItem("cart", JSON.stringify([]));
                     setTimeout(function () {
                         window.open("/store", "_self")
                     }, 1000);
                 }
-
             }).catch(error => {
                 NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
                 if (error.response.status === 401) {
@@ -457,111 +439,18 @@ class CartList extends Component {
         return true
     }
 
-    removeFromSelectedCart = (products) => {
-        let { selectedProducts } = this.state;
-
-        let newProducts = []
-
-        if (Array.isArray(products)) newProducts = [...products]
-        else newProducts.push(products)
-
-        for (const product of newProducts) {
-            selectedProducts = selectedProducts.filter(selectedProduct => {
-                return JSON.stringify(selectedProduct) !== JSON.stringify(product);
-            });
-        }
-
+    removeFromSelectedCart = (data) => {
+        let { products } = this.state;
+        products.forEach((item, index) => {
+            if (item.id === data.id && JSON.stringify(item.optionIds) === JSON.stringify(data.optionIds)) {
+                products.splice(index, 1);
+            }
+        })
+        localStorage.setItem("cart", JSON.stringify(products));
+        this.props.changeCount()
         this.setState({
-            selectedProducts: selectedProducts
+            products
         });
-    }
-
-    renderAddress = (item, index) => {
-        if (item?.transportation === "DropShip" || item?.transportation === "Sỉ kho khách hàng") {
-            return (
-                <Row>
-                    <Colxx xxs="12">
-                        <span className="w-75 d-inline-block">Địa chỉ giao hàng: {item?.address} </span>
-                        <span className="w-25 d-inline-block text-right">
-                            <ConfirmButton
-                                btnConfig={{
-                                    color: "primary",
-                                    size: "xs",
-                                }}
-                                content={{
-                                    close: "Đóng",
-                                    confirm: "Xác nhận"
-                                }}
-                                onConfirm={() => {
-                                    this.updateAddressOrder(index);
-                                }}
-                                closeOnConfirm={true}
-                                buttonContent={() => {
-                                    return (
-                                        <b>Thay đổi</b>
-                                    );
-                                }}
-                                confirmHeader={() => {
-                                    return (
-                                        <>Chọn địa chỉ giao hàng</>
-                                    );
-                                }}
-                                confirmContent={() => {
-                                    return (
-                                        <Row>
-                                            <Colxx xxs="12">
-                                                <Label className="form-group has-float-label mb-4">
-                                                    <Select
-                                                        className="react-select"
-                                                        classNamePrefix="react-select"
-                                                        options={this.state.optionAddress}
-                                                        value={this.state.selectedAddress}
-                                                        onChange={(e) => {
-                                                            this.setState({
-                                                                selectedAddress: e
-                                                            })
-                                                        }}
-                                                    />
-                                                    <IntlMessages id="Chọn địa chỉ giao hàng" />
-                                                </Label>
-                                            </Colxx>
-                                            <Colxx xxs="12">
-                                                <div className="text-right">
-                                                    <Button
-                                                        color="primary"
-                                                        onClick={() => {
-                                                            this.toggleModalCreateAddress();
-                                                            this.getSellerAddress();
-                                                        }}
-                                                    >
-                                                        Tạo mới
-                                                    </Button>
-                                                </div>
-                                            </Colxx>
-                                        </Row>
-                                    );
-                                }}
-                            />
-                        </span>
-                    </Colxx>
-                    <Colxx xxs="12 mt-2">
-                        <span className="w-80 d-inline-block">Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(item?.lastMiles || 0))} VNĐ</span>
-                        <span className="w-20 d-inline-block text-right">
-                            <Button
-                                disabled={this.state.selectedAddress?.label ? false : true}
-                                size="xs"
-                                color="primary"
-                                onClick={() => {
-                                    this.calculateLastMiles(item, index)
-                                }}
-                            >Cập nhật</Button>
-                        </span>
-                    </Colxx>
-                </Row>
-            )
-        } else {
-            return (<></>)
-        }
     }
 
     render() {
@@ -659,9 +548,7 @@ class CartList extends Component {
                                                         />
                                                     </span>
                                                 </div>
-                                                <Collapse
-                                                    isOpen={collapses[index]}
-                                                >
+                                                <Collapse isOpen={collapses[index]}>
                                                     <OrderTables
                                                         isOrderProducts={false}
                                                         data={Object.values(item)[0]}
@@ -684,13 +571,89 @@ class CartList extends Component {
                                                             <p>Tổng khối lượng: {numberFormat(Number.parseFloat(item?.weight), 3)} kg</p>
                                                         </Colxx>
                                                     </Row>
-                                                    {
-                                                        this.renderAddress(item, index)
-                                                    }
+                                                    <Row>
+                                                        <Colxx xxs="12">
+                                                            <span className="w-75 d-inline-block">Địa chỉ giao hàng: {item?.address} </span>
+                                                            <span className="w-25 d-inline-block text-right">
+                                                                <ConfirmButton
+                                                                    btnConfig={{
+                                                                        color: "primary",
+                                                                        size: "xs",
+                                                                    }}
+                                                                    content={{
+                                                                        close: "Đóng",
+                                                                        confirm: "Xác nhận"
+                                                                    }}
+                                                                    onConfirm={() => {
+                                                                        this.updateAddressOrder(index);
+                                                                    }}
+                                                                    closeOnConfirm={true}
+                                                                    buttonContent={() => {
+                                                                        return (
+                                                                            <span>Thay đổi</span>
+                                                                        );
+                                                                    }}
+                                                                    confirmHeader={() => {
+                                                                        return (
+                                                                            <>Chọn địa chỉ giao hàng</>
+                                                                        );
+                                                                    }}
+                                                                    confirmContent={() => {
+                                                                        return (
+                                                                            <Row>
+                                                                                <Colxx xxs="12">
+                                                                                    <Label className="form-group has-float-label mb-4">
+                                                                                        <Select
+                                                                                            className="react-select"
+                                                                                            classNamePrefix="react-select"
+                                                                                            options={this.state.optionAddress}
+                                                                                            value={this.state.selectedAddress}
+                                                                                            onChange={(e) => {
+                                                                                                this.setState({
+                                                                                                    selectedAddress: e
+                                                                                                })
+                                                                                            }}
+                                                                                        />
+                                                                                        <IntlMessages id="Chọn địa chỉ giao hàng" />
+                                                                                    </Label>
+                                                                                </Colxx>
+                                                                                <Colxx xxs="12">
+                                                                                    <div className="text-right">
+                                                                                        <Button
+                                                                                            color="primary"
+                                                                                            onClick={() => {
+                                                                                                this.toggleModalCreateAddress();
+                                                                                                this.getSellerAddress();
+                                                                                            }}
+                                                                                        >
+                                                                                            Tạo mới
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </Colxx>
+                                                                            </Row>
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            </span>
+                                                        </Colxx>
+                                                        <Colxx xxs="12 mt-2">
+                                                            <span className="w-80 d-inline-block">Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(item?.lastMiles || 0))} VNĐ</span>
+                                                            <span className="w-20 d-inline-block text-right">
+                                                                <Button
+                                                                    disabled={this.state.selectedAddress?.label ? false : true}
+                                                                    size="xs"
+                                                                    color="primary"
+                                                                    onClick={() => {
+                                                                        this.calculateLastMiles(item, index)
+                                                                    }}
+                                                                >Cập nhật</Button>
+                                                            </span>
+                                                        </Colxx>
+                                                    </Row>
                                                     <Row className="mt-2">
                                                         <Colxx xxs="6">
                                                             <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)))} VNĐ</p>
-                                                            
+
                                                         </Colxx>
                                                     </Row>
                                                 </Collapse>
@@ -745,6 +708,7 @@ class CartList extends Component {
                     <CreateAddressModals
                         key={this.state.isOpenCreateAddress + "address"}
                         isOpen={this.state.isOpenCreateAddress}
+                        getSellerAddress={this.getSellerAddress}
                         toggleModalCreateAddress={this.toggleModalCreateAddress}
                     />
                 </Fragment>
