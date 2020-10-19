@@ -219,39 +219,6 @@ class UserInfo extends Component {
         })
     }
 
-    validateEmail = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your email address";
-        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-            error = "Invalid email address";
-        }
-        return error;
-    }
-
-    validatePassword = (value) => {
-        let error;
-        if (!value) {
-            error = "Please enter your password";
-        } else if (value.length < 4) {
-            error = "Value must be longer than 3 characters";
-        }
-        return error;
-    }
-
-    componentDidUpdate() {
-        if (this.props.error) {
-            NotificationManager.warning(
-                "Email or password is incorrect!",
-                "Login Error",
-                3000,
-                null,
-                null,
-                ''
-            );
-        }
-    }
-
     submitChangePassword = () => {
         let id = null;
         if (this.state.id) {
@@ -259,8 +226,8 @@ class UserInfo extends Component {
         }
         const { passwordCheck, password, confirmPassword } = this.state.user;
         let data = { id, password, confirmPassword };
-        if(this.props?.type !== "modal") {
-            data = {...data, passwordCheck}
+        if (this.props?.type !== "modal") {
+            data = { ...data, passwordCheck }
         }
         console.log(data);
         ApiController.callAsync('put', USER.all, data)
@@ -273,7 +240,7 @@ class UserInfo extends Component {
 
     validateField = async () => {
         const needToValidate = [{ firstName: "Họ" }, { lastName: "Tên" },
-        { phoneNumber: "Số điện thoại" }, { email: "E-mail" },
+        { phoneNumber: "Số điện thoại" }, { email: "E-mail" }, { passwordCheck: "Mật khẩu hiện tại" },
         { password: "Mật khẩu" }, { confirmPassword: "Xác nhận mật khẩu" }]
         let success = true;
         for await (const field of needToValidate) {
@@ -338,6 +305,7 @@ class UserInfo extends Component {
                     .then(data => {
                         NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
                         this.props.toggleOpenUserModal()
+                        this.props.reloadUsers()
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                     });
@@ -514,6 +482,21 @@ class UserInfo extends Component {
                                         </Colxx></>
                                 ) : (<></>)
                             }
+                            <Colxx xxs="6">
+                                <Label className="has-float-label ">
+                                    <Input
+                                        type={typeInput}
+                                        value={user.passwordCheck || ""}
+                                        name="passwordCheck"
+                                        onChange={(e) => {
+                                            this.handleChangeInput(e)
+                                        }}
+                                    />
+                                    <span >
+                                        <IntlMessages id="Mật khẩu hiện tại *" />
+                                    </span>
+                                </Label>
+                            </Colxx>
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input

@@ -840,7 +840,7 @@ class EditUboxProducts extends Component {
                         </Card>
                     </Colxx>
                 </Row>
-                <Row className="mt-4">
+                {/* <Row className="mt-4">
                     <Colxx xxs="12">
                         <Card>
                             <CardBody>
@@ -855,7 +855,7 @@ class EditUboxProducts extends Component {
                             </CardBody>
                         </Card>
                     </Colxx>
-                </Row>
+                </Row> */}
                 <CategoryModals
                     key={this.state.isOpenCategoryModal}
                     isOpenModal={this.state.isOpenCategoryModal}

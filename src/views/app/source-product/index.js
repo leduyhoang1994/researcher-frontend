@@ -88,7 +88,7 @@ class CreateTrainingClass extends Component {
     this.setState({
       filter
     });
-    
+
   }
 
   toggleCollapse = () => {
@@ -103,9 +103,10 @@ class CreateTrainingClass extends Component {
     siteFilter.forEach(item => {
       site.push(item.value);
     })
-    if(categoriesFilter) {
+    console.log(categoriesFilter);
+    if (categoriesFilter) {
       categoriesFilter.forEach(item => {
-        sourceCategoryId.push(item.id)
+        sourceCategoryId.push(item?.id)
       })
     }
     const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
@@ -197,12 +198,7 @@ class CreateTrainingClass extends Component {
         }, () => {
           if (localStorage.getItem('selectedItems')) {
             const categoriesFilter = JSON.parse(localStorage.getItem('selectedItems'));
-            console.log(categoriesFilter?.sourceCategory);
-            let categories = [];
-            categoriesFilter.forEach(item => {
-              categories.push(item?.sourceCategory)
-            })
-            this.onChangeCategory(categories);
+            this.onChangeCategory(categoriesFilter)
             this.prepareQuery();
           }
         });
