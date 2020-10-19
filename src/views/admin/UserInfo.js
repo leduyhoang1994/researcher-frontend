@@ -298,10 +298,6 @@ class UserInfo extends Component {
         }
     }
 
-    reloadUsers = () => {
-        // this.props.reloadUsers();
-    }
-
     callApi = () => {
         let flag = true, id = this.state.id || null;
         const { selectedCity, selectedDistrict, selectedCommune } = this.state;
@@ -329,7 +325,7 @@ class UserInfo extends Component {
                                 window.open(`/info`, "_self")
                             }, 2000)
                         } else {
-                            this.reloadUsers();
+                            this.props.reloadUsers();
                         }
                     }).catch(error => {
                         NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
