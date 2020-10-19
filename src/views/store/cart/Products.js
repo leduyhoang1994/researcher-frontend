@@ -5,6 +5,8 @@ import { injectIntl } from 'react-intl';
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { numberWithCommas } from "../../../helpers/Utils";
 
+import "./style.scss"
+
 class Products extends Component {
     render() {
         const { item, increment, decrement, remove } = this.props;
@@ -16,15 +18,15 @@ class Products extends Component {
             <Colxx xxs="12">
                 <Card className="card d-flex flex-row mb-3">
                     <div className="d-flex flex-grow-1 min-width-zero">
-                        <CardBody className="align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center" style={{ padding: "10px 28px" }}>
+                        <CardBody className="align-self-center d-flex flex-column flex-md-row justify-content-between min-width-zero align-items-md-center row-product" >
                             <NavLink
                                 to={`/store/products/detail/${item.id}`}
-                                className="list-item-heading mb-0 truncate w-70 w-xs-100  mb-1 mt-1"
+                                className="list-item-heading mb-0 truncate w-50 w-xs-100  mb-1 mt-1"
                             >
-                                <span className="align-middle d-inline-block w-15 w-xs-100">
+                                <span className="align-middle d-inline-block w-25 w-xs-100">
                                     <img width="70" style={{ objectFit: "cover", height: "70px" }} src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${item.featureImage}`} alt="" />
                                 </span>
-                                <span className="align-left d-inline-block w-85 w-xs-100 text-small">
+                                <span className="align-left d-inline-block w-75 w-xs-100 text-small">
                                     <p className="d-block">
                                         {item.name}
                                         {

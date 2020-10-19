@@ -30,6 +30,7 @@ import { MobileMenuIcon, MenuIcon } from "../../components/svg";
 import { getDirection, setDirection } from "../../helpers/Utils";
 
 import "./TopNavStore.scss";
+import TopnavStoreEasyAccess from "./Topnav.StoreEasyAccess";
 
 class TopNavStore extends Component {
   constructor(props) {
@@ -315,14 +316,15 @@ class TopNavStore extends Component {
 
           <div className="header-icons d-inline-block align-middle">
 
-            {/* <TopnavEasyAccess /> */}
+
             {/* <TopnavNotifications /> */}
 
-            <Button href="/store/cart" style={{ verticalAlign: "initial", padding: "5px", fontSize: "16px", display: "inline-flex", alignItems: "center" }} outline>
-              <i className="simple-icon-basket" style={{ fontSize: "13pt", marginRight: "5px" }}></i>
-              <span style={{ fontSize: "12px" }}>Giỏ hàng</span>
-              <Badge color="secondary" style={{ padding: "2px", marginLeft: "5px" }}>{this.props.count}</Badge>
+            <Button href="/store/cart" className="btn-store-cart mr-3" outline >
+              <i className="simple-icon-basket"></i>
+              <span>Giỏ hàng</span>
+              <Badge color="secondary" id="badge">{this.props.count}</Badge>
             </Button>
+            {/* <TopnavStoreEasyAccess /> */}
             {/* <button
               className="header-icon btn btn-empty d-none d-sm-inline-block"
               type="button"
@@ -362,9 +364,25 @@ class TopNavStore extends Component {
                 {/* <DropdownItem divider /> */}
                 {
                   isLogin ? (
-                    <DropdownItem onClick={() => this.handleLogout()}>
-                      Sign out
+                    <>
+                      <DropdownItem
+                        onClick={() => {
+                          window.open("/store/info", "_self")
+                        }}
+                      >
+                        Cá nhân
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={() => {
+                          window.open("/store/orders", "_self")
+                        }}
+                      >
+                        Lịch sử mua hàng
+                      </DropdownItem>
+                      <DropdownItem onClick={() => this.handleLogout()}>
+                        Sign out
                     </DropdownItem>
+                    </>
                   ) : (
                       <DropdownItem onClick={() => this.handleLogin()}>
                         Login

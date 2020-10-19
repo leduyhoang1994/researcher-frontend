@@ -1,0 +1,25 @@
+.ReactTable .rt-th, .ReactTable .rt-td {
+    overflow: visible;
+}
+.card-body > .row .col-6 {
+    height: 53px;
+    margin-bottom: 15px;
+    label > * {
+        height: 43px;
+    }
+}
+.modal-dialog {
+    margin-left: 25%;
+    margin-right: 25%;
+    display: block; 
+    width: 50% !important; 
+    padding-left: 0px;
+    .modal-content {
+        width: 100% !important; 
+    }
+}
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 50%;
+    }
+}

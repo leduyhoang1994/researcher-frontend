@@ -25,10 +25,10 @@ const User = ({ match }) => {
             path={`${match.url}/login`}
             render={props => <Login {...props} />}
           />
-          <Route
+          {/* <Route
             path={`${match.url}/register`}
             render={props => <Register {...props} />}
-          />
+          /> */}
           <Route
             path={`${match.url}/forgot-password`}
             render={props => <ForgotPassword {...props} />}

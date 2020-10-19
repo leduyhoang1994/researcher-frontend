@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import EditUboxProducts from "../ubox-category/EditUboxCategories";
-
+import "./style.scss";
 class CategoryModals extends React.Component {
 
     constructor(props) {

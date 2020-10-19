@@ -22,10 +22,10 @@ const User = ({ match }) => {
             path={`${match.url}/login`}
             render={props => <Login {...props} />}
           />
-          <Route
+          {/* <Route
             path={`${match.url}/register`}
             render={props => <Register {...props} />}
-          />
+          /> */}
           <Redirect to="/error" />
         </Switch>
       </Suspense>

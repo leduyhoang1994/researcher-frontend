@@ -74,7 +74,8 @@ class Medias extends React.Component {
 
     removeImage = (url) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa file này không?')) {
-            var newURL = url.replace(/^[a-z]{4,5}\:\/{2}[a-z0-9.]{1,}\:[0-9]{1,4}.(.*)/, '$1'); // http or https
+            var newURL = url.replace(/^.*\/\/[^\/]+/, '');
+            // url.replace(/^[a-z]{4,5}\:\/{2}[a-z0-9.]{1,}\:[0-9]{1,4}.(.*)/, '$1'); // http or https
             ApiController.call('delete', `${UBOX_PRODUCTS.media}`, {
                 filePath: newURL
             }, data => {
@@ -100,7 +101,7 @@ class Medias extends React.Component {
         };
 
         return (
-            <div key={index || media} className="media-item">
+            <div key={`media-${index || media}`} className="media-item">
                 <div name="media-view" className="media-item-show" style={style} onClick={(e) => {
                     this.setState({
                         mediaModal: `${media}`,

@@ -3,29 +3,58 @@ export const baseDomain = `${process.env.REACT_APP_API_BASE_PATH}`;
 export const apiVersion = 'v1';
 export const apiPath = `${domain}/${apiVersion}`;
 
+/** Address*/
+export const address = 'address';
+export const ADDRESS = {
+  all: `${apiPath}/${address}`,
+}
+
+/** Address Order*/
+export const address_orders = 'address-orders';
+export const ADDRESS_ORDER = {
+  all: `${apiPath}/${address_orders}`,
+}
+
+/** Roles*/
+export const roles = 'roles';
+export const ROLES = {
+  all: `${apiPath}/${roles}`,
+}
+
 /** User */
-export const user = 'auth-users';
+export const users = 'users';
+export const auth_users = 'auth-users';
 export const USERS = {
-  all: `${apiPath}/${user}`,
-  one: `${apiPath}/${user}`,
-  classManagers: `${apiPath}/class-manager`
+  all: `${apiPath}/${auth_users}`,
+  one: `${apiPath}/${auth_users}`,
+  classManagers: `${apiPath}/class-manager`,
+  logout: `${apiPath}/${auth_users}/logout`,
+  login: `${apiPath}/${auth_users}/login`,
+  register: `${apiPath}/${auth_users}/register`,
 }
 
 /** Auth User*/
 export const USER = {
-  logout: `${apiPath}/${user}/logout`,
-  login: `${apiPath}/auth-users/login`,
-  register: `${apiPath}/${user}/register`,
-  details: `${apiPath}/users/info`,
+  all: `${apiPath}/${users}`,
+  roles: `${apiPath}/${users}/roles`,
+  details: `${apiPath}/${users}/info`,
 }
 
 /** Auth Seller*/
-export const seller = 'auth-sellers';
+export const sellers = 'auth-sellers';
+export const SELLERS = {
+  logout: `${apiPath}/${sellers}/logout`,
+  login: `${apiPath}/${sellers}/login`,
+  register: `${apiPath}/${sellers}/register`,
+}
+
+/** Auth Seller*/
+export const seller = 'seller';
 export const SELLER = {
-  logout: `${apiPath}/${seller}/logout`,
-  login: `${apiPath}/${seller}/login`,
-  register: `${apiPath}/${seller}/register`,
-  details: `${apiPath}/seller/info`,
+  all: `${apiPath}/${seller}`,
+  details: `${apiPath}/${seller}/info`,
+  admin: `${apiPath}/${seller}/admin`,
+  type: `${apiPath}/${seller}/admin/account-type`,
 }
 
 /** Source Category */
@@ -107,6 +136,7 @@ export const ORDERS = {
   all: `${apiPath}/${order}`,
   getBySeller: `${apiPath}/${order}/view-list`,
   details: `${apiPath}/${order}/view-detail`,
+  calculator: `${apiPath}/${order}/calculator/lastmile`,
 }
 
 /** SET */
@@ -127,4 +157,22 @@ export const constants = 'constants';
 export const CONSTANTS = {
   all: `${apiPath}/${constants}`,
   type: `${apiPath}/${constants}/type`,
+}
+
+/** TRANSPORTATION */
+export const transportation = 'transportations';
+export const TRANSPORTATION = {
+  all: `${apiPath}/${transportation}`,
+}
+
+/** Group Order */
+export const group_orders = 'group-orders';
+export const GROUP_ORDERS = {
+  all: `${apiPath}/${group_orders}`,
+}
+
+/** Group Order */
+export const account = 'account-type';
+export const ACCOUNTS = {
+  all: `${apiPath}/${account}`,
 }
