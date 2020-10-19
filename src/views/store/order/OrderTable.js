@@ -2,6 +2,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
+import { currencyFormatVND } from '../../../helpers/Utils';
 import "./style.scss";
 
 const dataTableColumns = [
@@ -31,7 +32,9 @@ const dataTableColumns = [
         accessor: "totalPrice",
         sortable: true,
         filterable: false,
-        Cell: props => <p className="text-muted">{Number.parseFloat(props.value).toFixed(0)}</p>
+        Cell: props => <p className="text-muted">
+            {props.value ? (currencyFormatVND(Number.parseFloat(props.value).toFixed(0)) + " đ") : null}
+        </p>
     },
     {
         Header: "Ngày tạo đơn",
@@ -65,14 +68,14 @@ const OrderTable = (props) => {
         const str = date.substring(0, 10);
         element.createdAt = str;
         element.groupOrderName = element.groupOrder.name;
-        element.address = element.addressOrder.city + ", " 
-        + element.addressOrder.district + ", " 
-        + element.addressOrder.town + ", " 
-        + element.addressOrder.address;
+        element.address = element.addressOrder.city + ", "
+            + element.addressOrder.district + ", "
+            + element.addressOrder.town + ", "
+            + element.addressOrder.address;
         element.transport = element.transportation.name;
         values.push(element);
     });
-    
+
     return (
         <div>
             <ReactTable

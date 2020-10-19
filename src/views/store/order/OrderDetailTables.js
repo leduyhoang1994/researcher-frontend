@@ -2,6 +2,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
+import { currencyFormatVND, numberWithCommas } from '../../../helpers/Utils';
 import "./style.scss";
 
 const dataTableColumns = [
@@ -25,14 +26,16 @@ const dataTableColumns = [
         accessor: "price",
         sortable: true,
         filterable: false,
-        Cell: props => <p className="text-muted">{Number.parseFloat(props.value).toFixed(0)} VNĐ</p>
+        Cell: props => <p className="text-muted">
+            {props.value ? (currencyFormatVND(Number.parseFloat(props.value).toFixed(0)) + " đ") : null}
+        </p>
     },
     {
         Header: "Số lượng",
         accessor: "quantity",
         sortable: true,
         filterable: false,
-        Cell: props => <p className="text-muted">{Number.parseFloat(props.value).toFixed(0)}</p>
+        Cell: props => <p className="text-muted">{numberWithCommas(Number.parseFloat(props.value).toFixed(0))}</p>
     },
     {
         Header: "Khối lượng",

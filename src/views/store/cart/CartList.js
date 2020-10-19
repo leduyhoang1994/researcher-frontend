@@ -299,7 +299,7 @@ class CartList extends Component {
                 return null;
             }
             addProducts.forEach(item => {
-                totalPrice += (item.offerPrice * item.quantity);
+                totalPrice += (item.price * item.quantity);
                 weight += (item.weight * item.quantity);
                 if (item.workshopIn > timeToCome) {
                     timeToCome = item.workshopIn;
