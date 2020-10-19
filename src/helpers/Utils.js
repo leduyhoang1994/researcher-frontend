@@ -199,17 +199,11 @@ export const getIndexTagOnKeyDown = (element) => {
   if (typeof win.getSelection != "undefined") {
     sel = win.getSelection();
     if (sel.rangeCount > 0) {
-      const indexElement = win.getSelection().getRangeAt(0).commonAncestorContainer;
-      console.log(indexElement);
       var range = win.getSelection().getRangeAt(0);
       var preCaretRange = range.cloneRange();
       preCaretRange.selectNodeContents(element);
       preCaretRange.setEnd(range.endContainer, range.endOffset);
-      console.log(window.getSelection().getRangeAt(0) );
-      // console.log(preCaretRange && preCaretRange.endOffset());
       caretOffset = preCaretRange.toString().length;
-      caretOffset = win.getSelection().baseNode.wholeText?.length || 0;
-      caretOffset = 0;
     }
   } else if ((sel = doc.selection) && sel.type !== "Control") {
     var textRange = sel.createRange();
