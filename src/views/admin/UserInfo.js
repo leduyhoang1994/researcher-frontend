@@ -1,19 +1,14 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, Input, CardBody, Form, FormGroup } from "reactstrap";
-import { connect } from "react-redux";
+import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
-
 import ApiController from '../../helpers/Api';
 import { USER, ADDRESS, USERS } from '../../constants/api';
-import { loginUser } from "../../redux/actions";
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
 import "./style.scss"
 import ConfirmButton from "../../components/common/ConfirmButton";
-import { Field, Formik, isFunction } from "formik";
-import { validateEmail, validateName, validatePhone } from "../../helpers/Validate";
 import UserModals from "./UserModals";
 
 class UserInfo extends Component {
@@ -251,6 +246,7 @@ class UserInfo extends Component {
             }
             if ((this.state.user[fieldName] || "") === "") {
                 if ((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
+                } else if(this.props?.type === "modal" && fieldName === "passwordCheck") {
                 } else {
                     success = false;
                     NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
@@ -282,10 +278,10 @@ class UserInfo extends Component {
             if (selectedCommune) {
                 user.town = selectedCommune.label;
             }
-            const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = user;
+            const { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword, passwordCheck } = user;
 
             if (id) {
-                const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company };
+                const data = { id, firstName, lastName, phoneNumber, email, city, district, town, address, company, passwordCheck };
                 ApiController.callAsync('put', USER.all, data)
                     .then(data => {
                         NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
@@ -482,21 +478,25 @@ class UserInfo extends Component {
                                         </Colxx></>
                                 ) : (<></>)
                             }
-                            <Colxx xxs="6">
-                                <Label className="has-float-label ">
-                                    <Input
-                                        type={typeInput}
-                                        value={user.passwordCheck || ""}
-                                        name="passwordCheck"
-                                        onChange={(e) => {
-                                            this.handleChangeInput(e)
-                                        }}
-                                    />
-                                    <span >
-                                        <IntlMessages id="Mật khẩu hiện tại *" />
-                                    </span>
-                                </Label>
-                            </Colxx>
+                            {
+                                this.props?.type === "modal" ? (<></>) : (
+                                    <Colxx xxs="6">
+                                        <Label className="has-float-label ">
+                                            <Input
+                                                type={typeInput}
+                                                value={user.passwordCheck || ""}
+                                                name="passwordCheck"
+                                                onChange={(e) => {
+                                                    this.handleChangeInput(e)
+                                                }}
+                                            />
+                                            <span >
+                                                <IntlMessages id="Mật khẩu hiện tại *" />
+                                            </span>
+                                        </Label>
+                                    </Colxx>
+                                )
+                            }
                             <Colxx xxs="6">
                                 <Label className="has-float-label ">
                                     <Input

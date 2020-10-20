@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, CardBody, Input, Label, Button, CardTitle } from 'reactstrap';
+import { Row, Card, CardBody, Input, Label, Button } from 'reactstrap';
 import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Select from 'react-select';
@@ -321,7 +321,7 @@ class EditUboxProducts extends Component {
         let optionId = [];
         for (var items in data) {
             let arr = data[items];
-            arr.map(item => {
+            arr.forEach(item => {
                 optionId.push(item.id);
             })
         }

@@ -152,7 +152,7 @@ class SourceProductTable extends Component {
             width: this.getColumnWidth("crossBorderWeight", "| Khối lượng"),
             accessor: "crossBorderWeight",
             Cell: props => <p className="text-muted">
-                {props.value ? (numberFormat(Number.parseFloat(props.value), 3) + " kg") : null}
+                {props.value ? (numberFormat(Number.parseFloat(props.value), 3, ".", ",") + " kg") : null}
             </p>
         },
         {

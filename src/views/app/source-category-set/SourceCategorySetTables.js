@@ -4,7 +4,6 @@ import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import DataTablePagination from '../../../components/DatatablePagination';
 import { Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
 import "./style.scss";
 import ConfirmButton from '../../../components/common/ConfirmButton';
 

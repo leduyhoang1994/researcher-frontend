@@ -5,7 +5,6 @@ import ReactTable from "react-table";
 import classnames from "classnames";
 import IntlMessages from "../../helpers/IntlMessages";
 import DataTablePagination from "../../components/DatatablePagination";
-import { Link } from 'react-router-dom';
 
 const CustomTbodyComponent = props => (
   <div {...props} className={classnames("rt-tbody", props.className || [])}>

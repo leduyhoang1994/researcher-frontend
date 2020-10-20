@@ -31,7 +31,7 @@ class SourceProductInfoModal extends React.Component {
         label: "Ảnh sản phẩm",
         col: "6",
         render: (value) => {
-          return <img width="100%" src={value} />;
+          return <img width="100%" src={value} alt=""/>;
         }
       },
       "id": {

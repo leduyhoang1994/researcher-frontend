@@ -62,7 +62,7 @@ const dataTableColumns = [
         Header: "Khối lượng",
         accessor: "weight",
         Cell: props => <p className="text-muted">
-            {props.value ? numberFormat(Number.parseFloat(props.value), 3).toLocaleString() + " kg": null}
+            {props.value ? numberFormat(Number.parseFloat(props.value), 3, ".", ",").toLocaleString() + " kg": null}
         </p>
     },
     {

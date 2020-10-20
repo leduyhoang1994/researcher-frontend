@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Modal, ModalBody } from 'reactstrap';
 import EditUboxProducts from "../ubox-category/EditUboxCategories";
 import "./style.scss";
 class CategoryModals extends React.Component {
@@ -11,8 +11,6 @@ class CategoryModals extends React.Component {
     }
 
     render() {
-        const isDisabled = false;
-
         return (
             <div>
                 <Modal isOpen={this.props.isOpenModal} toggle={this.props.toggleOpenCategoryModal}>

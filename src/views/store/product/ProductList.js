@@ -4,6 +4,7 @@ import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Product from './Product';
 import LazyLoad from 'react-lazyload';
+import "./style.scss";
 
 class ProductList extends Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class ProductList extends Component {
                 <Row>
                     {products.map((product, index) => {
                         return (
-                            <Colxx key={index} xxs="2" style={{ padding: "0 2px" }}>
+                            <Colxx key={index} xxs="2" id="column-each-product">
                                 <Product
                                     product={product}
                                     handleClick={this.handleClick}

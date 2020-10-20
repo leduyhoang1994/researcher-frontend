@@ -2,13 +2,10 @@ import React, { Component, Fragment } from "react";
 import { Row, Card, CardBody, Button } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
 import ApiController from '../../helpers/Api';
-import { __ } from '../../helpers/IntlMessages';
 import { USER, ROLES, SELLER } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
-import UserTables from "./UserTables";
 import { injectIntl } from "react-intl";
-import UserModals from "./UserModals";
-import ReactTable from "react-table";
+import SellerTables from "./SellerTables";
 
 
 class SellerLists extends Component {
@@ -26,6 +23,7 @@ class SellerLists extends Component {
             roleName: "",
             sellers: [],
             roles: [],
+            isLoading: true,
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
     }
@@ -37,7 +35,10 @@ class SellerLists extends Component {
 
     loadSellers = () => {
         ApiController.get(SELLER.all, {}, data => {
-            this.setState({ sellers: data });
+            this.setState({
+                sellers: data,
+                isLoading: false,
+            });
         });
     }
 
@@ -84,53 +85,12 @@ class SellerLists extends Component {
         console.log(this.state);
     }
 
-    columns = () => [
-        {
-            Header: __(this.messages, "Họ"),
-            sortable: false,
-            accessor: "firstName",
-            Cell: props => <p className="text-muted">{props.value}</p>
-        },
-        {
-            Header: __(this.messages, "Tên"),
-            sortable: false,
-            accessor: "lastName",
-            Cell: props => <p className="text-muted">{props.value}</p>
-        },
-        {
-            Header: __(this.messages, "Số điện thoại"),
-            sortable: false,
-            accessor: "phoneNumber",
-            Cell: props => <p className="text-muted">{props.value}</p>
-        },
-        {
-            Header: __(this.messages, "E-mail"),
-            sortable: false,
-            accessor: "email",
-            Cell: props => <p className="text-muted">{props.value}</p>
-        },
-        {
-            Header: __(this.messages, "Hành động"),
-            sortable: false,
-            accessor: null,
-            width: 280,
-            Cell: props => {
-                return (
-                    <div className="text-left d-block">
-                        <Button
-                            className="button"
-                            color="primary"
-                            size="xs"
-                            onClick={() => {
-                            }}
-                        >
-                            Chi tiết
-                  </Button>
-                    </div>
-                )
-            }
-        },
-    ]
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
+    }
+
     render() {
         const { sellers, roles } = this.state;
         let optionRoles = [];
@@ -138,6 +98,10 @@ class SellerLists extends Component {
             roles.forEach(item => {
                 optionRoles.push({ label: item.description, value: item.name, id: item.id })
             })
+        }
+
+        if (this.state.isLoading) {
+            return this.renderLoading();
         }
 
         return (
@@ -149,26 +113,9 @@ class SellerLists extends Component {
                                 <h2>Danh sách tài khoản</h2>
                             </Colxx>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto">
-                                <ReactTable
-                                    className="-striped -highlight"
-                                    data={sellers}
-                                    columns={this.columns()}
-                                    defaultPageSize={10}
-                                    showPagination={false}
-                                    getTrProps={(state, rowInfo) => {
-                                        if (rowInfo && rowInfo.row) {
-                                            return {
-                                                onClick: (e) => {
-                                                    window.open(`/info/sellers/detail/${rowInfo.original.id}`)
-                                                },
-                                                style: {
-                                                    cursor: "pointer"
-                                                }
-                                            }
-                                        } else {
-                                            return {}
-                                        }
-                                    }}
+                                <SellerTables
+                                    sellers={sellers}
+                                    component={this}
                                 />
                             </Colxx>
                         </Row>

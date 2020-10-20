@@ -1,18 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { Button, Card, CardBody, Collapse, Label, Row } from 'reactstrap';
 import { injectIntl } from 'react-intl';
-import Products from './Products';
 import { connect } from "react-redux";
 import { changeCount } from "../../../redux/actions";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { ADDRESS_ORDER, ORDERS, TRANSPORTATION } from '../../../constants/api';
 import Api from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { currencyFormatVND, numberFormat, numberWithCommas } from "../../../helpers/Utils";
-import { defaultImg } from '../../../constants/defaultValues';
+import { currencyFormatVND, numberFormat } from "../../../helpers/Utils";
 import CartTables from './CartTables';
-
-import "./style.scss";
 import OrderModals from './OrderModals';
 import ApiController from '../../../helpers/Api';
 import OrderTables from './OrderTables';
@@ -21,7 +17,7 @@ import IntlMessages from '../../../helpers/IntlMessages';
 import ConfirmButton from '../../../components/common/ConfirmButton';
 import CreateAddressModals from './CreateAddressModals';
 import GroupOrderModals from './GroupOrderModals';
-import { database } from 'firebase';
+import "./style.scss";
 
 class CartList extends Component {
     constructor(props) {
@@ -683,6 +679,7 @@ class CartList extends Component {
                                 <Colxx xxs="12">
                                     <div className="text-right mt-5">
                                         <Button
+                                            disabled={this.state.orders?.length> 0 ? false: true}
                                             className="mr-2"
                                             color="primary"
                                             onClick={() => {

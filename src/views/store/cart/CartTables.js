@@ -90,7 +90,7 @@ const CartTables = ({
       width: 75,
       accessor: "weight",
       Cell: props => <p className="text-muted">
-        {props.value ? (numberFormat(Number.parseFloat(props.value), 3) + " kg") : null}
+        {props.value ? (numberFormat(Number.parseFloat(props.value), 3, ".", ",") + " kg") : null}
       </p>
     },
     {

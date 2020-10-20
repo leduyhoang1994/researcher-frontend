@@ -5,9 +5,9 @@ import UserLayout from '../../layout/UserLayout';
 const Login = React.lazy(() =>
   import(/* webpackChunkName: "user-login" */ './login')
 );
-const Register = React.lazy(() =>
-  import(/* webpackChunkName: "user-register" */ './register')
-);
+// const Register = React.lazy(() =>
+//   import(/* webpackChunkName: "user-register" */ './register')
+// );
 const ForgotPassword = React.lazy(() =>
   import(/* webpackChunkName: "user-forgot-password" */ './forgot-password')
 );

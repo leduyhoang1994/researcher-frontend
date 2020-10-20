@@ -38,6 +38,7 @@ class SellerInfo extends Component {
             typeInput: "password",
             accounts: [],
             selectedType: [],
+            isLoading: true,
         };
         this.messages = this.props?.type === "modal" ? null : this.props.intl.messages;
         this.formRef = React.createRef();
@@ -67,7 +68,10 @@ class SellerInfo extends Component {
     loadUsers = (id) => {
         if (id) {
             ApiController.get(`${SELLER.details}/${id}`, {}, data => {
-                this.setState({ seller: data });
+                this.setState({
+                    seller: data,
+                    isLoading: false
+                });
                 this.defaultCity();
                 this.defaultAccountType()
             });
@@ -75,7 +79,8 @@ class SellerInfo extends Component {
             ApiController.get(`${SELLER.details}`, {}, data => {
                 this.setState({
                     seller: data,
-                    id: data?.id
+                    id: data?.id,
+                    isLoading: false
                 });
                 this.defaultCity()
                 this.defaultAccountType()
@@ -155,7 +160,7 @@ class SellerInfo extends Component {
     getCities = () => {
         let options = [];
         const { address } = this.state;
-        address.map((item, index) => {
+        address.forEach((item, index) => {
             let value = Object.keys(item)[0];
             options.push({ label: value, value: index });
         })
@@ -178,7 +183,7 @@ class SellerInfo extends Component {
         const selectedCity = this.state.address[index];
         const district = Object.values(selectedCity)[0];
 
-        district.map((item, index) => {
+        district.forEach((item, index) => {
             let value = Object.keys(item)[0];
             options.push({ label: value, value: index });
         })
@@ -204,13 +209,13 @@ class SellerInfo extends Component {
         const selectedCity = this.state.address[index];
         const selectedDistrict = Object.values(selectedCity)[0];
         let temp = [];
-        selectedDistrict.map(item => {
+        selectedDistrict.forEach(item => {
             if (Object.keys(item)[0] === district.label) {
                 temp = Object.values(item)[0];
             }
         })
 
-        temp.map((value, index) => {
+        temp.forEach((value, index) => {
             options.push({ label: value, value: index });
         })
 
@@ -292,9 +297,9 @@ class SellerInfo extends Component {
             }
             const { firstName, lastName, username, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
             if (password !== "" && password === confirmPassword) {
-                const data = {firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword, accountTypeId: selectedType.value };
-                if(id) {
-                    const obj = {...data, id};
+                const data = { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword, accountTypeId: selectedType.value };
+                if (id) {
+                    const obj = { ...data, id };
                     ApiController.callAsync('put', SELLER.admin, obj)
                         .then(data => {
                             NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
@@ -302,7 +307,7 @@ class SellerInfo extends Component {
                             NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                         });
                 } else {
-                    const obj = {...data, username};
+                    const obj = { ...data, username };
                     ApiController.callAsync('post', SELLERS.register, obj)
                         .then(data => {
                             NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
@@ -310,7 +315,7 @@ class SellerInfo extends Component {
                             NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
                         });
                 }
-                
+
             } else if (password !== "" && password !== confirmPassword) {
                 NotificationManager.warning("Xác nhận mật khẩu không trùng mật khẩu", "Thông báo", 1500);
             }
@@ -318,11 +323,19 @@ class SellerInfo extends Component {
         }
     }
 
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
+    }
+
     render() {
         const { seller, optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune, selectedType, accounts } = this.state;
-        const { firstName, lastName, username, phoneNumber, email, address, password, passwordCheck, confirmPassword, company } = seller;
+        const { firstName, lastName, username, phoneNumber, email, address, password, confirmPassword, company } = seller;
 
-        const isDisabled = false;
+        if (this.state.isLoading) {
+            return this.renderLoading();
+        }
 
         return (
             <Fragment>

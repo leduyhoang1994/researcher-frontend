@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input, Label, Button, ModalBody } from 'reactstrap';
+import { Input, Label, Button, ModalBody, Row } from 'reactstrap';
 import { Modal } from 'reactstrap';
+import { Colxx } from '../../components/common/CustomBootstrap';
 import { NotificationManager } from '../../components/common/react-notifications';
 import { CONSTANTS } from '../../constants/api';
 import ApiController from '../../helpers/Api';
@@ -93,7 +94,7 @@ class ConstantModals extends React.Component {
                     try {
                         this.props.getData()
                     } catch (error) {
-                        
+
                     }
                 }).catch(error => {
                     NotificationManager.warning("Tham số đã tồn tại!", "Thất bại", 1000);
@@ -105,31 +106,39 @@ class ConstantModals extends React.Component {
         const { constant, id } = this.state
         return (
             <>
-                <Label className="mr-2">
-                    <span>
-                        <IntlMessages id="Từ khóa" />
-                    </span>
-                    <Input
-                        value={constant.label}
-                        onChange={this.onHandleChange}
-                        type="text"
-                        name="label"
-                    />
-                </Label>
-                <Label className="mr-2">
-                    <span>
-                        <IntlMessages id="Giá trị" />
-                    </span>
-                    <Input
-                        value={constant.viewValue}
-                        onChange={this.onHandleChange}
-                        type="text"
-                        name="viewValue"
-                    />
-                </Label>
-                <Label>
-                    <Button className="button" onClick={this.onFormSubmit}>{id ? "Sửa" : "Tạo"}</Button>
-                </Label>
+                <Row id="modal-constant">
+                    <Colxx xxs="5">
+                        <Label className="">
+                            <span>
+                                <IntlMessages id="Từ khóa" />
+                            </span>
+                            <Input
+                                value={constant.label}
+                                onChange={this.onHandleChange}
+                                type="text"
+                                name="label"
+                            />
+                        </Label>
+                    </Colxx>
+                    <Colxx xxs="5">
+                        <Label className="">
+                            <span>
+                                <IntlMessages id="Giá trị" />
+                            </span>
+                            <Input
+                                value={constant.viewValue}
+                                onChange={this.onHandleChange}
+                                type="text"
+                                name="viewValue"
+                            />
+                        </Label>
+                    </Colxx>
+                    <Colxx xxs="2">
+                        <Label>
+                            <Button className="button btn-submit-constant-modal" onClick={this.onFormSubmit}>{id ? "Sửa" : "Tạo"}</Button>
+                        </Label>
+                    </Colxx>
+                </Row>
             </>
         )
     }

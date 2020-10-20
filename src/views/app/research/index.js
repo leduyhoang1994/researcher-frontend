@@ -10,7 +10,6 @@ import ApiController from '../../../helpers/Api';
 import { CATEGORY_SETS, SOURCE_CATEGORIES } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import { Redirect } from 'react-router-dom';
-import { arrayColumn } from '../../../helpers/Utils';
 import ResearchSetModal from './ResearchSetModal';
 import { SITE_LIST } from '../../../constants/data';
 import { isObject } from 'formik';

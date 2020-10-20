@@ -1,12 +1,10 @@
 import React, { Component } from "react";
 import { injectIntl } from "react-intl";
-import { Badge, Button } from "reactstrap";
 import {
   UncontrolledDropdown,
   DropdownItem,
   DropdownToggle,
   DropdownMenu,
-  Input
 } from "reactstrap";
 
 import { NavLink } from "react-router-dom";
@@ -223,7 +221,6 @@ class TopNav extends Component {
 
   render() {
     const { containerClassnames, menuClickCount } = this.props;
-    const { messages } = this.props.intl;
     return (
       <nav className="navbar fixed-top">
         <div className="d-flex align-items-center navbar-left">

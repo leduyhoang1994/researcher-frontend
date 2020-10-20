@@ -6,9 +6,9 @@ const Login = React.lazy(() =>
   import(/* webpackChunkName: "user-login" */ './login')
 );
 
-const Register = React.lazy(() =>
-  import(/* webpackChunkName: "user-register" */ './register')
-);
+// const Register = React.lazy(() =>
+//   import(/* webpackChunkName: "user-register" */ './register')
+// );
 
 
 const User = ({ match }) => {

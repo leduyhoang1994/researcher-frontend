@@ -6,7 +6,7 @@ import ApiController from "../../helpers/Api";
 import Select from "react-select";
 import { CONSTANTS } from "../../constants/api";
 import { NotificationManager } from '../../components/common/react-notifications';
-import { failed, notify_add_success, success, notify_syntax_error, required_field, notify_update_success } from "../../constants/constantTexts";
+import { failed, notify_add_success, success, required_field, notify_update_success } from "../../constants/constantTexts";
 import "./style.scss";
 import { getIndexTagOnKeyDown } from "../../helpers/Utils";
 import ConstantModals from "./ConstantModals";

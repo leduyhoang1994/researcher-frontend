@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Input, Label, Button, Card, CardBody } from 'reactstrap';
+import { Row, Button, Card, CardBody } from 'reactstrap';
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
 import Breadcrumb from "../../../containers/navs/Breadcrumb";
@@ -10,7 +10,7 @@ import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
 import GlideComponentThumbs from "../../../components/carousel/GlideComponentThumbs";
 import { NotificationManager } from "../../../components/common/react-notifications";
-import { currencyFormatVND } from "../../../helpers/Utils";
+import { currencyFormatVND, numberFormat } from "../../../helpers/Utils";
 import Property from "./Property";
 import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
@@ -55,37 +55,22 @@ class ProductDetail extends Component {
             id: this.props.match.params.id || null,
             product: {},
             properties: [],
-            isAddedToCart: false,
             options: null,
             optionIds: [],
             quantity: 1,
+            isLoading: true,
         };
         this.messages = this.props.intl.messages;
     }
 
     componentDidMount() {
         this.loadCurrentProduct();
-        this.loadLocalStorage();
     }
 
     loadCurrentProduct = () => {
         const { id } = this.state;
         if (id) {
             this.getProduct(id);
-        }
-    }
-
-    loadLocalStorage = () => {
-        let cart = localStorage.getItem("cart");
-        cart = cart ? JSON.parse(cart) : [];
-
-        for (let i = 0; i < cart.length; i++) {
-            if (cart[i].id === this.state.id) {
-                this.setState({
-                    isAddedToCart: !this.state.isAddedToCart
-                })
-
-            }
         }
     }
 
@@ -97,7 +82,8 @@ class ProductDetail extends Component {
             });
             this.setState({
                 product: data,
-                properties: arr
+                properties: arr,
+                isLoading: false
             })
         })
     }
@@ -159,6 +145,12 @@ class ProductDetail extends Component {
         this.setState({ optionsOwnProperties: newValue });
     };
 
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
+    }
+
     render() {
         const { product, properties } = this.state;
         const options = convertOptions(properties);
@@ -173,6 +165,11 @@ class ProductDetail extends Component {
                 }
             }
         }
+
+        if (this.state.isLoading) {
+            return this.renderLoading();
+        }
+
         return (
             <Fragment >
                 <Row>
@@ -222,7 +219,7 @@ class ProductDetail extends Component {
                                     <h2>{product.name}</h2>
                                     <Row className="mt-3">
                                         <Colxx xxs="6">
-                                            <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)): null}{}</p>
+                                            <p className="product-price">{product?.price ? currencyFormatVND(parseFloat(product.price).toFixed(0)): null} đ</p>
                                             <div className="mt-4">
                                                 <h3>Thuộc tính sản phẩm</h3>
                                                 <Property
@@ -235,25 +232,6 @@ class ProductDetail extends Component {
                                             <p >Sản lượng bán tại site gốc 1244</p>
                                         </Colxx>
                                     </Row>
-                                    {/* <Row>
-                                        <div className="mt-5">
-                                            <p className="float-left mt-3 ml-3">Số lượng</p>
-                                            <Label className="form-group has-float-label float-left ml-5">
-                                                <Input
-                                                    type="number"
-                                                    name="quantity"
-                                                    min={1}
-                                                    value={this.state.quantity}
-                                                    // defaultValue="0"
-                                                    onChange={e => {
-                                                        this.setState({
-                                                            quantity: parseInt(e.target.value)
-                                                        })
-                                                    }}
-                                                />
-                                            </Label>
-                                        </div>
-                                    </Row> */}
                                     <Row className="mt-5">
                                         <Colxx xxs="12">
                                             <div className="text-left card-title float-left">
@@ -261,16 +239,8 @@ class ProductDetail extends Component {
                                                     className="mr-2"
                                                     color="primary"
                                                     onClick={() => {
-                                                        // if (!isAddedToCart) {
                                                         this.addToCart();
-                                                        this.setState({
-                                                            isAddedToCart: true
-                                                        });
                                                         this.props.changeCount();
-                                                        // } 
-                                                        // else {
-                                                        //     window.open("/store/cart", "_self")
-                                                        // }
                                                     }}
                                                 >
                                                     {__(this.messages, "Thêm vào giỏ")}
@@ -306,7 +276,7 @@ class ProductDetail extends Component {
                         <Row >
                             <Colxx xxs="4" >
                                 <div>
-                                    <p className="mt-3 ml-3">Khối lượng {product.weight} kg</p>
+                                    <p className="mt-3 ml-3">Khối lượng {numberFormat(Number.parseFloat(product.weight), 3, ".", ",")} kg</p>
 
                                 </div>
                             </Colxx>

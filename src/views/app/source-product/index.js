@@ -290,7 +290,7 @@ class CreateTrainingClass extends Component {
   }
 
   render() {
-    const { filter, collapse, keySearch, data, pagination } = this.state;
+    const { filter, collapse, data, pagination } = this.state;
     const { siteFilter } = filter;
     return (
       <Fragment>

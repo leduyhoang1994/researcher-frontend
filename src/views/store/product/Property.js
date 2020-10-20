@@ -23,7 +23,7 @@ class Property extends React.Component {
             this.setState({
                 properties: properties
             }, () => {
-                properties.map((option) => {
+                properties.forEach((option) => {
                     this.radioButtonSelect(option[0], 0);
                 })
             })

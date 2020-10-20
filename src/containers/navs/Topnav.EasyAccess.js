@@ -15,18 +15,18 @@ const TopnavEasyAccess = () => {
           right
           id="iconMenuDropdown"
         >
-          <NavLink to="/store/cart" className="icon-menu-item">
+          {/* <NavLink to="/store/cart" className="icon-menu-item">
             <i className="simple-icon-basket" /><br/>
             <IntlMessages id="Giỏ hàng" />
-          </NavLink>
+          </NavLink> */}
           <NavLink to="/store" className="icon-menu-item">
             <i className="iconsminds-shop" /><br/>
             <IntlMessages id="Shop" />
           </NavLink>
-          <NavLink to="/store/orders" className="icon-menu-item">
+          {/* <NavLink to="/store/orders" className="icon-menu-item">
             <i className="iconsminds-data-center" /><br/>
             <IntlMessages id="Đơn hàng" />
-          </NavLink>
+          </NavLink> */}
 
           {/* <NavLink to="/app/ui" className="icon-menu-item">
             <i className="iconsminds-pantone d-block" />{" "}

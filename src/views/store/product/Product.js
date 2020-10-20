@@ -1,5 +1,5 @@
 import React from 'react';
-import { numberWithCommas } from "../../../helpers/Utils";
+import { numberFormat, numberWithCommas } from "../../../helpers/Utils";
 import { injectIntl } from 'react-intl';
 import {  NavLink } from 'react-router-dom';
 import "./style.scss";
@@ -100,12 +100,6 @@ class Product extends React.Component {
                                 objectFit: "contain",
                             }} 
                             src={`${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}`} alt="Card img" />
-                        {
-                            /* 
-                                <Badge color="primary" pill className="position-absolute badge-top-left">NEW</Badge>
-                                <Badge color="secondary" pill className="position-absolute badge-top-left-2">TRENDING</Badge> 
-                            */
-                        }
                     </div>
                     <CardBody className="product-body mt-3">
                         <CardSubtitle title={product.name} className="font-weight-bold mb-2 product-subtitle">
@@ -113,25 +107,10 @@ class Product extends React.Component {
                         </CardSubtitle>
                         {/* <CardText className="product-price font-weight-bold text-left text-normal mb-0">{product.internalPrice}</CardText> */}
                         <CardText className="product_price font-weight-bold text-right text-normal mb-0">{product?.price ? (`${numberWithCommas(Number.parseFloat(product?.price).toFixed(0))} đ`) : null}</CardText>
-                        <CardText className="text-left text-normal mb-0">Khối lượng {product.weight} kg</CardText>
-                        <CardText className="text-left text-normal mb-0">Phí ship nội địa {numberWithCommas(Number.parseFloat(product.serviceCost).toFixed(0))} đ</CardText>
+                        <CardText className="text-left text-normal mb-0">Khối lượng {numberFormat(Number.parseFloat(product.weight), 3, ".", ",")} kg</CardText>
+                        <CardText className="text-left text-normal mb-0">Phí ship nội địa {numberFormat(Number.parseFloat(product.serviceCost), 0, ",", ".")} đ</CardText>
                     </CardBody>
                 </NavLink>
-                {/* <div className="align-center mt-3">
-                    <Button
-                        className="mr-2"
-                        color="primary"
-                        disabled={isAddedToCart ? true : false}
-                        onClick={() => {
-                            addToCart(product);
-                            this.setState({
-                                isAddedToCart: true
-                            });
-                        }}
-                    >
-                        {__(this.messages, isAddedToCart ? "Đã thêm" : "Thêm vào giỏ")}
-                    </Button>
-                </div> */}
             </Card>
         );
     }

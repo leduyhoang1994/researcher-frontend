@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter,  Label, Input } from 'reactstrap';
 import IntlMessages from "../../../helpers/IntlMessages";
-import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
 import ApiController from '../../../helpers/Api';
-import { GROUP_ORDERS, SELLERS } from '../../../constants/api';
+import { GROUP_ORDERS } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
 
 class GroupOrderModals extends Component {

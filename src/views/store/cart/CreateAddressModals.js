@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Row } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Row } from 'reactstrap';
 import IntlMessages from "../../../helpers/IntlMessages";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import Select from 'react-select';
 import ApiController from '../../../helpers/Api';
 import { NotificationManager } from '../../../components/common/react-notifications';
-import { ADDRESS, ADDRESS_ORDER, SELLERS } from '../../../constants/api';
+import { ADDRESS, ADDRESS_ORDER } from '../../../constants/api';
 
 class CreateAddressModals extends Component {
   constructor(props) {
