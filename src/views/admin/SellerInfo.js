@@ -339,8 +339,8 @@ class SellerInfo extends Component {
 
         return (
             <Fragment>
-                <Card >
-                    <CardBody>
+                <Card className="balance-row-in-body">
+                    <CardBody >
                         <Row>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto pb-3">
                                 <h2>Thông tin tài khoản</h2>

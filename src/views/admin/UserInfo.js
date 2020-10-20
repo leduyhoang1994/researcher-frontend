@@ -318,7 +318,7 @@ class UserInfo extends Component {
 
         return (
             <Fragment>
-                <Card >
+                <Card className="balance-row-in-body">
                     <CardBody>
                         <Row>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto pb-3">
