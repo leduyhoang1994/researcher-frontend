@@ -99,7 +99,7 @@ const CartTables = ({
       width: 100,
       accessor: "price",
       Cell: props => <p className="text-muted">
-        {props.value ? (currencyFormatVND(Number.parseFloat(props.value)) + " đ") : null}
+        {props.value ? (currencyFormatVND(Number.parseFloat(props.value).toFixed(0)) + " đ") : null}
       </p>
     },
     {

@@ -80,13 +80,13 @@ class OrderDetail extends Component {
                             <p>Hình thức vận chuyển: {order?.transportation?.name}</p>
                         </Colxx>
                         <Colxx xxs="6">
-                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(order?.totalWeight), 3)} kg</p>
+                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(order?.totalWeight), 3, ".", ",")} kg</p>
                         </Colxx>
                         {/* <Colxx xxs="6">
-                            <p>Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(order?.lastMiles))} VNĐ</p>
+                            <p>Tổng giá vận chuyển: {currencyFormatVND(Number.parseFloat(order?.lastMiles))} đ</p>
                         </Colxx> */}
                         <Colxx xxs="6">
-                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(order?.totalPrice).toFixed(0))} VNĐ</p>
+                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(order?.totalPrice).toFixed(0))} đ</p>
                         </Colxx>
                         <Colxx xxs="6">
                             <p>Trạng thái đơn hàng: {order?.statusPayment}</p>

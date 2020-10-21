@@ -88,10 +88,11 @@ class CartList extends Component {
         ApiController.get(ADDRESS_ORDER.all, {}, data => {
             data.forEach(item => {
                 let valueAddress = "";
-                if (item.city) valueAddress = valueAddress.concat(item.city).concat(", ");
-                if (item.district) valueAddress = valueAddress.concat(item.district).concat(", ");
+                if (item.name) valueAddress = valueAddress.concat(item.name).concat(" (");
+                if (item.address) valueAddress = valueAddress.concat(item.address).concat(", ");
                 if (item.town) valueAddress = valueAddress.concat(item.town).concat(", ");
-                if (item.address) valueAddress = valueAddress.concat(item.address);
+                if (item.district) valueAddress = valueAddress.concat(item.district).concat(", ");
+                if (item.city) valueAddress = valueAddress.concat(item.city).concat(")");
                 optionAddress.push({ label: valueAddress, value: item.id })
             })
             this.setState({
@@ -313,14 +314,17 @@ class CartList extends Component {
         let order = orders[index];
         order.addressOrderId = this.state.selectedAddress.value;
         order.address = this.state.selectedAddress.label;
-        this.calculateLastMiles(order, index)
+        this.setState({
+            orders
+        })
     }
 
     calculateLastMiles = async (order, index) => {
         let { orders } = this.state;
         const { selectedAddress } = this.state;
-        const city = selectedAddress.label.split(", ")[0]
-        const district = selectedAddress.label.split(", ")[1]
+        let city = selectedAddress.label.split(", ")[3];
+        city = city.substr(0, city.length - 1);
+        const district = selectedAddress.label.split(", ")[2];
         const data = { weight: order.weight, city, district };
         ApiController.post(ORDERS.calculator, data, value => {
             order.lastMiles = value;
@@ -580,7 +584,7 @@ class CartList extends Component {
                                                             <p>Hình thức vận chuyển: {item?.transportation}</p>
                                                         </Colxx>
                                                         <Colxx xxs="6">
-                                                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(item?.weight), 3)} kg</p>
+                                                            <p>Tổng khối lượng: {numberFormat(Number.parseFloat(item?.weight), 3, ".", ",")} kg</p>
                                                         </Colxx>
                                                     </Row>
                                                     <Row>
@@ -664,7 +668,7 @@ class CartList extends Component {
                                                     </Row>
                                                     <Row className="mt-2">
                                                         <Colxx xxs="6">
-                                                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)).toFixed(0))} VNĐ</p>
+                                                            <p>Tổng giá trị nhập hàng: {currencyFormatVND(Number.parseFloat(item?.totalPrice + (item?.lastMiles ? item?.lastMiles : 0)).toFixed(0))} đ</p>
 
                                                         </Colxx>
                                                     </Row>

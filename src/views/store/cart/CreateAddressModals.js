@@ -18,6 +18,7 @@ class CreateAddressModals extends Component {
       optionsCity: [],
       optionsDistrict: [],
       optionsCommune: [],
+      name: "",
       recipient: "",
       phone: "",
       country: "",
@@ -122,11 +123,11 @@ class CreateAddressModals extends Component {
   }
 
   createAddressOrder = () => {
-    const { recipient, phone, selectedCity, selectedDistrict, selectedCommune, street, description } = this.state;
+    const { name, recipient, phone, selectedCity, selectedDistrict, selectedCommune, street, description } = this.state;
     const city = selectedCity.label;
     const district = selectedDistrict.label;
     const town = selectedCommune.label;
-    const data = { recipient, phone, country: "Viet Nam", city, district, town, address: street, description }
+    const data = { name, recipient, phone, country: "Viet Nam", city, district, town, address: street, description }
     ApiController.callAsync('post', ADDRESS_ORDER.all, data)
       .then(data => {
         if (data.data.statusCode === 200) {
@@ -150,10 +151,10 @@ class CreateAddressModals extends Component {
 
   render() {
     const { isOpen, toggleModalCreateAddress } = this.props;
-    const { recipient, phone, selectedCity, selectedDistrict, selectedCommune,
+    const { name, recipient, phone, selectedCity, selectedDistrict, selectedCommune,
       optionsCity, optionsDistrict, optionsCommune, street, description } = this.state;
     let isDisabled = true;
-    if (recipient && phone && selectedCity && selectedDistrict && selectedCommune && street) {
+    if (name && recipient && phone && selectedCity && selectedDistrict && selectedCommune && street) {
       isDisabled = false;
     }
 
@@ -165,6 +166,21 @@ class CreateAddressModals extends Component {
           </ModalHeader>
           <ModalBody>
             <Row>
+              <Colxx xxs="6">
+                <Label className="has-float-label ">
+                  <Input
+                    type="text"
+                    value={name}
+                    name="name"
+                    onChange={(e) => {
+                      this.handleChangeInput(e)
+                    }}
+                  />
+                  <span >
+                    <IntlMessages id="Loại địa chỉ *" />
+                  </span>
+                </Label>
+              </Colxx>
               <Colxx xxs="6">
                 <Label className="has-float-label ">
                   <Input

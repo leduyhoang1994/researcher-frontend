@@ -15,33 +15,6 @@ import Property from "./Property";
 import { defaultImg } from '../../../constants/defaultValues';
 // import { detailImages, detailThumbs } from "../../../data/carouselItems";
 
-
-const convertOptions = properties => {
-    let options = {};
-    let list = [];
-    if (properties) {
-        properties.forEach(item => {
-            if (!options[item.label]) {
-                options[item.label] = {};
-            }
-            if (!options[item.label][item.value]) {
-                options[item.label][item.value] = item.id;
-            }
-        });
-
-        for (let option in options) {
-            let value = options[option];
-            let attr = [];
-            for (let val in value) {
-                attr.push({ label: option, value: val, id: value[val] })
-            }
-            list.push(attr)
-        }
-
-        return list;
-    }
-}
-
 class ProductDetail extends Component {
     constructor(props) {
         super(props);
@@ -98,14 +71,12 @@ class ProductDetail extends Component {
             }
         })
         let transportation = [];
-        console.log(uboxProductTransportations);
         uboxProductTransportations.forEach(item => {
             let trans = item?.transportation;
             if(trans) {
                 transportation.push({label: trans.name, value: trans.id})
             }
         })
-        console.log(transportation);
         const product = { id, name, featureImage, transportation, weight, price, workshopIn, quantity, optionIds, property };
         let cart = localStorage.getItem("cart");
         let flag = false;
@@ -126,7 +97,6 @@ class ProductDetail extends Component {
             NotificationManager.success("Thêm giỏ hàng thành công", "Thành công", 1000);
         }
         localStorage.setItem("cart", JSON.stringify(cart));
-        
     };
 
     setAttribute = (data) => {
@@ -141,20 +111,38 @@ class ProductDetail extends Component {
         });
     }
 
+    convertOptions = properties => {
+        let options = {};
+        let list = [];
+        if (properties) {
+            properties.forEach(item => {
+                if (!options[item.label]) {
+                    options[item.label] = {};
+                }
+                if (!options[item.label][item.value]) {
+                    options[item.label][item.value] = item.id;
+                }
+            });
+    
+            for (let option in options) {
+                let value = options[option];
+                let attr = [];
+                for (let val in value) {
+                    attr.push({ label: option, value: val, id: value[val] })
+                }
+                list.push(attr)
+            }
+            return list;
+        } else {
+            return null;
+        }
+    }
+
     handleChangeOptions = (newValue) => {
         this.setState({ optionsOwnProperties: newValue });
     };
 
-    renderLoading = () => {
-        return (
-            <div className="loading"></div>
-        );
-    }
-
-    render() {
-        const { product, properties } = this.state;
-        const options = convertOptions(properties);
-        const { images } = product;
+    setDefaultImage = (images, product) => {
         let listImages = [];
         if (images && product) {
             listImages.push({ id: 0, img: product.featureImage ? `${process.env.REACT_APP_MEDIA_BASE_PATH}${product.featureImage}` : `${process.env.REACT_APP_MEDIA_BASE_PATH}${defaultImg}` });
@@ -165,6 +153,35 @@ class ProductDetail extends Component {
                 }
             }
         }
+        return listImages;
+    }
+    
+    convertTransportation = (product) => {
+        let result = "";
+        if(product && product.uboxProductTransportations) {
+            product.uboxProductTransportations.forEach(item => {
+                result = result.concat(item.transportation.name).concat(", ")       
+            })
+            if(result.length > 2) {
+                result = result.substr(0, result.length - 2);
+            }
+        }
+        return result;
+    }
+
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
+    }
+
+    render() {
+        const { product, properties } = this.state;
+        const { images } = product;
+
+        const options = this.convertOptions(properties);
+        let listImages = this.setDefaultImage(images, product);
+        let transportation = this.convertTransportation(product);
 
         if (this.state.isLoading) {
             return this.renderLoading();
@@ -264,7 +281,7 @@ class ProductDetail extends Component {
                             </Colxx>
                             <Colxx xxs="4" >
                                 <div>
-                                    <p className="mt-3 ml-3">Hình thức vận chuyển {product.transportation}</p>
+                                    <p className="mt-3 ml-3">Hình thức vận chuyển: {transportation} </p>
                                 </div>
                             </Colxx>
                             <Colxx xxs="4" >

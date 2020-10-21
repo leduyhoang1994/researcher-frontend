@@ -11,24 +11,27 @@ class Property extends React.Component {
             optionIds: {},
             selectedRadio: {},
             selectedAttr: {},
-            properties: this.props.properties || [],
+            properties: [],
         }
         this.messages = this.props.intl.messages;
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
         const { properties } = this.props;
-        const property = this.state.properties;
-        if (property.length !== properties.length) {
-            this.setState({
-                properties: properties
-            }, () => {
-                properties.forEach((option) => {
-                    this.radioButtonSelect(option[0], 0);
-                })
+        this.setState({
+            properties
+        }, () => {
+            this.defaultValue();
+        })
+    }
+
+    defaultValue = () => {
+        const { properties } = this.state;
+        if (properties) {
+            properties.forEach((option) => {
+                this.radioButtonSelect(option[0], 0);
             })
         }
-
     }
 
     renderAttribute = (properties) => {
@@ -78,7 +81,6 @@ class Property extends React.Component {
 
     render() {
         const { properties } = this.state;
-
         return (
             <div>
                 {this.renderAttribute(properties)}
