@@ -76,6 +76,12 @@ const multiMenu = [
         label: "Khách hàng",
         to: "/info/sellers"
       },
+      {
+        id: "address-detail",
+        icon: "iconsminds-qr-code",
+        label: "Cấu hình địa chỉ",
+        to: "/info/address"
+      },
     ]
   },
 ];

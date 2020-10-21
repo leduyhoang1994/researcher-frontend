@@ -5,14 +5,13 @@ import ReactTable from "react-table";
 import { currencyFormatVND, numberFormat } from '../../../helpers/Utils';
 
 import "./style.scss";
-import { Button } from 'reactstrap';
+import { Button, Input } from 'reactstrap';
 
 const OrderTables = ({
   data,
   component,
-  decrement,
-  increment,
-  remove
+  removeProduct,
+  handleChangeQuantity
 }) => {
   const columns = () => [
     {
@@ -34,7 +33,7 @@ const OrderTables = ({
       Header: __(component.messages, "Giá nhập hàng"),
       sortable: false,
       width: 100,
-      accessor: "offerPrice",
+      accessor: "price",
       Cell: props => <p className="text-muted">
         {props.value ? (currencyFormatVND(Number.parseFloat(props.value).toFixed(0)) + " đ") : null}
       </p>
@@ -50,25 +49,34 @@ const OrderTables = ({
     {
       Header: __(component.messages, "Số lượng"),
       sortable: false,
+      width: 120,
       accessor: "quantity",
       Cell: props =>
-        <div>
+        <div className="w-100">
           <Button
             size="xs"
-            className="w-5 w-xs-100"
+            className="w-30 w-xs-100"
             color="primary"
             disabled={parseInt(props.value) <= 1 ? true : false}
             onClick={() => {
-              decrement(props.original)
+              handleChangeQuantity(props.original, props.value - 1)
             }}
           >-</Button>
-          <span className="ml-2">{parseInt(props.value)}</span>
+          <Input
+            type="text"
+            className="w-40 d-inline-block input-quantity"
+            defaultValue={parseInt(props.value) || 1}
+            onChange={(e) => {
+              handleChangeQuantity(props.original, e.target.value)
+            }}
+          />
+          {/* <span className="ml-2">{parseInt(props.value)}</span> */}
           <Button
             size="xs"
-            className="w-5 w-xs-100 ml-2"
+            className="w-30 w-xs-100"
             color="primary"
             onClick={() => {
-              increment(props.original)
+              handleChangeQuantity(props.original, props.value + 1)
             }}
           >+</Button>
         </div>
@@ -85,7 +93,7 @@ const OrderTables = ({
             className="w-5 w-xs-100"
             color="primary"
             onClick={() => {
-              remove(props.original)
+              removeProduct(props.original)
             }}
           >X</Button>
         </div>
