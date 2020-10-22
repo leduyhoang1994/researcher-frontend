@@ -190,7 +190,7 @@ class AddressInfo extends Component {
                         </Row>
                         <Row>
                             <Colxx xxs="12">
-                                <Label className="form-group has-float-label mb-2 w-50">
+                                <Label className="form-group has-float-label mb-2">
                                     <Select
                                         className="react-select"
                                         classNamePrefix="react-select"
@@ -219,7 +219,7 @@ class AddressInfo extends Component {
                                 isChecked ? (
                                     <Colxx xxs="12" className="mt-4">
                                         <p><b>Thông tin quận / huyện</b></p>
-                                        <Label className="form-group has-float-label mt-3 w-50">
+                                        <Label className="form-group has-float-label mt-3">
                                             <Select
                                                 className="react-select"
                                                 classNamePrefix="react-select"
