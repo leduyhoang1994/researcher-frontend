@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import UserInfo from './UserInfo';
-import "./style.scss";
+import "../style.scss";
 
 class UserModals extends React.Component {
 

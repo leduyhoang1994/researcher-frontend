@@ -1,9 +1,9 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { __ } from '../../helpers/IntlMessages';
+import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import { Button } from 'reactstrap';
-import "./style.scss"
+import "../style.scss"
 
 const SellerTables = ({
   sellers,

@@ -1,11 +1,11 @@
 import React, { Component, Fragment } from "react";
 import { Row, Card, CardBody, Button } from "reactstrap";
 
-import { NotificationManager } from "../../components/common/react-notifications";
+import { NotificationManager } from "../../../components/common/react-notifications";
 
-import ApiController from '../../helpers/Api';
-import { USER, ROLES } from '../../constants/api';
-import { Colxx } from "../../components/common/CustomBootstrap";
+import ApiController from '../../../helpers/Api';
+import { USER, ROLES } from '../../../constants/api';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import UserTables from "./UserTables";
 import { injectIntl } from "react-intl";
 import UserModals from "./UserModals";

@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
-import { NotificationManager } from "../../components/common/react-notifications";
-import ApiController from '../../helpers/Api';
-import { USER, ADDRESS, USERS } from '../../constants/api';
-import { Colxx } from "../../components/common/CustomBootstrap";
-import IntlMessages from "../../helpers/IntlMessages";
+import { NotificationManager } from "../../../components/common/react-notifications";
+import ApiController from '../../../helpers/Api';
+import { USER, ADDRESS, USERS } from '../../../constants/api';
+import { Colxx } from "../../../components/common/CustomBootstrap";
+import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
-import "./style.scss"
-import ConfirmButton from "../../components/common/ConfirmButton";
+import "../style.scss"
+import ConfirmButton from "../../../components/common/ConfirmButton";
 import UserModals from "./UserModals";
 
 class UserInfo extends Component {

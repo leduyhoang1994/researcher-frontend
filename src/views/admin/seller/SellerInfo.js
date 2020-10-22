@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
-import { NotificationManager } from "../../components/common/react-notifications";
+import { NotificationManager } from "../../../components/common/react-notifications";
 
-import ApiController from '../../helpers/Api';
-import { SELLER, ADDRESS, ACCOUNTS, SELLERS } from '../../constants/api';
-import { Colxx } from "../../components/common/CustomBootstrap";
-import IntlMessages from "../../helpers/IntlMessages";
+import ApiController from '../../../helpers/Api';
+import { SELLER, ADDRESS, ACCOUNTS, SELLERS } from '../../../constants/api';
+import { Colxx } from "../../../components/common/CustomBootstrap";
+import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
-import "./style.scss"
+import "../style.scss"
 
 class SellerInfo extends Component {
     constructor(props) {

@@ -3,19 +3,19 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import AppLayout from '../../layout/AppLayout';
 
 const UserInfo = React.lazy(() =>
-  import(/* webpackChunkName: "user info" */ './UserInfo')
+  import(/* webpackChunkName: "user info" */ './user/UserInfo')
 );
 const UserLists = React.lazy(() =>
-  import(/* webpackChunkName: "list-user" */ './UserLists')
+  import(/* webpackChunkName: "list-user" */ './user/UserLists')
 );
 const SellerLists = React.lazy(() =>
-  import(/* webpackChunkName: "list-user" */ './SellerLists')
+  import(/* webpackChunkName: "list-user" */ './seller/SellerLists')
 );
 const SellerInfo = React.lazy(() =>
-  import(/* webpackChunkName: "seller-info" */ './SellerInfo')
+  import(/* webpackChunkName: "seller-info" */ './seller/SellerInfo')
 );
 const AddressInfo = React.lazy(() =>
-  import(/* webpackChunkName: "address-info" */ './AddressInfo')
+  import(/* webpackChunkName: "address-info" */ './address/AddressInfo')
 );
 
 const User = ({ match }) => {

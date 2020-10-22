@@ -1,12 +1,12 @@
 import React from 'react';
 import { injectIntl } from 'react-intl';
-import { __ } from '../../helpers/IntlMessages';
+import { __ } from '../../../helpers/IntlMessages';
 import ReactTable from "react-table";
 import { Button, Row } from 'reactstrap';
 import Select from 'react-select';
-import ConfirmButton from "../../components/common/ConfirmButton";
-import "./style.scss"
-import { Colxx } from '../../components/common/CustomBootstrap';
+import ConfirmButton from "../../../components/common/ConfirmButton";
+import "../style.scss"
+import { Colxx } from '../../../components/common/CustomBootstrap';
 
 const UserTables = ({
   data,

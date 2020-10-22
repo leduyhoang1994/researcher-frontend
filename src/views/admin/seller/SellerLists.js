@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { Row, Card, CardBody, Button } from "reactstrap";
-import { NotificationManager } from "../../components/common/react-notifications";
-import ApiController from '../../helpers/Api';
-import { USER, ROLES, SELLER } from '../../constants/api';
-import { Colxx } from "../../components/common/CustomBootstrap";
+import { NotificationManager } from "../../../components/common/react-notifications";
+import ApiController from '../../../helpers/Api';
+import { USER, ROLES, SELLER } from '../../../constants/api';
+import { Colxx } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from "react-intl";
 import SellerTables from "./SellerTables";
 
