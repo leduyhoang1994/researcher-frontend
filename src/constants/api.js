@@ -5,8 +5,10 @@ export const apiPath = `${domain}/${apiVersion}`;
 
 /** Address*/
 export const address = 'address';
+export const address_type = 'address-type';
 export const ADDRESS = {
   all: `${apiPath}/${address}`,
+  type: `${apiPath}/${address_type}`,
 }
 
 /** Address Order*/

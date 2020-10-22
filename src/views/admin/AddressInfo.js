@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, Input, CardBody } from "reactstrap";
+import { Row, Card, Label, Button, CardBody, CustomInput } from "reactstrap";
 import { NotificationManager } from "../../components/common/react-notifications";
-
 import ApiController from '../../helpers/Api';
-import { SELLER, ADDRESS, ACCOUNTS, SELLERS } from '../../constants/api';
+import { ADDRESS } from '../../constants/api';
 import { Colxx } from "../../components/common/CustomBootstrap";
 import IntlMessages from "../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
@@ -14,12 +13,14 @@ class AddressInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            store: [],
+            interCity: [],
+            optionsCity: [],
+            addressType: [],
+            isChecked: false,
             selectedCity: null,
             selectedDistrict: null,
-            selectedCommune: null,
-            optionsCity: [],
             optionsDistrict: [],
-            optionsCommune: [],
             isLoading: true,
         };
         this.messages = this.props.intl.messages;
@@ -27,41 +28,7 @@ class AddressInfo extends Component {
 
     componentDidMount() {
         this.getAddress();
-    }
-
-    defaultCity = () => {
-        const { seller, optionsCity } = this.state;
-        if (seller.city) {
-            optionsCity.forEach(item => {
-                if (item.label === seller.city) {
-                    this.handleChangeCity(item);
-                }
-            })
-            if (seller.district) {
-                this.defaultDistrict()
-            }
-        }
-    }
-
-    defaultDistrict = () => {
-        const { seller, optionsDistrict } = this.state;
-        optionsDistrict.forEach(item => {
-            if (item.label === seller.district) {
-                this.handleChangeDistrict(item);
-            }
-        })
-        if (seller.town) {
-            this.defaultCommune()
-        }
-    }
-
-    defaultCommune = () => {
-        const { seller, optionsCommune } = this.state;
-        optionsCommune.forEach(item => {
-            if (item.label === seller.town) {
-                this.handleChangeCommune(item);
-            }
-        })
+        this.getAddressType();
     }
 
     getAddress = () => {
@@ -75,15 +42,44 @@ class AddressInfo extends Component {
         });
     }
 
+    getAddressType = () => {
+        ApiController.get(ADDRESS.type, {}, data => {
+            data.forEach(item => {
+                if (item.code === "INSIDECITY") {
+                    item.name = "Nội thành"
+                }
+                if (item.code === "OUTSIDECITY") {
+                    item.name = "Ngoại thành"
+                }
+                if (item.code === "DISTRICT") {
+                    item.name = "Huyện xã"
+                }
+                if (item.code === "INTERCITY") {
+                    item.name = "Liên tỉnh"
+                }
+            })
+            this.setState({
+                addressType: data
+            })
+        });
+    }
+
     getCities = () => {
-        let options = [];
+        let options = [], store = [], interCity = [];
         const { address } = this.state;
         address.forEach((item, index) => {
             let value = Object.keys(item)[0];
+            if (item.type === "INTERCITY") {
+                interCity.push({ label: value, value: index })
+            } else {
+                store.push({ label: value, value: index })
+            }
             options.push({ label: value, value: index });
         })
         this.setState({
-            optionsCity: options
+            optionsCity: options,
+            interCity,
+            store
         })
     }
 
@@ -91,9 +87,7 @@ class AddressInfo extends Component {
         let options = [];
         this.setState({
             optionsDistrict: [],
-            optionsCommune: [],
             selectedDistrict: null,
-            selectedCommune: null,
             selectedCity: city
         })
 
@@ -103,7 +97,7 @@ class AddressInfo extends Component {
 
         district.forEach((item, index) => {
             let value = Object.keys(item)[0];
-            options.push({ label: value, value: index });
+            options.push({ label: value, value: index, radius: "", type: item.type });
         })
 
         this.setState({
@@ -111,133 +105,64 @@ class AddressInfo extends Component {
         })
     };
 
-    handleChangeDistrict = district => {
-        this.setState({
-            optionsCommune: [],
-            selectedCommune: null
-        })
-
-        let options = [];
-
-        this.setState({
-            selectedDistrict: district
-        });
-
-        const index = this.state.selectedCity.value;
-        const selectedCity = this.state.address[index];
-        const selectedDistrict = Object.values(selectedCity)[0];
-        let temp = [];
-        selectedDistrict.forEach(item => {
-            if (Object.keys(item)[0] === district.label) {
-                temp = Object.values(item)[0];
+    handleChangeDistrict = e => {
+        const { addressType } = this.state;
+        addressType.forEach(item => {
+            if (item.code === e?.type) {
+                e.radius = item.name;
             }
         })
-
-        temp.forEach((value, index) => {
-            options.push({ label: value, value: index });
-        })
-
         this.setState({
-            optionsCommune: options,
+            selectedDistrict: e
         })
-    };
+    }
 
-    handleChangeCommune = commune => {
-        this.setState({
-            selectedCommune: commune
-        });
-    };
+    changeRadius = (e) => {
+        console.log(e.target.id);
+    }
 
     handleChangeInput = (e) => {
-        const { seller } = this.state;
-        seller[e.target.name] = e.target.value;
         this.setState({
-            seller
+            [e.target.name]: e.target.value
         })
     }
 
-    submitChangeType = () => {
-        const { id, selectedType } = this.state;
-        const data = { sellerId: id, accountTypeId: selectedType.value }
-        console.log(data);
-        ApiController.callAsync('put', SELLER.type, data)
-            .then(data => {
-                console.log(data);
-                NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-            }).catch(error => {
-                NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-            });
+    validateFields = () => {
+        const { isChecked, selectedCity, selectedDistrict } = this.state;
+        if(selectedCity === null) {
+            NotificationManager.warning("Yêu cầu chọn tỉnh / thành phố", "Thông báo", 1500);
+            return true;
+        } else if(isChecked && selectedDistrict === null) {
+            NotificationManager.warning("Yêu cầu chọn quận / huyện", "Thông báo", 1500);
+            return true;
+        } else if(isChecked && (selectedDistrict?.radius || "") === "") {
+            NotificationManager.warning("Yêu cầu loại hình địa chỉ", "Thông báo", 1500);
+            return true;
+        }
+        return false;
     }
 
-    validateField = async () => {
-        const needToValidate = [{ firstName: "Họ" }, { lastName: "Tên" },
-        { phoneNumber: "Số điện thoại" }, { email: "E-mail" },
-        { password: "Mật khẩu" }, { confirmPassword: "Xác nhận mật khẩu" }]
-        let success = true;
-        for await (const field of needToValidate) {
-            let fieldName = "", fieldValue = "";
-            for (let key in field) {
-                fieldName = key;
-                fieldValue = field[key];
-            }
-            if ((this.state.seller[fieldName] || "") === "") {
-                if ((fieldName === "password" || fieldName === "confirmPassword") && this.state.id) {
-                } else {
-                    success = false;
-                    NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
+    updateAddress = () => {
+        const { isChecked, selectedCity, selectedDistrict } = this.state;
+        if(!this.validateFields()) {
+            let data = { city: selectedCity.label, isUboxWarehouse: isChecked }
+            if (isChecked) {
+                data = {
+                    ...data, districts: [
+                        {
+                            district: selectedDistrict.label,
+                            type: selectedDistrict.type
+                        }
+                    ]
                 }
             }
-        }
-        return success;
-    }
-
-    createUser = async () => {
-        if (await this.validateField()) {
-            this.callApi();
-        } else {
-            return;
-        }
-    }
-
-    callApi = () => {
-        let flag = true, id = this.state.id || null;
-        const { selectedCity, selectedDistrict, selectedCommune, selectedType } = this.state;
-        let { seller } = this.state;
-        if (flag) {
-            if (selectedCity) {
-                seller.city = selectedCity.label;
-            }
-            if (selectedDistrict) {
-                seller.district = selectedDistrict.label;
-            }
-            if (selectedCommune) {
-                seller.town = selectedCommune.label;
-            }
-            const { firstName, lastName, username, phoneNumber, email, city, district, town, address, company, password, confirmPassword } = seller;
-            if (password !== "" && password === confirmPassword) {
-                const data = { firstName, lastName, phoneNumber, email, city, district, town, address, company, password, confirmPassword, accountTypeId: selectedType.value };
-                if (id) {
-                    const obj = { ...data, id };
-                    ApiController.callAsync('put', SELLER.admin, obj)
-                        .then(data => {
-                            NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
-                        }).catch(error => {
-                            NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-                        });
-                } else {
-                    const obj = { ...data, username };
-                    ApiController.callAsync('post', SELLERS.register, obj)
-                        .then(data => {
-                            NotificationManager.success("Thêm mới thành công", "Thành công", 1500);
-                        }).catch(error => {
-                            NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
-                        });
-                }
-
-            } else if (password !== "" && password !== confirmPassword) {
-                NotificationManager.warning("Xác nhận mật khẩu không trùng mật khẩu", "Thông báo", 1500);
-            }
-
+            ApiController.callAsync('put', ADDRESS.all, data)
+                .then(data => {
+                    NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
+                    this.getAddress();
+                }).catch(error => {
+                    NotificationManager.warning(error.response.data.message, "Thất bại", 1500);
+                });
         }
     }
 
@@ -248,7 +173,7 @@ class AddressInfo extends Component {
     }
 
     render() {
-        const {optionsCity, optionsDistrict, optionsCommune, typeInput, selectedCity, selectedDistrict, selectedCommune, selectedType, accounts } = this.state;
+        const { isChecked, optionsCity, selectedCity, optionsDistrict, selectedDistrict, addressType, interCity, store } = this.state;
 
         if (this.state.isLoading) {
             return this.renderLoading();
@@ -260,12 +185,12 @@ class AddressInfo extends Component {
                     <CardBody >
                         <Row>
                             <Colxx xxs="12" md="12" className="mx-auto my-auto pb-3">
-                                <h2>Thông tin địa chỉ</h2>
+                                <h2>Cấu hình địa chỉ</h2>
                             </Colxx>
                         </Row>
                         <Row>
-                            <Colxx xxs="6">
-                                <Label className="form-group has-float-label mb-4">
+                            <Colxx xxs="12">
+                                <Label className="form-group has-float-label mb-2 w-50">
                                     <Select
                                         className="react-select"
                                         classNamePrefix="react-select"
@@ -273,47 +198,136 @@ class AddressInfo extends Component {
                                         onChange={this.handleChangeCity}
                                         options={optionsCity}
                                     />
-                                    <IntlMessages id="user.city" />
+                                    <IntlMessages id="Chọn tỉnh / thành phố *" />
                                 </Label>
                             </Colxx>
-                            <Colxx xxs="6">
-                                <Label className="form-group has-float-label mb-4">
-                                    <Select
-                                        className="react-select"
-                                        classNamePrefix="react-select"
-                                        value={selectedDistrict}
-                                        onChange={this.handleChangeDistrict}
-                                        options={optionsDistrict}
-                                    />
-                                    <IntlMessages id="user.district" />
-                                </Label>
+                            <Colxx xxs="12" >
+                                <CustomInput
+                                    id="custom-input-store"
+                                    className="mb-0"
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => {
+                                        this.setState({
+                                            isChecked: !isChecked
+                                        })
+                                    }}
+                                    label="Là kho"
+                                />
                             </Colxx>
-                            <Colxx xxs="6">
-                                <Label className="form-group has-float-label mb-4">
-                                    <Select
-                                        className="react-select"
-                                        classNamePrefix="react-select"
-                                        value={selectedCommune}
-                                        onChange={this.handleChangeCommune}
-                                        options={optionsCommune}
-                                    />
-                                    <IntlMessages id="user.commune" />
-                                </Label>
-                            </Colxx>
+                            {
+                                isChecked ? (
+                                    <Colxx xxs="12" className="mt-4">
+                                        <p><b>Thông tin quận / huyện</b></p>
+                                        <Label className="form-group has-float-label mt-3 w-50">
+                                            <Select
+                                                className="react-select"
+                                                classNamePrefix="react-select"
+                                                value={selectedDistrict}
+                                                options={optionsDistrict}
+                                                onChange={event => {
+                                                    this.handleChangeDistrict(event);
+                                                }}
+                                            />
+                                            <IntlMessages id="Chọn quận / huyện *" />
+                                        </Label>
+                                        {
+                                            selectedDistrict ? (
+                                                <div className="mt-4">
+                                                    <p className="w-40 d-inline-block">{selectedDistrict.label}</p>
+                                                    <div className="w-60 d-inline-block">
+                                                        {
+                                                            addressType.map((item, index) => {
+                                                                return (
+                                                                    <CustomInput
+                                                                        key={index}
+                                                                        type="radio"
+                                                                        name="radiusRadio"
+                                                                        id={item.name}
+                                                                        label={item.name}
+                                                                        inline
+                                                                        checked={selectedDistrict.radius === item.name ? true : false}
+                                                                        onChange={(e) => {
+                                                                            let district = selectedDistrict
+                                                                            district.radius = e.target.id;
+                                                                            district.type = item.code;
+                                                                            this.setState({
+                                                                                selectedDistrict: district
+                                                                            })
+                                                                        }}
+                                                                    />
+                                                                )
+
+                                                            })
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ) : (<></>)
+                                        }
+                                    </Colxx>
+                                ) : (<></>)
+                            }
                         </Row>
                         <div className="text-right mt-3">
                             <Button
                                 className="button"
                                 color="primary"
                                 onClick={() => {
-                                    this.createUser();
+                                    this.updateAddress();
                                 }}
                             >
-                                {this.state.id ? "Cập nhật" : "Thêm mới"}
+                                Cập nhật
                             </Button>
                         </div>
                     </CardBody>
-                </Card >
+                </Card>
+                <Card className="mt-4">
+                    <CardBody >
+                        <h2 className="">Thống kê</h2>
+                        <Row>
+                            <Colxx xxs="2" className="mt-3">
+                                <span className="vertical-align-middle">Kho: </span>
+                            </Colxx>
+                            <Colxx xxs="10" className="mt-3">
+                                {
+                                    store && store.map((item, index) => {
+                                        return (
+                                            <span key={item + index}
+                                                id={`${item.label}`}
+                                                onClick={() => {
+                                                    this.handleChangeCity(item)
+                                                }}
+                                                className="constants height-40 align-middle"
+                                            >
+                                                {item.label}
+                                            </span>
+                                        )
+                                    })
+                                }
+                            </Colxx>
+                            <Colxx xxs="2" className="mt-3">
+                                <span className="vertical-align-middle">Liên tỉnh: </span>
+                            </Colxx>
+                            <Colxx xxs="10" className="mt-3">
+                                {
+                                    interCity && interCity.map((item, index) => {
+                                        return (
+                                            <span key={item + index}
+                                                id={`${item.label}`}
+                                                onClick={() => {
+                                                    this.handleChangeCity(item)
+                                                }}
+                                                className="constants height-40 align-middle"
+                                            >
+                                                {item.label}
+                                            </span>
+                                        )
+                                    })
+                                }
+                            </Colxx>
+                        </Row>
+                    </CardBody>
+                </Card>
             </Fragment >
         );
     }

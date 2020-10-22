@@ -70,7 +70,6 @@ const OrderTables = ({
               handleChangeQuantity(props.original, e.target.value)
             }}
           />
-          {/* <span className="ml-2">{parseInt(props.value)}</span> */}
           <Button
             size="xs"
             className="w-30 w-xs-100"
