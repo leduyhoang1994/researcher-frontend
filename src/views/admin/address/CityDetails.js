@@ -1,14 +1,11 @@
-import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, CardBody, CustomInput } from "reactstrap";
+import React, { Component } from "react";
+import { CustomInput } from "reactstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
 import ApiController from '../../../helpers/Api';
 import { ADDRESS } from '../../../constants/api';
-import { Colxx } from "../../../components/common/CustomBootstrap";
-import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
-import Select from "react-select";
-import "../style.scss"
 import DistrictDetails from "./DistrictDetails";
+import "../style.scss";
 
 class CityDetails extends Component {
     constructor(props) {

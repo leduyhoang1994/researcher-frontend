@@ -1,12 +1,6 @@
-import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, CardBody, CustomInput, FormGroup, Input } from "reactstrap";
-import { NotificationManager } from "../../../components/common/react-notifications";
-import ApiController from '../../../helpers/Api';
-import { ADDRESS } from '../../../constants/api';
-import { Colxx } from "../../../components/common/CustomBootstrap";
-import IntlMessages from "../../../helpers/IntlMessages";
+import React, { Component } from "react";
+import { CustomInput } from "reactstrap";
 import { injectIntl } from "react-intl";
-import Select from "react-select";
 import "../style.scss"
 
 class DistrictDetails extends Component {
@@ -15,7 +9,7 @@ class DistrictDetails extends Component {
         this.state = {
             district: {},
             addressType: [],
-            isWarehouseChecked:  false,
+            isWarehouseChecked: false,
         };
         this.messages = this.props.intl.messages;
     }

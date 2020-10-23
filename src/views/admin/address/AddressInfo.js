@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { Row, Card, Label, Button, CardBody, CustomInput } from "reactstrap";
+import { Row, Card, Label, CardBody } from "reactstrap";
 import { NotificationManager } from "../../../components/common/react-notifications";
 import ApiController from '../../../helpers/Api';
 import { ADDRESS } from '../../../constants/api';
@@ -7,8 +7,9 @@ import { Colxx } from "../../../components/common/CustomBootstrap";
 import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
-import "../style.scss"
 import CityDetails from "./CityDetails";
+import "../style.scss";
+import AddressAnalyst from "./AddressAnalyst";
 
 class AddressInfo extends Component {
     constructor(props) {
@@ -172,53 +173,11 @@ class AddressInfo extends Component {
                         </Row>
                     </CardBody>
                 </Card>
-                <Card className="mt-4">
-                    <CardBody >
-                        <h2 className="">Thống kê</h2>
-                        <Row>
-                            <Colxx xxs="2" className="mt-3">
-                                <span className="vertical-align-middle">Kho: </span>
-                            </Colxx>
-                            <Colxx xxs="10" className="mt-3">
-                                {
-                                    store && store.map((item, index) => {
-                                        return (
-                                            <span key={item + index}
-                                                id={`${item.label}`}
-                                                onClick={() => {
-                                                    this.handleChangeCity(item)
-                                                }}
-                                                className="constants height-40 align-middle"
-                                            >
-                                                {item.label}
-                                            </span>
-                                        )
-                                    })
-                                }
-                            </Colxx>
-                            <Colxx xxs="2" className="mt-3">
-                                <span className="vertical-align-middle">Liên tỉnh: </span>
-                            </Colxx>
-                            <Colxx xxs="10" className="mt-3">
-                                {
-                                    interCity && interCity.map((item, index) => {
-                                        return (
-                                            <span key={item + index}
-                                                id={`${item.label}`}
-                                                onClick={() => {
-                                                    this.handleChangeCity(item)
-                                                }}
-                                                className="constants height-40 align-middle"
-                                            >
-                                                {item.label}
-                                            </span>
-                                        )
-                                    })
-                                }
-                            </Colxx>
-                        </Row>
-                    </CardBody>
-                </Card>
+                <AddressAnalyst 
+                    store={store}
+                    interCity={interCity}
+                    handleChangeCity={this.handleChangeCity}
+                />
             </Fragment >
         );
     }
