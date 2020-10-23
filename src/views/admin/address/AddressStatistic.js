@@ -3,7 +3,7 @@ import { Row, Card, CardBody } from "reactstrap";
 import { Colxx } from "../../../components/common/CustomBootstrap";
 import "../style.scss";
 
-class AddressAnalyst extends Component {
+class AddressStatistic extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -66,4 +66,4 @@ class AddressAnalyst extends Component {
     }
 }
 
-export default AddressAnalyst;
+export default AddressStatistic;

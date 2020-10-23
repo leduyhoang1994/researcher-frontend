@@ -8,8 +8,8 @@ import IntlMessages from "../../../helpers/IntlMessages";
 import { injectIntl } from "react-intl";
 import Select from "react-select";
 import CityDetails from "./CityDetails";
+import AddressStatistic from "./AddressStatistic";
 import "../style.scss";
-import AddressAnalyst from "./AddressAnalyst";
 
 class AddressInfo extends Component {
     constructor(props) {
@@ -173,7 +173,7 @@ class AddressInfo extends Component {
                         </Row>
                     </CardBody>
                 </Card>
-                <AddressAnalyst 
+                <AddressStatistic 
                     store={store}
                     interCity={interCity}
                     handleChangeCity={this.handleChangeCity}
