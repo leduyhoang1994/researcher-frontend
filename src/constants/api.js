@@ -178,3 +178,7 @@ export const account = 'account-type';
 export const ACCOUNTS = {
   all: `${apiPath}/${account}`,
 }
+
+/** Crawl */
+//1688
+export const CRAWL_1688 = `${SOURCE_PRODUCTS.all}/crawl-1688`;

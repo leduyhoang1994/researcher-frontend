@@ -11,6 +11,7 @@ import ApiController from '../../../helpers/Api';
 import { SOURCE_CATEGORIES, SOURCE_PRODUCTS } from '../../../constants/api';
 import SourceProductModal from './SourceProductModal';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import ManualCrawlModal from './manual-crawl/modal';
 
 class CreateTrainingClass extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class CreateTrainingClass extends Component {
         maxMonthlySale: null,
         minPriceMax: null,
         maxPriceMax: null,
+        siteUrl: ""
       },
       data: [],
       pagination: {
@@ -39,6 +41,7 @@ class CreateTrainingClass extends Component {
       sorted: [],
       collapse: false,
       keySearch: null,
+      isCrawlModalOpen: false
     };
     this.messages = this.props.intl.messages;
   }
@@ -46,6 +49,10 @@ class CreateTrainingClass extends Component {
   componentDidMount() {
     this.loadSites();
     this.loadCategories();
+  }
+
+  toggleCrawlModal = () => {
+    this.setState({ isCrawlModalOpen: !this.state.isCrawlModalOpen });
   }
 
   loadSites = () => {
@@ -97,7 +104,7 @@ class CreateTrainingClass extends Component {
 
   prepareQuery = (orderBy = null, desc) => {
     const { pagination } = this.state;
-    const { sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = this.state.filter;
+    const { siteUrl, sourceProductName, categoriesFilter, siteFilter, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type } = this.state.filter;
     let site = [];
     let sourceCategoryId = [];
     siteFilter.forEach(item => {
@@ -109,7 +116,7 @@ class CreateTrainingClass extends Component {
         sourceCategoryId.push(item?.id)
       })
     }
-    const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type };
+    const arrFilter = { sourceProductName, sourceCategoryId, site, minMonthlySale, maxMonthlySale, minPriceMax, maxPriceMax, type, siteUrl };
     let data = {};
     for (let key in arrFilter) {
       const value = arrFilter[key] || null;
@@ -289,6 +296,23 @@ class CreateTrainingClass extends Component {
     else this.removeFromSelectedProducts(newDatas)
   }
 
+  crawledCallback = (product) => {
+    this.toggleCrawlModal();
+    this.setState({
+      filter: {
+        categoriesFilter: [],
+        sourceProductName: product.productTitleCn,
+        siteFilter: [],
+        minMonthlySale: null,
+        maxMonthlySale: null,
+        minPriceMax: null,
+        maxPriceMax: null,
+      }
+    }, () => {
+      this.prepareQuery();
+    });
+  }
+
   render() {
     const { filter, collapse, data, pagination } = this.state;
     const { siteFilter } = filter;
@@ -332,10 +356,11 @@ class CreateTrainingClass extends Component {
                   <Colxx xxs="6">
                     <Label className="form-group has-float-label">
                       <Input
+                        placeholder="Tiếng Việt hoặc tiếng Trung"
                         type="text"
                         className="form-control"
                         name="name"
-                        defaultValue={filter.sourceProductName}
+                        value={filter.sourceProductName}
                         onChange={e => {
                           this.setState({
                             filter: {
@@ -460,6 +485,28 @@ class CreateTrainingClass extends Component {
                         </span>
                       </Label>
                     </Colxx>
+
+                    <Colxx xxs="6">
+                      <Label className="form-group has-float-label">
+                        <Input
+                          type="text"
+                          className="form-control"
+                          name="name"
+                          value={filter.siteUrl}
+                          onChange={e => {
+                            this.setState({
+                              filter: {
+                                ...this.state.filter,
+                                siteUrl: e.target.value
+                              }
+                            });
+                          }}
+                        />
+                        <span>
+                          {__(this.messages, "Link sản phẩm")}
+                        </span>
+                      </Label>
+                    </Colxx>
                   </Row>
                 </Collapse>
                 <div className="text-right">
@@ -470,6 +517,13 @@ class CreateTrainingClass extends Component {
 
               </CardBody>
               <CardFooter className="text-right">
+                <Button
+                  onClick={this.toggleCrawlModal}
+                  className="mr-2"
+                  color="success"
+                >
+                  {__(this.messages, "Crawl sản phẩm")}
+                </Button>
                 <Button
                   onClick={this.prepareQuery}
                 >
@@ -484,7 +538,7 @@ class CreateTrainingClass extends Component {
             <Card>
               <CardBody>
                 <SourceProductTable
-                  component={this}
+                  messages={this.messages}
                   data={data}
                   pagination={pagination}
                   prepareQuery={this.prepareQuery}
@@ -514,6 +568,11 @@ class CreateTrainingClass extends Component {
           isOpen={this.state.isOpenSourceProductModal}
           toggleModal={this.toggleOpenSourceProductModal}
           selectedProducts={this.state.selectedProducts}
+        />
+        <ManualCrawlModal
+          crawledCallback={this.crawledCallback}
+          isOpen={this.state.isCrawlModalOpen}
+          toggle={this.toggleCrawlModal}
         />
       </Fragment >
     );

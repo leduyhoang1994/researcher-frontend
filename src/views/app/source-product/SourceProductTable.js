@@ -18,7 +18,7 @@ class SourceProductTable extends Component {
     this.state = {
       isLoading: true,
     };
-    this.messages = this.props.component.props.intl.messages;
+    this.messages = this.props.messages;
   }
 
   columns = (selectable = true, filterCate) => [
@@ -95,6 +95,13 @@ class SourceProductTable extends Component {
       Cell: props => <div className="text-left">
         <a target="_blank" rel="noopener noreferrer" href={props.original.productLink}>{props.value}</a>
       </div>
+    },
+    {
+      Header: __(this.messages, "Tên sản phẩm Trung"),
+      width: 400,
+      // width: this.getColumnWidth("productTitleCn", "Tên sản phẩm Trung"),
+      accessor: "productTitleCn",
+      Cell: props => <p className="text-muted text-left">{props.value}</p>,
     },
     {
       Header: __(this.messages, "Tên ngành hàng tầng 3"),
