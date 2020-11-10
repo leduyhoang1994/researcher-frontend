@@ -5,10 +5,7 @@ import { Fragment } from 'react';
 import { Colxx } from '../../../components/common/CustomBootstrap';
 import { PRODUCT_SELLER } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
-import ProductList from '../product/ProductList';
 import Category from '../category/Category';
-import { slides, advert } from "../../../data/slideShow"
-import HomePageCarousel from './HomePageCarousel';
 import { defaultImg } from '../../../constants/defaultValues';
 import DataTablePagination from '../../../components/DatatablePagination';
 import Product from '../product/Product';
@@ -31,15 +28,14 @@ class Homepage extends React.Component {
             categoryLv3: "",
             search: "",
             cart: cart,
-            cate: new URLSearchParams(this.props.location.search),
             categoryName: this.props.match.params.cate || null,
             dataTable: {
                 page: 0,
                 pages: 1,
                 canNext: false,
                 canPrevious: false,
-                size: 10,
-                pageSizeOptions: [10, 20, 50, 100],
+                size: 20,
+                pageSizeOptions: [10, 20, 50, 100, 1000],
             }
 
         };
@@ -50,25 +46,21 @@ class Homepage extends React.Component {
         this.getProducts();
     }
 
-    getProducts = () => {
-        let level = (this.state.cate.get("lvl"));
-        let { dataTable } = this.state;
+    getProducts = (hasLevel = true) => {
+        let { dataTable, categoryLv1, categoryLv2, categoryLv3, categoryName } = this.state;
         let array = [];
-        let categoryLv1 = this.state.categoryLv1;
-        let categoryLv2 = this.state.categoryLv2;
-        let categoryLv3 = this.state.categoryLv3;
-        if (level) {
-            level = parseInt(level);
-            switch (level) {
-                case 1: categoryLv1 = this.state.categoryName; break;
-                case 2: categoryLv2 = this.state.categoryName; break;
-                case 3: categoryLv3 = this.state.categoryName; break;
-                default: break;
+        if(hasLevel) {
+            const cate = new URLSearchParams(this.props.location.search);
+            let level = cate.get("lvl") || "";
+            if (level) {
+                level = parseInt(level);
+                switch (level) {
+                    case 1: categoryLv1 = categoryName; break;
+                    case 2: categoryLv2 = categoryName; break;
+                    case 3: categoryLv3 = categoryName; break;
+                    default: break;
+                }
             }
-        } else {
-            categoryLv1 = this.state.categoryLv1;
-            categoryLv2 = this.state.categoryLv2;
-            categoryLv3 = this.state.categoryLv3;
         }
 
         ApiController.post(PRODUCT_SELLER.filter, {
@@ -86,16 +78,60 @@ class Homepage extends React.Component {
                     if (!item.featureImage) item.featureImage = defaultImg;
                     array.push(item);
                 });
-                dataTable.page = this.state.products.nextPage - 1;
-                dataTable.pages = Math.ceil(this.state.products.total / dataTable.size);
+                dataTable.page = data.nextPage - 1;
+                dataTable.pages = Math.ceil(data.total / dataTable.size);
                 dataTable.canNext = dataTable.pages > 1 ? true : false;
-                dataTable.canPrevious = this.state.products.backPage > -1 ? true : false;
+                dataTable.canPrevious = data.backPage > -1 ? true : false;
                 this.setState({
                     products: array,
                     dataTable: dataTable
                 })
             })
         })
+    }
+
+    onPageChange = (page) => {
+        let { dataTable } = this.state;
+        dataTable.page = page;
+        if (page >= 1) {
+            dataTable.canPrevious = true;
+        } else {
+            dataTable.canPrevious = false;
+        }
+        if (page < dataTable.pages - 1) {
+            dataTable.canNext = true;
+        } else {
+            dataTable.canNext = false;
+        }
+        this.setState({
+            dataTable: dataTable
+        })
+        this.getProducts();
+    }
+
+    onPageSizeChange = (size) => {
+        const { dataTable, products } = this.state;
+        dataTable.size = size;
+        dataTable.pages = Math.ceil(products?.length / size)
+        console.log(dataTable, size);
+        this.setState({
+            dataTable: dataTable
+        })
+        this.getProducts();
+    }
+
+    getAllProduct = () => {
+        const { dataTable } = this.state;
+        dataTable.page = 0;
+        dataTable.size = 1000
+        this.setState({
+            dataTable,
+            categoryLv1: "",
+            categoryLv2: "",
+            categoryLv3: "",
+            categoryName: ""
+        })
+        this.getProducts(false)
     }
 
     render() {
@@ -110,7 +146,9 @@ class Homepage extends React.Component {
                     <CardBody className="p-0">
                         <Row>
                             <Colxx xxs="3">
-                                <Category />
+                                <Category
+                                    getAllProduct={this.getAllProduct}
+                                />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
                                 <Row>
@@ -125,7 +163,7 @@ class Homepage extends React.Component {
                                     }
                                 </Row>
                                 <Row>
-                                    <Colxx xxs="12" className="text-center mt-5">
+                                    <Colxx xxs="12" className="text-center mt-5 p-4">
                                         <DataTablePagination
                                             key={dataTable}
                                             page={dataTable.page}
@@ -141,38 +179,6 @@ class Homepage extends React.Component {
                                         />
                                     </Colxx>
                                 </Row>
-                                {/* <div className="p-0 w-100 float-left">
-                                    {
-                                        slides &&
-                                        <HomePageCarousel
-                                            items={slides}
-                                        />
-                                    }
-                                </div> */}
-                                {/* <div className="p-0 w-30 float-left">
-                                    {advert.map((item, index) => {
-                                        if (index < 3) {
-                                            return (
-                                                <div key={index}>
-                                                    <img src={item.img} alt=""></img>
-                                                </div>
-                                            )
-                                        } else {
-                                            // return (<></>)
-                                        }
-
-                                    }
-
-                                        // <NavLink
-                                        //     to={`/#`}
-                                        //     className=""
-                                        // >
-                                        //     <span>a
-                                        //         <img src={item.img} alt=""></img>
-                                        //     </span>
-                                        // </NavLink>
-                                    )}
-                                </div> */}
                             </Colxx>
                         </Row>
                     </CardBody>

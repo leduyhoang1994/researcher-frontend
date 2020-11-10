@@ -15,6 +15,14 @@ class Category extends Component {
         };
 
         this.messages = this.props.intl.messages;
+        const path = window.location.href;
+        const regex = /\/store\/([^\?]+)/;
+        const res = regex.exec(path);
+        if (res && res[1]) {
+            this.activeCate = decodeURI(res[1]);
+        } else {
+            this.activeCate = "";
+        }
     }
 
     componentDidMount() {
@@ -52,8 +60,8 @@ class Category extends Component {
         //use for filtering
         // const fullPath = [...path, cate];
         return (
-            <div className="mb-0 cateMenuLv1 d-flex" key={cate}>
-                <div className="cateName"
+            <div className={`${this.activeCate === cate ? 'active-cate' : ''} mb-0 cateMenuLv1 d-flex`} key={cate}>
+                <div className={`cateName`}
                     onClick={() => {
                         this.onFilterByCategory(cate, 1)
                     }}>
@@ -87,6 +95,16 @@ class Category extends Component {
         return (
             <>
                 <div className="cate-menu homepage-menu">
+                    <a
+                        href="#"
+                        onClick={() => {
+                            this.props.getAllProduct()
+                            this.activeCate = ""
+                        }}
+                        className="mb-0 cateMenuLv1 d-flex"
+                    >
+                        Xem tất cả sản phẩm
+                        </a>
                     {
                         Object.keys(categories).map(category => {
                             return (

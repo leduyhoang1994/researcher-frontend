@@ -1,3 +1,11 @@
+@mixin cateHover {
+  background-color: var(--theme-color-1);
+  color: white;
+  .cateName{
+    color: white;
+  }
+}
+
 .homepage-menu {
   ul {
     padding: 0px;
@@ -39,10 +47,7 @@
     margin-bottom: 0px;
   }
   &:hover {
-    background-color: var(--theme-color-1);
-    .cateName{
-      color: white;
-    }
+    @include cateHover;
     .modal-sub-menu{
       display: block;
     }
@@ -50,6 +55,10 @@
       display: block;
     }
   } 
+}
+
+.active-cate {
+  @include cateHover();
 }
 .display-block {
   display: block;
