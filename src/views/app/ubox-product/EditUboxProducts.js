@@ -430,8 +430,8 @@ class EditUboxProducts extends Component {
 
             formData = jsonToFormData(copySamplePropertiesObj(product, this.state.uboxProduct), formData)
             if (files) {
-                if (files.length > 10) {
-                    NotificationManager.warning(`Số lượng files media vượt quá số hạn định mức! (${files.length}/10 files)`, "Cảnh báo");
+                if (files.length > 20) {
+                    NotificationManager.warning(`Số lượng files media vượt quá số hạn định mức! (${files.length}/20 files)`, "Cảnh báo");
                     this.setState({ isUpdating: false });
                     return;
                 }
@@ -462,8 +462,8 @@ class EditUboxProducts extends Component {
             formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.uboxProduct), formData)
 
             if (files) {
-                if (files.length > 10) {
-                    NotificationManager.warning(`Số lượng files media vượt quá số hạn định mức! (${files.length}/10 files)`, "Cảnh báo");
+                if (files.length > 20) {
+                    NotificationManager.warning(`Số lượng files media vượt quá số hạn định mức! (${files.length}/20 files)`, "Cảnh báo");
                     this.setState({ isUpdating: false });
                     return;
                 }
