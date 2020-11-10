@@ -10,15 +10,15 @@ class UploadModals extends React.Component {
         this.state = {
             files: null
         }
-        this.onFormSubmit = this.onFormSubmit.bind(this)
+        // this.onFormSubmit = this.onFormSubmit.bind(this)
         this.onChange = this.onChange.bind(this)
     }
 
-    onFormSubmit(e) {
-        e.preventDefault() // Stop form submit
-        console.log('Stop form submit')
-        // this.fileUpload(this.state.files);
-    }
+    // onFormSubmit(e) {
+    //     e.preventDefault() // Stop form submit
+    //     console.log('Stop form submit')
+    //     // this.fileUpload(this.state.files);
+    // }
     onChange(e) {
         this.setState({ files: e.target.files })
     }
@@ -61,7 +61,6 @@ class UploadModals extends React.Component {
                                 onChange={this.onChange}
                             />
                             <Button
-                                type="submit"
                                 className="pl-4 pr-4 button "
                                 onClick={this.props.toggle}
                             >
