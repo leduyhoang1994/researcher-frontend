@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalBody } from 'reactstrap';
+import { Button, Form, Input, Modal, ModalBody } from 'reactstrap';
 import ApiController from '../../../helpers/Api';
 import { UBOX_PRODUCTS } from '../../../constants/api';
 
@@ -48,11 +48,27 @@ class UploadModals extends React.Component {
         return (
             <Modal isOpen={this.props.isOpen} toggle={this.props.toggle} onClosed={this.handlerImages}>
                 <ModalBody>
-                    <form onSubmit={this.onFormSubmit}>
-                        <h1>File Upload</h1><br />
-                        <input type="file" id='i_file' name='i_file' accept=".mp4,.mov,.mp4,.flv,.avi,.jpg,.jpeg,.png,.gif" onChange={this.onChange} multiple />
-                        <button type="submit" onClick={this.props.toggle} className="float-right">Ok</button>
-                    </form>
+                    <Form>
+                        <h1>File Upload</h1>
+                        <div className="d-block">
+                            <Input
+                                multiple
+                                type="file"
+                                id="i_file"
+                                name="i_file"
+                                className="d-inline-block w-85"
+                                accept=".mp4,.mov,.mp4,.flv,.avi,.jpg,.jpeg,.png,.gif"
+                                onChange={this.onChange}
+                            />
+                            <Button
+                                type="submit"
+                                className="pl-4 pr-4 button "
+                                onClick={this.props.toggle}
+                            >
+                                Upload file
+                            </Button>
+                        </div>
+                    </Form>
                 </ModalBody>
             </Modal>
         )

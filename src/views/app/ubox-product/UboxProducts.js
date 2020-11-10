@@ -168,6 +168,8 @@ class UboxProducts extends Component {
                                             <Label className="form-group has-float-label">
                                                 <Select
                                                     isMulti
+                                                    className="react-select"
+                                                    classNamePrefix="react-select"
                                                     options={this.state.optionCategories}
                                                     value={this.state.selectedCategory}
                                                     onChange={(value) => {

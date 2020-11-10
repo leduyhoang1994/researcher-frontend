@@ -10,6 +10,8 @@ import Category from '../category/Category';
 import { slides, advert } from "../../../data/slideShow"
 import HomePageCarousel from './HomePageCarousel';
 import { defaultImg } from '../../../constants/defaultValues';
+import DataTablePagination from '../../../components/DatatablePagination';
+import Product from '../product/Product';
 
 class Homepage extends React.Component {
 
@@ -31,6 +33,14 @@ class Homepage extends React.Component {
             cart: cart,
             cate: new URLSearchParams(this.props.location.search),
             categoryName: this.props.match.params.cate || null,
+            dataTable: {
+                page: 0,
+                pages: 1,
+                canNext: false,
+                canPrevious: false,
+                size: 10,
+                pageSizeOptions: [10, 20, 50, 100],
+            }
 
         };
         this.messages = this.props.intl.messages;
@@ -42,6 +52,7 @@ class Homepage extends React.Component {
 
     getProducts = () => {
         let level = (this.state.cate.get("lvl"));
+        let { dataTable } = this.state;
         let array = [];
         let categoryLv1 = this.state.categoryLv1;
         let categoryLv2 = this.state.categoryLv2;
@@ -65,8 +76,8 @@ class Homepage extends React.Component {
             uboxCategoryNameLv2: categoryLv2,
             uboxCategoryNameLv3: categoryLv3,
             isPublished: true,
-            page: 0,
-            size: 10
+            page: dataTable.page,
+            size: dataTable.size
         }, data => {
             this.setState({
                 products: data.uboxProducts
@@ -75,15 +86,23 @@ class Homepage extends React.Component {
                     if (!item.featureImage) item.featureImage = defaultImg;
                     array.push(item);
                 });
+                dataTable.page = this.state.products.nextPage - 1;
+                dataTable.pages = Math.ceil(this.state.products.total / dataTable.size);
+                dataTable.canNext = dataTable.pages > 1 ? true : false;
+                dataTable.canPrevious = this.state.products.backPage > -1 ? true : false;
                 this.setState({
-                    products: array
+                    products: array,
+                    dataTable: dataTable
                 })
             })
         })
     }
 
     render() {
-        const { products } = this.state;
+        const { products, isLoading, dataTable } = this.state;
+        if (isLoading) {
+            return this.renderLoading();
+        }
 
         return (
             <Fragment>
@@ -94,14 +113,42 @@ class Homepage extends React.Component {
                                 <Category />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
-                                <div className="p-0 w-100 float-left">
+                                <Row>
+                                    {
+                                        products.map((product, index) => {
+                                            return (
+                                                <Colxx xxs="3" key={index}>
+                                                    <Product product={product} />
+                                                </Colxx>
+                                            )
+                                        })
+                                    }
+                                </Row>
+                                <Row>
+                                    <Colxx xxs="12" className="text-center mt-5">
+                                        <DataTablePagination
+                                            key={dataTable}
+                                            page={dataTable.page}
+                                            pages={dataTable.pages}
+                                            defaultPageSize={dataTable.size}
+                                            canPrevious={dataTable.canPrevious}
+                                            canNext={(dataTable?.page < dataTable?.pages - 1) ? true : false}
+                                            pageSizeOptions={dataTable.pageSizeOptions}
+                                            showPageSizeOptions={true}
+                                            showPageJump={true}
+                                            onPageChange={this.onPageChange}
+                                            onPageSizeChange={this.onPageSizeChange}
+                                        />
+                                    </Colxx>
+                                </Row>
+                                {/* <div className="p-0 w-100 float-left">
                                     {
                                         slides &&
                                         <HomePageCarousel
                                             items={slides}
                                         />
                                     }
-                                </div>
+                                </div> */}
                                 {/* <div className="p-0 w-30 float-left">
                                     {advert.map((item, index) => {
                                         if (index < 3) {
@@ -128,11 +175,6 @@ class Homepage extends React.Component {
                                 </div> */}
                             </Colxx>
                         </Row>
-                    </CardBody>
-                </Card>
-                <Card className="p-4 w-100 mt-2">
-                    <CardBody>
-                        <ProductList products={products} />
                     </CardBody>
                 </Card>
             </Fragment>

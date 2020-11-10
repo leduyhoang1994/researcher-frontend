@@ -39,10 +39,9 @@ class Filter extends React.Component {
         let { dataTable } = this.state;
         let search = this.state.search.get('s');
         let array = [];
-        const { page, size } = dataTable;
         this.setState({ isLoading: true });
 
-        ApiController.post(PRODUCT_SELLER.filter, { uboxProductName: search, page: page, size: size }, data => {
+        ApiController.post(PRODUCT_SELLER.filter, { uboxProductName: search, page: dataTable.page, size: dataTable.size }, data => {
             this.setState({
                 resultFilter: data
             }, () => {
