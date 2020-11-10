@@ -142,9 +142,7 @@ class SourceProductInfoModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, props) {
-    console.log(nextProps, props);
     if (nextProps.isOpen && nextProps.sourceProductId !== this.state.sourceProductId) {
-      console.log("tewtew");
       this.getSourceProductInfo(nextProps.sourceProductId)
     }
   }
@@ -154,7 +152,6 @@ class SourceProductInfoModal extends React.Component {
     const mapping = this.getMapping();
     //.sort((a, b) => (a.order > b.order) ? 1 : -1)
     const render = [];
-    console.log(Object.keys(sourceProduct));
     Object.keys(mapping).forEach(key => {
       if (!sourceProduct[key]) {
         return true;

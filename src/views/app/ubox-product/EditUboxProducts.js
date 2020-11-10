@@ -214,7 +214,7 @@ class EditUboxProducts extends Component {
             data.uboxProductTransportations.forEach(item => {
                 transportation.push({ label: item.transportation.name, value: item.transportation.name, id: item.transportation.id })
             })
-            
+
             this.setState({
                 keyProperty: new Date().getTime(),
                 keyMedia: new Date().getTime(),
@@ -338,7 +338,7 @@ class EditUboxProducts extends Component {
         const needToValidate = [
             { name: "Tên sản phẩm" }, { price: "Giá ubox" },
             { internalPrice: "Giá nội bộ" }, { minPrice: "Giá bán tối thiểu" },
-            { offerPrice: "Giá bán đề xuất" },  { serviceSla: "Dịch vụ SLA" },
+            { offerPrice: "Giá bán đề xuất" }, { serviceSla: "Dịch vụ SLA" },
             { transportationIds: "Hình thức vận chuyển" },
             { workshopIn: "Thời gian phát hàng của cửa hàng" },
             { uboxIn: "Thời gian giao hàng Ubox" }, { uboxCategoryId: "Ngành hàng" },
@@ -369,9 +369,9 @@ class EditUboxProducts extends Component {
     }
 
     publishProduct = () => {
-        const value = {ids: [this.state.id], status: this.state.product.isPublished}
+        const value = { ids: [this.state.id], status: this.state.product.isPublished }
         ApiController.call('put', `${UBOX_PRODUCTS.publish}`, value, data => {
-            if(data) {
+            if (data) {
                 NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
             }
         })
@@ -429,11 +429,14 @@ class EditUboxProducts extends Component {
 
             formData = jsonToFormData(copySamplePropertiesObj(product, this.state.uboxProduct), formData)
             if (files) {
+                if (files.length > 10) {
+                    NotificationManager.warning("Số lượng files media vượt quá số hạn định mức! (10 files)", "Cảnh báo");
+                    return;
+                }
                 files.forEach(file => {
                     formData.append("file", file);
                 });
             }
-
 
             formData.append('id', parseInt(this.state.id));
 
@@ -457,6 +460,10 @@ class EditUboxProducts extends Component {
             formData = jsonToFormData(copySamplePropertiesObj(this.state.product, this.state.uboxProduct), formData)
 
             if (files) {
+                if (files.length > 10) {
+                    NotificationManager.warning("Số lượng files media vượt quá số hạn định mức! (10 files)", "Cảnh báo");
+                    return;
+                }
                 files.forEach(file => {
                     formData.append("file", file);
                 });
