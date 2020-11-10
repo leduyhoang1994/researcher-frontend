@@ -165,7 +165,7 @@ class Homepage extends React.Component {
                                 <Row>
                                     <Colxx xxs="12" className="text-center mt-5 p-4">
                                         <DataTablePagination
-                                            key={dataTable}
+                                            key={JSON.stringify(dataTable)}
                                             page={dataTable.page}
                                             pages={dataTable.pages}
                                             defaultPageSize={dataTable.size}
