@@ -49,7 +49,7 @@ class Homepage extends React.Component {
     getProducts = (hasLevel = true) => {
         let { dataTable, categoryLv1, categoryLv2, categoryLv3, categoryName } = this.state;
         let array = [];
-        if(hasLevel) {
+        if (hasLevel) {
             const cate = new URLSearchParams(this.props.location.search);
             let level = cate.get("lvl") || "";
             if (level) {
@@ -120,7 +120,7 @@ class Homepage extends React.Component {
         this.getProducts();
     }
 
-    getAllProduct = () => {
+    getAllProduct = (e) => {
         const { dataTable } = this.state;
         dataTable.page = 0;
         dataTable.size = 1000
@@ -131,6 +131,7 @@ class Homepage extends React.Component {
             categoryLv3: "",
             categoryName: ""
         })
+        this.props.history.push(`/store`)
         this.getProducts(false)
     }
 
