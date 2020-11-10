@@ -18,6 +18,7 @@ import { Redirect } from 'react-router-dom';
 import { isFunction } from 'formik';
 import CategoryModals from './CategoryModals';
 import SourceProductInfoModal from './SourceProductInfoModal';
+import "./style.scss";
 
 class EditUboxProducts extends Component {
     constructor(props) {
@@ -709,7 +710,7 @@ class EditUboxProducts extends Component {
                                                     <span>
                                                         {__(this.messages, "Nguồn sản phẩm *")}
                                                     </span>
-                                                    <a href="javascript:void(0);" className="text-small" onClick={this.toggleSourceProductInfoModal} style={{ fontStyle: "italic" }}>
+                                                    <a href="#" className="text-small" onClick={this.toggleSourceProductInfoModal} style={{ fontStyle: "italic" }}>
                                                         Xem thông tin sản phẩm nguồn
                                                     </a>
                                                     <SourceProductInfoModal
