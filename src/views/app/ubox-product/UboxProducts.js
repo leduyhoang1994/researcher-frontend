@@ -35,8 +35,6 @@ class UboxProducts extends Component {
         await this.filterProducts();
     }
 
-
-
     getAllCategories = () => {
         ApiController.get(UBOX_CATEGORIES.all, {}, data => {
             let options = [];
@@ -179,7 +177,7 @@ class UboxProducts extends Component {
                                                     }}
                                                 />
                                                 <span>
-                                                    {__(this.messages, "Thư mục")}
+                                                    {__(this.messages, "Ngành hàng")}
                                                 </span>
                                             </Label>
                                         </Colxx>

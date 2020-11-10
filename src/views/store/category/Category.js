@@ -95,16 +95,6 @@ class Category extends Component {
         return (
             <>
                 <div className="cate-menu homepage-menu">
-                    <a
-                        href="#"
-                        onClick={() => {
-                            this.props.getAllProduct()
-                            this.activeCate = ""
-                        }}
-                        className="mb-0 cateMenuLv1 d-flex"
-                    >
-                        Xem tất cả sản phẩm
-                        </a>
                     {
                         Object.keys(categories).map(category => {
                             return (

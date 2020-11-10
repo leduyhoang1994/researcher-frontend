@@ -85,13 +85,13 @@ class SourceProductInfoModal extends React.Component {
         }
       },
       "productCategoryCn": {
-        label: "Tên thư mục tiếng Trung",
+        label: "Tên ngành hàng tiếng Trung",
         render: (value) => {
           return value;
         }
       },
       "productCategoryVi": {
-        label: "Tên thư mục tiếng Việt",
+        label: "Tên ngành hàng tiếng Việt",
         render: (value) => {
           return value;
         }

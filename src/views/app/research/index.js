@@ -144,7 +144,7 @@ class Research extends Component {
         const { filterOptions } = this.state;
 
         if (this.validateFilterOptions() === false) {
-            NotificationManager.error("Bạn cần chọn top thư mục của ít nhất 1 sàn", "Không thành công");
+            NotificationManager.error("Bạn cần chọn top ngành hàng của ít nhất 1 sàn", "Không thành công");
             return;
         }
 

@@ -11,7 +11,6 @@ import DataTablePagination from '../../../components/DatatablePagination';
 import Product from '../product/Product';
 
 class Homepage extends React.Component {
-
     constructor(props) {
         super(props);
         let cart = localStorage.getItem("cart");
@@ -28,6 +27,7 @@ class Homepage extends React.Component {
             categoryLv3: "",
             search: "",
             cart: cart,
+            cate: new URLSearchParams(this.props.location.search),
             categoryName: this.props.match.params.cate || null,
             dataTable: {
                 page: 0,
@@ -35,9 +35,9 @@ class Homepage extends React.Component {
                 canNext: false,
                 canPrevious: false,
                 size: 20,
-                pageSizeOptions: [10, 20, 50, 100, 1000],
-            }
-
+                pageSizeOptions: [10, 20, 50, 100],
+            },
+            isLoading: true,
         };
         this.messages = this.props.intl.messages;
     }
@@ -46,20 +46,17 @@ class Homepage extends React.Component {
         this.getProducts();
     }
 
-    getProducts = (hasLevel = true) => {
-        let { dataTable, categoryLv1, categoryLv2, categoryLv3, categoryName } = this.state;
+    getProducts = () => {
+        let { cate, dataTable, categoryLv1, categoryLv2, categoryLv3, categoryName } = this.state;
         let array = [];
-        if (hasLevel) {
-            const cate = new URLSearchParams(this.props.location.search);
-            let level = cate.get("lvl") || "";
-            if (level) {
-                level = parseInt(level);
-                switch (level) {
-                    case 1: categoryLv1 = categoryName; break;
-                    case 2: categoryLv2 = categoryName; break;
-                    case 3: categoryLv3 = categoryName; break;
-                    default: break;
-                }
+        let level = cate.get("lvl") || "";
+        if (level) {
+            level = parseInt(level);
+            switch (level) {
+                case 1: categoryLv1 = categoryName; break;
+                case 2: categoryLv2 = categoryName; break;
+                case 3: categoryLv3 = categoryName; break;
+                default: break;
             }
         }
 
@@ -72,7 +69,8 @@ class Homepage extends React.Component {
             size: dataTable.size
         }, data => {
             this.setState({
-                products: data.uboxProducts
+                products: data.uboxProducts,
+                isLoading: false,
             }, () => {
                 this.state.products.forEach(item => {
                     if (!item.featureImage) item.featureImage = defaultImg;
@@ -120,21 +118,12 @@ class Homepage extends React.Component {
         this.getProducts();
     }
 
-    getAllProduct = (e) => {
-        const { dataTable } = this.state;
-        dataTable.page = 0;
-        dataTable.size = 1000
-        this.setState({
-            dataTable,
-            categoryLv1: "",
-            categoryLv2: "",
-            categoryLv3: "",
-            categoryName: ""
-        })
-        this.props.history.push(`/store`)
-        this.getProducts(false)
+    renderLoading = () => {
+        return (
+            <div className="loading"></div>
+        );
     }
-
+    
     render() {
         const { products, isLoading, dataTable } = this.state;
         if (isLoading) {
@@ -147,9 +136,7 @@ class Homepage extends React.Component {
                     <CardBody className="p-0">
                         <Row>
                             <Colxx xxs="3">
-                                <Category
-                                    getAllProduct={this.getAllProduct}
-                                />
+                                <Category />
                             </Colxx>
                             <Colxx xxs="9" className="text-center">
                                 <Row>
