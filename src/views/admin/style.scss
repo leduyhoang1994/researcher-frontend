@@ -51,5 +51,14 @@
       overflow: auto;
   }
   .line-height-district {
-      height: 38px !important;
+    padding: 10px 0 !important;
+    p {
+        margin: 0;
+    }
+    &:hover {
+        background-color: whitesmoke;
+    }
+    input, label:hover {
+        cursor: pointer;
+    }
   }

@@ -1,26 +1,26 @@
 const multiMenu = [
   {
     id: "research",
-    icon: "iconsminds-qr-code",
+    icon: "simple-icon-globe",
     label: "Sản phẩm nguồn",
     to: "/app/research",
     subs: [{
-      icon: "iconsminds-qr-code",
+      icon: "simple-icon-list",
       label: "Ngành hàng",
       to: "/app/research"
     },
     {
-      icon: "iconsminds-qr-code",
+      icon: "simple-icon-list",
       label: "Danh sách ngành hàng",
       to: "/app/source-category-sets"
     },
     {
-      icon: "iconsminds-qr-code",
+      icon: "simple-icon-list",
       label: "Sản phẩm",
       to: "/app/source-products"
     },
     {
-      icon: "iconsminds-qr-code",
+      icon: "simple-icon-list",
       label: "Bộ Sản phẩm",
       to: "/app/source-product-sets",
     }
@@ -28,25 +28,25 @@ const multiMenu = [
   },
   {
     id: "ubox-product",
-    icon: "iconsminds-qr-code",
+    icon: "iconsminds-data-center",
     label: "Sản phẩm Ubox",
     to: "/app/ubox-products",
     subs: [
       {
         id: "cateList",
-        icon: "iconsminds-qr-code",
+        icon: "simple-icon-list",
         label: "Danh sách ngành hàng",
         to: "/app/ubox-categories",
       },
       {
         id: "product",
-        icon: "iconsminds-qr-code",
+        icon: "simple-icon-list",
         label: "Danh sách sản phẩm",
         to: "/app/ubox-products"
       },
       {
         id: "calculate",
-        icon: "iconsminds-qr-code",
+        icon: "iconsminds-calculator",
         label: "Tính phí dịch vụ",
         to: "/calculator"
       }
@@ -54,31 +54,31 @@ const multiMenu = [
   },
   {
     id: "info-page",
-    icon: "iconsminds-qr-code",
+    icon: "simple-icon-info",
     label: "Thông tin tài khoản",
     to: "/info",
   },
   {
     id: "admin-page",
-    icon: "iconsminds-qr-code",
+    icon: "simple-icon-people",
     label: "Quản lý tài khoản",
     to: "/app",
     subs: [
       {
         id: "user-detail",
-        icon: "iconsminds-qr-code",
+        icon: "simple-icon-list",
         label: "Nhân viên",
         to: "/info/users"
       },
       {
         id: "seller-detail",
-        icon: "iconsminds-qr-code",
+        icon: "simple-icon-list",
         label: "Khách hàng",
         to: "/info/sellers"
       },
       {
         id: "address-detail",
-        icon: "iconsminds-qr-code",
+        icon: "iconsminds-location-2",
         label: "Cấu hình địa chỉ",
         to: "/info/address"
       },

@@ -29,6 +29,7 @@ import TopnavEasyAccess from "./Topnav.EasyAccess";
 import TopnavDarkSwitch from "./Topnav.DarkSwitch";
 
 import { getDirection, setDirection } from "../../helpers/Utils";
+import "./TopNav.scss";
 
 class TopNav extends Component {
   constructor(props) {

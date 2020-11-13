@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Card, CardBody, CardTitle } from "reactstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import ReactTable from "react-table";
@@ -36,33 +36,28 @@ const dataTableColumns = [
 export const ReactTableAdvancedCard = (props) => {
   const data = props.categories;
   return (
-    <Card className="mb-4">
-      <CardBody>
-        <CardTitle>
-          <IntlMessages id="table.react-advanced" />
-        </CardTitle>
-        <ReactTable
-          getTrProps={(state, rowInfo) => {
-            if (true) {
-              return {
-                onClick: (e) => {
-                  props.handleClickRow(rowInfo.original)
-                },
-                style: {
-                  cursor: "pointer"
-                }
+    <Fragment>
+      <ReactTable
+        getTrProps={(state, rowInfo) => {
+          if (true) {
+            return {
+              onClick: (e) => {
+                props.handleClickRow(rowInfo.original)
+              },
+              style: {
+                cursor: "pointer"
               }
             }
-          }}
-          data={data}
-          columns={dataTableColumns}
-          defaultPageSize={5}
-          // filterable={true}
-          showPageJump={true}
-          PaginationComponent={DataTablePagination}
-          showPageSizeOptions={true}
-        />
-      </CardBody>
-    </Card>
+          }
+        }}
+        data={data}
+        columns={dataTableColumns}
+        defaultPageSize={5}
+        // filterable={true}
+        showPageJump={true}
+        PaginationComponent={DataTablePagination}
+        showPageSizeOptions={true}
+      />
+    </Fragment>
   );
 };

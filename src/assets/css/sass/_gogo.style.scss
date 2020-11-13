@@ -2745,14 +2745,14 @@ main {
   @include respond-below(xl) {
     margin-left: $sub-menu-width-lg + $main-menu-width-lg + $main-margin-lg;
     margin-right: $main-margin-lg;
-    margin-top: $main-margin-lg + $navbar-height-lg -10;
-    margin-bottom: 30px;
+    margin-top: $main-margin-lg + $navbar-height-lg -30;
+    margin-bottom: 20px;
   }
 
   @include respond-below(lg) {
     margin-left: $sub-menu-width-md + $main-menu-width-md + $main-margin-md;
     margin-right: $main-margin-md;
-    margin-top: $main-margin-md + $navbar-height-md -10;
+    margin-top: $main-margin-md + $navbar-height-md -30;
     margin-bottom: 20px;
   }
 

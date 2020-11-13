@@ -38,8 +38,8 @@ class DistrictDetails extends Component {
                                         key={index + district.label}
                                         className="ml-4"
                                         type="radio"
-                                        name={index + district.label}
-                                        id={item.code}
+                                        name={index + item.code + district.label}
+                                        id={index + item.code + district.label}
                                         label={item.name}
                                         inline
                                         checked={isInputChecked}

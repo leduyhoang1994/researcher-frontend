@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Card, Button } from 'reactstrap';
-import { Colxx } from "../../../components/common/CustomBootstrap";
+import { Row, Card, Button, CardBody, CardTitle } from 'reactstrap';
+import Breadcrumb from "../../../containers/navs/Breadcrumb";
+import { Colxx, Separator } from "../../../components/common/CustomBootstrap";
 import { injectIntl } from 'react-intl';
-import { __ } from '../../../helpers/IntlMessages';
+import IntlMessages, { __ } from '../../../helpers/IntlMessages';
 import { ReactTableAdvancedCard } from "../../../containers/ui/ReactTableCards";
 import { UBOX_CATEGORIES } from '../../../constants/api';
 import ApiController from '../../../helpers/Api';
@@ -40,22 +41,33 @@ class UboxCategories extends Component {
         } */}
           <Row>
             <Colxx xxs="12">
+              <Breadcrumb heading="Ngành hàng" match={this.props.match} />
+              <Separator className="mb-5" />
+            </Colxx>
+          </Row>
+          <Row>
+            <Colxx xxs="12">
               <Card>
-                <ReactTableAdvancedCard
-                  categories={this.state.categories}
-                  handleClickRow={this.handleClickRow}
-                />
+                <CardBody>
+                  <CardTitle>
+                    <IntlMessages id="table.react-advanced" />
+                  </CardTitle>
+                  <ReactTableAdvancedCard
+                    categories={this.state.categories}
+                    handleClickRow={this.handleClickRow}
+                  />
 
-                <div className="text-right card-title">
-                  <Link to="/app/ubox-categories/add">
-                    <Button
-                      className="mr-2"
-                      color="warning"
-                    >
-                      {__(this.messages, "Thêm ngành hàng")}
-                    </Button>
-                  </Link>
-                </div>
+                  <div className="text-right">
+                    <Link to="/app/ubox-categories/add">
+                      <Button
+                        className=""
+                        color="warning"
+                      >
+                        {__(this.messages, "Thêm ngành hàng")}
+                      </Button>
+                    </Link>
+                  </div>
+                </CardBody>
               </Card>
             </Colxx>
           </Row>
