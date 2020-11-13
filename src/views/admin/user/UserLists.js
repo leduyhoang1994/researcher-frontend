@@ -37,18 +37,20 @@ class UserLists extends Component {
     }
 
     loadUsers = () => {
-        ApiController.get(USER.all, {}, data => {
-            let value = [];
-            const user = JSON.parse(localStorage.getItem('user_details') || "") || null;
-            if (user && data) {
-                data.forEach(item => {
-                    if (item.id !== user.id) {
-                        value.push(item);
-                    }
-                })
-            }
-            this.setState({ users: value });
-        });
+        ApiController.callAsync('get', USER.all, {})
+            .then(result => {
+                const data = result.data.result
+                let value = [];
+                const user = JSON.parse(localStorage.getItem('user_details') || "") || null;
+                if (user && data) {
+                    data.forEach(item => {
+                        if (item.id !== user.id) {
+                            value.push(item);
+                        }
+                    })
+                }
+                this.setState({ users: value });
+            }).catch(error => { });
     }
 
     loadRoles = () => {

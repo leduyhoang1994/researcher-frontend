@@ -71,14 +71,7 @@ class GroupOrderModals extends Component {
             this.props.setGroupOrderId(data.data.result.id);
           }
         }).catch(error => {
-          if (error.response.status === 401) {
-            setTimeout(function () {
-              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
-              setTimeout(function () {
-                window.open("/seller/login", "_self")
-              }, 1500);
-            }, 1500);
-          } else {
+          if (error.response.status !== 401) {
             NotificationManager.warning("Thêm lô hàng thất bại", "Thất bại", 1000);
           }
         });

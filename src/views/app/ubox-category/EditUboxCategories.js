@@ -100,14 +100,6 @@ class EditUboxCategories extends Component {
                 this.setState({ cateSetList: data.data.result });
             }).catch(error => {
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
-                if (error.response.status === 401) {
-                    setTimeout(function () {
-                        NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 2000);
-                        setTimeout(function () {
-                            window.open("/user/login", "_self")
-                        }, 1500);
-                    }, 1500);
-                }
             });
         ApiController.get(UBOX_CATEGORIES.all, {}, data => {
             let options1 = [];

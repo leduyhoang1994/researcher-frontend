@@ -7,6 +7,9 @@ Axios.interceptors.request.use(function (config) {
   config.headers.Authorization = 'Bearer ' + token;
   return config;
 });
+
+const currentUrl = window.location.href;
+
 const ApiController = {
   callAsync: async (method, url, data, options = {}) => {
     switch (method) {
@@ -101,14 +104,28 @@ const ApiController = {
         if (isFunction(options.errorCallback)) {
           options.errorCallback(error);
         } else {
-          // NotificationManager.error(
-          //   error.response?.data?.message ? error.response?.data?.message : "Something wrong",
-          //   "Error",
-          //   3000,
-          //   null,
-          //   null,
-          //   ""
-          // );
+          if (error.response.status === 401) {
+            if (currentUrl.includes("/store")) {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/seller/login", "_self")
+              }, 2000);
+            } else {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/user/login", "_self")
+              }, 2000);
+            }
+          } else {
+            NotificationManager.error(
+              error.response.data.message ? error.response.data.message : "Something wrong",
+              "Error",
+              3000,
+              null,
+              null,
+              ""
+            );
+          }
         }
       });
   },
@@ -124,14 +141,28 @@ const ApiController = {
         if (isFunction(options.errorCallback)) {
           options.errorCallback(error);
         } else {
-          NotificationManager.error(
-            error.response.data.message ? error.response.data.message : "Something wrong",
-            "Error",
-            3000,
-            null,
-            null,
-            ""
-          );
+          if (error.response.status === 401) {
+            if (currentUrl.includes("/store")) {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/seller/login", "_self")
+              }, 2000);
+            } else {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/user/login", "_self")
+              }, 2000);
+            }
+          } else {
+            NotificationManager.error(
+              error.response.data.message ? error.response.data.message : "Something wrong",
+              "Error",
+              3000,
+              null,
+              null,
+              ""
+            );
+          }
         }
       });
   },
@@ -147,14 +178,28 @@ const ApiController = {
         if (isFunction(options.errorCallback)) {
           options.errorCallback(error);
         } else {
-          // NotificationManager.error(
-          //   error.response.data.message ? error.response.data.message : "Something wrong",
-          //   "Error",
-          //   3000,
-          //   null,
-          //   null,
-          //   ""
-          // );
+          if (error.response.status === 401) {
+            if (currentUrl.includes("/store")) {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/seller/login", "_self")
+              }, 2000);
+            } else {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/user/login", "_self")
+              }, 2000);
+            }
+          } else {
+            NotificationManager.error(
+              error.response.data.message ? error.response.data.message : "Something wrong",
+              "Error",
+              3000,
+              null,
+              null,
+              ""
+            );
+          }
         }
       });
   },
@@ -182,14 +227,28 @@ const ApiController = {
         if (isFunction(options.errorCallback)) {
           options.errorCallback(error);
         } else {
-          // NotificationManager.error(
-          //   error.response?.data.message ? error.response?.data.message : "Something wrong",
-          //   "Error",
-          //   3000,
-          //   null,
-          //   null,
-          //   ""
-          // );
+          if (error.response.status === 401) {
+            if (currentUrl.includes("/store")) {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/seller/login", "_self")
+              }, 2000);
+            } else {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/user/login", "_self")
+              }, 2000);
+            }
+          } else {
+            NotificationManager.error(
+              error.response.data.message ? error.response.data.message : "Something wrong",
+              "Error",
+              3000,
+              null,
+              null,
+              ""
+            );
+          }
         }
       });
   },
@@ -205,14 +264,28 @@ const ApiController = {
         if (isFunction(options.errorCallback)) {
           options.errorCallback(error);
         } else {
-          // NotificationManager.error(
-          //   error.response.data.message ? error.response.data.message : "Something wrong",
-          //   "Error",
-          //   3000,
-          //   null,
-          //   null,
-          //   ""
-          // );
+          if (error.response.status === 401) {
+            if (currentUrl.includes("/store")) {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/seller/login", "_self")
+              }, 2000);
+            } else {
+              NotificationManager.info("Yêu cầu đăng nhập tài khoản researcher!", "Thông báo", 1500);
+              setTimeout(() => {
+                window.open("/user/login", "_self")
+              }, 2000);
+            }
+          } else {
+            NotificationManager.error(
+              error.response.data.message ? error.response.data.message : "Something wrong",
+              "Error",
+              3000,
+              null,
+              null,
+              ""
+            );
+          }
         }
       });
   }

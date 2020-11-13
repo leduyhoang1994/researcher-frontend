@@ -113,14 +113,6 @@ class OrderList extends Component {
                 }
             }).catch(error => {
                 NotificationManager.warning("Đặt hàng thất bại", "Thất bại", 1000);
-                if (error.response.status === 401) {
-                    setTimeout(function () {
-                        NotificationManager.info("Yêu cầu đăng nhập tài khoản khách hàng!", "Thông báo", 2000);
-                        setTimeout(function () {
-                            window.open("/seller/login", "_self")
-                        }, 1500);
-                    }, 1500);
-                }
             });
         }
     }

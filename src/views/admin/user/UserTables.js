@@ -57,7 +57,7 @@ const UserTables = ({
         props.original?.userRoles && props.original.userRoles.forEach(item => {
           value.push({ label: item.roleId.description, value: item.roleId.name, id: item.roleId.id })
         })
-        let selectedValue = [];
+        let selectedValue = [], disabled = true;
         const id = props.original.id;
         return (
           <div className="text-left d-block">
@@ -66,6 +66,7 @@ const UserTables = ({
                 size: "xs",
                 color: "warning"
               }}
+              isDisabled={disabled}
               content={{
                 close: "Đóng",
                 confirm: "Xác nhận"
@@ -108,6 +109,7 @@ const UserTables = ({
                             options={options}
                             defaultValue={value}
                             onChange={(e) => {
+                              disabled=false
                               selectedValue = e;
                             }}
                           />

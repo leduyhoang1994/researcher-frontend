@@ -34,12 +34,10 @@ class SellerLists extends Component {
     }
 
     loadSellers = () => {
-        ApiController.get(SELLER.all, {}, data => {
-            this.setState({
-                sellers: data,
-                isLoading: false,
-            });
-        });
+        ApiController.callAsync('get', SELLER.all, {})
+            .then(result => {
+                this.setState({ sellers: result.data.result, isLoading: false, });
+            }).catch(error => { });
     }
 
     loadRoles = () => {

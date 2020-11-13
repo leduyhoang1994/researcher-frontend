@@ -308,8 +308,6 @@ class AccountInfo extends Component {
                 } else {
                     NotificationManager.warning(error.response?.data?.message, "Thất bại", 1500);
                 }
-
-
             });
     }
 

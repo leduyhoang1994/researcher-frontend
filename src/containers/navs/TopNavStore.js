@@ -341,12 +341,12 @@ class TopNavStore extends Component {
           {
 
           }
-          <div className={`user user${!isLogin && "-customer"} d-inline-block`}>
+          <div className={`user ${isLogin?.authSeller?.role?.length === 0 ? "userfalse" : "user-customer"} d-inline-block`}>
             <UncontrolledDropdown className="dropdown-menu-right">
               <DropdownToggle className="p-0" color="empty">
                 <span>
                   {
-                    isLogin ?
+                    isLogin && isLogin?.authSeller?.role?.length === 0 ?
                       <>
                         <span className="name mr-1">{this.userDetails?.name}</span>
                         <img alt="Profile" src="/assets/img/lamita_logo.png" />
@@ -363,7 +363,7 @@ class TopNavStore extends Component {
                 <DropdownItem>Support</DropdownItem> */}
                 {/* <DropdownItem divider /> */}
                 {
-                  isLogin ? (
+                  isLogin && isLogin?.authSeller?.role?.length === 0  ? (
                     <>
                       <DropdownItem
                         onClick={() => {
