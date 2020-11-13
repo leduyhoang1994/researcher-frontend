@@ -72,7 +72,6 @@ class UserLists extends Component {
             roleIds.push(item.id)
         })
         const userRole = { userId: id, roleIds: roleIds }
-        console.log(userRole);
         ApiController.callAsync('put', USER.roles, userRole)
             .then(data => {
                 this.loadUsers();
@@ -85,7 +84,6 @@ class UserLists extends Component {
     softDeleteUser = id => {
         ApiController.callAsync('delete', `${USER.all}/${id}`)
             .then(data => {
-                console.log(data);
                 NotificationManager.success("Cập nhật thành công", "Thành công", 1500);
             }).catch(error => {
                 NotificationManager.warning(error.response.data.message, "Thất bại", 1500);

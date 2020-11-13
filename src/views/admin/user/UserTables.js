@@ -57,7 +57,7 @@ const UserTables = ({
         props.original?.userRoles && props.original.userRoles.forEach(item => {
           value.push({ label: item.roleId.description, value: item.roleId.name, id: item.roleId.id })
         })
-        let selectedValue = [], disabled = true;
+        let selectedValue = value;
         const id = props.original.id;
         return (
           <div className="text-left d-block">
@@ -66,7 +66,6 @@ const UserTables = ({
                 size: "xs",
                 color: "warning"
               }}
-              isDisabled={disabled}
               content={{
                 close: "Đóng",
                 confirm: "Xác nhận"
@@ -109,7 +108,6 @@ const UserTables = ({
                             options={options}
                             defaultValue={value}
                             onChange={(e) => {
-                              disabled=false
                               selectedValue = e;
                             }}
                           />
@@ -130,18 +128,36 @@ const UserTables = ({
             >
               Cập nhật
             </Button>
-            <Button
-              className="button ml-2"
-              color="primary"
-              size="xs"
-              onClick={() => {
-                softDeleteUser(id);
+            <ConfirmButton
+              btnConfig={{
+                className:"button ml-2",
+                color: "danger",
+                size: "xs"
               }}
-            >
-              {
-                props.original.isActive ? "Vô hiệu hóa" : "Tái sử dụng"
-              }
-            </Button>
+              content={{
+                close: "Đóng",
+                confirm: "Xác nhận"
+              }}
+              closeOnConfirm={true}
+              onConfirm={() => {
+                softDeleteUser(id)
+              }}
+              buttonContent={() => {
+                return (
+                  <b>{props.original.isActive ? "Xóa" : "Tái sử dụng"}</b>
+                );
+              }}
+              confirmHeader={() => {
+                return (
+                  <>Cảnh báo</>
+                );
+              }}
+              confirmContent={() => {
+                return (
+                <p>{`Bạn có chắc chắn muốn ${props.original.isActive ? "xóa" : "tái sử dụng"} ?`}</p>
+                );
+              }}
+            />
           </div>
         )
       }
