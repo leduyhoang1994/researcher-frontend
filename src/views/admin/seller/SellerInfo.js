@@ -49,19 +49,12 @@ class SellerInfo extends Component {
         this.getAddress();
         this.loadAccountType();
         let { id } = this.state;
-        if (this.props?.sellerId !== undefined && this.props?.sellerId !== null) {
-            id = this.props.sellerId;
-            this.setState({ id })
-        }
-
-        if (this.props?.type !== "modal") {
-            if (id) {
-                this.loadUsers(id);
-            } else {
-                this.loadUsers();
-            }
-        } else if (id) {
+        if (id) {
             this.loadUsers(id);
+        } else {
+            this.setState({
+                isLoading: false
+            })
         }
     }
 
@@ -73,16 +66,6 @@ class SellerInfo extends Component {
                     isLoading: false
                 });
                 this.defaultCity();
-                this.defaultAccountType()
-            });
-        } else {
-            ApiController.get(`${SELLER.details}`, {}, data => {
-                this.setState({
-                    seller: data,
-                    id: data?.id,
-                    isLoading: false
-                });
-                this.defaultCity()
                 this.defaultAccountType()
             });
         }
@@ -501,7 +484,7 @@ class SellerInfo extends Component {
                                         }}
                                     />
                                     <span >
-                                        <IntlMessages id="Mật khẩu mới" />
+                                        <IntlMessages id={`Mật khẩu mới ${this.state.id ? "" : "*"}`} />
                                     </span>
                                 </Label>
                             </Colxx>
@@ -516,7 +499,7 @@ class SellerInfo extends Component {
                                         }}
                                     />
                                     <span >
-                                        <IntlMessages id="Xác nhận mật khẩu" />
+                                        <IntlMessages id={`Xác nhận mật khẩu ${this.state.id ? "" : "*"}`} />
                                     </span>
                                 </Label>
                             </Colxx>
@@ -550,6 +533,15 @@ class SellerInfo extends Component {
                         </Row>
 
                         <div className="text-right mt-3">
+                            <Button
+                                className="button mr-2"
+                                color="info"
+                                onClick={() => {
+                                    window.open("/info/sellers", "_self")
+                                }}
+                            >
+                                Back
+                            </Button>
                             <Button
                                 className="button"
                                 color="primary"

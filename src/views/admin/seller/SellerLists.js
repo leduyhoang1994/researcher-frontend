@@ -124,11 +124,11 @@ class SellerLists extends Component {
                                 className="mr-3"
                                 color="primary"
                                 onClick={() => {
-                                    window.open("/info/sellers/detail")
+                                    window.open("/info/sellers/detail", "_self")
                                 }}
                             >
                                 Thêm mới
-                                </Button>
+                            </Button>
                             {/* <Button
                                     className="button"
                                     color="primary"

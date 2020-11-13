@@ -69,7 +69,7 @@ const SellerTables = ({
           if (rowInfo && rowInfo.row) {
             return {
               onClick: (e) => {
-                window.open(`/info/sellers/detail/${rowInfo.original.id}`)
+                window.open(`/info/sellers/detail/${rowInfo.original.id}`, "_self")
               },
               style: {
                 cursor: "pointer"
