@@ -8,6 +8,7 @@ import './style.scss';
 import ApiController from '../../../helpers/Api';
 import { SOURCE_CATEGORIES, SOURCE_PRODUCTS } from '../../../constants/api';
 import { NotificationManager } from '../../../components/common/react-notifications';
+import { isFunction } from 'formik';
 
 class CreateSourceProductModal extends React.Component {
 
@@ -114,18 +115,65 @@ class CreateSourceProductModal extends React.Component {
             });
     }
 
-    createSourceProduct = () => {
-        ApiController.callAsync('post', SOURCE_PRODUCTS.all, this.state.sourceProduct)
-            .then(data => {
-                NotificationManager.success('Thêm mới sản phẩm nguồn thành công!', "Thành công");
-                // this.props.
-                this.props.createdCallBack()
-                this.props.toggle();
-            }).catch(error => {
-                if (error.response) {
-                    NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+    validateFields = async () => {
+        const needToValidate = [
+            { productCategoryCn: "Tên ngành hàng - Tiếng Trung" },
+            { productCategoryVi: "Tên ngành hàng - Tiếng Việt" },
+            { countrySite: "Loại sàn" },
+            { crossBorderWeight: "Cân nặng" },
+            // { logisticFee: "Phí giao hàng nội địa" },
+            { maxPrice: 'Giá max' },
+            { minPrice: "Giá min" },
+            { monthlySale: "Số lượng bán ra hàng tháng" },
+            // { numberOfComments: "Số lượng comments" },
+            { procurementRepetitionRate: "Tỉ lệ khách quay lại" },
+            { productImage: "Link ảnh sp" },
+            { productLink: "Link sp" },
+            { productTitleCn: "Tên sản phẩm - Tiếng Trung" },
+            { productTitleVi: "Tên sản phẩm - Tiếng Việt" },
+            { shopLink: "Link Shop" },
+            { shopLocation: "Địa chỉ phát hàng" },
+            { shopName: "Tên Shop" },
+            { site: "Sàn" },
+            { siteId: "ID sản phẩm trên trang" },
+        ];
+        let success = true;
+        for await (const field of needToValidate) {
+            if (isFunction(field)) {
+                const fieldData = field();
+                if (fieldData[0] === "") {
+                    success = false;
+                    NotificationManager.error(`Trường ${fieldData[1].sourceProduct} cần phải nhập`);
                 }
-            });
+            } else {
+                let fieldName = "", fieldValue = "";
+                for (let key in field) {
+                    fieldName = key;
+                    fieldValue = field[key];
+                }
+                if ((this.state.sourceProduct[fieldName] || "") === "") {
+                    success = false;
+                    NotificationManager.error(`Trường ${fieldValue} cần phải nhập`);
+                }
+            }
+        }
+        return success;
+    }
+
+    createSourceProduct = async () => {
+        if (await this.validateFields()) {
+            ApiController.callAsync('post', SOURCE_PRODUCTS.all, this.state.sourceProduct)
+                .then(data => {
+                    NotificationManager.success('Thêm mới sản phẩm nguồn thành công!', "Thành công");
+                    // this.props.
+                    this.props.createdCallBack()
+                    this.props.toggle();
+                }).catch(error => {
+                    if (error.response) {
+                        NotificationManager.warning(error.response.data.message, "Thất bại", 1000);
+                    }
+                });
+        }
     }
 
     render() {

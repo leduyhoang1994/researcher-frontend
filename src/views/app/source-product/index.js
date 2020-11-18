@@ -43,7 +43,8 @@ class CreateTrainingClass extends Component {
       collapse: false,
       keySearch: null,
       isCrawlModalOpen: false,
-      isCreateModalOpen: false
+      isCreateModalOpen: false,
+      reloadModal: new Date()
     };
     this.messages = this.props.intl.messages;
   }
@@ -99,6 +100,14 @@ class CreateTrainingClass extends Component {
   toggleCollapse = () => {
     this.setState({ collapse: !this.state.collapse });
   };
+
+  reloadDataCallbackModal = () => {
+    this.setState({
+      reloadModal: new Date()
+    })
+    this.loadSites();
+    this.loadCategories();
+  }
 
   prepareQuery = (orderBy = null, desc) => {
     const { pagination } = this.state;
@@ -589,7 +598,8 @@ class CreateTrainingClass extends Component {
           toggle={this.toggleCrawlModal}
         />
         <CreateSourceProductModal
-          createdCallBack={this.prepareQuery}
+          key={this.state.reloadModal}
+          createdCallBack={this.reloadDataCallbackModal}
           isOpen={this.state.isCreateModalOpen}
           toggle={this.toggleCreateModal}
         />
