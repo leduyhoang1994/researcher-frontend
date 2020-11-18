@@ -12,6 +12,7 @@ import { SOURCE_CATEGORIES, SOURCE_PRODUCTS } from '../../../constants/api';
 import SourceProductModal from './SourceProductModal';
 import { NotificationManager } from '../../../components/common/react-notifications';
 import ManualCrawlModal from './manual-crawl/modal';
+import CreateSourceProductModal from './CreateSourceProductModal';
 
 class CreateTrainingClass extends Component {
   constructor(props) {
@@ -41,7 +42,8 @@ class CreateTrainingClass extends Component {
       sorted: [],
       collapse: false,
       keySearch: null,
-      isCrawlModalOpen: false
+      isCrawlModalOpen: false,
+      isCreateModalOpen: false
     };
     this.messages = this.props.intl.messages;
   }
@@ -53,6 +55,10 @@ class CreateTrainingClass extends Component {
 
   toggleCrawlModal = () => {
     this.setState({ isCrawlModalOpen: !this.state.isCrawlModalOpen });
+  }
+
+  toggleCreateModal = () => {
+    this.setState({ isCreateModalOpen: !this.state.isCreateModalOpen });
   }
 
   loadSites = () => {
@@ -297,6 +303,23 @@ class CreateTrainingClass extends Component {
     });
   }
 
+  createdCallback = (product) => {
+    this.toggleCrawlModal();
+    this.setState({
+      filter: {
+        categoriesFilter: [],
+        sourceProductName: product.productTitleCn,
+        siteFilter: [],
+        minMonthlySale: null,
+        maxMonthlySale: null,
+        minPriceMax: null,
+        maxPriceMax: null,
+      }
+    }, () => {
+      this.prepareQuery();
+    });
+  }
+
   render() {
     const { filter, collapse, data, pagination } = this.state;
     const { siteFilter } = filter;
@@ -502,6 +525,13 @@ class CreateTrainingClass extends Component {
               </CardBody>
               <CardFooter className="text-right">
                 <Button
+                  onClick={this.toggleCreateModal}
+                  className="mr-2"
+                  color="success"
+                >
+                  {__(this.messages, "Thêm sản phẩm nguồn")}
+                </Button>
+                <Button
                   onClick={this.toggleCrawlModal}
                   className="mr-2"
                   color="success"
@@ -557,6 +587,11 @@ class CreateTrainingClass extends Component {
           crawledCallback={this.crawledCallback}
           isOpen={this.state.isCrawlModalOpen}
           toggle={this.toggleCrawlModal}
+        />
+        <CreateSourceProductModal
+          createdCallBack={this.prepareQuery}
+          isOpen={this.state.isCreateModalOpen}
+          toggle={this.toggleCreateModal}
         />
       </Fragment >
     );
