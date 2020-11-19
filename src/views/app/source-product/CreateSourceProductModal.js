@@ -192,6 +192,7 @@ class CreateSourceProductModal extends React.Component {
                                 <Label className="form-group has-float-label">
                                     <Creatable
                                         isClearable
+                                        isSearchable={false}
                                         value={{ label: countrySite, value: countrySite }}
                                         options={listCountry}
                                         className="react-select"
@@ -204,7 +205,7 @@ class CreateSourceProductModal extends React.Component {
                                         }}
                                     />
                                     <span>
-                                        {__(this.messages, "Loại sàn")}
+                                        {__(this.messages, "Loại sàn *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -222,7 +223,7 @@ class CreateSourceProductModal extends React.Component {
                                         }}
                                     />
                                     <span>
-                                        {__(this.messages, "Tên ngành hàng - Tiếng Trung")}
+                                        {__(this.messages, "Tên ngành hàng - Tiếng Trung *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -233,7 +234,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Tên sản phẩm - Tiếng Trung")}
+                                        {__(this.messages, "Tên sản phẩm - Tiếng Trung *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -244,7 +245,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Link sản phẩm")}
+                                        {__(this.messages, "Link sản phẩm *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -255,7 +256,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Địa chỉ phát hàng")}
+                                        {__(this.messages, "Địa chỉ phát hàng *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -285,6 +286,7 @@ class CreateSourceProductModal extends React.Component {
                                 <Label className="form-group has-float-label">
                                     <Creatable
                                         isClearable
+                                        isSearchable={false}
                                         value={{ label: site, value: site }}
                                         options={listSite}
                                         className="react-select"
@@ -297,7 +299,7 @@ class CreateSourceProductModal extends React.Component {
                                         }}
                                     />
                                     <span>
-                                        {__(this.messages, "Sàn")}
+                                        {__(this.messages, "Sàn *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -315,7 +317,7 @@ class CreateSourceProductModal extends React.Component {
                                         }}
                                     />
                                     <span>
-                                        {__(this.messages, "Tên ngành hàng - Tiếng Việt")}
+                                        {__(this.messages, "Tên ngành hàng - Tiếng Việt *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -326,7 +328,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Tên sản phẩm - Tiếng Việt")}
+                                        {__(this.messages, "Tên sản phẩm - Tiếng Việt *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -337,7 +339,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Link ảnh sản phẩm")}
+                                        {__(this.messages, "Link ảnh sản phẩm *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -348,7 +350,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Cân nặng")}
+                                        {__(this.messages, "Cân nặng *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -359,7 +361,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Giá min")}
+                                        {__(this.messages, "Giá min *")}
                                     </span>
                                 </Label>
                             </Colxx>
@@ -372,7 +374,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Link Shop")}
+                                        {__(this.messages, "Link Shop *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -383,7 +385,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Tên Shop")}
+                                        {__(this.messages, "Tên Shop *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -394,7 +396,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Tỷ lệ khách quay lại")}
+                                        {__(this.messages, "Tỷ lệ khách quay lại *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -405,7 +407,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "ID sản phẩm trên trang nguồn")}
+                                        {__(this.messages, "ID sản phẩm trên trang nguồn *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -416,7 +418,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Số lượng bán ra hàng tháng")}
+                                        {__(this.messages, "Số lượng bán ra hàng tháng *")}
                                     </span>
                                 </Label>
                                 <Label className="form-group has-float-label">
@@ -427,7 +429,7 @@ class CreateSourceProductModal extends React.Component {
                                         onChange={this.handleChangeText}
                                     />
                                     <span>
-                                        {__(this.messages, "Giá max")}
+                                        {__(this.messages, "Giá max *")}
                                     </span>
                                 </Label>
 
